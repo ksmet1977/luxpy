@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.9.3 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.9.5 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.9.3
+                1.9.5
               </div>
             
           
@@ -480,6 +480,7 @@
 <span class="sd">            | - LMS absorbances (&#39;LMSa&#39;) </span>
 <span class="sd">            | - relative macular pigment density (&#39;rmd&#39;) </span>
 <span class="sd">            | - ocular media optical density (&#39;docul&#39;)</span>
+<span class="sd">            | - LMSa absorbance interpolators (&#39;LMSa_interps&#39;) for use in _get_LMSa_absorbance (&#39;pre-calculation increases speed&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">_DATA_PATH</span> 
@@ -495,6 +496,7 @@
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s1">&#39;wls&#39;</span><span class="p">:</span>
             <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wls</span><span class="p">,</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">])),</span> <span class="n">wl</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
     
 <span class="k">def</span> <span class="nf">_docul_fine</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">,</span> <span class="n">docul2</span><span class="p">):</span>
@@ -547,6 +549,8 @@
 <span class="sd">            | - LMS absorbances (&#39;LMSa&#39;) </span>
 <span class="sd">            | - relative macular pigment density (&#39;rmd&#39;) </span>
 <span class="sd">            | - ocular media optical density (&#39;docul&#39;)</span>
+<span class="sd">            | - LMSa absorbance interpolators (&#39;LMSa_interps&#39;) for use in _get_LMSa_absorbance (&#39;pre-calculation increases speed&#39;)</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">_DATA_PATH</span> 
@@ -567,8 +571,26 @@
     <span class="n">ocular_sum_32</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">],:]</span><span class="o">.</span><span class="n">T</span>  <span class="c1"># 32 years only!</span>
     <span class="n">docul2</span> <span class="o">=</span> <span class="n">_docul_fine</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">,</span> <span class="n">docul2</span><span class="p">)</span>
     <span class="n">docul2</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">docul2</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wls&#39;</span><span class="p">:</span> <span class="n">wl</span><span class="p">,</span> <span class="s1">&#39;rmd&#39;</span><span class="p">:</span> <span class="n">macula_rel</span><span class="p">,</span> <span class="s1">&#39;docul&#39;</span><span class="p">:</span><span class="n">docul2</span><span class="p">,</span> <span class="s1">&#39;LMSa&#39;</span><span class="p">:</span> <span class="n">absorbance</span><span class="p">}</span>
+    <span class="n">absorbance_interps</span> <span class="o">=</span> <span class="n">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">absorbance</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wls&#39;</span><span class="p">:</span> <span class="n">wl</span><span class="p">,</span> <span class="s1">&#39;rmd&#39;</span><span class="p">:</span> <span class="n">macula_rel</span><span class="p">,</span> <span class="s1">&#39;docul&#39;</span><span class="p">:</span><span class="n">docul2</span><span class="p">,</span> <span class="s1">&#39;LMSa&#39;</span><span class="p">:</span> <span class="n">absorbance</span><span class="p">,</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">:</span><span class="n">absorbance_interps</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">data</span>
+
+<span class="k">def</span> <span class="nf">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">LMSa</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="n">_peak_shft</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> 
+            <span class="c1"># L, M:</span>
+            <span class="n">_peak_shft</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># S:</span>
+            <span class="n">LMSa</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,:])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">non_nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
+            <span class="n">_peak_shft</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_peak_shft</span>
+
+<span class="c1"># Create the interpolators in advance for speed:</span>
+<span class="c1"># _LMS_ABSORBANCE_INTERPOLATORS = get_LMSa_interpolators(odata = _DATA[&#39;odata&#39;], kind = 3)</span>
+
 
 <div class="viewcode-block" id="load_database"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.load_database">[docs]</a><span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_std</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_lms_odens</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -869,7 +891,85 @@
         <span class="n">var_od</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
     <span class="k">return</span> <span class="n">my_round</span><span class="p">((</span><span class="mf">0.30</span> <span class="o">+</span> <span class="mf">0.45</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fieldsize</span><span class="o">/</span><span class="mf">1.333</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od</span><span class="o">/</span><span class="mi">100</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="c1"># def _LMS_absorptance_old(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0, 0], LMSa0 = None,**kwargs):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Calculate the quantal absorptance of the L, M and S cones for a given field size.</span>
+    
+<span class="c1">#     Args:</span>
+<span class="c1">#         :fieldsize: </span>
+<span class="c1">#             | 10, float, optional</span>
+<span class="c1">#             | Field size in degrees.</span>
+<span class="c1">#         :var_shft_LMS:</span>
+<span class="c1">#             | [0, 0, 0] optional</span>
+<span class="c1">#             | Variation (shift) of LMS peak absorptance.</span>
+<span class="c1">#         :var_od_LMS:</span>
+<span class="c1">#             | [0, 0, 0] optional</span>
+<span class="c1">#             | Variation of LMS optical densities.</span>
+<span class="c1">#         :LMSa0: </span>
+<span class="c1">#             | None, optional</span>
+<span class="c1">#             | Uncorrected LMS absorptance functions</span>
+<span class="c1">#             | None defaults to the ones stored in _DATA</span>
+
+<span class="c1">#     Returns:</span>
+<span class="c1">#         alpha_lms: </span>
+<span class="c1">#             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+    
+<span class="c1">#     if LMSa0 is None:</span>
+<span class="c1">#         LMSa = _DATA[&#39;odata&#39;][&#39;LMSa&#39;].copy()</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         LMSa = LMSa0.copy()</span>
+  
+<span class="c1">#     wls = LMSa[:1,:].copy() # wavelengths</span>
+<span class="c1">#     LMSa = LMSa[1:,:] # get rid of wavelengths</span>
+
+<span class="c1">#     # Peak Wavelength Shift:</span>
+<span class="c1">#     wl_shifted = np.empty(LMSa.shape)</span>
+<span class="c1">#     wl_shifted[0] = wls + var_shft_LMS[0] </span>
+<span class="c1">#     wl_shifted[1] = wls + var_shft_LMS[1] </span>
+<span class="c1">#     wl_shifted[2] = wls + var_shft_LMS[2] </span>
+    
+<span class="c1">#     LMSa_shft = np.empty(LMSa.shape)</span>
+<span class="c1">#     kind = 3 # -&gt;&#39;cubic&#39;</span>
+<span class="c1">#     if var_shft_LMS[0] == 0:</span>
+<span class="c1">#         LMSa_shft[0] = LMSa[0]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         LMSa_shft[0] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = &quot;extrapolate&quot;)(wls)</span>
+<span class="c1">#     if var_shft_LMS[1] == 0:</span>
+<span class="c1">#         LMSa_shft[1] = LMSa[1]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         LMSa_shft[1] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = &quot;extrapolate&quot;)(wls)</span>
+    
+<span class="c1">#     if var_shft_LMS[2] == 0:</span>
+<span class="c1">#         LMSa_shft[2] = LMSa[2]</span>
+<span class="c1">#     else:</span>
+<span class="c1">#         LMSa[2,np.isinf(LMSa[2,:])] = np.nan</span>
+<span class="c1">#         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))</span>
+<span class="c1">#         LMSa_shft[2] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = &quot;extrapolate&quot;)(wls)</span>
+
+<span class="c1">#         # Detect poor interpolation (sign switch due to instability):</span>
+<span class="c1">#         ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) </span>
+<span class="c1">#         cond = ((ssw &gt;= 0) &amp; (wls &gt; 560))</span>
+<span class="c1">#         if cond.any():</span>
+<span class="c1">#             wl_min = wls[np.where(cond)].min()</span>
+<span class="c1">#             LMSa_shft[2,np.where((wls &gt;= wl_min))] = np.nan</span>
+
+<span class="c1">#     # corrected LMS (no age correction):</span>
+<span class="c1">#     pkOd_L = _d_LM_max(fieldsize, var_od_LMS[0])  # varied peak optical density of L-cone</span>
+<span class="c1">#     pkOd_M = _d_LM_max(fieldsize, var_od_LMS[1])  # varied peak optical density of M-cone</span>
+<span class="c1">#     pkOd_S = _d_S_max(fieldsize, var_od_LMS[2])   # varied peak optical density of S-cone</span>
+    
+<span class="c1">#     alpha_lms = 1. * LMSa_shft</span>
+<span class="c1">#     alpha_lms[0] = 1 - 10**(-pkOd_L*(10**LMSa_shft[0]))</span>
+<span class="c1">#     alpha_lms[1] = 1 - 10**(-pkOd_M*(10**LMSa_shft[1]))</span>
+<span class="c1">#     alpha_lms[2] = 1 - 10**(-pkOd_S*(10**LMSa_shft[2]))</span>
+<span class="c1"># #    alpha_lms[np.isnan(alpha_lms)] = 0</span>
+<span class="c1">#     # this fix is required because the above math fails for alpha_lms[2,:]==0</span>
+<span class="c1">#     #alpha_lms[2,np.where(wls &gt;= _WL_CRIT)] = 0 </span>
+
+<span class="c1">#     return np.vstack((wls,alpha_lms))</span>
+
+<span class="k">def</span> <span class="nf">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSa0_interps</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the quantal absorptance of the L, M and S cones for a given field size.</span>
 <span class="sd">    </span>
@@ -887,6 +987,10 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Uncorrected LMS absorptance functions</span>
 <span class="sd">            | None defaults to the ones stored in _DATA</span>
+<span class="sd">        :LMSa0_interps:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Pre-calculated interpolators for uncorrected LMS absorbance functions</span>
+<span class="sd">            | None defaults to the ones stored in _DATA</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        alpha_lms: </span>
@@ -897,55 +1001,42 @@
         <span class="n">LMSa</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;odata&#39;</span><span class="p">][</span><span class="s1">&#39;LMSa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">LMSa</span> <span class="o">=</span> <span class="n">LMSa0</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">LMSa0_interps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">LMSa_interps</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;odata&#39;</span><span class="p">][</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">LMSa_interps</span> <span class="o">=</span> <span class="n">LMSa0_interps</span>
   
     <span class="n">wls</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># wavelengths</span>
     <span class="n">LMSa</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="c1"># get rid of wavelengths</span>
-
+    
     <span class="c1"># Peak Wavelength Shift:</span>
-    <span class="n">wl_shifted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">LMSa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">wls</span> <span class="o">+</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
-    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">wls</span> <span class="o">+</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
-    <span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">wls</span> <span class="o">+</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> 
-    
-    <span class="n">LMSa_shft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">LMSa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-    <span class="n">kind</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># -&gt;&#39;cubic&#39;</span>
-    <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">,:])]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="n">non_nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-        <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl_shifted</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span><span class="n">LMSa</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">non_nan_indices</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;extrapolate&quot;</span><span class="p">)(</span><span class="n">wls</span><span class="p">)</span>
+    <span class="n">wl_shifted</span> <span class="o">=</span> <span class="p">(</span><span class="n">wls</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">var_shft_LMS</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span>
 
-        <span class="c1"># Detect poor interpolation (sign switch due to instability):</span>
-        <span class="n">ssw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]))))</span> 
-        <span class="n">cond</span> <span class="o">=</span> <span class="p">((</span><span class="n">ssw</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wls</span> <span class="o">&gt;</span> <span class="mi">560</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">cond</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">wl_min</span> <span class="o">=</span> <span class="n">wls</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-            <span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wls</span> <span class="o">&gt;=</span> <span class="n">wl_min</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">alpha_lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">LMSa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="c1"># kind = 3 # -&gt;&#39;cubic&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">var_shft_LMS</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">_peak_shft</span> <span class="o">=</span> <span class="n">LMSa</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_peak_shft</span> <span class="o">=</span> <span class="n">LMSa_interps</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">wl_shifted</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> 
+                <span class="c1"># S: Detect poor interpolation (sign switch due to instability):</span>
+                <span class="n">ssw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">_peak_shft</span><span class="p">))))</span> 
+                <span class="n">cond</span> <span class="o">=</span> <span class="p">((</span><span class="n">ssw</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wls</span> <span class="o">&gt;</span> <span class="mi">560</span><span class="p">))</span>
+                <span class="k">if</span> <span class="n">cond</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                    <span class="n">wl_min</span> <span class="o">=</span> <span class="n">wls</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cond</span><span class="p">)]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+                    <span class="n">_peak_shft</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wls</span> <span class="o">&gt;=</span> <span class="n">wl_min</span><span class="p">))]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        
+        <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> <span class="c1"># L,M:</span>
+            <span class="n">_pkOd</span> <span class="o">=</span> <span class="n">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od_LMS</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># varied peak optical density of L,M-cone</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># S:</span>
+            <span class="n">_pkOd</span> <span class="o">=</span> <span class="n">_d_S_max</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od_LMS</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="c1"># varied peak optical density of S-cone</span>
+            
+        <span class="n">alpha_lms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">_pkOd</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">_peak_shft</span><span class="p">))</span> 
 
-    <span class="c1"># corrected LMS (no age correction):</span>
-    <span class="n">pkOd_L</span> <span class="o">=</span> <span class="n">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od_LMS</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># varied peak optical density of L-cone</span>
-    <span class="n">pkOd_M</span> <span class="o">=</span> <span class="n">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od_LMS</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># varied peak optical density of M-cone</span>
-    <span class="n">pkOd_S</span> <span class="o">=</span> <span class="n">_d_S_max</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od_LMS</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>   <span class="c1"># varied peak optical density of S-cone</span>
-    
-    <span class="n">alpha_lms</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">LMSa_shft</span>
-    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_L</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_M</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
-    <span class="n">alpha_lms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="n">pkOd_S</span><span class="o">*</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">LMSa_shft</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
-<span class="c1">#    alpha_lms[np.isnan(alpha_lms)] = 0</span>
-    <span class="c1"># this fix is required because the above math fails for alpha_lms[2,:]==0</span>
-    <span class="c1">#alpha_lms[2,np.where(wls &gt;= _WL_CRIT)] = 0 </span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wls</span><span class="p">,</span><span class="n">alpha_lms</span><span class="p">))</span>
+
 
 <span class="k">def</span> <span class="nf">_LMS_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                  <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
@@ -998,7 +1089,7 @@
     <span class="n">docul</span> <span class="o">=</span> <span class="n">_d_ocular</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="n">age</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="n">var_od_lens</span><span class="p">,</span> <span class="n">docul0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;docul&#39;</span><span class="p">])</span>
     
     <span class="c1"># corrected LMS (no age correction):</span>
-    <span class="n">alpha_lms</span> <span class="o">=</span> <span class="n">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="n">var_shft_LMS</span><span class="p">,</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="n">var_od_LMS</span><span class="p">,</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">])</span>
+    <span class="n">alpha_lms</span> <span class="o">=</span> <span class="n">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="n">var_shft_LMS</span><span class="p">,</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="n">var_od_LMS</span><span class="p">,</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">],</span> <span class="n">LMSa0_interps</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">])</span>
     
     <span class="c1"># Corrected to Corneal Incidence:</span>
     <span class="n">LMSq</span> <span class="o">=</span> <span class="n">alpha_lms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -1184,7 +1275,7 @@
         <span class="n">LMSa_fs</span> <span class="o">=</span> <span class="n">LMSa</span>
         <span class="n">LMSq_fs_age</span> <span class="o">=</span> <span class="n">LMSq</span>
 
-    <span class="n">LMSa_2</span> <span class="o">=</span> <span class="n">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">])</span>
+    <span class="n">LMSa_2</span> <span class="o">=</span> <span class="n">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">],</span> <span class="n">LMSa0_interps</span> <span class="o">=</span> <span class="n">odata</span><span class="p">[</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">])</span>
     <span class="n">LMSq_2_32</span> <span class="o">=</span> <span class="n">_LMS_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="n">odata</span><span class="p">)</span>
     
     <span class="n">const_fs_age</span> <span class="o">=</span> <span class="p">(</span><span class="n">LMSa_fs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">LMSq_fs_age</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">LMSa_fs</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">LMSq_fs_age</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]))</span>
@@ -2558,7 +2649,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
+        &#169; Copyright 2022, Kevin A.G. Smet.
 
     </p>
   </div>

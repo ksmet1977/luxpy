@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Math sub-package &mdash; LuxPy 1.9.3 documentation</title>
+  <title>Math sub-package &mdash; LuxPy 1.9.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.9.3
+                1.9.5
               </div>
             
           
@@ -1716,6 +1716,68 @@ Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.mean_distance_weighted">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">mean_distance_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mean_distance_weighted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.mean_distance_weighted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively calculate distance weighted mean.</p>
+<dl>
+<dt>Args: </dt><dd><dl class="field-list">
+<dt class="field-odd">x</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with data</div>
+</div>
+</dd>
+<dt class="field-even">axis</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">dimension along which to take mean</div>
+</div>
+</dd>
+<dt class="field-odd">keepdims</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: keep dimension of original ndarray</div>
+</div>
+</dd>
+<dt class="field-even">center_x</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Center data first.</div>
+</div>
+</dd>
+<dt class="field-odd">rtol</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1e-3, optional</div>
+<div class="line">Relative tolerance on recursive mean values. If two sequential</div>
+<div class="line">mean values differ less than this amount, the recursion stops.</div>
+</div>
+</dd>
+<dt class="field-even">max_iter</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">100, optional</div>
+<div class="line">Maximum amount of recursions. If this number is reached the </div>
+<div class="line">recursion stops, even when rtol is not yet achieved. (to avoid</div>
+<div class="line">getting stuck in an infinite loop when the recursion doesn’t converge)</div>
+</div>
+</dd>
+<dt class="field-odd">cnt,mu,mu0</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Needed for passing values across recursions to be able to stop them.</div>
+<div class="line">DO NOT CHANGE.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">mu_dw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">distance weighted mean of the array</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.math.minimizebnd">
 <span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">minimizebnd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
@@ -1823,7 +1885,7 @@ Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
+        &#169; Copyright 2022, Kevin A.G. Smet.
 
     </p>
   </div>

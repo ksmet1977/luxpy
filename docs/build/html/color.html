@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Color sub-package &mdash; LuxPy 1.9.3 documentation</title>
+  <title>Color sub-package &mdash; LuxPy 1.9.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.9.3
+                1.9.5
               </div>
             
           
@@ -2590,51 +2590,48 @@ to use the dict :fwtf: (should be empty!)
 temperature calculations.</p>
 </dd>
 <dt class="field-even">_CCT_LUT</dt>
-<dd class="field-even"><p>Dict with LUTs structure LUT[mode][cspace][cieobs][lut i].</p>
+<dd class="field-even"><p>Dict with pre-calculated LUTs with structure LUT[mode][cspace][cieobs][lut i].</p>
 </dd>
 <dt class="field-odd">_CCT_LUT_CALC</dt>
 <dd class="field-odd"><p>Boolean determining whether to force LUT calculation, even if
-the LUT.npy files can be found in ./data/cctluts/.</p>
+the LUT.pkl files can be found in ./data/cctluts/.</p>
 </dd>
-<dt class="field-even">_CCT_LUT</dt>
-<dd class="field-even"><p>Dict with all pre-calculated LUTs.</p>
-</dd>
-<dt class="field-odd">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</dt>
-<dd class="field-odd"><p>number of subdivisions when performing
+<dt class="field-even">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</dt>
+<dd class="field-even"><p>number of subdivisions when performing
 a cascading lut calculation to zoom-in 
 progressively on the CCT (until a certain 
 tolerance is met)</p>
 </dd>
-<dt class="field-even">_CCT_CSPACE</dt>
-<dd class="field-even"><p>default chromaticity space to calculate CCT and Duv in.</p>
+<dt class="field-odd">_CCT_CSPACE</dt>
+<dd class="field-odd"><p>default chromaticity space to calculate CCT and Duv in.</p>
 </dd>
-<dt class="field-odd">_CCT_CSPACE_KWARGS</dt>
-<dd class="field-odd"><p>nested dict with cspace parameters for forward and backward modes.</p>
+<dt class="field-even">_CCT_CSPACE_KWARGS</dt>
+<dd class="field-even"><p>nested dict with cspace parameters for forward and backward modes.</p>
 </dd>
-<dt class="field-even">get_tcs4()</dt>
-<dd class="field-even"><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors.</p>
+<dt class="field-odd">get_tcs4()</dt>
+<dd class="field-odd"><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors.</p>
 </dd>
-<dt class="field-odd">calculate_lut()</dt>
-<dd class="field-odd"><p>Function that calculates the LUT for the input ccts.</p>
+<dt class="field-even">calculate_lut()</dt>
+<dd class="field-even"><p>Function that calculates the LUT for the input ccts.</p>
 </dd>
-<dt class="field-even">generate_luts()</dt>
-<dd class="field-even"><p>Generate a number of luts and store them in a nested dictionary.
+<dt class="field-odd">generate_luts()</dt>
+<dd class="field-odd"><p>Generate a number of luts and store them in a nested dictionary.
 (Structure: lut[cspace][cieobs][lut type])</p>
 </dd>
-<dt class="field-odd">xyz_to_cct()</dt>
-<dd class="field-odd"><p>Calculates CCT, Duv from XYZ (wraps a variety of methods)</p>
+<dt class="field-even">xyz_to_cct()</dt>
+<dd class="field-even"><p>Calculates CCT, Duv from XYZ (wraps a variety of methods)</p>
 </dd>
-<dt class="field-even">xyz_to_duv()</dt>
-<dd class="field-even"><p>Calculates Duv, (CCT) from XYZ (wrapper around xyz_to_cct, but with Duv output.)</p>
-</dd>
-<dt class="field-odd">cct_to_xyz()</dt>
-<dd class="field-odd"><p>Calculates xyz from CCT, Duv by estimating the line perpendicular to the planckian locus (=iso-T line).</p>
+<dt class="field-odd">xyz_to_duv()</dt>
+<dd class="field-odd"><p>Calculates Duv, (CCT) from XYZ (wrapper around xyz_to_cct, but with Duv output.)</p>
 </dd>
 <dt class="field-even">cct_to_xyz()</dt>
-<dd class="field-even"><p>Calculates xyz from CCT, Duv [_CCT_MIN &lt; CCT &lt; _CCT_MAX]</p>
+<dd class="field-even"><p>Calculates xyz from CCT, Duv by estimating the line perpendicular to the planckian locus (=iso-T line).</p>
 </dd>
-<dt class="field-odd">xyz_to_cct_mcamy1992()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-odd">cct_to_xyz()</dt>
+<dd class="field-odd"><p>Calculates xyz from CCT, Duv [_CCT_MIN &lt; CCT &lt; _CCT_MAX]</p>
+</dd>
+<dt class="field-even">xyz_to_cct_mcamy1992()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Calculates CCT from XYZ using Mcamy model:</div>
 <div class="line"><a class="reference external" href="http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract">McCamy, Calvin S. (April 1992). 
 Correlated color temperature as an explicit function of 
@@ -2642,8 +2639,8 @@ chromaticity coordinates.
 Color Research &amp; Application. 17 (2): 142–144.</a></div>
 </div>
 </dd>
-<dt class="field-even">xyz_to_cct_hernandez1999()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">xyz_to_cct_hernandez1999()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Calculate CCT from XYZ using Hernández-Andrés et al. model.</div>
 <div class="line"><a class="reference external" href="https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703">Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
 Calculating Correlated Color Temperatures Across the 
@@ -2651,16 +2648,16 @@ Entire Gamut of Daylight and Skylight Chromaticities.
 Applied Optics. 38 (27): 5703–5709. PMID 18324081.</a></div>
 </div>
 </dd>
-<dt class="field-odd">xyz_to_cct_ohno2014()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">xyz_to_cct_ohno2014()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Calculates CCT, Duv from XYZ using a Ohno’s 2014 LUT method.</div>
 <div class="line"><a class="reference external" href="http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020">Ohno Y. (2014)
 Practical use and calculation of CCT and Duv. 
 Leukos. 2014 Jan 2;10(1):47-55.</a></div>
 </div>
 </dd>
-<dt class="field-even">xyz_to_cct_zhang2019()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">xyz_to_cct_zhang2019()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Calculates CCT, Duv from XYZ using Zhang’s 2019 golden-ratio search algorithm</div>
 <div class="line"><a class="reference external" href="https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018">Zhang, F. (2019). 
 High-accuracy method for calculating correlated color temperature with 
@@ -2668,20 +2665,25 @@ a lookup table based on golden section search.
 Optik, 193, 163018.</a></div>
 </div>
 </dd>
-<dt class="field-odd">xyz_to_cct_robertson1968()</dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">xyz_to_cct_robertson1968()</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">Calculates CCT, Duv from XYZ using a Robertson’s 1968 search method.</div>
 <div class="line"><a class="reference external" href="https://doi.org/10.1364/JOSA.58.001528">Robertson, A. R. (1968). 
 Computation of Correlated Color Temperature and Distribution Temperature. 
 Journal of the Optical Society of America,  58(11), 1528–1535.</a></div>
 </div>
 </dd>
-<dt class="field-even">xyz_to_cct_li2016()</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">xyz_to_cct_li2016()</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Calculates CCT, Duv from XYZ using a Li’s 2019 Newton-Raphson method.</div>
 <div class="line"><a class="reference external" href="https://doi.org/10.1364/OE.24.014066">Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., &amp; Luo, M. R. (2016).
 Accurate method for computing correlated color temperature. 
 Optics Express, 24(13), 14066–14078.</a>                        </div>
+</div>
+</dd>
+<dt class="field-even">xyz_to_cct_fibonacci()</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Calculates CCT, Duv from XYZ using a Fibonacci search method.</div>
 </div>
 </dd>
 <dt class="field-odd">cct_to_mired()</dt>
@@ -2722,7 +2724,7 @@ Optics Express, 24(13), 14066–14078.</a>                        </div>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_mcamy1992">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_mcamy1992</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_mcamy1992"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_mcamy1992" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_mcamy1992</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_mcamy1992"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_mcamy1992" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) using 
 the mccamy approximation (!!! only valid for CIE 1931 2° input !!!).</p>
 <div class="line-block">
@@ -2813,7 +2815,7 @@ Color Research &amp; Application. 17 (2): 142–144.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_hernandez1999">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_hernandez1999</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_hernandez1999"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_hernandez1999" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_hernandez1999</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_hernandez1999"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_hernandez1999" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) using 
 the mccamy approximation (!!! only valid for CIE 1931 2° input !!!).</p>
 <div class="line-block">
@@ -2904,7 +2906,7 @@ Applied Optics. 38 (27), 5703–5709. P</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_robertson1968">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_robertson1968</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_robertson1968"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_robertson1968" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_robertson1968</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_robertson1968"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_robertson1968" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) using  
 Robertson’s 1968 search method.</p>
@@ -2938,6 +2940,7 @@ Robertson’s 1968 search method.</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">rtol</dt>
@@ -2959,9 +2962,8 @@ Robertson’s 1968 search method.</p>
 <dt class="field-even">force_tolerance</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">True, optional</div>
-<div class="line">If False: search only using the list of CCTs in the used lut,</div>
+<div class="line">If False: search only using the list of CCTs in the used lut. </div>
 <div class="line-block">
-<div class="line">or suplied using :cct_search_list: or :mk_search_list:. </div>
 <div class="line">Only one loop of the full algorithm is performed. </div>
 <div class="line">Accuracy depends on CCT of test source and the location</div>
 <div class="line">and spacing of the CCTs in the list.</div>
@@ -2999,13 +3001,13 @@ Robertson’s 1968 search method.</p>
 </dd>
 <dt class="field-odd">max_iter</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">100, optional</div>
+<div class="line">_CCT_MAX_ITER, optional</div>
 <div class="line">Maximum number of iterations used by the cascading-lut or newton-raphson methods.</div>
 </div>
 </dd>
 <dt class="field-even">split_calculation_at_N</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">10, optional</div>
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
 <div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
 <div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
 </div>
@@ -3085,6 +3087,20 @@ Robertson’s 1968 search method.</p>
 <div class="line">these differences and proceeds anyway.</div>
 </div>
 </dd>
+<dt class="field-even">use_fast_duv</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -3116,7 +3132,7 @@ Optics Express, 24(13), 14066–14078.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_ohno2014">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv_parabolic_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_ohno2014" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv_parabolic_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_ohno2014" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) 
 using Ohno’s 2014 method.</p>
@@ -3150,6 +3166,7 @@ using Ohno’s 2014 method.</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">rtol</dt>
@@ -3171,9 +3188,8 @@ using Ohno’s 2014 method.</p>
 <dt class="field-even">force_tolerance</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">True, optional</div>
-<div class="line">If False: search only using the list of CCTs in the used lut,</div>
+<div class="line">If False: search only using the list of CCTs in the used lut. </div>
 <div class="line-block">
-<div class="line">or suplied using :cct_search_list: or :mk_search_list:. </div>
 <div class="line">Only one loop of the full algorithm is performed. </div>
 <div class="line">Accuracy depends on CCT of test source and the location</div>
 <div class="line">and spacing of the CCTs in the list.</div>
@@ -3220,13 +3236,13 @@ using Ohno’s 2014 method.</p>
 </dd>
 <dt class="field-even">max_iter</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">100, optional</div>
+<div class="line">_CCT_MAX_ITER, optional</div>
 <div class="line">Maximum number of iterations used by the cascading-lut or newton-raphson methods.</div>
 </div>
 </dd>
 <dt class="field-odd">split_calculation_at_N</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">10, optional</div>
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
 <div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
 <div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
 </div>
@@ -3306,6 +3322,20 @@ using Ohno’s 2014 method.</p>
 <div class="line">these differences and proceeds anyway.</div>
 </div>
 </dd>
+<dt class="field-odd">use_fast_duv</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -3336,7 +3366,7 @@ Optics Express, 24(13), 14066–14078.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_li2016">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_li2016</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guess_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'robertson1968'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fgm_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_li2016"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_li2016" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_li2016</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guess_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'robertson1968'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fgm_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_li2016"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_li2016" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) using the 
 Newton-Raphson method described in Li et al. (2016).</p>
@@ -3370,6 +3400,7 @@ Newton-Raphson method described in Li et al. (2016).</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">rtol</dt>
@@ -3390,8 +3421,58 @@ Newton-Raphson method described in Li et al. (2016).</p>
 </dd>
 <dt class="field-even">max_iter</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">100, optional</div>
+<div class="line">_CCT_MAX_ITER, optional</div>
 <div class="line">Maximum number of iterations used newton-raphson methods.</div>
+</div>
+</dd>
+<dt class="field-odd">lut_resolution_reduction_factor</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR, optional</div>
+<div class="line">Number of times the interval spanned by the adjacent Tc in a search or lut</div>
+<div class="line">method is downsampled (the search process will then start again)</div>
+</div>
+</dd>
+<dt class="field-even">split_calculation_at_N</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
+<div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
+<div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
+</div>
+</dd>
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Look-Up-Table with Ti, u,v,u’,v’,u”,v”,slope values of Planckians. </div>
+<div class="line">Options:</div>
+<div class="line-block">
+<div class="line">- None: defaults to the lut specified in _CCT_LUT[first_guess_mode][‘lut_type_def’].</div>
+<div class="line">- list (lut,lut_kwargs): use this pre-calculated lut </div>
+<div class="line-block">
+<div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
+</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
+<div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">luts_dict</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Dictionary of pre-calculated luts for various cspaces and cmf sets.</div>
+<div class="line-block">
+<div class="line">Must have structure luts_dict[cspace][cieobs][lut_label] with the</div>
+<div class="line-block">
+<div class="line">lut part of a two-element list [lut, lut_kwargs]. It must contain</div>
+<div class="line">at the top-level a key ‘wl’ containing the wavelengths of the </div>
+<div class="line">Planckians used to generate the luts in this dictionary.</div>
+</div>
+</div>
+<div class="line">If None: luts_dict defaults to _CCT_LUT[first_guess_mode][‘luts’]    </div>
 </div>
 </dd>
 <dt class="field-odd">cspace</dt>
@@ -3424,17 +3505,40 @@ Newton-Raphson method described in Li et al. (2016).</p>
 <div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
 </div>
 </dd>
-<dt class="field-odd">first_guess_mode</dt>
+<dt class="field-odd">ignore_wl_diff</dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">When getting a lut from the dictionary, if differences are</div>
+<div class="line">detected in the wavelengts of the lut and the ones used to calculate any</div>
+<div class="line">plankcians then a new lut should be generated. Seting this to True ignores</div>
+<div class="line">these differences and proceeds anyway.</div>
+</div>
+</dd>
+<dt class="field-even">first_guess_mode</dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">‘robertson1968’, optional</div>
 <div class="line">Method used to get an approximate (first guess) estimate of the cct,</div>
 <div class="line">after which the newton-raphson method is started.</div>
 <div class="line">Options: ‘robertson1968’, ‘ohno2014’, ‘zhang2019’</div>
 </div>
 </dd>
-<dt class="field-even">fgm_kwargs</dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">fgm_kwargs</dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">Dict with keyword arguments for the selected first_guess_mode.</div>
+</div>
+</dd>
+<dt class="field-even">use_fast_duv</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
 </div>
 </dd>
 </dl>
@@ -3468,7 +3572,7 @@ Journal of the Optical Society of America,  58(11), 1528–1535.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_zhang2019">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_zhang2019</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_zhang2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_zhang2019" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_zhang2019</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_zhang2019"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_zhang2019" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) using the 
 golden-ratio search method described in Zhang et al. (2019).</p>
@@ -3502,6 +3606,7 @@ golden-ratio search method described in Zhang et al. (2019).</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">rtol</dt>
@@ -3523,9 +3628,8 @@ golden-ratio search method described in Zhang et al. (2019).</p>
 <dt class="field-even">force_tolerance</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">True, optional</div>
-<div class="line">If False: search only using the list of CCTs in the used lut,</div>
+<div class="line">If False: search only using the list of CCTs in the used lut. </div>
 <div class="line-block">
-<div class="line">or suplied using :cct_search_list: or :mk_search_list:. </div>
 <div class="line">Only one loop of the full algorithm is performed. </div>
 <div class="line">Accuracy depends on CCT of test source and the location</div>
 <div class="line">and spacing of the CCTs in the list.</div>
@@ -3563,13 +3667,13 @@ golden-ratio search method described in Zhang et al. (2019).</p>
 </dd>
 <dt class="field-odd">max_iter</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">100, optional</div>
+<div class="line">_CCT_MAX_ITER, optional</div>
 <div class="line">Maximum number of iterations used by the cascading-lut or newton-raphson methods.</div>
 </div>
 </dd>
 <dt class="field-even">split_calculation_at_N</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">10, optional</div>
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
 <div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
 <div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
 </div>
@@ -3649,6 +3753,20 @@ golden-ratio search method described in Zhang et al. (2019).</p>
 <div class="line">these differences and proceeds anyway.</div>
 </div>
 </dd>
+<dt class="field-even">use_fast_duv</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
+</div>
+</dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
@@ -3680,8 +3798,227 @@ Optics Express, 24(13), 14066–14078.</a></p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct_fibonacci">
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct_fibonacci</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct_fibonacci"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct_fibonacci" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) using a 
+Fibonacci search.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">xyzw</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of tristimulus values</div>
+</div>
+</dd>
+<dt class="field-even">cieobs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">luxpy._CIEOBS, optional</div>
+<div class="line">CMF set used to calculated xyzw.</div>
+</div>
+</dd>
+<dt class="field-odd">out</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘cct’ (or 1), optional</div>
+<div class="line">Determines what to return.</div>
+<div class="line">Other options: ‘duv’ (or -1), ‘cct,duv’(or 2), “[cct,duv]” (or -2)</div>
+</div>
+</dd>
+<dt class="field-even">is_uv_input</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: xyzw contain uv input data, not xyz data!</div>
+</div>
+</dd>
+<dt class="field-odd">wl</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
+</div>
+</dd>
+<dt class="field-even">rtol</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">1e-5, float, optional</div>
+<div class="line">Stop search when cct a relative tolerance is reached.</div>
+<div class="line">The relative tolerance is calculated as dCCT/CCT_est, </div>
+<div class="line">with CCT_est the current intermediate estimate in the </div>
+<div class="line">search and with dCCT the difference between</div>
+<div class="line">the present and former estimates.</div>
+</div>
+</dd>
+<dt class="field-odd">atol</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0.1, optional</div>
+<div class="line">Stop search when cct a absolute tolerance (K) is reached.</div>
+</div>
+</dd>
+<dt class="field-even">force_tolerance</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If False: search only using the list of CCTs in the used lut.</div>
+<div class="line-block">
+<div class="line">Only one loop of the full algorithm is performed. </div>
+<div class="line">Accuracy depends on CCT of test source and the location</div>
+<div class="line">and spacing of the CCTs in the list.</div>
+</div>
+<div class="line">If True:  search will use adjacent CCTs to test source to create a new LUT,</div>
+<div class="line-block">
+<div class="line">(repeat the algoritm at higher resolution, progessively zooming in</div>
+<div class="line-block">
+<div class="line">toward the ground-truth) for tol_method == ‘cl’; when </div>
+</div>
+<div class="line">tol_method == ‘nr’ a newton-raphson method is used.</div>
+<div class="line">Because the CCT for multiple source is calculated in one go,</div>
+<div class="line">the atol and rtol values have to be met for all! </div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">tol_method</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘newton-raphson’, optional</div>
+<div class="line">(Additional) method to try and achieve set tolerances. </div>
+<div class="line">Options: </div>
+<div class="line">- ‘cl’, ‘cascading-lut’: use increasingly higher CCT-resolution</div>
+<div class="line-block">
+<div class="line">to ‘zoom-in’ on the ground-truth.</div>
+</div>
+<div class="line">- ‘nr’, ‘newton-raphson’: use the method as described in Li, 2016.</div>
+</div>
+</dd>
+<dt class="field-even">lut_resolution_reduction_factor</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR, optional</div>
+<div class="line">Number of times the interval spanned by the adjacent Tc in a search or lut</div>
+<div class="line">method is downsampled (the search process will then start again)</div>
+</div>
+</dd>
+<dt class="field-odd">max_iter</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_MAX_ITER, optional</div>
+<div class="line">Maximum number of iterations used by the cascading-lut or newton-raphson methods.</div>
+</div>
+</dd>
+<dt class="field-even">split_calculation_at_N</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
+<div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
+<div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
+</div>
+</dd>
+<dt class="field-odd">lut</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Look-Up-Table with Ti, u,v,u’,v’,u”,v”,slope values of Planckians. </div>
+<div class="line">Options:</div>
+<div class="line-block">
+<div class="line">- None: defaults to the lut specified in _CCT_LUT[‘fibonacci’][‘lut_type_def’].</div>
+<div class="line">- list (lut,lut_kwargs): use this pre-calculated lut </div>
+<div class="line-block">
+<div class="line">(add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)</div>
+</div>
+<div class="line">- tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),</div>
+<div class="line-block">
+<div class="line">if not: then a new lut will be generated from scratch using the info in the tuple.</div>
+</div>
+<div class="line">- str: must be key (label) in :luts_dict: (pre-calculated dict of luts)</div>
+<div class="line">- ndarray [Nx1]: list of luts for which to generate a lut</div>
+<div class="line">- ndarray [Nxn] with n&gt;3: pre-calculated lut (last col must contain slope of the isotemperature lines).</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">luts_dict</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Dictionary of pre-calculated luts for various cspaces and cmf sets.</div>
+<div class="line-block">
+<div class="line">Must have structure luts_dict[cspace][cieobs][lut_label] with the</div>
+<div class="line-block">
+<div class="line">lut part of a two-element list [lut, lut_kwargs]. It must contain</div>
+<div class="line">at the top-level a key ‘wl’ containing the wavelengths of the </div>
+<div class="line">Planckians used to generate the luts in this dictionary.</div>
+</div>
+</div>
+<div class="line">If None: luts_dict defaults to _CCT_LUT[‘fibonacci’][‘luts’]    </div>
+</div>
+</dd>
+<dt class="field-odd">cspace</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">_CCT_SPACE, optional</div>
+<div class="line">Color space to do calculations in. </div>
+<div class="line">Options: </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">- cspace string: </div>
+<div class="line-block">
+<div class="line">e.g. ‘Yuv60’ for use with luxpy.colortf()</div>
+</div>
+<div class="line">- tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions </div>
+<div class="line-block">
+<div class="line">(and an optional string describing the cspace): </div>
+<div class="line-block">
+<div class="line">e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) </div>
+</div>
+</div>
+<div class="line">- dict with keys: ‘fwtf’ (foward), ‘bwtf’ (backward) [, optional: ‘str’ (cspace string)]</div>
+</div>
+<div class="line">Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u’v’ diagram</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">cspace_kwargs</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_CSPACE_KWARGS, optional</div>
+<div class="line">Parameter nested dictionary for the forward and backward transforms.</div>
+</div>
+</dd>
+<dt class="field-odd">ignore_wl_diff</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">When getting a lut from the dictionary, if differences are</div>
+<div class="line">detected in the wavelengts of the lut and the ones used to calculate any</div>
+<div class="line">plankcians then a new lut should be generated. Seting this to True ignores</div>
+<div class="line">these differences and proceeds anyway.</div>
+</div>
+</dd>
+<dt class="field-even">use_fast_duv</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with:</div>
+<div class="line-block">
+<div class="line">cct: out == ‘cct’ (or 1)</div>
+<div class="line">duv: out == ‘duv’ (or -1)</div>
+<div class="line">cct, duv: out == ‘cct,duv’ (or 2)</div>
+<div class="line">[cct,duv]: out == “[cct,duv]” (or -2) </div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Note: </dt><dd><p>1. Out-of-lut CCTs (or close to) are encoded as negative CCTs (with as absolute value
+the value of the closest CCT from the lut.)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.xyz_to_cct">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ohno2014'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv_parabolic_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guess_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'robertson1968'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fgm_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">xyz_to_cct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'robertson1968'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'cct'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_uv_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_tolerance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'newton-raphson'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_resolution_reduction_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_calculation_at_N</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luts_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_wl_diff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duv_parabolic_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.002</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">first_guess_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'robertson1968'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fgm_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_fast_duv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#xyz_to_cct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.xyz_to_cct" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert XYZ tristimulus values to correlated color temperature (CCT) and 
 Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) using a number
 of modes (methods).</p>
@@ -3694,9 +4031,9 @@ of modes (methods).</p>
 </dd>
 <dt class="field-even">mode</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘ohno2014’, optional</div>
+<div class="line">‘robertson1968’, optional</div>
 <div class="line">String with name of method to use.</div>
-<div class="line">Options: ‘robertson1968’, ‘ohno2014’, ‘li2016’, ‘zhang2019’</div>
+<div class="line">Options: ‘robertson1968’, ‘ohno2014’, ‘li2016’, ‘zhang2019’, ‘fibonacci’,</div>
 <div class="line-block">
 <div class="line">(also, but see note below: ‘mcamy1992’, ‘hernandez1999’)</div>
 </div>
@@ -3729,6 +4066,7 @@ of modes (methods).</p>
 <dd class="field-even"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-odd">rtol</dt>
@@ -3750,9 +4088,8 @@ of modes (methods).</p>
 <dt class="field-odd">force_tolerance</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">True, optional</div>
-<div class="line">If False: search only using the list of CCTs in the used lut,</div>
+<div class="line">If False: search only using the list of CCTs in the used lut. </div>
 <div class="line-block">
-<div class="line">or suplied using :cct_search_list: or :mk_search_list:. </div>
 <div class="line">Only one loop of the full algorithm is performed. </div>
 <div class="line">Accuracy depends on CCT of test source and the location</div>
 <div class="line">and spacing of the CCTs in the list.</div>
@@ -3776,7 +4113,7 @@ of modes (methods).</p>
 <div class="line">Options: </div>
 <div class="line">- ‘cl’, ‘cascading-lut’: use increasingly higher CCT-resolution</div>
 <div class="line-block">
-<div class="line">to ‘zoom-in’ on the ground-truth.</div>
+<div class="line">to ‘zoom-in’ on the ground-truth. (not for mode == ‘li2016’)</div>
 </div>
 <div class="line">- ‘nr’, ‘newton-raphson’: use the method as described in Li, 2016.</div>
 </div>
@@ -3790,13 +4127,13 @@ of modes (methods).</p>
 </dd>
 <dt class="field-even">max_iter</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">100, optional</div>
+<div class="line">_CCT_MAX_ITER, optional</div>
 <div class="line">Maximum number of iterations used by the cascading-lut or newton-raphson methods.</div>
 </div>
 </dd>
 <dt class="field-odd">split_calculation_at_N</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">10, optional</div>
+<div class="line">_CCT_SPLIT_CALC_AT_N, optional</div>
 <div class="line">Split calculation when xyzw.shape[0] &gt; split_calculation_at_N. </div>
 <div class="line">Splitting speeds up the calculation. If None: no splitting is done.</div>
 </div>
@@ -3896,9 +4233,18 @@ of modes (methods).</p>
 <div class="line">Options: ‘robertson1968’, ‘ohno2014’, ‘zhang2019’</div>
 </div>
 </dd>
-<dt class="field-odd">fgm_kwargs</dt>
+<dt class="field-odd">use_fast_duv</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">Dict with keyword arguments for the selected first_guess_mode in Li’s 2016 method.</div>
+<div class="line">_CCT_FAST_DUV, optional</div>
+<div class="line">If True: use a fast estimator of the Duv </div>
+<div class="line-block">
+<div class="line">(one that avoids calculation of Planckians and uses the former</div>
+<div class="line-block">
+<div class="line">best estimate’s u,v coordinates. This method is accurate enough</div>
+<div class="line">when the atol is small enough -&gt; as long as abs(T-T_former)&lt;=1K</div>
+<div class="line">the Duv estimate should be ok.)</div>
+</div>
+</div>
 </div>
 </dd>
 </dl>
@@ -4006,6 +4352,7 @@ XYZ tristimulus values.</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
 <div class="line">Wavelengths used when calculating Planckian radiators.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">cspace</dt>
@@ -4058,7 +4405,7 @@ will result in coordinates outside of the Spectrum Locus !!!)</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.calculate_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">calculate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#calculate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.calculate_lut" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">calculate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#calculate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.calculate_lut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that calculates a LUT for the specified calculation method 
 for the input ccts. Calculation is performed for CMF set specified in 
 cieobs and in the chromaticity diagram in cspace.</p>
@@ -4079,15 +4426,16 @@ cieobs and in the chromaticity diagram in cspace.</p>
 </dd>
 <dt class="field-odd">wl</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">_WL3, optional</div>
+<div class="line">None, optional</div>
 <div class="line">Generate luts based on Planckians with wavelengths (range). </div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">lut_vars</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
 <div class="line">Data the lut should contain. Must follow this order </div>
-<div class="line">and minimum should be [‘T’,’uv’]</div>
+<div class="line">and minimum should be [‘T’]</div>
 </div>
 </dd>
 <dt class="field-odd">cspace</dt>
@@ -4139,7 +4487,7 @@ cieobs and in the chromaticity diagram in cspace.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct.generate_luts">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">generate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">types=[None],</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">cct_min=550,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">lut_file=None,</span> <span class="pre">load=False,</span> <span class="pre">lut_path='D:\\Documents\\GitHub\\luxpy\\luxpy\\data\\cctluts\\',</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">cieobs=['1931_2'],</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cspace=['Yuv60'],</span> <span class="pre">cspace_kwargs=[{'fwtf':</span> <span class="pre">{},</span> <span class="pre">'bwtf':</span> <span class="pre">{}}],</span> <span class="pre">verbosity=0,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#generate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.generate_luts" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">generate_luts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">types=[None],</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">cct_min=550,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">lut_file=None,</span> <span class="pre">load=False,</span> <span class="pre">lut_path='D:\\Documents\\GitHub\\luxpy\\luxpy\\data\\cctluts\\',</span> <span class="pre">save_luts=True,</span> <span class="pre">wl=None,</span> <span class="pre">cieobs=['1931_2'],</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cspace=['Yuv60'],</span> <span class="pre">cspace_kwargs=[{'fwtf':</span> <span class="pre">{},</span> <span class="pre">'bwtf':</span> <span class="pre">{}}],</span> <span class="pre">verbosity=0,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={}</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#generate_luts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct.generate_luts" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generate a number of luts and store them in a nested dictionary.
 Structure: lut[cspace][cieobs][lut type].</p>
 <dl>
@@ -4147,7 +4495,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 <dt class="field-odd">lut_file</dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">None, optional</div>
-<div class="line">string specifying the filename to save the lut (as.npy) to.</div>
+<div class="line">string specifying the filename to save the lut (as .pkl) to.</div>
 <div class="line">If None: don’t save anything when generated (i.e. load==False).</div>
 </div>
 </dd>
@@ -4166,8 +4514,9 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dd>
 <dt class="field-even">wl</dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">_WL3, optional</div>
+<div class="line">None, optional</div>
 <div class="line">Wavelength for Planckian spectrum generation.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-odd">cieobs</dt>
@@ -4240,7 +4589,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 <dd class="field-even"><div class="line-block">
 <div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
 <div class="line">Data the lut should contain. Must follow this order </div>
-<div class="line">and minimum should be [‘T’,’uv’]</div>
+<div class="line">and minimum should be [‘T’]</div>
 </div>
 </dd>
 <dt class="field-odd">cspace,cspace_kwargs</dt>
@@ -4277,10 +4626,14 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dl>
 <dl>
 <dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">[lut]</dt>
+<dt class="field-odd">dict</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">List of 1 ndarray with the lut.</div>
-<div class="line">The lut contains as data specified in lut_vars:</div>
+<div class="line">Dictionary with luts for the specified mode, cieobs(s) and cspace(s).</div>
+<div class="line">Structure: lut[cspace][cieobs][lut type]</div>
+<div class="line">At the upper dict level there is also a key ‘wl’ which contains a dict with keys </div>
+<div class="line">the cieobs and with values the wavelengths used to calculate the Planckians for</div>
+<div class="line">each lut for the specified cieobs; as well as a key with the lut_vars</div>
+<div class="line">The luts contains as data the variables as specified in lut_vars:</div>
 <div class="line">- T: (in K)</div>
 <div class="line">- uv: chromaticity coordinates of planckians</div>
 <div class="line">- uvp: chromaticity coordinates of 1st derivative of the planckians.</div>
@@ -4382,7 +4735,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._get_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_get_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_nd_array=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_get_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._get_lut" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_get_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_ndarray=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=None,</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_get_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._get_lut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an ndarray LUT from various sources.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4483,8 +4836,9 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dd>
 <dt class="field-odd">wl</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">_WL3, optional</div>
+<div class="line">None, optional</div>
 <div class="line">Wavelength for Planckian spectrum generation.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">cieobs</dt>
@@ -4521,7 +4875,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
 <div class="line">Data the lut should contain. Must follow this order </div>
-<div class="line">and minimum should be [‘T’,’uv’]</div>
+<div class="line">and minimum should be [‘T’]</div>
 </div>
 </dd>
 <dt class="field-even">cspace,cspace_kwargs</dt>
@@ -4588,7 +4942,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_tcs">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_nd_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_tcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_tcs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_tcs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_ndarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_tcs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_tcs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an ndarray of Tc’s obtained from a list or tuple of tc4 4-vectors (or ndarray).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4671,7 +5025,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 <div class="line">is NaN or positive.</div>
 </div>
 </dd>
-<dt class="field-even">resample_nd_array</dt>
+<dt class="field-even">resample_ndarray</dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">False, optional</div>
 <div class="line">If False: do not resample Tc’s of an ndarray input for tc4</div>
@@ -4694,7 +5048,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_lut">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_nd_array</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tc4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seamless_stitch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fallback_n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'K-1'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resample_ndarray</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cct_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">550</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lut_vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['T',</span> <span class="pre">'uv',</span> <span class="pre">'uvp',</span> <span class="pre">'uvpp',</span> <span class="pre">'iso-T-slope']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Yuv60'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cspace_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get an ndarray LUT for Tc’s obtained from a list or tuple of tc4 4-vectors (or ndarray).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -4787,8 +5141,9 @@ Structure: lut[cspace][cieobs][lut type].</p>
 </dd>
 <dt class="field-odd">wl</dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">_WL3, optional</div>
+<div class="line">None, optional</div>
 <div class="line">Wavelength for Planckian spectrum generation.</div>
+<div class="line">If None: use same wavelengths as CMFs in :cieobs:.</div>
 </div>
 </dd>
 <dt class="field-even">cieobs</dt>
@@ -4802,7 +5157,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 <dd class="field-odd"><div class="line-block">
 <div class="line">[‘T’,’uv’,’uvp’,’uvpp’,’iso-T-slope’], optional</div>
 <div class="line">Data the lut should contain. Must follow this order </div>
-<div class="line">and minimum should be [‘T’,’uv’]</div>
+<div class="line">and minimum should be [‘T’]</div>
 </div>
 </dd>
 <dt class="field-even">cspace,cspace_kwargs</dt>
@@ -4840,7 +5195,7 @@ Structure: lut[cspace][cieobs][lut type].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cct._generate_lut_ohno2014">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_nd_array=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=[360.0,</span> <span class="pre">830.0,</span> <span class="pre">1.0],</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">f_corr=None,</span> <span class="pre">ignore_f_corr_is_None=False,</span> <span class="pre">ignore_wl_diff=False,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut_ohno2014" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cct.</span></span><span class="sig-name descname"><span class="pre">_generate_lut_ohno2014</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">lut,</span> <span class="pre">uin=None,</span> <span class="pre">seamless_stitch=True,</span> <span class="pre">fallback_unit='K-1',</span> <span class="pre">fallback_n=50,</span> <span class="pre">resample_ndarray=False,</span> <span class="pre">cct_max=100000000000.0,</span> <span class="pre">cct_min=550,</span> <span class="pre">luts_dict=None,</span> <span class="pre">lut_type_def=None,</span> <span class="pre">lut_vars=['T',</span> <span class="pre">'uv'],</span> <span class="pre">cieobs='1931_2',</span> <span class="pre">cspace_str=None,</span> <span class="pre">wl=None,</span> <span class="pre">ignore_unequal_wl=False,</span> <span class="pre">lut_generator_fcn=&lt;function</span> <span class="pre">_generate_lut&gt;,</span> <span class="pre">lut_generator_kwargs={},</span> <span class="pre">cspace='Yuv60',</span> <span class="pre">cspace_kwargs={'bwtf':</span> <span class="pre">{},</span> <span class="pre">'fwtf':</span> <span class="pre">{}},</span> <span class="pre">f_corr=None,</span> <span class="pre">ignore_f_corr_is_None=False,</span> <span class="pre">ignore_wl_diff=False,</span> <span class="pre">**kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/color/cct/cct.html#_generate_lut_ohno2014"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.color.cct._generate_lut_ohno2014" title="Permalink to this definition">¶</a></dt>
 <dd><p>Lut generator function for ohno2014.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -13467,7 +13822,7 @@ base color shift and metameric uncertainty.</div>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.color.cri.cri_ref_fast">
-<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">cri_ref_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([360.0,</span> <span class="pre">361.0,</span> <span class="pre">362.0,</span> <span class="pre">363.0,</span> <span class="pre">364.0,</span> <span class="pre">365.0,</span> <span class="pre">366.0,</span> <span class="pre">367.0,</span> <span class="pre">368.0,</span> <span class="pre">369.0,</span> <span class="pre">370.0,</span> <span class="pre">371.0,</span> <span class="pre">372.0,</span> <span class="pre">373.0,</span> <span class="pre">374.0,</span> <span class="pre">375.0,</span> <span class="pre">376.0,</span> <span class="pre">377.0,</span> <span class="pre">378.0,</span> <span class="pre">379.0,</span> <span class="pre">380.0,</span> <span class="pre">381.0,</span> <span class="pre">382.0,</span> <span class="pre">383.0,</span> <span class="pre">384.0,</span> <span class="pre">385.0,</span> <span class="pre">386.0,</span> <span class="pre">387.0,</span> <span class="pre">388.0,</span> <span class="pre">389.0,</span> <span class="pre">390.0,</span> <span class="pre">391.0,</span> <span class="pre">392.0,</span> <span class="pre">393.0,</span> <span class="pre">394.0,</span> <span class="pre">395.0,</span> <span class="pre">396.0,</span> <span class="pre">397.0,</span> <span class="pre">398.0,</span> <span class="pre">399.0,</span> <span class="pre">400.0,</span> <span class="pre">401.0,</span> <span class="pre">402.0,</span> <span class="pre">403.0,</span> <span class="pre">404.0,</span> <span class="pre">405.0,</span> <span class="pre">406.0,</span> <span class="pre">407.0,</span> <span class="pre">408.0,</span> <span class="pre">409.0,</span> <span class="pre">410.0,</span> <span class="pre">411.0,</span> <span class="pre">412.0,</span> <span class="pre">413.0,</span> <span class="pre">414.0,</span> <span class="pre">415.0,</span> <span class="pre">416.0,</span> <span class="pre">417.0,</span> <span class="pre">418.0,</span> <span class="pre">419.0,</span> <span class="pre">420.0,</span> <span class="pre">421.0,</span> <span class="pre">422.0,</span> <span class="pre">423.0,</span> <span class="pre">424.0,</span> <span class="pre">425.0,</span> <span class="pre">426.0,</span> <span class="pre">427.0,</span> <span class="pre">428.0,</span> <span class="pre">429.0,</span> <span class="pre">430.0,</span> <span class="pre">431.0,</span> <span class="pre">432.0,</span> <span class="pre">433.0,</span> <span class="pre">434.0,</span> <span class="pre">435.0,</span> <span class="pre">436.0,</span> <span class="pre">437.0,</span> <span class="pre">438.0,</span> <span class="pre">439.0,</span> <span class="pre">440.0,</span> <span class="pre">441.0,</span> <span class="pre">442.0,</span> <span class="pre">443.0,</span> <span class="pre">444.0,</span> <span class="pre">445.0,</span> <span class="pre">446.0,</span> <span class="pre">447.0,</span> <span class="pre">448.0,</span> <span class="pre">449.0,</span> <span class="pre">450.0,</span> <span class="pre">451.0,</span> <span class="pre">452.0,</span> <span class="pre">453.0,</span> <span class="pre">454.0,</span> <span class="pre">455.0,</span> <span class="pre">456.0,</span> <span class="pre">457.0,</span> <span class="pre">458.0,</span> <span class="pre">459.0,</span> <span class="pre">460.0,</span> <span class="pre">461.0,</span> <span class="pre">462.0,</span> <span class="pre">463.0,</span> <span class="pre">464.0,</span> <span class="pre">465.0,</span> <span class="pre">466.0,</span> <span class="pre">467.0,</span> <span class="pre">468.0,</span> <span class="pre">469.0,</span> <span class="pre">470.0,</span> <span class="pre">471.0,</span> <span class="pre">472.0,</span> <span class="pre">473.0,</span> <span class="pre">474.0,</span> <span class="pre">475.0,</span> <span class="pre">476.0,</span> <span class="pre">477.0,</span> <span class="pre">478.0,</span> <span class="pre">479.0,</span> <span class="pre">480.0,</span> <span class="pre">481.0,</span> <span class="pre">482.0,</span> <span class="pre">483.0,</span> <span class="pre">484.0,</span> <span class="pre">485.0,</span> <span class="pre">486.0,</span> <span class="pre">487.0,</span> <span class="pre">488.0,</span> <span class="pre">489.0,</span> <span class="pre">490.0,</span> <span class="pre">491.0,</span> <span class="pre">492.0,</span> <span class="pre">493.0,</span> <span class="pre">494.0,</span> <span class="pre">495.0,</span> <span class="pre">496.0,</span> <span class="pre">497.0,</span> <span class="pre">498.0,</span> <span class="pre">499.0,</span> <span class="pre">500.0,</span> <span class="pre">501.0,</span> <span class="pre">502.0,</span> <span class="pre">503.0,</span> <span class="pre">504.0,</span> <span class="pre">505.0,</span> <span class="pre">506.0,</span> <span class="pre">507.0,</span> <span class="pre">508.0,</span> <span class="pre">509.0,</span> <span class="pre">510.0,</span> <span class="pre">511.0,</span> <span class="pre">512.0,</span> <span class="pre">513.0,</span> <span class="pre">514.0,</span> <span class="pre">515.0,</span> <span class="pre">516.0,</span> <span class="pre">517.0,</span> <span class="pre">518.0,</span> <span class="pre">519.0,</span> <span class="pre">520.0,</span> <span class="pre">521.0,</span> <span class="pre">522.0,</span> <span class="pre">523.0,</span> <span class="pre">524.0,</span> <span class="pre">525.0,</span> <span class="pre">526.0,</span> <span class="pre">527.0,</span> <span class="pre">528.0,</span> <span class="pre">529.0,</span> <span class="pre">530.0,</span> <span class="pre">531.0,</span> <span class="pre">532.0,</span> <span class="pre">533.0,</span> <span class="pre">534.0,</span> <span class="pre">535.0,</span> <span class="pre">536.0,</span> <span class="pre">537.0,</span> <span class="pre">538.0,</span> <span class="pre">539.0,</span> <span class="pre">540.0,</span> <span class="pre">541.0,</span> <span class="pre">542.0,</span> <span class="pre">543.0,</span> <span class="pre">544.0,</span> <span class="pre">545.0,</span> <span class="pre">546.0,</span> <span class="pre">547.0,</span> <span class="pre">548.0,</span> <span class="pre">549.0,</span> <span class="pre">550.0,</span> <span class="pre">551.0,</span> <span class="pre">552.0,</span> <span class="pre">553.0,</span> <span class="pre">554.0,</span> <span class="pre">555.0,</span> <span class="pre">556.0,</span> <span class="pre">557.0,</span> <span class="pre">558.0,</span> <span class="pre">559.0,</span> <span class="pre">560.0,</span> <span class="pre">561.0,</span> <span class="pre">562.0,</span> <span class="pre">563.0,</span> <span class="pre">564.0,</span> <span class="pre">565.0,</span> <span class="pre">566.0,</span> <span class="pre">567.0,</span> <span class="pre">568.0,</span> <span class="pre">569.0,</span> <span class="pre">570.0,</span> <span class="pre">571.0,</span> <span class="pre">572.0,</span> <span class="pre">573.0,</span> <span class="pre">574.0,</span> <span class="pre">575.0,</span> <span class="pre">576.0,</span> <span class="pre">577.0,</span> <span class="pre">578.0,</span> <span class="pre">579.0,</span> <span class="pre">580.0,</span> <span class="pre">581.0,</span> <span class="pre">582.0,</span> <span class="pre">583.0,</span> <span class="pre">584.0,</span> <span class="pre">585.0,</span> <span class="pre">586.0,</span> <span class="pre">587.0,</span> <span class="pre">588.0,</span> <span class="pre">589.0,</span> <span class="pre">590.0,</span> <span class="pre">591.0,</span> <span class="pre">592.0,</span> <span class="pre">593.0,</span> <span class="pre">594.0,</span> <span class="pre">595.0,</span> <span class="pre">596.0,</span> <span class="pre">597.0,</span> <span class="pre">598.0,</span> <span class="pre">599.0,</span> <span class="pre">600.0,</span> <span class="pre">601.0,</span> <span class="pre">602.0,</span> <span class="pre">603.0,</span> <span class="pre">604.0,</span> <span class="pre">605.0,</span> <span class="pre">606.0,</span> <span class="pre">607.0,</span> <span class="pre">608.0,</span> <span class="pre">609.0,</span> <span class="pre">610.0,</span> <span class="pre">611.0,</span> <span class="pre">612.0,</span> <span class="pre">613.0,</span> <span class="pre">614.0,</span> <span class="pre">615.0,</span> <span class="pre">616.0,</span> <span class="pre">617.0,</span> <span class="pre">618.0,</span> <span class="pre">619.0,</span> <span class="pre">620.0,</span> <span class="pre">621.0,</span> <span class="pre">622.0,</span> <span class="pre">623.0,</span> <span class="pre">624.0,</span> <span class="pre">625.0,</span> <span class="pre">626.0,</span> <span class="pre">627.0,</span> <span class="pre">628.0,</span> <span class="pre">629.0,</span> <span class="pre">630.0,</span> <span class="pre">631.0,</span> <span class="pre">632.0,</span> <span class="pre">633.0,</span> <span class="pre">634.0,</span> <span class="pre">635.0,</span> <span class="pre">636.0,</span> <span class="pre">637.0,</span> <span class="pre">638.0,</span> <span class="pre">639.0,</span> <span class="pre">640.0,</span> <span class="pre">641.0,</span> <span class="pre">642.0,</span> <span class="pre">643.0,</span> <span class="pre">644.0,</span> <span class="pre">645.0,</span> <span class="pre">646.0,</span> <span class="pre">647.0,</span> <span class="pre">648.0,</span> <span class="pre">649.0,</span> <span class="pre">650.0,</span> <span class="pre">651.0,</span> <span class="pre">652.0,</span> <span class="pre">653.0,</span> <span class="pre">654.0,</span> <span class="pre">655.0,</span> <span class="pre">656.0,</span> <span class="pre">657.0,</span> <span class="pre">658.0,</span> <span class="pre">659.0,</span> <span class="pre">660.0,</span> <span class="pre">661.0,</span> <span class="pre">662.0,</span> <span class="pre">663.0,</span> <span class="pre">664.0,</span> <span class="pre">665.0,</span> <span class="pre">666.0,</span> <span class="pre">667.0,</span> <span class="pre">668.0,</span> <span class="pre">669.0,</span> <span class="pre">670.0,</span> <span class="pre">671.0,</span> <span class="pre">672.0,</span> <span class="pre">673.0,</span> <span class="pre">674.0,</span> <span class="pre">675.0,</span> <span class="pre">676.0,</span> <span class="pre">677.0,</span> <span class="pre">678.0,</span> <span class="pre">679.0,</span> <span class="pre">680.0,</span> <span class="pre">681.0,</span> <span class="pre">682.0,</span> <span class="pre">683.0,</span> <span class="pre">684.0,</span> <span class="pre">685.0,</span> <span class="pre">686.0,</span> <span class="pre">687.0,</span> <span class="pre">688.0,</span> <span class="pre">689.0,</span> <span class="pre">690.0,</span> <span class="pre">691.0,</span> <span class="pre">692.0,</span> <span class="pre">693.0,</span> <span class="pre">694.0,</span> <span class="pre">695.0,</span> <span class="pre">696.0,</span> <span class="pre">697.0,</span> <span class="pre">698.0,</span> <span class="pre">699.0,</span> <span class="pre">700.0,</span> <span class="pre">701.0,</span> <span class="pre">702.0,</span> <span class="pre">703.0,</span> <span class="pre">704.0,</span> <span class="pre">705.0,</span> <span class="pre">706.0,</span> <span class="pre">707.0,</span> <span class="pre">708.0,</span> <span class="pre">709.0,</span> <span class="pre">710.0,</span> <span class="pre">711.0,</span> <span class="pre">712.0,</span> <span class="pre">713.0,</span> <span class="pre">714.0,</span> <span class="pre">715.0,</span> <span class="pre">716.0,</span> <span class="pre">717.0,</span> <span class="pre">718.0,</span> <span class="pre">719.0,</span> <span class="pre">720.0,</span> <span class="pre">721.0,</span> <span class="pre">722.0,</span> <span class="pre">723.0,</span> <span class="pre">724.0,</span> <span class="pre">725.0,</span> <span class="pre">726.0,</span> <span class="pre">727.0,</span> <span class="pre">728.0,</span> <span class="pre">729.0,</span> <span class="pre">730.0,</span> <span class="pre">731.0,</span> <span class="pre">732.0,</span> <span class="pre">733.0,</span> <span class="pre">734.0,</span> <span class="pre">735.0,</span> <span class="pre">736.0,</span> <span class="pre">737.0,</span> <span class="pre">738.0,</span> <span class="pre">739.0,</span> <span class="pre">740.0,</span> <span class="pre">741.0,</span> <span class="pre">742.0,</span> <span class="pre">743.0,</span> <span class="pre">744.0,</span> <span class="pre">745.0,</span> <span class="pre">746.0,</span> <span class="pre">747.0,</span> <span class="pre">748.0,</span> <span class="pre">749.0,</span> <span class="pre">750.0,</span> <span class="pre">751.0,</span> <span class="pre">752.0,</span> <span class="pre">753.0,</span> <span class="pre">754.0,</span> <span class="pre">755.0,</span> <span class="pre">756.0,</span> <span class="pre">757.0,</span> <span class="pre">758.0,</span> <span class="pre">759.0,</span> <span class="pre">760.0,</span> <span class="pre">761.0,</span> <span class="pre">762.0,</span> <span class="pre">763.0,</span> <span class="pre">764.0,</span> <span class="pre">765.0,</span> <span class="pre">766.0,</span> <span class="pre">767.0,</span> <span class="pre">768.0,</span> <span class="pre">769.0,</span> <span class="pre">770.0,</span> <span class="pre">771.0,</span> <span class="pre">772.0,</span> <span class="pre">773.0,</span> <span class="pre">774.0,</span> <span class="pre">775.0,</span> <span class="pre">776.0,</span> <span class="pre">777.0,</span> <span class="pre">778.0,</span> <span class="pre">779.0,</span> <span class="pre">780.0,</span> <span class="pre">781.0,</span> <span class="pre">782.0,</span> <span class="pre">783.0,</span> <span class="pre">784.0,</span> <span class="pre">785.0,</span> <span class="pre">786.0,</span> <span class="pre">787.0,</span> <span class="pre">788.0,</span> <span class="pre">789.0,</span> <span class="pre">790.0,</span> <span class="pre">791.0,</span> <span class="pre">792.0,</span> <span class="pre">793.0,</span> <span class="pre">794.0,</span> <span class="pre">795.0,</span> <span class="pre">796.0,</span> <span class="pre">797.0,</span> <span class="pre">798.0,</span> <span class="pre">799.0,</span> <span class="pre">800.0,</span> <span class="pre">801.0,</span> <span class="pre">802.0,</span> <span class="pre">803.0,</span> <span class="pre">804.0,</span> <span class="pre">805.0,</span> <span class="pre">806.0,</span> <span class="pre">807.0,</span> <span class="pre">808.0,</span> <span class="pre">809.0,</span> <span class="pre">810.0,</span> <span class="pre">811.0,</span> <span class="pre">812.0,</span> <span class="pre">813.0,</span> <span class="pre">814.0,</span> <span class="pre">815.0,</span> <span class="pre">816.0,</span> <span class="pre">817.0,</span> <span class="pre">818.0,</span> <span class="pre">819.0,</span> <span class="pre">820.0,</span> <span class="pre">821.0,</span> <span class="pre">822.0,</span> <span class="pre">823.0,</span> <span class="pre">824.0,</span> <span class="pre">825.0,</span> <span class="pre">826.0,</span> <span class="pre">827.0,</span> <span class="pre">828.0,</span> <span class="pre">829.0,</span> <span class="pre">830.0])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iestm30'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mix_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[4000,</span> <span class="pre">5000]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_daylight_below4000K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_locus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360,</span> <span class="pre">830,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.cri_ref_fast" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.color.cri.</span></span><span class="sig-name descname"><span class="pre">cri_ref_fast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ccts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl3</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([360,</span> <span class="pre">361,</span> <span class="pre">362,</span> <span class="pre">363,</span> <span class="pre">364,</span> <span class="pre">365,</span> <span class="pre">366,</span> <span class="pre">367,</span> <span class="pre">368,</span> <span class="pre">369,</span> <span class="pre">370,</span> <span class="pre">371,</span> <span class="pre">372,</span> <span class="pre">373,</span> <span class="pre">374,</span> <span class="pre">375,</span> <span class="pre">376,</span> <span class="pre">377,</span> <span class="pre">378,</span> <span class="pre">379,</span> <span class="pre">380,</span> <span class="pre">381,</span> <span class="pre">382,</span> <span class="pre">383,</span> <span class="pre">384,</span> <span class="pre">385,</span> <span class="pre">386,</span> <span class="pre">387,</span> <span class="pre">388,</span> <span class="pre">389,</span> <span class="pre">390,</span> <span class="pre">391,</span> <span class="pre">392,</span> <span class="pre">393,</span> <span class="pre">394,</span> <span class="pre">395,</span> <span class="pre">396,</span> <span class="pre">397,</span> <span class="pre">398,</span> <span class="pre">399,</span> <span class="pre">400,</span> <span class="pre">401,</span> <span class="pre">402,</span> <span class="pre">403,</span> <span class="pre">404,</span> <span class="pre">405,</span> <span class="pre">406,</span> <span class="pre">407,</span> <span class="pre">408,</span> <span class="pre">409,</span> <span class="pre">410,</span> <span class="pre">411,</span> <span class="pre">412,</span> <span class="pre">413,</span> <span class="pre">414,</span> <span class="pre">415,</span> <span class="pre">416,</span> <span class="pre">417,</span> <span class="pre">418,</span> <span class="pre">419,</span> <span class="pre">420,</span> <span class="pre">421,</span> <span class="pre">422,</span> <span class="pre">423,</span> <span class="pre">424,</span> <span class="pre">425,</span> <span class="pre">426,</span> <span class="pre">427,</span> <span class="pre">428,</span> <span class="pre">429,</span> <span class="pre">430,</span> <span class="pre">431,</span> <span class="pre">432,</span> <span class="pre">433,</span> <span class="pre">434,</span> <span class="pre">435,</span> <span class="pre">436,</span> <span class="pre">437,</span> <span class="pre">438,</span> <span class="pre">439,</span> <span class="pre">440,</span> <span class="pre">441,</span> <span class="pre">442,</span> <span class="pre">443,</span> <span class="pre">444,</span> <span class="pre">445,</span> <span class="pre">446,</span> <span class="pre">447,</span> <span class="pre">448,</span> <span class="pre">449,</span> <span class="pre">450,</span> <span class="pre">451,</span> <span class="pre">452,</span> <span class="pre">453,</span> <span class="pre">454,</span> <span class="pre">455,</span> <span class="pre">456,</span> <span class="pre">457,</span> <span class="pre">458,</span> <span class="pre">459,</span> <span class="pre">460,</span> <span class="pre">461,</span> <span class="pre">462,</span> <span class="pre">463,</span> <span class="pre">464,</span> <span class="pre">465,</span> <span class="pre">466,</span> <span class="pre">467,</span> <span class="pre">468,</span> <span class="pre">469,</span> <span class="pre">470,</span> <span class="pre">471,</span> <span class="pre">472,</span> <span class="pre">473,</span> <span class="pre">474,</span> <span class="pre">475,</span> <span class="pre">476,</span> <span class="pre">477,</span> <span class="pre">478,</span> <span class="pre">479,</span> <span class="pre">480,</span> <span class="pre">481,</span> <span class="pre">482,</span> <span class="pre">483,</span> <span class="pre">484,</span> <span class="pre">485,</span> <span class="pre">486,</span> <span class="pre">487,</span> <span class="pre">488,</span> <span class="pre">489,</span> <span class="pre">490,</span> <span class="pre">491,</span> <span class="pre">492,</span> <span class="pre">493,</span> <span class="pre">494,</span> <span class="pre">495,</span> <span class="pre">496,</span> <span class="pre">497,</span> <span class="pre">498,</span> <span class="pre">499,</span> <span class="pre">500,</span> <span class="pre">501,</span> <span class="pre">502,</span> <span class="pre">503,</span> <span class="pre">504,</span> <span class="pre">505,</span> <span class="pre">506,</span> <span class="pre">507,</span> <span class="pre">508,</span> <span class="pre">509,</span> <span class="pre">510,</span> <span class="pre">511,</span> <span class="pre">512,</span> <span class="pre">513,</span> <span class="pre">514,</span> <span class="pre">515,</span> <span class="pre">516,</span> <span class="pre">517,</span> <span class="pre">518,</span> <span class="pre">519,</span> <span class="pre">520,</span> <span class="pre">521,</span> <span class="pre">522,</span> <span class="pre">523,</span> <span class="pre">524,</span> <span class="pre">525,</span> <span class="pre">526,</span> <span class="pre">527,</span> <span class="pre">528,</span> <span class="pre">529,</span> <span class="pre">530,</span> <span class="pre">531,</span> <span class="pre">532,</span> <span class="pre">533,</span> <span class="pre">534,</span> <span class="pre">535,</span> <span class="pre">536,</span> <span class="pre">537,</span> <span class="pre">538,</span> <span class="pre">539,</span> <span class="pre">540,</span> <span class="pre">541,</span> <span class="pre">542,</span> <span class="pre">543,</span> <span class="pre">544,</span> <span class="pre">545,</span> <span class="pre">546,</span> <span class="pre">547,</span> <span class="pre">548,</span> <span class="pre">549,</span> <span class="pre">550,</span> <span class="pre">551,</span> <span class="pre">552,</span> <span class="pre">553,</span> <span class="pre">554,</span> <span class="pre">555,</span> <span class="pre">556,</span> <span class="pre">557,</span> <span class="pre">558,</span> <span class="pre">559,</span> <span class="pre">560,</span> <span class="pre">561,</span> <span class="pre">562,</span> <span class="pre">563,</span> <span class="pre">564,</span> <span class="pre">565,</span> <span class="pre">566,</span> <span class="pre">567,</span> <span class="pre">568,</span> <span class="pre">569,</span> <span class="pre">570,</span> <span class="pre">571,</span> <span class="pre">572,</span> <span class="pre">573,</span> <span class="pre">574,</span> <span class="pre">575,</span> <span class="pre">576,</span> <span class="pre">577,</span> <span class="pre">578,</span> <span class="pre">579,</span> <span class="pre">580,</span> <span class="pre">581,</span> <span class="pre">582,</span> <span class="pre">583,</span> <span class="pre">584,</span> <span class="pre">585,</span> <span class="pre">586,</span> <span class="pre">587,</span> <span class="pre">588,</span> <span class="pre">589,</span> <span class="pre">590,</span> <span class="pre">591,</span> <span class="pre">592,</span> <span class="pre">593,</span> <span class="pre">594,</span> <span class="pre">595,</span> <span class="pre">596,</span> <span class="pre">597,</span> <span class="pre">598,</span> <span class="pre">599,</span> <span class="pre">600,</span> <span class="pre">601,</span> <span class="pre">602,</span> <span class="pre">603,</span> <span class="pre">604,</span> <span class="pre">605,</span> <span class="pre">606,</span> <span class="pre">607,</span> <span class="pre">608,</span> <span class="pre">609,</span> <span class="pre">610,</span> <span class="pre">611,</span> <span class="pre">612,</span> <span class="pre">613,</span> <span class="pre">614,</span> <span class="pre">615,</span> <span class="pre">616,</span> <span class="pre">617,</span> <span class="pre">618,</span> <span class="pre">619,</span> <span class="pre">620,</span> <span class="pre">621,</span> <span class="pre">622,</span> <span class="pre">623,</span> <span class="pre">624,</span> <span class="pre">625,</span> <span class="pre">626,</span> <span class="pre">627,</span> <span class="pre">628,</span> <span class="pre">629,</span> <span class="pre">630,</span> <span class="pre">631,</span> <span class="pre">632,</span> <span class="pre">633,</span> <span class="pre">634,</span> <span class="pre">635,</span> <span class="pre">636,</span> <span class="pre">637,</span> <span class="pre">638,</span> <span class="pre">639,</span> <span class="pre">640,</span> <span class="pre">641,</span> <span class="pre">642,</span> <span class="pre">643,</span> <span class="pre">644,</span> <span class="pre">645,</span> <span class="pre">646,</span> <span class="pre">647,</span> <span class="pre">648,</span> <span class="pre">649,</span> <span class="pre">650,</span> <span class="pre">651,</span> <span class="pre">652,</span> <span class="pre">653,</span> <span class="pre">654,</span> <span class="pre">655,</span> <span class="pre">656,</span> <span class="pre">657,</span> <span class="pre">658,</span> <span class="pre">659,</span> <span class="pre">660,</span> <span class="pre">661,</span> <span class="pre">662,</span> <span class="pre">663,</span> <span class="pre">664,</span> <span class="pre">665,</span> <span class="pre">666,</span> <span class="pre">667,</span> <span class="pre">668,</span> <span class="pre">669,</span> <span class="pre">670,</span> <span class="pre">671,</span> <span class="pre">672,</span> <span class="pre">673,</span> <span class="pre">674,</span> <span class="pre">675,</span> <span class="pre">676,</span> <span class="pre">677,</span> <span class="pre">678,</span> <span class="pre">679,</span> <span class="pre">680,</span> <span class="pre">681,</span> <span class="pre">682,</span> <span class="pre">683,</span> <span class="pre">684,</span> <span class="pre">685,</span> <span class="pre">686,</span> <span class="pre">687,</span> <span class="pre">688,</span> <span class="pre">689,</span> <span class="pre">690,</span> <span class="pre">691,</span> <span class="pre">692,</span> <span class="pre">693,</span> <span class="pre">694,</span> <span class="pre">695,</span> <span class="pre">696,</span> <span class="pre">697,</span> <span class="pre">698,</span> <span class="pre">699,</span> <span class="pre">700,</span> <span class="pre">701,</span> <span class="pre">702,</span> <span class="pre">703,</span> <span class="pre">704,</span> <span class="pre">705,</span> <span class="pre">706,</span> <span class="pre">707,</span> <span class="pre">708,</span> <span class="pre">709,</span> <span class="pre">710,</span> <span class="pre">711,</span> <span class="pre">712,</span> <span class="pre">713,</span> <span class="pre">714,</span> <span class="pre">715,</span> <span class="pre">716,</span> <span class="pre">717,</span> <span class="pre">718,</span> <span class="pre">719,</span> <span class="pre">720,</span> <span class="pre">721,</span> <span class="pre">722,</span> <span class="pre">723,</span> <span class="pre">724,</span> <span class="pre">725,</span> <span class="pre">726,</span> <span class="pre">727,</span> <span class="pre">728,</span> <span class="pre">729,</span> <span class="pre">730,</span> <span class="pre">731,</span> <span class="pre">732,</span> <span class="pre">733,</span> <span class="pre">734,</span> <span class="pre">735,</span> <span class="pre">736,</span> <span class="pre">737,</span> <span class="pre">738,</span> <span class="pre">739,</span> <span class="pre">740,</span> <span class="pre">741,</span> <span class="pre">742,</span> <span class="pre">743,</span> <span class="pre">744,</span> <span class="pre">745,</span> <span class="pre">746,</span> <span class="pre">747,</span> <span class="pre">748,</span> <span class="pre">749,</span> <span class="pre">750,</span> <span class="pre">751,</span> <span class="pre">752,</span> <span class="pre">753,</span> <span class="pre">754,</span> <span class="pre">755,</span> <span class="pre">756,</span> <span class="pre">757,</span> <span class="pre">758,</span> <span class="pre">759,</span> <span class="pre">760,</span> <span class="pre">761,</span> <span class="pre">762,</span> <span class="pre">763,</span> <span class="pre">764,</span> <span class="pre">765,</span> <span class="pre">766,</span> <span class="pre">767,</span> <span class="pre">768,</span> <span class="pre">769,</span> <span class="pre">770,</span> <span class="pre">771,</span> <span class="pre">772,</span> <span class="pre">773,</span> <span class="pre">774,</span> <span class="pre">775,</span> <span class="pre">776,</span> <span class="pre">777,</span> <span class="pre">778,</span> <span class="pre">779,</span> <span class="pre">780,</span> <span class="pre">781,</span> <span class="pre">782,</span> <span class="pre">783,</span> <span class="pre">784,</span> <span class="pre">785,</span> <span class="pre">786,</span> <span class="pre">787,</span> <span class="pre">788,</span> <span class="pre">789,</span> <span class="pre">790,</span> <span class="pre">791,</span> <span class="pre">792,</span> <span class="pre">793,</span> <span class="pre">794,</span> <span class="pre">795,</span> <span class="pre">796,</span> <span class="pre">797,</span> <span class="pre">798,</span> <span class="pre">799,</span> <span class="pre">800,</span> <span class="pre">801,</span> <span class="pre">802,</span> <span class="pre">803,</span> <span class="pre">804,</span> <span class="pre">805,</span> <span class="pre">806,</span> <span class="pre">807,</span> <span class="pre">808,</span> <span class="pre">809,</span> <span class="pre">810,</span> <span class="pre">811,</span> <span class="pre">812,</span> <span class="pre">813,</span> <span class="pre">814,</span> <span class="pre">815,</span> <span class="pre">816,</span> <span class="pre">817,</span> <span class="pre">818,</span> <span class="pre">819,</span> <span class="pre">820,</span> <span class="pre">821,</span> <span class="pre">822,</span> <span class="pre">823,</span> <span class="pre">824,</span> <span class="pre">825,</span> <span class="pre">826,</span> <span class="pre">827,</span> <span class="pre">828,</span> <span class="pre">829,</span> <span class="pre">830])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'iestm30'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mix_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[4000,</span> <span class="pre">5000]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_daylight_below4000K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">daylight_locus</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[360,</span> <span class="pre">830,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#luxpy.color.cri.cri_ref_fast" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates multiple reference illuminant spectra based on ccts 
 for color rendering index calculations.</p>
 </dd></dl>
@@ -15428,7 +15783,7 @@ Opt. Express, vol. 25, no. 13, pp. 15131–15151, Jun. 2017.</a></p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
+        &#169; Copyright 2022, Kevin A.G. Smet.
 
     </p>
   </div>

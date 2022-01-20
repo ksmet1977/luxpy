@@ -8,7 +8,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Utils sub-package &mdash; LuxPy 1.9.3 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.9.5 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                1.9.3
+                1.9.5
               </div>
             
           
@@ -860,6 +860,86 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.unique">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">unique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#unique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.unique" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get unique elements from array.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">array</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">array to get unique elements from.</div>
+</div>
+</dd>
+<dt class="field-even">sort</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: get sorted unique elements.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">unique_array</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with (sorted) unique elements.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.save_pkl">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">save_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#save_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.save_pkl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save an object in a pickle file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">str with filename of pickle file.</div>
+</div>
+</dd>
+<dt class="field-even">obj</dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">python object to save</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">None</dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.load_pkl">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">load_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#load_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.load_pkl" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the object in a pickle file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">str with filename of pickle file.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">obj</dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">loaded python object</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.utils.tree">
 <span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">pathlib.Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_to_directories</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_limit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/folder_tree.html#tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.tree" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a directory Path object print a visual tree structure</p>
@@ -887,7 +967,7 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
+        &#169; Copyright 2022, Kevin A.G. Smet.
 
     </p>
   </div>

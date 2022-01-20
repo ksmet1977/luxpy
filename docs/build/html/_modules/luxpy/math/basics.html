@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>luxpy.math.basics &mdash; LuxPy 1.9.3 documentation</title>
+  <title>luxpy.math.basics &mdash; LuxPy 1.9.5 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                1.9.3
+                1.9.5
               </div>
             
           
@@ -264,6 +264,8 @@
 <span class="sd"> </span>
 <span class="sd"> :stress_F_test(): Perform F-test on significance of difference between STRESS A and STRESS B.</span>
 <span class="sd"> </span>
+<span class="sd"> :mean_distance_weighted(): Recursively calculates distance weighted mean.</span>
+<span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -280,7 +282,7 @@
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;remove_outliers&#39;</span><span class="p">,</span><span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;fit_cov_ellipse&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;in_hull&#39;</span><span class="p">,</span><span class="s1">&#39;interp1_sprague5&#39;</span><span class="p">,</span><span class="s1">&#39;interp1&#39;</span><span class="p">,</span> <span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span><span class="s1">&#39;stress_F_test&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span><span class="s1">&#39;stress_F_test&#39;</span><span class="p">,</span><span class="s1">&#39;mean_distance_weighted&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -1631,6 +1633,62 @@
         <span class="n">i</span><span class="o">+=</span><span class="mi">1</span>
     <span class="n">Fstats</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;p&#39;</span><span class="p">:</span> <span class="n">ps</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">:</span> <span class="n">Fvs</span><span class="p">,</span> <span class="s1">&#39;Fc&#39;</span><span class="p">:</span> <span class="n">Fcs</span><span class="p">,</span> <span class="s1">&#39;H&#39;</span><span class="p">:</span> <span class="n">H</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">Fstats</span></div>
+
+<div class="viewcode-block" id="mean_distance_weighted"><a class="viewcode-back" href="../../../math.html#luxpy.math.mean_distance_weighted">[docs]</a><span class="k">def</span> <span class="nf">mean_distance_weighted</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_x</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Recursively calculate distance weighted mean.</span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        :x:</span>
+<span class="sd">            | ndarray with data</span>
+<span class="sd">        :axis:</span>
+<span class="sd">            | dimension along which to take mean</span>
+<span class="sd">        :keepdims:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: keep dimension of original ndarray</span>
+<span class="sd">        :center_x:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Center data first.</span>
+<span class="sd">        :rtol:</span>
+<span class="sd">            | 1e-3, optional</span>
+<span class="sd">            | Relative tolerance on recursive mean values. If two sequential</span>
+<span class="sd">            | mean values differ less than this amount, the recursion stops.</span>
+<span class="sd">        :max_iter:</span>
+<span class="sd">            | 100, optional</span>
+<span class="sd">            | Maximum amount of recursions. If this number is reached the </span>
+<span class="sd">            | recursion stops, even when rtol is not yet achieved. (to avoid</span>
+<span class="sd">            | getting stuck in an infinite loop when the recursion doesn&#39;t converge)</span>
+<span class="sd">        :cnt,mu,mu0:</span>
+<span class="sd">            | Needed for passing values across recursions to be able to stop them.</span>
+<span class="sd">            | DO NOT CHANGE.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :mu_dw:</span>
+<span class="sd">            | distance weighted mean of the array</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span> 
+    <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">center_x</span><span class="p">:</span> 
+            <span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mu0</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+    <span class="n">w</span> <span class="o">=</span> <span class="p">(((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="c1"># w = (((x - mu)**2))**0.5</span>
+    <span class="n">w</span><span class="p">[</span><span class="n">w</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-100</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">w</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">mu_prev</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">mu</span><span class="o">-</span><span class="n">mu_prev</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">mu</span> <span class="o">+</span> <span class="mf">1e-100</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">rtol</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">())</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">&lt;</span> <span class="n">max_iter</span><span class="p">):</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">mean_distance_weighted</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="n">keepdims</span><span class="p">,</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span><span class="p">,</span> <span class="n">mu0</span> <span class="o">=</span> <span class="n">mu0</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">cnt</span><span class="p">)</span>     
+        <span class="k">return</span> <span class="n">mu</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">keepdims</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">mu0</span> <span class="o">+</span> <span class="n">mu</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">mu0</span> <span class="o">+</span> <span class="n">mu</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -1642,7 +1700,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
+        &#169; Copyright 2022, Kevin A.G. Smet.
 
     </p>
   </div>
