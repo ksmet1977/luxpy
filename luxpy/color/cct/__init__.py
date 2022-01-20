@@ -15,12 +15,10 @@ cct: Module with functions related to correlated color temperature calculations
  :_CCT_LUT_PATH: Folder with Look-Up-Tables (LUT) for correlated color 
                  temperature calculations. 
 
- :_CCT_LUT: Dict with LUTs structure LUT[mode][cspace][cieobs][lut i].
+ :_CCT_LUT: Dict with pre-calculated LUTs with structure LUT[mode][cspace][cieobs][lut i].
  
  :_CCT_LUT_CALC: Boolean determining whether to force LUT calculation, even if
-                 the LUT.npy files can be found in ./data/cctluts/.
-                 
- :_CCT_LUT: Dict with all pre-calculated LUTs.
+                 the LUT.pkl files can be found in ./data/cctluts/.
  
  :_CCT_LUT_RESOLUTION_REDUCTION_FACTOR: number of subdivisions when performing
                                         a cascading lut calculation to zoom-in 
@@ -85,7 +83,8 @@ cct: Module with functions related to correlated color temperature calculations
                          Optics Express, 24(13), 14066–14078. 
                          <https://doi.org/10.1364/OE.24.014066>`_                        
                                 
-                                             
+ :xyz_to_cct_fibonacci(): | Calculates CCT, Duv from XYZ using a Fibonacci search method.
+                  
  :cct_to_mired(): Converts from CCT to Mired scale (or back).
  
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
