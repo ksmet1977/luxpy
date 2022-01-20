@@ -1902,7 +1902,7 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
 
     # cl cannot recover from out-of-lut, so if all are out-of-lut, no use continuing!
     if (out_of_lut is not None) and (out_of_lut.all()): 
-        return -1, None # ,None because expected output (from _generate_lut is 2):
+        return None, None # ,None because expected output (from _generate_lut is 2):
 
     # get overall min, max Ts over all xyzw test points:
     Ts_m1p1 =  np.hstack((TBB_m1,TBB_p1))  
@@ -1912,7 +1912,7 @@ def _get_loop_i_lut_for_cascading_lut(Tx, TBB_m1, TBB_p1, out_of_lut,
 
     if (dTs<= atol).all() | (np.abs(dTs/Tx) <= rtol).all():
         Tx =  ((Ts_min + Ts_max)/2)[:,None] 
-        return -1, Tx 
+        return None, Tx 
     else:
         
         lut_int = lut_char[0][2]
@@ -1998,7 +1998,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
                                                 lut_generator_kwargs = lut_generator_kwargs,
                                                 )
 
-        if (tmp[0] is -1): 
+        if (tmp[0] is None): 
             if tmp[1] is not None: Tx = tmp[1]
             break
         else:
