@@ -97,8 +97,8 @@ __all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_I
 _WL3 = [360.0,830.0,1.0]
     
 #--------------------------------------------------------------------------------------------------
-# set coefficients for blackbody radiators:
-_BB = {'c1' : 3.74177185e-16, 'c2' : 1.4387768775e-2,'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.62607015e-34, 'k' : 1.380649e-23} # blackbody c1,c2 & n standard values (h,k,c from NIST, CODATA2018)
+# set coefficients for blackbody radiators (c2 rounded to 1.4388e-2 as defiend for ITS-90 International Temperature Scale):
+_BB = {'c1' : 3.74177185e-16, 'c2' : np.round(1.4387768775e-2,6),'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.62607015e-34, 'k' : 1.380649e-23} # blackbody c1,c2 & n standard values (h,k,c from NIST, CODATA2018)
 
 
 #--------------------------------------------------------------------------------------------------
