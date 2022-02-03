@@ -862,7 +862,7 @@ def _LMS_absorptance(fieldsize = 10, var_shft_LMS = [0,0,0], var_od_LMS = [0, 0,
                 cond = ((ssw >= 0) & (wls > 560))
                 if cond.any():
                     wl_min = wls[np.where(cond)].min()
-                    _peak_shft[i,np.where((wls >= wl_min))] = np.nan
+                    _peak_shft[np.where((wls[0] >= wl_min))] = np.nan
         
         if i < 2: # L,M:
             _pkOd = _d_LM_max(fieldsize, var_od_LMS[i])  # varied peak optical density of L,M-cone
