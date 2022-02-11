@@ -138,6 +138,7 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
 #==============================================================================
 _CCT_AVOID_ZERO_DIV = 1e-100
 _CCT_AVOID_INF = 1/_CCT_AVOID_ZERO_DIV
+_CCT_T_ROUNDING = 12
 
 _CCT_MAX = 1e11 # don't set to higher value to avoid overflow and errors
 _CCT_MIN = 550
@@ -276,6 +277,8 @@ def _get_xyzbar_wl_dl(cieobs, wl = None):
     cmf[:,c] += _CCT_AVOID_ZERO_DIV # avoid nan's in uvwvbar
     return cmf, wl, dl
 
+
+
 def _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict):
     """
     Convert the xyzbar (no wl on row 0!) CMF set to a CMF set representing a different 
@@ -394,6 +397,8 @@ def _get_tcs4(tc4, uin = None, out = 'Ts',
     if '-1' in u:
         Ts[Ts==0] = _CCT_AVOID_ZERO_DIV
         Ts = 1e6/Ts[::-1] # scale was in mireds 
+    
+    Ts = np.round(Ts,_CCT_T_ROUNDING)
     
     if out == 'Ts': 
         return Ts
@@ -1428,7 +1433,7 @@ def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
                                                 lut_vars = _CCT_LUT[mode]['lut_vars'],
                                                 verbosity = _CCT_VERBOSITY_LUT_GENERATION,
                                                 lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'])
-        _CCT_LUT[mode]['luts'] = _lut_to_float64(_CCT_LUT[mode]['luts'])
+        # _CCT_LUT[mode]['luts'] = _lut_to_float64(_CCT_LUT[mode]['luts'])
         _copy_luts(mode, lut = _CCT_LUT) # 2015_2 -> 2006_2, 2015_10 -> 2006_10
 
 
@@ -1450,8 +1455,7 @@ def _get_Duv_for_T_from_uvBB(u,v, uBB0, vBB0):
     # Get duv: 
     du, dv = u - uBB0, v - vBB0
     Duv = (du**2 + dv**2)**0.5 
-    # return Duv*(np.sign(du*dv)*(-np.sign(dv)) +
-    #         (Duv>0)*(np.sign(dv)*(du==0) - np.sign(du)*(dv==0)))
+
     # find sign of duv:
     theta = math.positive_arctan(du,dv,htype='deg')
     theta[theta>180] = theta[theta>180] - 360
@@ -2192,7 +2196,6 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
     pn = (((v.T - vBB)**2 + (u.T - uBB)**2)).argmin(axis=0)
-    
 
     # Deal with endpoints of lut + create intermediate variables 
     # to save memory:
@@ -2202,7 +2205,11 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     # vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, m0p = '0p')
 
     di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0p')
-
+    
+    # Solve issue near slope change of planckian locus -> 2 positive di & di_p1:
+    c = (di_0>0) & (di_p1>0)
+    di_0[c] = -di_0[c]
+    
     # Estimate Tc (Robertson, 1968): 
     slope = (di_0/((di_0 - di_p1) + _CCT_AVOID_ZERO_DIV))
     Tx = ((((1/TBB_0) + slope * ((1/TBB_p1) - (1/TBB_0)))**(-1)))#".copy()
@@ -3879,6 +3886,7 @@ def cct_to_mired(data):
 # test code:
 if __name__ == '__main__':
     import luxpy as lx 
+    import pandas as pd
     import imp 
     imp.reload(lx)
     
@@ -3897,16 +3905,22 @@ if __name__ == '__main__':
     # ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
     ccts = np.array([[3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    # ccts = np.array([[1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    duv = -0.05
+    ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    ccts = np.array([[2000,1626.2602, 1626.26015,1626.2601,1626.260,1500]]).T
     duvs = np.array([[duv]*ccts.shape[0]]).T
+    ccts = np.array([[1625.9260897230306]]).T
+    duvs = np.array([[0.0037117089512229]]).T
+    ccts = np.array([[1626.26]]).T
+    duvs = np.array([[-0.04]]).T
     
     # ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])
     # ccts, duvs = np.array([[19080.549294416654]]),np.array([[-0.040182320893775464]])
     # ccts, duvs = np.array([[9245.398073947294]]),np.array([[0.024538833865705142]])
     # ccts, duvs = np.array([[10396.099312731212]]),np.array([[0.0059537886422764115]])
     cctsduvs_t = np.hstack((ccts,duvs))
-
+    
+    # cctsduvs_t = pd.read_csv('test_rob_error.csv',header=None,index_col=None).values
+    # ccts, duvs = cctsduvs_t[:,:1], cctsduvs_t[:,1:]
     
     cct_offset = None
     # plt.figure()
@@ -3949,8 +3963,10 @@ if __name__ == '__main__':
     print('Dcctsduvs:\n', cctsduvs_ - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
     fig,ax = plt.subplots(1,2,figsize=(14,8))
+    d = np.abs(cctsduvs_ - cctsduvs_t)
     for i in range(2):
-        ax[i].plot(ccts[:,0], np.abs(cctsduvs_[:,i] - cctsduvs_t[:,i]))
+        ax[i].plot(ccts[:,0], d[:,i],'o')
+    # ax[0].set_ylim([0,1])
     print(cctsduvs_t[0,0],cctsduvs[0,0], cctsduvs[0,0]-cctsduvs_t[0,0])
 
     
