@@ -148,7 +148,7 @@ _CCT_CSPACE_KWARGS = {'fwtf':{}, 'bwtf':{}}
 
 _CCT_FALLBACK_N = 50
 _CCT_FALLBACK_UNIT = 'K-1'
-_CCT_MAX_ITER = 100
+_CCT_MAX_ITER = 10
 _CCT_SPLIT_CALC_AT_N = 25 # some tests show that this seems to be the fastest (for 1000 conversions)
 
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
@@ -1873,6 +1873,9 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
     T = T0
     while True & (i <= max_iter):
            
+
+        T[T < _CCT_MIN] = _CCT_MIN # avoid infinities & convergence problems
+        
         # Get (u,v), (u',v'), (u",v"):
         _, uBB, vBB, upBB, vpBB, uppBB, vppBB = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
 
@@ -1880,7 +1883,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
         du, dv = (u - uBB), (v - vBB) # pre-calculate for speed
         DT = -(du*upBB + dv*vpBB) / np.abs((upBB**2)-du*uppBB + (vpBB**2)-dv*vppBB)
 
-        DT[DT>T] = _CCT_MIN # avoid convergence problems
+        # DT[DT>T] = _CCT_MIN # avoid convergence problems
         T = T - DT 
 
         if (np.abs(DT) < atol).all() | (np.abs(DT)/T < rtol).all():
@@ -2207,7 +2210,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0p')
     
     # Solve issue near slope change of planckian locus -> 2 positive di & di_p1:
-    c = (di_0>0) & (di_p1>0)
+    c = (di_0>0) & (di_p1>0) & (di_0 > di_p1)
     di_0[c] = -di_0[c]
     
     # Estimate Tc (Robertson, 1968): 
@@ -3897,21 +3900,21 @@ if __name__ == '__main__':
     xyz = spd_to_xyz(BB, cieobs = cieobs)
     
     cct = 5000
-    duv = -0.05
+    duv = -0.04
     
     # duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
     duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T
     ccts = np.array([[cct]*duvs.shape[0]]).T
     # ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
-    ccts = np.array([[3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    ccts = np.array([[2000,1626.2602, 1626.26015,1626.2601,1626.260,1500]]).T
+    ccts = np.array([[1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    # ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    # ccts = np.array([[2000,1626.2602, 1626.26015,1626.2601,1626.260,1500]]).T
     duvs = np.array([[duv]*ccts.shape[0]]).T
-    ccts = np.array([[1625.9260897230306]]).T
-    duvs = np.array([[0.0037117089512229]]).T
-    ccts = np.array([[1626.26]]).T
-    duvs = np.array([[-0.04]]).T
+    # ccts = np.array([[1625.9260897230306]]).T
+    # duvs = np.array([[0.0037117089512229]]).T
+    # ccts = np.array([[1626.26]]).T
+    # duvs = np.array([[-0.04]]).T
     
     # ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])
     # ccts, duvs = np.array([[19080.549294416654]]),np.array([[-0.040182320893775464]])
