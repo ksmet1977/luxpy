@@ -170,10 +170,14 @@ _CCT_LUT_MIN, _CCT_LUT_MAX = 1000.0, 51000
 # _CCT_SHARED_LUT_TYPES = [((10,100,10,'K-1'),(100,625,25,'K-1'),True),
 #                         ((1,1,1,'K-1'),(25,1025,25,'K-1'),False),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 15, '%'),),
+#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 5, '%'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.75, '%'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.50, '%'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, '%'),),
+#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1000.0, 'K'),),
+#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 500.0, 'K'),),
+#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 250.0, 'K'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 100.0, 'K'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 50.0, 'K'),),
 #                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 25.0, 'K'),),
@@ -1468,7 +1472,8 @@ def _get_Duv_for_T(u,v, T, wl, cieobs, cspace_dict, uvwbar = None, dl = None,
             _,UVWBB,_,_ = _get_tristim_of_BB_BBp_BBpp(T, uvwbar, wl, dl, out='BB')
             uvBB = xyz_to_Yxy(UVWBB)[...,1:]
         else:
-            BB = cri_ref(T, ref_type = ['BB'], wl3 = wl)
+            BB = _get_BB_BBp_BBpp(T, wl, out = 'BB')
+            # BB = cri_ref(T, ref_type = ['BB'], wl3 = wl)
             xyzBB = spd_to_xyz(BB, cieobs = cieobs, relative = True)
             uvBB = cspace_dict['fwtf'](xyzBB)[...,1:]
         uBB, vBB = uvBB[...,0:1], uvBB[...,1:2]
@@ -1831,7 +1836,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
     than any input in cieobs or xyzbar is ignored. cspace_dict must be supplied
     when uvwbar is None (needed for color space conversion!). Max-iter specifies
     the maximum number of iterations (avoid potential infinite loops or cut the
-    optimization short). When fast_duv is True (dfeault) a faster method is used, but this
+    optimization short). When fast_duv is True (default) a faster method is used, but this
     only sufficiently accurate when the estimated CCT is 1 K or less than the
     true value. 
     
@@ -2182,7 +2187,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     
     # get uBB, vBB, mBB from lut:
     TBB, uBB, vBB, mBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols], lut[:,-1::lut_n_cols].copy()
-    mBB[mBB>0] = -mBB[mBB>0]
+    # mBB[mBB>0] = -mBB[mBB>0]
     
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
@@ -3871,7 +3876,7 @@ def cct_to_mired(data):
 
 
 #==============================================================================
-
+# test code:
 if __name__ == '__main__':
     import luxpy as lx 
     import imp 
@@ -3892,6 +3897,8 @@ if __name__ == '__main__':
     # ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
     ccts = np.array([[3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    # ccts = np.array([[1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    duv = -0.05
     duvs = np.array([[duv]*ccts.shape[0]]).T
     
     # ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])
@@ -3922,13 +3929,14 @@ if __name__ == '__main__':
     
 
     # xyz = np.array([[100,100,100]])
-    modes = ['fibonacci']#,'ohno2014','zhang2019','fibonacci']
+    modes = ['robertson1968']#,'ohno2014','zhang2019','fibonacci']
+    lut = ((1000.0,51000.0,0.5,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
     for mode in modes:
         print('mode:',mode)
         cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                              mode = mode, force_tolerance=True, 
+                              mode = mode, force_tolerance=False, 
                               tol_method='nr',
-                              lut=_CCT_LUT[mode]['lut_type_def'],#((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
+                              lut=lut,#((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
                               split_calculation_at_N=None)
     
     
@@ -3940,28 +3948,10 @@ if __name__ == '__main__':
     print('cctsduvs:\n', cctsduvs)
     print('Dcctsduvs:\n', cctsduvs_ - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
+    fig,ax = plt.subplots(1,2,figsize=(14,8))
+    for i in range(2):
+        ax[i].plot(ccts[:,0], np.abs(cctsduvs_[:,i] - cctsduvs_t[:,i]))
     print(cctsduvs_t[0,0],cctsduvs[0,0], cctsduvs[0,0]-cctsduvs_t[0,0])
-# if __name__ == '__main__':
-#     from cct_methods_analysis import get_cctduv_grid
-#     ccts = np.array([2000,2250,2500,2750,3000,3500,4000,4500,5000,6000,7000,8000,9000,
-#                  1e4,1.25e4,1.5e4,2e4,3e4,4e4,5e4])
-#     duvs = np.array([-0.05,-0.025,0,0.025,0.05])
-#     rnd_grid_offsets = (1,1,10,0) # (100% of half-distance between CCTs, 100% of half-distance between duvs, 10 random points per original grid, random seed)
-    
-#     error_minmaxCCT = [1500,50000]
-#     error_minmaxDuv = [-0.05,0.05]
-    
-#     xyz, cctsduvs_t, cctsduvs_t0 = get_cctduv_grid(ccts = ccts, duvs = duvs, rnd_grid_offsets = rnd_grid_offsets)
-#     cnd = (cctsduvs_t[:,0]>=error_minmaxCCT[0]) & (cctsduvs_t[:,0]<=error_minmaxCCT[1]) & (cctsduvs_t[:,1]>=error_minmaxDuv[0]) & (cctsduvs_t[:,1]<=error_minmaxDuv[1])
-#     xyz = xyz[cnd,:]
-#     cctsduvs_t = cctsduvs_t[cnd,:]
-#     cctsduvs_t0 = cctsduvs_t0[cnd,:]
-    
-#     cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-#                           mode='robertson1968', force_tolerance=False, 
-#                           tol_method='nr',lut=None,split_calculation_at_N=None)
-#     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
 
-#     print('max error', np.abs(cctsduvs_[:,0]-cctsduvs_t[:,0]).max())
     
     
