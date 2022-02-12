@@ -2199,6 +2199,11 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
     pn = (((v.T - vBB)**2 + (u.T - uBB)**2)).argmin(axis=0)
+    
+    # Solve issue of zero-crossing of slope of planckian locus:
+    # c = (np.sign(mBB[pn]) != np.sign(mBB[pn+1]))[:,0]  
+    c = ((1 - mBB[pn+1]/mBB[pn])[:,0] > 1) # check for difference in sign between i and i+1
+    pn[c] = pn[c] - 1
 
     # Deal with endpoints of lut + create intermediate variables 
     # to save memory:
@@ -2220,8 +2225,6 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     if fast_duv:
         uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, i = idx_sources, m0p = '0p')
         vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, i = idx_sources, m0p = '0p')
-        # ux = ((((1/uBB_0)+slope*((1/uBB_p1) - (1/uBB_0)))**(-1)))#.copy()
-        # vx = ((((1/vBB_0)+slope*((1/vBB_p1) - (1/vBB_0)))**(-1)))#.copy()
         ux = (uBB_0 + slope * (uBB_p1 - uBB_0))#.copy()
         vx = (vBB_0 + slope * (vBB_p1 - vBB_0))#.copy()
         Duvx = _get_Duv_for_T_from_uvBB(u, v, ux, vx)
@@ -3907,7 +3910,7 @@ if __name__ == '__main__':
     ccts = np.array([[cct]*duvs.shape[0]]).T
     # ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
-    ccts = np.array([[1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    ccts = np.array([[1625.92608972303,1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
     # ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
     # ccts = np.array([[2000,1626.2602, 1626.26015,1626.2601,1626.260,1500]]).T
     duvs = np.array([[duv]*ccts.shape[0]]).T
@@ -3915,6 +3918,7 @@ if __name__ == '__main__':
     # duvs = np.array([[0.0037117089512229]]).T
     # ccts = np.array([[1626.26]]).T
     # duvs = np.array([[-0.04]]).T
+    duvs[0] = 0.0037117089512229
     
     # ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])
     # ccts, duvs = np.array([[19080.549294416654]]),np.array([[-0.040182320893775464]])
@@ -3960,17 +3964,21 @@ if __name__ == '__main__':
     
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
-    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)
+    print('cct_to_xyz2')
+    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, cct_offset = cct_offset)
     print('cctsduvs_t:\n',cctsduvs_t)
     print('cctsduvs:\n', cctsduvs)
     print('Dcctsduvs:\n', cctsduvs_ - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
+    print(cctsduvs_t[0,0],cctsduvs[0,0], cctsduvs[0,0]-cctsduvs_t[0,0])
     fig,ax = plt.subplots(1,2,figsize=(14,8))
     d = np.abs(cctsduvs_ - cctsduvs_t)
     for i in range(2):
         ax[i].plot(ccts[:,0], d[:,i],'o')
-    # ax[0].set_ylim([0,1])
-    print(cctsduvs_t[0,0],cctsduvs[0,0], cctsduvs[0,0]-cctsduvs_t[0,0])
+        ax[i].plot(lut[:,0], np.zeros_like(lut),'r.')
+        ax[i].plot(lut[:,0], lut[:,-1],'g.-')
+        ax[i].set_xlim([1550,1700])
+        ax[i].set_ylim([-d[:,i].max()*1.1,d[:,i].max()*1.1])
 
     
     
