@@ -957,7 +957,7 @@ def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
     axh.text(7.5,2.8, "CIE 13.3-1995", fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
     axh.text(7.5,2.2, "     (CRI)    ", fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
     axh.text(7.5,1.6, "    $R_a$  {:1.0f}".format(ciera[0,0]), fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
-    axh.text(7.5,1.0, "    $R_9$  {:1.0f}".format(cierai[9,0]), fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
+    axh.text(7.5,1.0, "    $R_9$  {:1.0f}".format(cierai[8,0]), fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
 
     # Create a Rectangle patch
     rect = patches.Rectangle((7.2,0.5),1.7,2.5,linewidth=1,edgecolor='k',facecolor='none')
