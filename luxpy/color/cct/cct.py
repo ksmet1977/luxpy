@@ -3523,7 +3523,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
 
 def xyz_to_cct(xyzw, mode = 'robertson1968',
                cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
-               atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
+               atol = 0.1, rtol = 1e-10, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,

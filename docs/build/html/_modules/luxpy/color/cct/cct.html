@@ -1,75 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>luxpy.color.cct.cct &mdash; LuxPy 1.9.5 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>luxpy.color.cct.cct &mdash; LuxPy 1.9.6 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
-    
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.9.5
+                1.9.6
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,19 +36,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -97,69 +45,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">LuxPy</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
-        
       <li>luxpy.color.cct.cct</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for luxpy.color.cct.cct</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="c1">########################################################################</span>
@@ -301,16 +210,17 @@
 <span class="c1">#==============================================================================</span>
 <span class="n">_CCT_AVOID_ZERO_DIV</span> <span class="o">=</span> <span class="mf">1e-100</span>
 <span class="n">_CCT_AVOID_INF</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">_CCT_AVOID_ZERO_DIV</span>
+<span class="c1"># _CCT_T_ROUNDING = 12</span>
 
 <span class="n">_CCT_MAX</span> <span class="o">=</span> <span class="mf">1e11</span> <span class="c1"># don&#39;t set to higher value to avoid overflow and errors</span>
-<span class="n">_CCT_MIN</span> <span class="o">=</span> <span class="mi">550</span>
+<span class="n">_CCT_MIN</span> <span class="o">=</span> <span class="mi">450</span>
 
 <span class="n">_CCT_CSPACE</span> <span class="o">=</span> <span class="s1">&#39;Yuv60&#39;</span>
 <span class="n">_CCT_CSPACE_KWARGS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fwtf&#39;</span><span class="p">:{},</span> <span class="s1">&#39;bwtf&#39;</span><span class="p">:{}}</span>
 
 <span class="n">_CCT_FALLBACK_N</span> <span class="o">=</span> <span class="mi">50</span>
 <span class="n">_CCT_FALLBACK_UNIT</span> <span class="o">=</span> <span class="s1">&#39;K-1&#39;</span>
-<span class="n">_CCT_MAX_ITER</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">_CCT_MAX_ITER</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="n">_CCT_SPLIT_CALC_AT_N</span> <span class="o">=</span> <span class="mi">25</span> <span class="c1"># some tests show that this seems to be the fastest (for 1000 conversions)</span>
 
 <span class="n">_CCT_LUT_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span><span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cctluts&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="c1">#folder with cct lut data</span>
@@ -333,10 +243,14 @@
 <span class="c1"># _CCT_SHARED_LUT_TYPES = [((10,100,10,&#39;K-1&#39;),(100,625,25,&#39;K-1&#39;),True),</span>
 <span class="c1">#                         ((1,1,1,&#39;K-1&#39;),(25,1025,25,&#39;K-1&#39;),False),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 15, &#39;%&#39;),),</span>
+<span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 5, &#39;%&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, &#39;%&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.75, &#39;%&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.50, &#39;%&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, &#39;%&#39;),),</span>
+<span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1000.0, &#39;K&#39;),),</span>
+<span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 500.0, &#39;K&#39;),),</span>
+<span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 250.0, &#39;K&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 100.0, &#39;K&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 50.0, &#39;K&#39;),),</span>
 <span class="c1">#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 25.0, &#39;K&#39;),),</span>
@@ -434,6 +348,8 @@
     <span class="n">c</span> <span class="o">=</span> <span class="o">~</span><span class="p">(((</span><span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">))</span>
     <span class="n">cmf</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="n">_CCT_AVOID_ZERO_DIV</span> <span class="c1"># avoid nan&#39;s in uvwvbar</span>
     <span class="k">return</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span>
+
+
 
 <span class="k">def</span> <span class="nf">_convert_xyzbar_to_uvwbar</span><span class="p">(</span><span class="n">xyzbar</span><span class="p">,</span> <span class="n">cspace_dict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -553,6 +469,8 @@
     <span class="k">if</span> <span class="s1">&#39;-1&#39;</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
         <span class="n">Ts</span><span class="p">[</span><span class="n">Ts</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CCT_AVOID_ZERO_DIV</span>
         <span class="n">Ts</span> <span class="o">=</span> <span class="mf">1e6</span><span class="o">/</span><span class="n">Ts</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># scale was in mireds </span>
+    
+    <span class="c1"># Ts = np.round(Ts,_CCT_T_ROUNDING)</span>
     
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Ts&#39;</span><span class="p">:</span> 
         <span class="k">return</span> <span class="n">Ts</span>
@@ -1587,7 +1505,7 @@
                                                 <span class="n">lut_vars</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span>
                                                 <span class="n">verbosity</span> <span class="o">=</span> <span class="n">_CCT_VERBOSITY_LUT_GENERATION</span><span class="p">,</span>
                                                 <span class="n">lut_generator_fcn</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;_generate_lut&#39;</span><span class="p">])</span>
-        <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_lut_to_float64</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
+        <span class="c1"># _CCT_LUT[mode][&#39;luts&#39;] = _lut_to_float64(_CCT_LUT[mode][&#39;luts&#39;])</span>
         <span class="n">_copy_luts</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">lut</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">)</span> <span class="c1"># 2015_2 -&gt; 2006_2, 2015_10 -&gt; 2006_10</span>
 
 
@@ -1609,8 +1527,7 @@
     <span class="c1"># Get duv: </span>
     <span class="n">du</span><span class="p">,</span> <span class="n">dv</span> <span class="o">=</span> <span class="n">u</span> <span class="o">-</span> <span class="n">uBB0</span><span class="p">,</span> <span class="n">v</span> <span class="o">-</span> <span class="n">vBB0</span>
     <span class="n">Duv</span> <span class="o">=</span> <span class="p">(</span><span class="n">du</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">dv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> 
-    <span class="c1"># return Duv*(np.sign(du*dv)*(-np.sign(dv)) +</span>
-    <span class="c1">#         (Duv&gt;0)*(np.sign(dv)*(du==0) - np.sign(du)*(dv==0)))</span>
+
     <span class="c1"># find sign of duv:</span>
     <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">positive_arctan</span><span class="p">(</span><span class="n">du</span><span class="p">,</span><span class="n">dv</span><span class="p">,</span><span class="n">htype</span><span class="o">=</span><span class="s1">&#39;deg&#39;</span><span class="p">)</span>
     <span class="n">theta</span><span class="p">[</span><span class="n">theta</span><span class="o">&gt;</span><span class="mi">180</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">theta</span><span class="o">&gt;</span><span class="mi">180</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
@@ -1631,7 +1548,8 @@
             <span class="n">_</span><span class="p">,</span><span class="n">UVWBB</span><span class="p">,</span><span class="n">_</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">_get_tristim_of_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="s1">&#39;BB&#39;</span><span class="p">)</span>
             <span class="n">uvBB</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">UVWBB</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">BB</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BB&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+            <span class="n">BB</span> <span class="o">=</span> <span class="n">_get_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB&#39;</span><span class="p">)</span>
+            <span class="c1"># BB = cri_ref(T, ref_type = [&#39;BB&#39;], wl3 = wl)</span>
             <span class="n">xyzBB</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
             <span class="n">uvBB</span> <span class="o">=</span> <span class="n">cspace_dict</span><span class="p">[</span><span class="s1">&#39;fwtf&#39;</span><span class="p">](</span><span class="n">xyzBB</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">uBB</span><span class="p">,</span> <span class="n">vBB</span> <span class="o">=</span> <span class="n">uvBB</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">uvBB</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -1949,7 +1867,8 @@
 <span class="sd">    with specified Tc. uvwbar (no wavelengths on row0, these are supplied seperately</span>
 <span class="sd">    in wl, with wavelength spacing in dl) is the cmf set corresponding to the tristimulus values</span>
 <span class="sd">    of the chosen chromaticity diagram or color space to do the CCT calculations in.</span>
-<span class="sd">    </span>
+<span class="sd">    See: Li et al. (2016). Accurate method for computing correlated color temperature. Optics Express, 24(13), 14066–14078.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># calculate U,V,W (Eq. 6) and U&#39;,V&#39;,W&#39; (Eq.10) [Robertson,1986] and U&quot;,V&quot;,W&quot; [Li,2016; started from XYZ, but this is equivalent]:</span>
     <span class="n">T</span><span class="p">,</span> <span class="n">UVW</span><span class="p">,</span> <span class="n">UVWp</span><span class="p">,</span> <span class="n">UVWpp</span> <span class="o">=</span> <span class="n">_get_tristim_of_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
@@ -1994,7 +1913,7 @@
 <span class="sd">    than any input in cieobs or xyzbar is ignored. cspace_dict must be supplied</span>
 <span class="sd">    when uvwbar is None (needed for color space conversion!). Max-iter specifies</span>
 <span class="sd">    the maximum number of iterations (avoid potential infinite loops or cut the</span>
-<span class="sd">    optimization short). When fast_duv is True (dfeault) a faster method is used, but this</span>
+<span class="sd">    optimization short). When fast_duv is True (default) a faster method is used, but this</span>
 <span class="sd">    only sufficiently accurate when the estimated CCT is 1 K or less than the</span>
 <span class="sd">    true value. </span>
 <span class="sd">    </span>
@@ -2027,14 +1946,18 @@
     <span class="n">T</span> <span class="o">=</span> <span class="n">T0</span>
     <span class="k">while</span> <span class="kc">True</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">i</span> <span class="o">&lt;=</span> <span class="n">max_iter</span><span class="p">):</span>
            
+        <span class="n">T</span><span class="p">[</span><span class="n">T</span> <span class="o">&lt;</span> <span class="n">_CCT_MIN</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CCT_MIN</span> <span class="c1"># avoid infinities and convergence problems </span>
+        
         <span class="c1"># Get (u,v), (u&#39;,v&#39;), (u&quot;,v&quot;):</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">uBB</span><span class="p">,</span> <span class="n">vBB</span><span class="p">,</span> <span class="n">upBB</span><span class="p">,</span> <span class="n">vpBB</span><span class="p">,</span> <span class="n">uppBB</span><span class="p">,</span> <span class="n">vppBB</span> <span class="o">=</span> <span class="n">_get_uv_uvp_uvpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">)</span>
 
         <span class="c1"># Calculate DT (ratio of f&#39; and abs(f&quot;):</span>
         <span class="n">du</span><span class="p">,</span> <span class="n">dv</span> <span class="o">=</span> <span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">uBB</span><span class="p">),</span> <span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">vBB</span><span class="p">)</span> <span class="c1"># pre-calculate for speed</span>
+
+        <span class="c1"># print(&#39;\n&#39;,((vpBB**2)-dv*vppBB).shape)</span>
         <span class="n">DT</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">du</span><span class="o">*</span><span class="n">upBB</span> <span class="o">+</span> <span class="n">dv</span><span class="o">*</span><span class="n">vpBB</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">upBB</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">du</span><span class="o">*</span><span class="n">uppBB</span> <span class="o">+</span> <span class="p">(</span><span class="n">vpBB</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">-</span><span class="n">dv</span><span class="o">*</span><span class="n">vppBB</span><span class="p">)</span>
 
-        <span class="n">DT</span><span class="p">[</span><span class="n">DT</span><span class="o">&gt;</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CCT_MIN</span> <span class="c1"># avoid convergence problems</span>
+        <span class="c1"># DT[DT&gt;T] = _CCT_MIN # avoid convergence problems</span>
         <span class="n">T</span> <span class="o">=</span> <span class="n">T</span> <span class="o">-</span> <span class="n">DT</span> 
 
         <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">DT</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">atol</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="o">|</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">DT</span><span class="p">)</span><span class="o">/</span><span class="n">T</span> <span class="o">&lt;</span> <span class="n">rtol</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -2344,13 +2267,17 @@
     <span class="n">idx_sources</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
     
     <span class="c1"># get uBB, vBB, mBB from lut:</span>
-    <span class="n">TBB</span><span class="p">,</span> <span class="n">uBB</span><span class="p">,</span> <span class="n">vBB</span><span class="p">,</span> <span class="n">mBB</span>  <span class="o">=</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">1</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">2</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">mBB</span><span class="p">[</span><span class="n">mBB</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">mBB</span><span class="p">[</span><span class="n">mBB</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">TBB</span><span class="p">,</span> <span class="n">uBB</span><span class="p">,</span> <span class="n">vBB</span><span class="p">,</span> <span class="n">mBB</span>  <span class="o">=</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">1</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="mi">2</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">],</span> <span class="n">lut</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">::</span><span class="n">lut_n_cols</span><span class="p">]</span>
     
     <span class="c1"># calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):</span>
     <span class="n">di</span> <span class="o">=</span> <span class="p">((</span><span class="n">v</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">vBB</span><span class="p">)</span> <span class="o">-</span> <span class="n">mBB</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">uBB</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">mBB</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span>
     <span class="n">pn</span> <span class="o">=</span> <span class="p">(((</span><span class="n">v</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">vBB</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">T</span> <span class="o">-</span> <span class="n">uBB</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     
+    
+    <span class="c1"># Solve issue of zero-crossing of slope of planckian locus:</span>
+    <span class="c1"># c = (np.sign(mBB[pn]) != np.sign(mBB[pn+1]))[:,0]  </span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">mBB</span><span class="p">[</span><span class="n">pn</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">mBB</span><span class="p">[</span><span class="n">pn</span><span class="p">])[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># check for difference in sign between i and i+1</span>
+    <span class="n">pn</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">=</span> <span class="n">pn</span><span class="p">[</span><span class="n">c</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
 
     <span class="c1"># Deal with endpoints of lut + create intermediate variables </span>
     <span class="c1"># to save memory:</span>
@@ -2358,20 +2285,17 @@
     <span class="n">TBB_m1</span><span class="p">,</span> <span class="n">TBB_0</span><span class="p">,</span> <span class="n">TBB_p1</span> <span class="o">=</span> <span class="n">_get_pns_from_x</span><span class="p">(</span><span class="n">TBB</span><span class="p">,</span> <span class="n">pn</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">idx_sources</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;m0p&#39;</span><span class="p">)</span>
     <span class="c1"># uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, m0p = &#39;0p&#39;)</span>
     <span class="c1"># vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, m0p = &#39;0p&#39;)</span>
-
     <span class="n">di_0</span><span class="p">,</span> <span class="n">di_p1</span> <span class="o">=</span> <span class="n">_get_pns_from_x</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">pn</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">idx_sources</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;0p&#39;</span><span class="p">)</span>
-
+    
     <span class="c1"># Estimate Tc (Robertson, 1968): </span>
     <span class="n">slope</span> <span class="o">=</span> <span class="p">(</span><span class="n">di_0</span><span class="o">/</span><span class="p">((</span><span class="n">di_0</span> <span class="o">-</span> <span class="n">di_p1</span><span class="p">)</span> <span class="o">+</span> <span class="n">_CCT_AVOID_ZERO_DIV</span><span class="p">))</span>
+    <span class="n">slope_m</span> <span class="o">=</span> <span class="n">slope</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">Tx</span> <span class="o">=</span> <span class="p">((((</span><span class="mi">1</span><span class="o">/</span><span class="n">TBB_0</span><span class="p">)</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="n">TBB_p1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">TBB_0</span><span class="p">)))</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span><span class="c1">#&quot;.copy()</span>
 
     <span class="k">if</span> <span class="n">fast_duv</span><span class="p">:</span>
         <span class="n">uBB_0</span><span class="p">,</span> <span class="n">uBB_p1</span> <span class="o">=</span> <span class="n">_get_pns_from_x</span><span class="p">(</span><span class="n">uBB</span><span class="p">,</span> <span class="n">pn</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">idx_sources</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;0p&#39;</span><span class="p">)</span>
         <span class="n">vBB_0</span><span class="p">,</span> <span class="n">vBB_p1</span> <span class="o">=</span> <span class="n">_get_pns_from_x</span><span class="p">(</span><span class="n">vBB</span><span class="p">,</span> <span class="n">pn</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">idx_sources</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;0p&#39;</span><span class="p">)</span>
-        <span class="c1"># ux = ((((1/uBB_0)+slope*((1/uBB_p1) - (1/uBB_0)))**(-1)))#.copy()</span>
-        <span class="c1"># vx = ((((1/vBB_0)+slope*((1/vBB_p1) - (1/vBB_0)))**(-1)))#.copy()</span>
-        <span class="n">ux</span> <span class="o">=</span> <span class="p">(</span><span class="n">uBB_0</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">uBB_p1</span> <span class="o">-</span> <span class="n">uBB_0</span><span class="p">))</span><span class="c1">#.copy()</span>
-        <span class="n">vx</span> <span class="o">=</span> <span class="p">(</span><span class="n">vBB_0</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">vBB_p1</span> <span class="o">-</span> <span class="n">vBB_0</span><span class="p">))</span><span class="c1">#.copy()</span>
+        <span class="n">ux</span><span class="p">,</span> <span class="n">vx</span> <span class="o">=</span> <span class="p">(</span><span class="n">uBB_0</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">uBB_p1</span> <span class="o">-</span> <span class="n">uBB_0</span><span class="p">)),</span> <span class="p">(</span><span class="n">vBB_0</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">vBB_p1</span> <span class="o">-</span> <span class="n">vBB_0</span><span class="p">))</span>
         <span class="n">Duvx</span> <span class="o">=</span> <span class="n">_get_Duv_for_T_from_uvBB</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">vx</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">Tx</span><span class="p">,</span> <span class="n">Duvx</span><span class="p">,</span> <span class="n">out_of_lut</span><span class="p">,</span> <span class="p">(</span><span class="n">TBB_m1</span><span class="p">,</span> <span class="n">TBB_p1</span><span class="p">)</span>
 
@@ -3671,7 +3595,7 @@
 
 <div class="viewcode-block" id="xyz_to_cct"><a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct">[docs]</a><span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span>
                <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-               <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tol_method</span> <span class="o">=</span> <span class="s1">&#39;newton-raphson&#39;</span><span class="p">,</span> 
+               <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tol_method</span> <span class="o">=</span> <span class="s1">&#39;newton-raphson&#39;</span><span class="p">,</span> 
                <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</span><span class="p">,</span>
                <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="n">_CCT_SPLIT_CALC_AT_N</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="n">_CCT_MAX_ITER</span><span class="p">,</span>
                <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CCT_CSPACE</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">_CCT_CSPACE_KWARGS</span><span class="p">,</span>
@@ -4008,7 +3932,7 @@
 
         <span class="n">YuvBB</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">UVW</span><span class="p">)</span>
         <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">YuvBB</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span> <span class="o">*</span> <span class="n">duv</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">mi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)),</span> <span class="n">YuvBB</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">mi</span><span class="p">)</span><span class="o">*</span> <span class="n">duv</span><span class="o">*</span><span class="p">((</span><span class="n">mi</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">mi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
-   
+        
     <span class="c1"># plt.plot(YuvBB[...,1],YuvBB[...,2],&#39;gx&#39;)</span>
     <span class="c1"># lx.plotSL(cspace=&#39;Yuv60&#39;,axh=plt.gca())</span>
     <span class="c1"># plt.plot(u,v,&#39;b+&#39;)    </span>
@@ -4034,143 +3958,115 @@
 
 
 <span class="c1">#==============================================================================</span>
-
+<span class="c1"># test code:</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+           
     <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span> 
-    <span class="kn">import</span> <span class="nn">imp</span> 
-    <span class="n">imp</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="n">lx</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
     
     <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span>
     
-    <span class="n">BB</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">([</span><span class="mi">3000</span><span class="p">,</span><span class="mi">5000</span><span class="p">,</span><span class="mi">9000</span><span class="p">,</span><span class="mi">15000</span><span class="p">,</span><span class="mi">25000</span><span class="p">],</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="s1">&#39;BB&#39;</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">)</span>
+    <span class="c1"># cieobs = &#39;2015_10&#39;</span>
+
+    <span class="c1"># ------------------------------</span>
+    <span class="c1"># Setup some tests:</span>
     
-    <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="c1"># test 1:</span>
+    <span class="c1"># cct = 5000    </span>
+    <span class="c1"># duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T</span>
+    <span class="c1"># ccts = np.array([[cct]*duvs.shape[0]]).T</span>
     
-    <span class="n">cct</span> <span class="o">=</span> <span class="mi">5000</span>
-    <span class="n">duv</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.05</span>
-    
-    <span class="c1"># duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T</span>
-    <span class="n">duvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.05</span><span class="p">,</span><span class="o">-</span><span class="mf">0.025</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.025</span><span class="p">,</span><span class="mf">0.05</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
-    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">cct</span><span class="p">]</span><span class="o">*</span><span class="n">duvs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
-    <span class="c1"># ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T</span>
+    <span class="c1"># test 2:</span>
+    <span class="n">duv</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.04</span>
     <span class="c1"># duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T</span>
-    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">3500</span><span class="p">,</span> <span class="mf">4500.0</span><span class="p">,</span> <span class="mi">5500</span><span class="p">,</span> <span class="mi">6500</span><span class="p">,</span> <span class="mi">15500</span><span class="p">,</span><span class="mi">25500</span><span class="p">,</span><span class="mi">35500</span><span class="p">,</span><span class="mi">45500</span><span class="p">,</span><span class="mi">50500</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1"># ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T</span>
+
+    <span class="c1"># test 3:</span>
+    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1625.92608972303</span><span class="p">,</span><span class="mf">1626.26</span><span class="p">,</span> <span class="mi">3500</span><span class="p">,</span> <span class="mf">4500.0</span><span class="p">,</span> <span class="mi">5500</span><span class="p">,</span> <span class="mi">6500</span><span class="p">,</span> <span class="mi">15500</span><span class="p">,</span><span class="mi">25500</span><span class="p">,</span><span class="mi">35500</span><span class="p">,</span><span class="mi">45500</span><span class="p">,</span><span class="mi">50500</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
     <span class="n">duvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">duv</span><span class="p">]</span><span class="o">*</span><span class="n">ccts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">duvs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0037117089512229</span>
     
-    <span class="c1"># ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])</span>
-    <span class="c1"># ccts, duvs = np.array([[19080.549294416654]]),np.array([[-0.040182320893775464]])</span>
-    <span class="c1"># ccts, duvs = np.array([[9245.398073947294]]),np.array([[0.024538833865705142]])</span>
-    <span class="c1"># ccts, duvs = np.array([[10396.099312731212]]),np.array([[0.0059537886422764115]])</span>
     <span class="n">cctsduvs_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ccts</span><span class="p">,</span><span class="n">duvs</span><span class="p">))</span>
 
+    <span class="c1"># Test 4 (from disk):</span>
+    <span class="c1"># cctsduvs_t = pd.read_csv(&#39;test_rob_error.csv&#39;,header=None,index_col=None).values</span>
+    <span class="c1"># ccts, duvs = cctsduvs_t[:,:1], cctsduvs_t[:,1:]</span>
     
+    
+    <span class="c1">#--------------------------------</span>
+    <span class="c1"># Backward transform from CCT,Duv to xyz to generate test xyz for forward tf:</span>
     <span class="n">cct_offset</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="c1"># plt.figure()</span>
-    <span class="n">xyz</span> <span class="o">=</span> <span class="n">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">duvs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">cct_offset</span> <span class="o">=</span> <span class="n">cct_offset</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct_to_xyz:&#39;</span><span class="p">)</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">duvs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cct_offset</span> <span class="o">=</span> <span class="n">cct_offset</span><span class="p">)</span>
     
-    <span class="c1"># fig,ax=plt.subplots(1,1)    </span>
-    <span class="c1"># plt.xlim([0.15,0.3])</span>
-    <span class="c1"># plt.ylim([0.25,0.4])</span>
-    <span class="c1"># lx.plotSL(cspace=&#39;Yuv60&#39;,cieobs=cieobs,axh=ax)</span>
-    <span class="c1"># BB = cri_ref([cct-1,cct-0.1,cct,cct+0.5,cct+1], ref_type = &#39;BB&#39;, wl3 = _WL3)</span>
-    <span class="c1"># xyzBB = spd_to_xyz(BB, cieobs = cieobs)</span>
     
-    <span class="n">Yuv</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">xyz_to_Yuv60</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
-    <span class="c1"># YuvBB = lx.xyz_to_Yuv60(xyzBB)</span>
-    <span class="c1"># plt.plot(Yuv[...,1],Yuv[...,2],&#39;rp&#39;)</span>
-    <span class="c1"># plt.plot(YuvBB[...,1],YuvBB[...,2],&#39;g+-&#39;)</span>
-    <span class="c1"># plt.xlim([0.25056,0.25058])</span>
-    <span class="c1"># plt.ylim([0.34758,0.34760])</span>
-
-    
-
-    <span class="c1"># xyz = np.array([[100,100,100]])</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fibonacci&#39;</span><span class="p">]</span><span class="c1">#,&#39;ohno2014&#39;,&#39;zhang2019&#39;,&#39;fibonacci&#39;]</span>
+    <span class="c1">#--------------------------------</span>
+    <span class="c1"># Forward transform from xyz to CCT,Duv using Robertson 1968 or several other methods:</span>
+    <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">]</span> <span class="c1">#,&#39;ohno2014&#39;,&#39;zhang2019&#39;,&#39;fibonacci&#39;]</span>
+    <span class="n">lut</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1000.0</span><span class="p">,</span><span class="mf">51000.0</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="s1">&#39;%&#39;</span><span class="p">),)</span> <span class="c1">#_CCT_LUT[modes[0]][&#39;lut_type_def&#39;]</span>
+    <span class="c1"># lut_m = _CCT_LUT[&#39;robertson1968&#39;][&#39;luts&#39;][&#39;Yuv60&#39;][&#39;1931_2&#39;][((1000.0,51000.0,0.5,&#39;%&#39;),)]</span>
     <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">modes</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mode:&#39;</span><span class="p">,</span><span class="n">mode</span><span class="p">)</span>
         <span class="n">cctsduvs</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;[cct,duv]&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> 
-                              <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">force_tolerance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
-                              <span class="n">tol_method</span><span class="o">=</span><span class="s1">&#39;nr&#39;</span><span class="p">,</span>
-                              <span class="n">lut</span><span class="o">=</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">],</span><span class="c1">#((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,&#39;K&#39;),),</span>
-                              <span class="n">split_calculation_at_N</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+                              <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                              <span class="n">tol_method</span> <span class="o">=</span> <span class="s1">&#39;nr&#39;</span><span class="p">,</span>
+                              <span class="n">lut</span> <span class="o">=</span> <span class="n">lut</span><span class="p">,</span> <span class="c1">#((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,&#39;K&#39;),),</span>
+                              <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
     
-    
-    
-    <span class="c1"># cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = &#39;[cct,duv]&#39;,force_tolerance=True)</span>
+    <span class="c1"># Out of LUT conversions are coded with a negative CCT, so make positive again before calculating error:</span>
     <span class="n">cctsduvs_</span> <span class="o">=</span> <span class="n">cctsduvs</span><span class="o">.</span><span class="n">copy</span><span class="p">();</span><span class="n">cctsduvs_</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cctsduvs_</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># outof gamut ccts are encoded as negative!!</span>
-    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">cct_to_xyz</span><span class="p">(</span><span class="n">cctsduvs_</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span><span class="n">cct_offset</span> <span class="o">=</span> <span class="n">cct_offset</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------</span>
+    <span class="c1"># Close loop: Backward transform from CCT,Duv (obtained from forward tf) to xyz</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cct_to_xyz2&#39;</span><span class="p">)</span>
+    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">cct_to_xyz</span><span class="p">(</span><span class="n">cctsduvs_</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cct_offset</span> <span class="o">=</span> <span class="n">cct_offset</span><span class="p">)</span>
+    
+    <span class="c1">#--------------------------------</span>
+    <span class="c1"># Calculate CCT,Duv and XYZ errors:</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cctsduvs_t:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">cctsduvs_t</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;cctsduvs:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">cctsduvs</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dcctsduvs:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">cctsduvs_</span> <span class="o">-</span> <span class="n">cctsduvs_t</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dxyz:</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">xyz</span> <span class="o">-</span> <span class="n">xyz_</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">cctsduvs_t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">cctsduvs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">cctsduvs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">cctsduvs_t</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
-<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
-<span class="c1">#     from cct_methods_analysis import get_cctduv_grid</span>
-<span class="c1">#     ccts = np.array([2000,2250,2500,2750,3000,3500,4000,4500,5000,6000,7000,8000,9000,</span>
-<span class="c1">#                  1e4,1.25e4,1.5e4,2e4,3e4,4e4,5e4])</span>
-<span class="c1">#     duvs = np.array([-0.05,-0.025,0,0.025,0.05])</span>
-<span class="c1">#     rnd_grid_offsets = (1,1,10,0) # (100% of half-distance between CCTs, 100% of half-distance between duvs, 10 random points per original grid, random seed)</span>
     
-<span class="c1">#     error_minmaxCCT = [1500,50000]</span>
-<span class="c1">#     error_minmaxDuv = [-0.05,0.05]</span>
+    <span class="c1">#---------------------------------</span>
+    <span class="c1"># Make a plot of the errors:    </span>
+    <span class="n">fig</span><span class="p">,</span><span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">8</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cctsduvs_</span> <span class="o">-</span> <span class="n">cctsduvs_t</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ccts</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">d</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">*</span><span class="n">lut</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="mi">2</span><span class="p">]]),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="n">d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.1</span><span class="p">,</span><span class="n">d</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mf">1.1</span><span class="p">])</span>
     
-<span class="c1">#     xyz, cctsduvs_t, cctsduvs_t0 = get_cctduv_grid(ccts = ccts, duvs = duvs, rnd_grid_offsets = rnd_grid_offsets)</span>
-<span class="c1">#     cnd = (cctsduvs_t[:,0]&gt;=error_minmaxCCT[0]) &amp; (cctsduvs_t[:,0]&lt;=error_minmaxCCT[1]) &amp; (cctsduvs_t[:,1]&gt;=error_minmaxDuv[0]) &amp; (cctsduvs_t[:,1]&lt;=error_minmaxDuv[1])</span>
-<span class="c1">#     xyz = xyz[cnd,:]</span>
-<span class="c1">#     cctsduvs_t = cctsduvs_t[cnd,:]</span>
-<span class="c1">#     cctsduvs_t0 = cctsduvs_t0[cnd,:]</span>
-    
-<span class="c1">#     cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = &#39;[cct,duv]&#39;, wl = _WL3, </span>
-<span class="c1">#                           mode=&#39;robertson1968&#39;, force_tolerance=False, </span>
-<span class="c1">#                           tol_method=&#39;nr&#39;,lut=None,split_calculation_at_N=None)</span>
-<span class="c1">#     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!</span>
 
-<span class="c1">#     print(&#39;max error&#39;, np.abs(cctsduvs_[:,0]-cctsduvs_t[:,0]).max())</span>
     
     
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2022, Kevin A.G. Smet.
-
-    </p>
+    <p>&#169; Copyright 2022, Kevin A.G. Smet.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
