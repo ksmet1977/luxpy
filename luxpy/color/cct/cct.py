@@ -1795,7 +1795,8 @@ def _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp'):
     with specified Tc. uvwbar (no wavelengths on row0, these are supplied seperately
     in wl, with wavelength spacing in dl) is the cmf set corresponding to the tristimulus values
     of the chosen chromaticity diagram or color space to do the CCT calculations in.
-    
+    See: Li et al. (2016). Accurate method for computing correlated color temperature. Optics Express, 24(13), 14066–14078.
+
     """
     # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
     T, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(T, uvwbar, wl, dl, out = out)
@@ -1873,14 +1874,15 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
     T = T0
     while True & (i <= max_iter):
            
-
-        T[T < _CCT_MIN] = _CCT_MIN # avoid infinities & convergence problems
+        T[T < _CCT_MIN] = _CCT_MIN # avoid infinities and convergence problems 
         
         # Get (u,v), (u',v'), (u",v"):
         _, uBB, vBB, upBB, vpBB, uppBB, vppBB = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
 
         # Calculate DT (ratio of f' and abs(f"):
         du, dv = (u - uBB), (v - vBB) # pre-calculate for speed
+
+        # print('\n',((vpBB**2)-dv*vppBB).shape)
         DT = -(du*upBB + dv*vpBB) / np.abs((upBB**2)-du*uppBB + (vpBB**2)-dv*vppBB)
 
         # DT[DT>T] = _CCT_MIN # avoid convergence problems
@@ -2193,12 +2195,12 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     idx_sources = np.arange(u.shape[0],dtype=np.int32)
     
     # get uBB, vBB, mBB from lut:
-    TBB, uBB, vBB, mBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols], lut[:,-1::lut_n_cols].copy()
-    # mBB[mBB>0] = -mBB[mBB>0]
+    TBB, uBB, vBB, mBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols], lut[:,-1::lut_n_cols]
     
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
     pn = (((v.T - vBB)**2 + (u.T - uBB)**2)).argmin(axis=0)
+    
     
     # Solve issue of zero-crossing of slope of planckian locus:
     # c = (np.sign(mBB[pn]) != np.sign(mBB[pn+1]))[:,0]  
@@ -2211,22 +2213,17 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = 'm0p')
     # uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, m0p = '0p')
     # vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, m0p = '0p')
-
     di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0p')
-    
-    # Solve issue near slope change of planckian locus -> 2 positive di & di_p1:
-    c = (di_0>0) & (di_p1>0) & (di_0 > di_p1)
-    di_0[c] = -di_0[c]
     
     # Estimate Tc (Robertson, 1968): 
     slope = (di_0/((di_0 - di_p1) + _CCT_AVOID_ZERO_DIV))
+    slope_m = slope.copy()
     Tx = ((((1/TBB_0) + slope * ((1/TBB_p1) - (1/TBB_0)))**(-1)))#".copy()
 
     if fast_duv:
         uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, i = idx_sources, m0p = '0p')
         vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, i = idx_sources, m0p = '0p')
-        ux = (uBB_0 + slope * (uBB_p1 - uBB_0))#.copy()
-        vx = (vBB_0 + slope * (vBB_p1 - vBB_0))#.copy()
+        ux, vx = (uBB_0 + slope * (uBB_p1 - uBB_0)), (vBB_0 + slope * (vBB_p1 - vBB_0))
         Duvx = _get_Duv_for_T_from_uvBB(u, v, ux, vx)
     return Tx, Duvx, out_of_lut, (TBB_m1, TBB_p1)
 
@@ -3863,7 +3860,7 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
 
         YuvBB = xyz_to_Yxy(UVW)
         u, v = YuvBB[:,1:2] + np.sign(mi) * duv*(1/((1+mi**2)**0.5)), YuvBB[:,2:3] + np.sign(mi)* duv*((mi)/(1+mi**2)**0.5)
-   
+        
     # plt.plot(YuvBB[...,1],YuvBB[...,2],'gx')
     # lx.plotSL(cspace='Yuv60',axh=plt.gca())
     # plt.plot(u,v,'b+')    
@@ -3933,6 +3930,9 @@ if __name__ == '__main__':
     # plt.figure()
     xyz = cct_to_xyz(ccts = ccts, duv = duvs, cieobs = cieobs, wl = _WL3, cct_offset = cct_offset)
     
+    # t = np.array([1323,346])
+    # xyz,cctsduvs_t,ccts = xyz[t,...], cctsduvs_t[t,:],ccts[t]
+    
     # fig,ax=plt.subplots(1,1)    
     # plt.xlim([0.15,0.3])
     # plt.ylim([0.25,0.4])
@@ -3952,6 +3952,7 @@ if __name__ == '__main__':
     # xyz = np.array([[100,100,100]])
     modes = ['robertson1968']#,'ohno2014','zhang2019','fibonacci']
     lut = ((1000.0,51000.0,0.5,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
+    lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,51000.0,0.5,'%'),)]
     for mode in modes:
         print('mode:',mode)
         cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
@@ -3964,21 +3965,20 @@ if __name__ == '__main__':
     
     # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
-    print('cct_to_xyz2')
-    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, cct_offset = cct_offset)
+    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)
     print('cctsduvs_t:\n',cctsduvs_t)
     print('cctsduvs:\n', cctsduvs)
     print('Dcctsduvs:\n', cctsduvs_ - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
-    print(cctsduvs_t[0,0],cctsduvs[0,0], cctsduvs[0,0]-cctsduvs_t[0,0])
     fig,ax = plt.subplots(1,2,figsize=(14,8))
     d = np.abs(cctsduvs_ - cctsduvs_t)
     for i in range(2):
         ax[i].plot(ccts[:,0], d[:,i],'o')
-        ax[i].plot(lut[:,0], np.zeros_like(lut),'r.')
-        ax[i].plot(lut[:,0], lut[:,-1],'g.-')
+        ax[i].plot(np.array([*lut[0][:2]]), np.array([0,0]),'r.')
+        #ax[i].plot(lut[:,0], lut[:,-1],'g.-')
         ax[i].set_xlim([1550,1700])
         ax[i].set_ylim([-d[:,i].max()*1.1,d[:,i].max()*1.1])
+    
 
     
     
