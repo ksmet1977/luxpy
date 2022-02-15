@@ -138,10 +138,10 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
 #==============================================================================
 _CCT_AVOID_ZERO_DIV = 1e-100
 _CCT_AVOID_INF = 1/_CCT_AVOID_ZERO_DIV
-_CCT_T_ROUNDING = 12
+# _CCT_T_ROUNDING = 12
 
 _CCT_MAX = 1e11 # don't set to higher value to avoid overflow and errors
-_CCT_MIN = 550
+_CCT_MIN = 450
 
 _CCT_CSPACE = 'Yuv60'
 _CCT_CSPACE_KWARGS = {'fwtf':{}, 'bwtf':{}}
@@ -398,7 +398,7 @@ def _get_tcs4(tc4, uin = None, out = 'Ts',
         Ts[Ts==0] = _CCT_AVOID_ZERO_DIV
         Ts = 1e6/Ts[::-1] # scale was in mireds 
     
-    Ts = np.round(Ts,_CCT_T_ROUNDING)
+    # Ts = np.round(Ts,_CCT_T_ROUNDING)
     
     if out == 'Ts': 
         return Ts
@@ -3888,95 +3888,81 @@ def cct_to_mired(data):
 #==============================================================================
 # test code:
 if __name__ == '__main__':
+           
     import luxpy as lx 
     import pandas as pd
-    import imp 
-    imp.reload(lx)
     
     cieobs = '1931_2'
     
-    BB = cri_ref([3000,5000,9000,15000,25000], ref_type = 'BB', wl3 = _WL3)
+    # cieobs = '2015_10'
+
+    # ------------------------------
+    # Setup some tests:
     
-    xyz = spd_to_xyz(BB, cieobs = cieobs)
+    # test 1:
+    # cct = 5000    
+    # duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T
+    # ccts = np.array([[cct]*duvs.shape[0]]).T
     
-    cct = 5000
+    # test 2:
     duv = -0.04
-    
-    # duvs = np.array([[0.05,0.025,0,-0.025,-0.05]]).T
-    duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T
-    ccts = np.array([[cct]*duvs.shape[0]]).T
-    # ccts = np.array([[cct, cct, cct+1000,cct+100,cct+10, cct+1, cct+0.1, cct+0.01]]).T
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
-    ccts = np.array([[1625.92608972303,1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
     # ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    # ccts = np.array([[2000,1626.2602, 1626.26015,1626.2601,1626.260,1500]]).T
+
+    # test 3:
+    ccts = np.array([[1625.92608972303,1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
     duvs = np.array([[duv]*ccts.shape[0]]).T
-    # ccts = np.array([[1625.9260897230306]]).T
-    # duvs = np.array([[0.0037117089512229]]).T
-    # ccts = np.array([[1626.26]]).T
-    # duvs = np.array([[-0.04]]).T
     duvs[0] = 0.0037117089512229
     
-    # ccts, duvs = np.array([[2801.15]]),np.array([[-0.0]])
-    # ccts, duvs = np.array([[19080.549294416654]]),np.array([[-0.040182320893775464]])
-    # ccts, duvs = np.array([[9245.398073947294]]),np.array([[0.024538833865705142]])
-    # ccts, duvs = np.array([[10396.099312731212]]),np.array([[0.0059537886422764115]])
     cctsduvs_t = np.hstack((ccts,duvs))
-    
+
+    # Test 4 (from disk):
     # cctsduvs_t = pd.read_csv('test_rob_error.csv',header=None,index_col=None).values
     # ccts, duvs = cctsduvs_t[:,:1], cctsduvs_t[:,1:]
     
+    
+    #--------------------------------
+    # Backward transform from CCT,Duv to xyz to generate test xyz for forward tf:
     cct_offset = None
-    # plt.figure()
-    xyz = cct_to_xyz(ccts = ccts, duv = duvs, cieobs = cieobs, wl = _WL3, cct_offset = cct_offset)
+    print('cct_to_xyz:')
+    xyz = cct_to_xyz(ccts = ccts, duv = duvs, cieobs = cieobs, cct_offset = cct_offset)
     
-    # t = np.array([1323,346])
-    # xyz,cctsduvs_t,ccts = xyz[t,...], cctsduvs_t[t,:],ccts[t]
     
-    # fig,ax=plt.subplots(1,1)    
-    # plt.xlim([0.15,0.3])
-    # plt.ylim([0.25,0.4])
-    # lx.plotSL(cspace='Yuv60',cieobs=cieobs,axh=ax)
-    # BB = cri_ref([cct-1,cct-0.1,cct,cct+0.5,cct+1], ref_type = 'BB', wl3 = _WL3)
-    # xyzBB = spd_to_xyz(BB, cieobs = cieobs)
-    
-    Yuv = lx.xyz_to_Yuv60(xyz)
-    # YuvBB = lx.xyz_to_Yuv60(xyzBB)
-    # plt.plot(Yuv[...,1],Yuv[...,2],'rp')
-    # plt.plot(YuvBB[...,1],YuvBB[...,2],'g+-')
-    # plt.xlim([0.25056,0.25058])
-    # plt.ylim([0.34758,0.34760])
-
-    
-
-    # xyz = np.array([[100,100,100]])
-    modes = ['robertson1968']#,'ohno2014','zhang2019','fibonacci']
+    #--------------------------------
+    # Forward transform from xyz to CCT,Duv using Robertson 1968 or several other methods:
+    modes = ['robertson1968'] #,'ohno2014','zhang2019','fibonacci']
     lut = ((1000.0,51000.0,0.5,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
-    lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,51000.0,0.5,'%'),)]
+    # lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,51000.0,0.5,'%'),)]
     for mode in modes:
         print('mode:',mode)
         cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
-                              mode = mode, force_tolerance=False, 
-                              tol_method='nr',
-                              lut=lut,#((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
-                              split_calculation_at_N=None)
+                              mode = mode, force_tolerance = False, 
+                              tol_method = 'nr',
+                              lut = lut, #((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
+                              split_calculation_at_N = None)
     
-    
-    
-    # cctsduvs2 = xyz_to_cct_li2016(xyz, rtol=1e-6, cieobs = cieobs, out = '[cct,duv]',force_tolerance=True)
+    # Out of LUT conversions are coded with a negative CCT, so make positive again before calculating error:
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
-    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, wl = _WL3,cct_offset = cct_offset)
+    
+    #--------------------------------
+    # Close loop: Backward transform from CCT,Duv (obtained from forward tf) to xyz
+    print('cct_to_xyz2')
+    xyz_ = cct_to_xyz(cctsduvs_, cieobs = cieobs, cct_offset = cct_offset)
+    
+    #--------------------------------
+    # Calculate CCT,Duv and XYZ errors:
     print('cctsduvs_t:\n',cctsduvs_t)
     print('cctsduvs:\n', cctsduvs)
     print('Dcctsduvs:\n', cctsduvs_ - cctsduvs_t)
     print('Dxyz:\n', xyz - xyz_)
+    
+    #---------------------------------
+    # Make a plot of the errors:    
     fig,ax = plt.subplots(1,2,figsize=(14,8))
     d = np.abs(cctsduvs_ - cctsduvs_t)
     for i in range(2):
         ax[i].plot(ccts[:,0], d[:,i],'o')
         ax[i].plot(np.array([*lut[0][:2]]), np.array([0,0]),'r.')
-        #ax[i].plot(lut[:,0], lut[:,-1],'g.-')
-        ax[i].set_xlim([1550,1700])
         ax[i].set_ylim([-d[:,i].max()*1.1,d[:,i].max()*1.1])
     
 
