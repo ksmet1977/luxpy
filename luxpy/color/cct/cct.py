@@ -3434,6 +3434,12 @@ def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
         1. Out-of-lut CCTs (or close to) are encoded as negative CCTs (with as absolute value
         the value of the closest CCT from the lut.)
     """
+    
+    if 'luts' not in _CCT_LUT['fibonacci'].keys():
+        print('\nInitializing (generate or download) Fibonacci LUTs on first use.')
+        init_fibonacci() # initialize LUTs for fibonacci
+        print('\n')
+    
     return _xyz_to_cct(xyzw, mode = 'fibonacci', cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
                        cspace = cspace, cspace_kwargs = cspace_kwargs,
                        atol = atol, rtol = rtol, force_tolerance = force_tolerance,
