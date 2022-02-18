@@ -3447,8 +3447,11 @@ def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
 
 
 # pre-generate / load from disk / load from github some LUTs for fibonacci based search:
-_initialize_lut(mode = 'fibonacci', lut_types = _unique_types([_CCT_LUT['fibonacci']['lut_type_def']] + _CCT_SHARED_LUT_TYPES))
-
+# BUT: only when its pkl file exists or when _CCT_LUT_CAL is True, otherwise let user init(download the LUT manually)!!
+def init_fibonacci(force_calc = _CCT_LUT_CALC):
+    _initialize_lut(mode = 'fibonacci', force_calc = force_calc, lut_types = _unique_types([_CCT_LUT['fibonacci']['lut_type_def']] + _CCT_SHARED_LUT_TYPES))
+if os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format('fibonacci'))) | (_CCT_LUT_CALC):
+    init_fibonacci(force_calc = _CCT_LUT_CALC) 
 
     
 #------------------------------------------------------------------------------
@@ -3712,6 +3715,13 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
     """  
     if (mode != 'mcamy1992') & (mode != 'hernandez1999'):
         
+        # Very large LUT for fibonacci is not part of package, and is generated or downloaded on first use
+        if (mode == 'fibonacci'):
+            if 'luts' not in _CCT_LUT['fibonacci'].keys():
+                print('\nInitializing (generate or download) Fibonacci LUTs on first use.')
+                init_fibonacci() # initialize LUTs for fibonacci
+                print('\n')
+                
         return _xyz_to_cct(xyzw, mode, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
                            cspace = cspace, cspace_kwargs = cspace_kwargs,
                            atol = atol, rtol = rtol, force_tolerance = force_tolerance,
