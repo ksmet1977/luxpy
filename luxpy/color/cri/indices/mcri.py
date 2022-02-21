@@ -24,7 +24,7 @@ Reference
     <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
 
 """
-from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, xyz_to_ipt, xyz_to_cct
+from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, colortf, xyz_to_ipt, xyz_to_cct
 from luxpy.utils import np, np2d, asplit
 from ..utils.DE_scalers import psy_scale
 from ..utils.helpers import _get_hue_bin_data, _hue_bin_data_to_rg
@@ -51,8 +51,11 @@ _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']",
                 }
 
 
+__all__ = ['spd_to_mcri','_MCRI_DEFAULTS']
+
 ###############################################################################
-def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
+def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None,
+                mcri_defaults = None):
     """
     Calculates the MCRI or Memory Color Rendition Index, Rm
     
@@ -82,6 +85,11 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
             | None, optional
             | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. 
             | None: default to no interpolation   
+        :mcri_defaults:
+            | None, optional
+            | Dictionary with structure of _MCRI_DEFAULTS containing everything
+            | needed to calculate MCRI.
+            | If None: _MCRI_DEFAULTS is used.
     
     Returns:
         :returns: 
@@ -101,12 +109,13 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
     
     
     # unpack metric default values:
-    avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [_MCRI_DEFAULTS[x] for x in sorted(_MCRI_DEFAULTS.keys())] 
+    if mcri_defaults is None: mcri_defaults = _MCRI_DEFAULTS
+    avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [mcri_defaults[x] for x in sorted(mcri_defaults.keys())] 
     similarity_ai = cri_specific_pars['similarity_ai']
-    Mxyz2lms = cspace['Mxyz2lms'] 
+    Mxyz2lms = cspace.get('Mxyz2lms',None)
     scale_fcn = scale['fcn']
     scale_factor = scale['cfactor']
-    sampleset = eval(sampleset)
+    if isinstance(sampleset,str): sampleset = eval(sampleset)
     
     # A. calculate xyz:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
@@ -138,7 +147,15 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None):
         xyztw = cat.apply(xyztw, cattype = cattype_cat, catmode = catmode_cat, xyzw1 = xyztw,xyzw0 = None, xyzw2 = xyzw_cat, D = D, mcat = [mcat_cat], Dtype = Dtype_cat)
      
     # C. convert xyz to ipt and split:
-    ipt = xyz_to_ipt(xyzti, cieobs = cieobs['xyz'], M = Mxyz2lms) #input matrix as published in Smet et al. 2012, Energy and Buildings
+    if cspace['type'] == 'ipt': 
+        ipt = xyz_to_ipt(xyzti, cieobs = cieobs['xyz'], M = Mxyz2lms) #input matrix as published in Smet et al. 2012, Energy and Buildings
+    else:
+        cspace.pop('type') # get rid of type key
+        if 'xyzw' in cspace:
+            if cspace['xyzw'] is None:
+                cspace['xyzw'] = xyztw
+        ipt = colortf(xyzti, fwtf = cspace)
+        
     I,P,T = asplit(ipt)  
 
     # D. calculate specific (hue dependent) similarity indicators, Si:
