@@ -22,7 +22,7 @@ Module for Circadian Light (CLa) and Stimulus (CS) calculations (LRC)
 :_LRC_CLA_CS_CONST: dict with model parameters and spectral data.
 
 :spd_to_CS_CLa_lrc(): Calculate Circadian Stimulus (CS) 
-                        and Circadian Light (CLA: Rea et al 2012, CLA2.0: Rea et al 2021.
+                        and Circadian Light (CLA: Rea et al 2012, CLA2.0: Rea et al 2021, 2022.
                                              
 :CLa_to_CS(): Convert Circadian Light to Circadian Stimulus.
 
@@ -63,9 +63,16 @@ References
         Frontiers in Neuroscience, 15, 44. 
         <https://doi.org/10.3389/fnins.2021.615322>`_
         
-    6. `LRC Online Circadian stimulus calculator  (CLa2.0, 2021)
+    6. `Rea, M. S., Nagare, R., & Figueiro, M. G. (2022). 
+        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. 
+        Frontiers in Neuroscience, 16. 
+        <https://www.frontiersin.org/article/10.3389/fnins.2022.849800>`_
+        
+    7. `LRC Online Circadian stimulus calculator  (CLa2.0, 2021)
         <https://docs.light-health.org/cscalc>`_
 
+    8. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)
+        <https://github.com/Light-and-Health-Research-Center/cscalc>`_
 Note:
 ----
     1. The 2005 CLA formulation did not include a physiologically based 
@@ -157,8 +164,8 @@ def fCLa2d0(wl, Elv, integral, Norm = None, k = None, a_b_y = None, a_rod = None
             Vphotl = None, Vscotl = None, Vl_mpl = None, Scl_mpl = None, Mcl = None, WL = None,\
             Scl = None, ybarl = None, g = None):
     """
-    Local helper function that calculate CLa2.0 from El based on Eq. 3 
-    in Rea et al (2021).
+    Local helper function that calculate CLa2.0 from El based on the correction of Eq. 3 
+    in Rea et al (2021, 2022).
     
     Args:
         The various model parameters as described in the paper and contained 
@@ -175,12 +182,23 @@ def fCLa2d0(wl, Elv, integral, Norm = None, k = None, a_b_y = None, a_rod = None
         
         2. `LRC Online Circadian Stimulus calculator (CLa2.0, 2021)
         <https://docs.light-health.org/cscalc>`_
-
         
+        3. `Rea, M. S., Nagare, R., & Figueiro, M. G. (2022). 
+        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. 
+        Frontiers in Neuroscience, 16. 
+        <https://www.frontiersin.org/article/10.3389/fnins.2022.849800>`_
+        
+        4. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)
+        <https://github.com/Light-and-Health-Research-Center/cscalc>`_
+
+    Note:
+        1. The equations and parameter values used are those in the 
+        github repository and corrigendum.
     """
     dl = getwld(wl) 
     
-    # Calculate piecewise function in Eq. 3 in Rea et al. 2021:
+    # Calculate piecewise function in Eq. 3 in Rea et al. 2021 
+    # -> use corrected in corrigendum from 2022:
     
     # calculate value of condition function (b-y):
     cond_number = integral(Elv*Scl_mpl*dl) - k*integral(Elv*Vl_mpl*dl)
@@ -301,7 +319,7 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
             | CLa version to calculate 
             | Options: 
             | - 'CLa1.0': Rea et al. 2012
-            | - 'CLa2.0': Rea et al. 2021
+            | - 'CLa2.0': Rea et al. 2021, 2022
         :E: 
             | None, float or ndarray, optional
             | Illuminance of light sources.
@@ -373,7 +391,7 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
         to estimate the equivalent photopic illuminance from CIE Illuminant D65
         (an approximation of daylight with a CCT of 6500 K).
         
-        2. Nov. 6, 2012: To get a value of CLa2.0 = 813, Eq. 3 from the paper 
+        2. Nov. 6, 2021: To get a value of CLa2.0 = 813, Eq. 3 from the paper 
         must be adjusted to also divide by the transmision of the 
         macula ('mp' in paper) the S-cone and Vlambda functions prior to 
         calculating the integrals in the denominators of the first factor after
@@ -382,6 +400,15 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
         Verification of the code on github shows indeed that these denominators
         are calculated by using the macular transmission divided S-cone and 
         Vlambda functions. Is this an error in the code or in the paper?
+        
+        3. Feb. 22, 2022: A corrigendum has been released for Eq. 3 in the original
+        paper, where the normalization is indeed done.
+        
+        4. Feb. 22, 2022: While the rodsat value in the corrigendum is defined as 6.50 W/m²,
+        this calculator uses the value as used in the online calculator: 6.5215 W/m².
+        (see `code base on github: <https://github.com/Light-and-Health-Research-Center/cscalc>`_)
+        
+        
         
     References:
         
@@ -407,9 +434,16 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
         Frontiers in Neuroscience, 15, 44. 
         <https://doi.org/10.3389/fnins.2021.615322>`_
         
-        6. `LRC Online Circadian stimulus calculator (CLa2.0, 2021)
+        6. `Rea, M. S., Nagare, R., & Figueiro, M. G. (2022). 
+        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. 
+        Frontiers in Neuroscience, 16. 
+        <https://www.frontiersin.org/article/10.3389/fnins.2022.849800>`_
+        
+        7. `LRC Online Circadian stimulus calculator (CLa2.0, 2021)
         <https://docs.light-health.org/cscalc>`_
-
+        
+        8. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)
+        <https://github.com/Light-and-Health-Research-Center/cscalc>`_
         
     """
     # Create copy of dict with model parameters and spectral data:
@@ -429,7 +463,7 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
     Elv = El[1:].copy()
       
     # define integral function:
-    integral = lambda x: integrate.trapz(x, x = wl, axis = -1) 
+    # integral = lambda x: integrate.trapz(x, x = wl, axis = -1) 
     integral = lambda x: np.sum(x,  axis = -1) 
     
     # Rescale El to E (if not None):
