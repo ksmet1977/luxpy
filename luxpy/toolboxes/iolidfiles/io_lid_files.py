@@ -61,7 +61,7 @@ def _read_file(string_data):
     if isinstance(string_data,io.StringIO):
         content = string_data.read()
         name = 'StringIO'
-    elif os.path.isfile(string_data) & (string_data[-4:] in ('.ies', '.ldt')):
+    elif isinstance(string_data, str) & (string_data[-4:] in ('.ies', '.ldt')):
         name = string_data[:-4]
 
         # file = open(filename, 'rt', encoding='cp1252')
@@ -132,6 +132,7 @@ def read_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0'
         3. 'map' contains a dicionary with keys 'thetas', 'phis', 'values'. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]   
         4. LDT map completion only supported for Isymm == 4 (since 31/10/2018), and Isymm == 1 (since, 02/10/2021), Map will be filled with original 'theta', 'phi' and normalized 'candela_2d' values !
         5. LIDtype is checked by looking for the presence of 'TILT=' in datasource content (if True->'IES' else 'LDT')
+        6. IES files with TILT=INCLUDE or TILT=<filename> are not supported!
     """
     common_keys = ['datasource', 'version', 'intensity', 'theta', 'phi', \
                    'values', 'map', 'Iv0', 'candela_values', 'candela_2d']
@@ -193,6 +194,9 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
             | 'lamp_h_type', 'candela_values', 'candela_2d', 'v_same', 'h_same',
             | 'intensity', 'theta', 'values', 'phi', 'map','Iv0']
             | )
+            
+    Note:
+        1. Files with TILT=INCLUDE or TILT=<filename> are not supported!
     """
     version_table = {
         'IESNA:LM-63-1986': 1986,
@@ -221,7 +225,7 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
 
     keywords = dict()
 
-    while content and not content.startswith('TILT='):
+    while content and not content.startswith('TILT=NONE'):
         s, content = content.split('\n', 1)
 
         if s.startswith('['):
@@ -232,8 +236,12 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
     s, content = content.split('\n', 1)
 
     if not s.startswith('TILT'):
-        displaymsg('ERROR' "TILT keyword not found, check your IES file", verbosity = verbosity)
+        displaymsg('ERROR', "TILT keyword not found, check your IES file", verbosity = verbosity)
         return None
+    elif s.startswith('TILT='):
+        if not s.startswith('TILT=NONE'):
+            displaymsg('ERROR', "TILT=INCLUDE or TILT=<filename> are not supported", verbosity = verbosity)
+            return None
 
     # fight against ill-formed files
     file_data = content.replace(',', ' ').split()
@@ -436,9 +444,13 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         IES['Isym'] = 3
         
     elif (IES['lamp_h_type'] == 'TYPE360') & (complete == True):
-        candela_2d = matlib.repmat(candela_2d,361,1)
-        phis = np.arange(phis, phis + 360 + 1)
-        phis[phis>360] = phis[phis>360] - 360
+        if phis.shape[0]>1:
+            phis[phis<0] = phis[phis<0] + 360
+            phis[phis>360] = phis[phis>360] - 360
+        else:
+            candela_2d = matlib.repmat(candela_2d,361,1)
+            phis = np.arange(phis, phis + 360 + 1)
+            phis[phis>360] = phis[phis>360] - 360
         
         # complete thetas:
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
