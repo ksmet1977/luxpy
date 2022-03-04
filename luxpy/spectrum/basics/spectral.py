@@ -97,8 +97,8 @@ __all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_I
 _WL3 = [360.0,830.0,1.0]
     
 #--------------------------------------------------------------------------------------------------
-# set coefficients for blackbody radiators:
-_BB = {'c1' : 3.74183e-16, 'c2' : 1.4388*0.01,'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.626070040e-34, 'k' : 1.38064852e-23} # blackbody c1,c2 & n standard values
+# set coefficients for blackbody radiators (c2 rounded to 1.4388e-2 as defiend for ITS-90 International Temperature Scale):
+_BB = {'c1' : 3.74177185e-16, 'c2' : np.round(1.4387768775e-2,6),'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.62607015e-34, 'k' : 1.380649e-23} # blackbody c1,c2 & n standard values (h,k,c from NIST, CODATA2018)
 
 
 #--------------------------------------------------------------------------------------------------
@@ -128,8 +128,8 @@ def getwlr(wl3 = None):
     if wl3 is None: wl3 = _WL3
     
     # Wavelength definition:
-    wl = wl3 if (len(wl3) != 3) else np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))) # define wavelengths from [start = l0, stop = ln, spacing = dl]
-    
+    # wl = wl3 if (len(wl3) != 3) else np.linspace(wl3[0],wl3[1],int(np.floor((wl3[1]-wl3[0]+wl3[2])/wl3[2]))) # define wavelengths from [start = l0, stop = ln, spacing = dl]
+    wl = wl3 if (len(wl3) != 3) else np.arange(wl3[0], wl3[1] + wl3[2], wl3[2]) # define wavelengths from [start = l0, stop = ln, spacing = dl]
     return wl
 
 #------------------------------------------------------------------------------
@@ -147,8 +147,10 @@ def getwld(wl):
             | - ndarray (.shape = (n,)): for unequal wavelength spacings
     """
     d = np.diff(wl)
-    dl = (np.hstack((d[0],d[0:-1]/2.0,d[-1]))+np.hstack((0.0,d[1:]/2.0,0.0)))
-    if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl = dl[0]
+    # dl = (np.hstack((d[0],d[0:-1]/2.0,d[-1])) + np.hstack((0.0,d[1:]/2.0,0.0)))
+    dl = np.hstack((d[0],(d[0:-1] + d[1:])/2.0,d[-1]))
+    # if np.array_equal(dl,dl.mean()*np.ones(dl.shape)): dl = dl[0]
+    if (dl == dl.mean()).all(): dl = dl[0]
     return dl
 
 

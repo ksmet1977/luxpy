@@ -101,6 +101,8 @@ Module with useful basic math functions
  
  :stress_F_test(): Perform F-test on significance of difference between STRESS A and STRESS B.
  
+ :mean_distance_weighted(): Recursively calculates distance weighted mean.
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -117,7 +119,7 @@ __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
 __all__ += ['in_hull','interp1_sprague5','interp1', 'ndinterp1','ndinterp1_scipy']
-__all__ += ['box_m','pitman_morgan', 'stress','stress_F_test']
+__all__ += ['box_m','pitman_morgan', 'stress','stress_F_test','mean_distance_weighted']
 
 
 #------------------------------------------------------------------------------
@@ -1468,3 +1470,59 @@ def stress_F_test(stressA, stressB, N, alpha = 0.05):
         i+=1
     Fstats = {'p': ps, 'F': Fvs, 'Fc': Fcs, 'H': H}
     return Fstats
+
+def mean_distance_weighted(x, axis = 0, keepdims = False, center_x = False, rtol = 1e-3, max_iter = 100, cnt = 0,mu = None, mu0 = 0):
+    """
+    Recursively calculate distance weighted mean.
+    
+    Args: 
+        :x:
+            | ndarray with data
+        :axis:
+            | dimension along which to take mean
+        :keepdims:
+            | False, optional
+            | If True: keep dimension of original ndarray
+        :center_x:
+            | True, optional
+            | Center data first.
+        :rtol:
+            | 1e-3, optional
+            | Relative tolerance on recursive mean values. If two sequential
+            | mean values differ less than this amount, the recursion stops.
+        :max_iter:
+            | 100, optional
+            | Maximum amount of recursions. If this number is reached the 
+            | recursion stops, even when rtol is not yet achieved. (to avoid
+            | getting stuck in an infinite loop when the recursion doesn't converge)
+        :cnt,mu,mu0:
+            | Needed for passing values across recursions to be able to stop them.
+            | DO NOT CHANGE.
+            
+    Returns:
+        :mu_dw:
+            | distance weighted mean of the array
+            
+    """
+    cnt += 1 
+    if mu is None: 
+        if center_x: 
+            mu0 = np.mean(x, axis = axis, keepdims = True)
+            x = x - mu0
+        mu = np.mean(x, axis = axis, keepdims = True)
+        
+    w = (((x - mu)**2).sum(axis=-1,keepdims=True)**0.5)
+    # w = (((x - mu)**2))**0.5
+    w[w==0] = 1e-100
+    w = 1 / w
+    w = w / np.sum(w, axis = axis, keepdims = True)
+    mu_prev = mu
+    mu = np.sum(w*x,axis = axis, keepdims = True)
+    if ((np.abs((mu-mu_prev)/(mu + 1e-100)) > rtol).any()) & (cnt < max_iter):
+        mu = mean_distance_weighted(x, axis = axis, keepdims = keepdims,mu = mu, mu0 = mu0, max_iter = max_iter, cnt = cnt)     
+        return mu
+    else:
+        if keepdims:
+            return mu0 + mu
+        else:
+            return np.squeeze(mu0 + mu, axis = axis)

@@ -60,6 +60,7 @@ __all__ = ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi',
            'optimize_scale_factor','spd_to_cri',
            '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
 
+_CCT_MODE = 'ohno2014'
 #------------------------------------------------------------------------------
 def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100):
     """ Helper function to return dict with required keys when nhbins = None in call to _get_hue_bin_data"""
@@ -682,7 +683,8 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     xyztw_cct = spd_to_xyz(St, cieobs = cieobs['cct'], rfl = None, out = 1)
 
     # A.b. get cct:
-    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = 'lut')
+    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = _CCT_MODE)
+    cct = np.abs(cct) # out-of-lut ccts are encoded as negative
     
     # A.c. get reference ill.:
     if isinstance(ref_type,np.ndarray):
@@ -692,7 +694,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
 
     # B. calculate xyz and xyzw of SPD and Sr (stack for speed):
     xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
-    xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
+    #xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     N = St.shape[0]-1
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
     xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]

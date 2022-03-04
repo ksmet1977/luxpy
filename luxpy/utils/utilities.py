@@ -41,7 +41,7 @@ Module with utility functions and parameters
 
  :vec_to_dict(): Convert dict to vec and vice versa.
 
-  getdata(): Get data from csv-file or convert between pandas dataframe
+ :getdata(): Get data from csv-file or convert between pandas dataframe
              and numpy 2d-array.
 
  :dictkv(): Easy input of of keys and values into dict 
@@ -72,6 +72,14 @@ Module with utility functions and parameters
  
  :get_function_kwargs(): Get dictionary of a function's keyword arguments and their default values. 
 
+ :profile_fcn(): Profile or time a function fcn.
+
+ :unique(): Get unique elements from array.
+ 
+ :save_pkl(): save object in pickle file
+ 
+ :load_pkl(): load object in pickle file
+ 
 ===============================================================================
 """
 #------------------------------------------------------------------------------
@@ -85,6 +93,7 @@ import time
 import cProfile
 import pstats
 import io
+import pickle
 from collections import OrderedDict as odict
 from mpl_toolkits.mplot3d import Axes3D
 __all__ = ['odict','Axes3D']
@@ -118,7 +127,8 @@ __all__ += ['np2d','np3d','np2dT','np3dT',
            'put_args_in_db','vec_to_dict',
            'getdata','dictkv','OD','meshblock','asplit','ajoin',
            'broadcast_shape','todim','write_to_excel','show_luxpy_tree',
-           'is_importable','get_function_kwargs','profile_fcn']
+           'is_importable','get_function_kwargs','profile_fcn','unique',
+           'save_pkl', 'load_pkl']
 
 ##############################################################################
 # Start function definitions
@@ -761,3 +771,59 @@ def profile_fcn(fcn, profile=True, sort_stats = 'tottime', output_file=None):
             with open(output_file, 'w+') as f:
                 f.write(s.getvalue())
         return ps
+    
+#------------------------------------------------------------------------------
+def unique(array, sort = True):
+    """ 
+    Get unique elements from array.
+    
+    Args:
+        :array:
+            | array to get unique elements from.
+        :sort:
+            | True, optional
+            | If True: get sorted unique elements.
+            
+    Returns:
+        :unique_array:
+            | ndarray with (sorted) unique elements.
+    """
+    if sort:
+        return np.unique(array) 
+    else:
+        uniq, index = np.unique(array, return_index=True)
+        return uniq[index.argsort()]
+
+#------------------------------------------------------------------------------
+def save_pkl(filename, obj): 
+    """ 
+    Save an object in a pickle file.
+    
+    Args:
+        :filename:
+            | str with filename of pickle file.
+        :obj:
+            | python object to save
+    
+    Returns:
+        :None:
+    """
+    with open(filename, 'wb') as handle:
+        pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        
+def load_pkl(filename):
+    """ 
+    Load the object in a pickle file.
+    
+    Args:
+        :filename:
+            | str with filename of pickle file.
+        
+    Returns:
+        :obj:
+            | loaded python object
+    """
+    obj = None
+    with open(filename, 'rb') as handle:
+        obj = pickle.load(handle)
+    return obj

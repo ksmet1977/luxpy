@@ -1,75 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>luxpy.color.cam.utils &mdash; LuxPy 1.7.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>luxpy.color.cam.utils &mdash; LuxPy 1.9.6 documentation</title>
+      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
         <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
         <script src="../../../../_static/jquery.js"></script>
         <script src="../../../../_static/underscore.js"></script>
         <script src="../../../../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
-
-    
+    <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
-          
-
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                1.7.0
+                1.9.6
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -77,19 +36,8 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -97,69 +45,30 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../../../../index.html">LuxPy</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="../../../index.html">Module code</a> &raquo;</li>
-        
       <li>luxpy.color.cam.utils</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>Source code for luxpy.color.cam.utils</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -326,24 +235,41 @@
     <span class="n">ei</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;ei&#39;</span><span class="p">]</span>
     
     
-    
     <span class="k">if</span> <span class="n">forward</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
         <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">360.0</span>
         <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="mf">360.0</span>
         <span class="k">if</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">T</span>
-    
+        
         <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
             <span class="n">h_j</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">h_hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">h_j</span><span class="p">,</span> <span class="n">repeats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">hi_h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">hi</span><span class="p">),</span><span class="n">repeats</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_hi</span> <span class="o">-</span> <span class="n">hi_h</span><span class="p">)</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100000.0</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
-            <span class="n">H_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">*</span><span class="p">(</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+            <span class="n">H_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">((</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="mf">1e-308</span> <span class="o">+</span> <span class="p">((</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">-</span><span class="mf">360.0</span><span class="o">*</span><span class="p">((</span><span class="n">h_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">==</span><span class="mf">360.0</span><span class="p">))</span><span class="o">/</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])))</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
+            
+            <span class="c1"># for (i,pi) in enumerate(p):</span>
+            <span class="c1">#     print(&#39;i,pi&#39;,i,pi)</span>
+            <span class="c1">#     print(&#39;Hi[pi]&#39;,Hi[pi])</span>
+            <span class="c1">#     print(&#39;h_j[i]-hi[pi]&#39;,h_j[i]-hi[pi])</span>
+            <span class="c1">#     print(&#39;with bool&#39;,((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360)))</span>
+            <span class="c1">#     print(&#39;ei[pi]&#39;,ei[pi])</span>
+            <span class="c1">#     print(&#39;1/ei[pi]&#39;,1/ei[pi])</span>
+            <span class="c1">#     print(&#39;(h_j[i]-hi[pi])/ei[pi]&#39;,(h_j[i]-hi[pi])/ei[pi])</span>
+            <span class="c1">#     print(&#39;ei[pi+1]&#39;,ei[pi+1])</span>
+            <span class="c1">#     print(&#39;1/ei[pi+1]&#39;,1/ei[pi+1])</span>
+            <span class="c1">#     print(&#39;(hi[pi+1] - h_j[i])&#39;,(hi[pi+1] - h_j[i]))</span>
+            <span class="c1">#     print(&#39;(hi[pi+1] - h_j[i])/ei[pi+1]&#39;,(hi[pi+1] - h_j[i])/ei[pi+1])</span>
+            <span class="c1">#     print(&#39;((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1])&#39;,((h_j[i]-hi[pi])/ei[pi] + (hi[pi+1] - h_j[i])/ei[pi+1]))</span>
+            <span class="c1">#     print(&#39;100*...&#39;,(100.0/(1.0 + ((hi[pi+1] - h_j[i])/ei[pi+1])/((h_j[i]-hi[pi])/ei[pi]))))</span>
+            <span class="c1">#     print(&#39;p1&#39;,1/(1e-308+(((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360.0))/ei[pi])))</span>
+            <span class="c1">#     print(Hi[pi] + (100.0/(1.0 + ((hi[pi+1] - h_j[i])/ei[pi+1])/(1e-308 + ((h_j[i]-hi[pi])-360.0*((h_j[i]-hi[pi])==360.0))/ei[pi]))))</span>
+            
             <span class="n">H</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">H_j</span>
     
         <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -355,6 +281,7 @@
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">H</span><span class="p">[</span><span class="n">H</span><span class="o">&gt;=</span><span class="mi">400</span><span class="p">]</span> <span class="o">=</span> <span class="n">H</span><span class="p">[</span><span class="n">H</span><span class="o">&gt;=</span><span class="mi">400</span><span class="p">]</span> <span class="o">-</span> <span class="mi">400</span>
         <span class="k">if</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">H</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">T</span>
         <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">H</span><span class="p">)</span>
@@ -363,7 +290,7 @@
             <span class="n">H_Hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">H_j</span><span class="p">,</span> <span class="n">repeats</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Hi</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">Hi_H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">Hi</span><span class="p">),</span><span class="n">repeats</span> <span class="o">=</span> <span class="n">H</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">H_Hi</span> <span class="o">-</span> <span class="n">Hi_H</span><span class="p">)</span>
-            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1000.0</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">d</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100000.0</span>
             <span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">p</span><span class="p">[</span><span class="n">p</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">Hi</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># make sure last unique hue data is not selected</span>
             <span class="n">h_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
@@ -378,7 +305,8 @@
             <span class="k">return</span> <span class="n">h</span></div>
         
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">280</span><span class="p">,</span><span class="mi">370</span><span class="p">,</span><span class="mi">390</span><span class="p">])</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="mi">110</span><span class="p">,</span><span class="mi">280</span><span class="p">,</span><span class="mi">370</span><span class="p">,</span> <span class="mf">380.13</span><span class="p">,</span> <span class="mf">380.14</span><span class="p">,</span> <span class="mf">381.15</span><span class="p">,</span> <span class="mi">390</span><span class="p">])</span>
+    <span class="c1"># h = np.array([380.14])</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;h&#39;</span><span class="p">,</span><span class="n">h</span><span class="p">)</span>
     <span class="n">H</span> <span class="o">=</span> <span class="n">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">,</span><span class="n">H</span><span class="p">)</span>
@@ -390,46 +318,30 @@
 </pre></div>
 
            </div>
-           
           </div>
           <footer>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2021, Kevin A.G. Smet.
-
-    </p>
+    <p>&#169; Copyright 2022, Kevin A.G. Smet.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

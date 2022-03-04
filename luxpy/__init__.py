@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.7.0
-    * Date: September 1, 2021
+    * Version: 1.9.6
+    * Date: February 15, 2022
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -35,7 +35,7 @@ run: luxpy.utils.show_luxpy_tree()
 
 Imported core packages/modules/functions:
 ----------------------------------------
- * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib
+ * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib, sys, pickle, requests
  * collections.OrderedDict.odict
  * mpl_toolkits.mplot3d.Axes3D
  
@@ -68,11 +68,11 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.7.0'; """Current version"""
+__VERSION__ = 'v1.9.6'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = '01-Sep-2021'; """release date"""
+__DATE__ = '15-Feb-2022'; """release date"""
 
-__COPYRIGHT__ = 'Copyright (C) 2017-2021 - Kevin A.G. Smet'; """copyright info"""
+__COPYRIGHT__ = 'Copyright (C) 2017-2022 - Kevin A.G. Smet'; """copyright info"""
 
 __AUTHOR__ = 'Kevin A.G. Smet'; """Package author"""
 __EMAIL__ = 'ksmet1977 at gmail.com'; """contact info"""
@@ -92,11 +92,11 @@ __all__ = ['__version__','__VERSION__','__AUTHOR__','__EMAIL__', '__URL__','__DA
 # core: should be in core
 # other: commonly used packages
 # special: more special packages that are imported (or tried to be) on use of module
-__REQUIRED__={'core':['os','warnings','pathlib','importlib',
+__REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'collections.OrderedDict.odict','mpl_toolkits.mplot3d.Axes3D',
                       'colorsys','itertools','copy','time','tkinter','ctypes',
                       'platform','subprocess',
-                      'cProfile', 'pstats', 'io'],
+                      'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
               'special':['seabreeze', 'seabreeze.spectrometers','pyswarms']}
 # (some imports for spectro toolbox are done there to avoid dependency 
@@ -226,6 +226,8 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES}; """ Dictionary with color space ax
 
 #   Extend color transform module:
 #__all__ = [x for x in dir() if x[:2]!='__'] # to give color.ctf.colortf access to globals()
+import sys,importlib
+importlib.reload(sys.modules['luxpy.color.ctf.colortf']) # force reload so that colortf has access to all colortransforms defined up to that point
 from luxpy.color.ctf.colortf import *
 __all__ += color.ctf.colortf.__all__
 
@@ -256,8 +258,8 @@ __all__ += ['SPD']
 # From /toolboxes:
 #----------------------------------------
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
-                     'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
-                     'spectral_mismatch_and_uncertainty']
+                      'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
+                      'spectral_mismatch_and_uncertainty']
 try:
     #   load ciephotbio sub_package:
     from luxpy.toolboxes import photbiochem 

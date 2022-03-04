@@ -4,15 +4,15 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.7.0
-* Date: Sep 1, 2021
+* Version: 1.9.6
+* Date: February 15, 2022
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
 
 ### Cite LuxPy:
 If you use the package, please cite the following **tutorial paper** published in **LEUKOS**:
-[**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
+[**Smet, K. A. G. (2020). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
 ### **NEW** luxpy basic web-app [under development]:
 For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:2017 Rf, alpha-opic irradiances, Equivalent Daylight Illuminance (EDI), Efficacy of Luminous Radiation (ELR), Daylight Efficacy Ratio (DER), IES/LDT Luminous Intensity Distribution plots/renders, ...) using a python web-application:
@@ -26,7 +26,7 @@ For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:
 * spectral data interpolation (conform CIE15-2018) and normalization
 * calculation of daylight phase, blackbody radiator and other reference illuminant spectra
 * calculation of tristimulus values
-* correlated color temperature and Duv
+* correlated color temperature and Duv (methods: robertson1968, ohno2014, li2016, zhang2019)
 * color space transformations
 * chromatic adaptation transforms 
 * color appearance models 
@@ -54,7 +54,7 @@ As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurem
 Luxpy can be easily installed from pypi `pip install luxpy` or anaconda `conda install -c ksmet1977 luxpy`.
 
 An overview of the *basic usage* is given in the [**luxpy basic usage.ipynb**](https://github.com/ksmet1977/luxpy/blob/master/luxpy_basic_usage.ipynb) jupyter notebook (**!! Don't right-click to save, see below for download instructions !!**),
- as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2019). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
+ as well as the tutorial paper published in LEUKOS: [**Smet, K. A. G. (2020). Tutorial: The LuxPy Python Toolbox for Lighting and Color Science. LEUKOS, 1–23. DOI: 10.1080/15502724.2018.1518717**](https://www.tandfonline.com/doi/full/10.1080/15502724.2018.1518717)
 
  * !!! **To download jupyter notebook:**
      1. Open the notebook in github by clicking it and then press download button at the top right; don't right-click the notebook link itself and use 'save as ...', as this apparently results in some *NotJSONError* when opening the notebook!

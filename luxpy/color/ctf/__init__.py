@@ -32,15 +32,17 @@ colortransforms.py
  :_CSPACE_AXES: dict with list[str,str,str] containing axis labels
                 of defined cspaces
 
- :chromaticity_and_color_space_transforms:
+Supported chromaticity / colorspace functions:
   | * xyz_to_Yxy(), Yxy_to_xyz(): (X,Y,Z) <-> (Y,x,y);
   | * xyz_to_Yuv(), Yuv_to_Yxy(): (X,Y,Z) <-> CIE 1976 (Y,u',v');
+  | * xyz_to_Yuv76(), Yuv76_to_Yxy(): (X,Y,Z) <-> CIE 1976 (Y,u',v');
+  | * xyz_to_Yuv60(), Yuv60_to_Yxy(): (X,Y,Z) <-> CIE 1960 (Y,u,v);
   | * xyz_to_xyz(), lms_to_xyz(): (X,Y,Z) <-> (X,Y,Z); for use with colortf()
   | * xyz_to_lms(), lms_to_xyz(): (X,Y,Z) <-> (L,M,S) cone fundamental responses
-  | * xyz_to_lab(), lab_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*,a*,b*)
-  | * xyz_to_luv(), luv_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*,u*,v*)
+  | * xyz_to_lab(), lab_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*a*b*)
+  | * xyz_to_luv(), luv_to_xyz(): (X,Y,Z) <-> CIE 1976 (L*u*v*)
   | * xyz_to_Vrb_mb(),Vrb_mb_to_xyz(): (X,Y,Z) <-> (V,r,b); [Macleod & Boyton, 1979]
-  | * xyz_to_ipt(), ipt_to_xyz(): (X,Y,Z) <-> (I,P,T); [Ebner et al, 1998]
+  | * xyz_to_ipt(), ipt_to_xyz(): (X,Y,Z) <-> (I,P,T); (Ebner et al, 1998)
   | * xyz_to_Ydlep(), Ydlep_to_xyz(): (X,Y,Z) <-> (Y,dl, ep); 
   |                   Y, dominant wavelength (dl) and excitation purity (ep)
   | * xyz_to_srgb(), srgb_to_xyz(): (X,Y,Z) <-> sRGB; (IEC:61966 sRGB)

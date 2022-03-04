@@ -134,8 +134,8 @@ LAB methods
 
 from luxpy import _CMF, _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES
 from luxpy.color.cam.colorappearancemodels import _CAM_DEFAULT_WHITE_POINT, _CAM_DEFAULT_CONDITIONS 
-from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms, 
-                   Yxy_to_xyz, Yuv_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
+from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_Yuv76, xyz_to_Yuv60, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms, 
+                   Yxy_to_xyz, Yuv_to_xyz, Yuv76_to_xyz, Yuv60_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
                    xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz, 
                    xyz_to_jabM_ciecam16, jabM_ciecam16_to_xyz, xyz_to_jabC_ciecam16, jabC_ciecam16_to_xyz, 
                    xyz_to_jabz, jabz_to_xyz, xyz_to_jabM_zcam, jabM_zcam_to_xyz, xyz_to_jabC_zcam, jabC_zcam_to_xyz, 
@@ -428,6 +428,36 @@ class XYZ(CDATA):
     
     
     
+    def to_Yuv76(self,**kwargs):
+        """ 
+        Convert XYZ tristimulus values CIE 1976 Yu'v' chromaticity values.
+
+            
+        Returns:
+            :Yuv: 
+                | luxpy.LAB with .value field that is a ndarray 
+                | with CIE 1976 Yu'v' chromaticity values.
+                | (Y value refers to luminance or luminance factor)
+           """
+        return LAB(value = xyz_to_Yuv76(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv76')
+    
+    
+    
+    def to_Yuv60(self,**kwargs):
+        """ 
+        Convert XYZ tristimulus values CIE 1960 Yuv chromaticity values.
+
+            
+        Returns:
+            :Yuv: 
+                | luxpy.LAB with .value field that is a ndarray 
+                | with CIE 1960 Yuv chromaticity values.
+                | (Y value refers to luminance or luminance factor)
+           """
+        return LAB(value = xyz_to_Yuv60(self.value), relative = self.relative, cieobs = self.cieobs, dtype = 'Yuv60')
+
+    
+    
     def to_wuv(self, xyzw = _COLORTF_DEFAULT_WHITE_POINT):
         """ 
         Convert XYZ tristimulus values CIE 1964 U*V*W* color space.
@@ -654,94 +684,94 @@ class XYZ(CDATA):
     #---color appearance space coordinates-----------------------------------------
     #------------------------------------------------------------------------------
     
-    def to_jabM_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+    def to_jabM_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, yellowbluepurplecorrect = None, mcat = 'cat02'):
         """
         See ?luxpy.xyz_to_jabM_ciecam02
         """
-        value = xyz_to_jabM_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        value = xyz_to_jabM_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
-    def to_jabC_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+    def to_jabC_ciecam02(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, yellowbluepurplecorrect = None, mcat = 'cat02'):
         """
         See ?luxpy.xyz_to_jabC_ciecam02
         """
-        value = xyz_to_jabC_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        value = xyz_to_jabC_ciecam02(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_ciecam02', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
     
-    def to_jab_cam02ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+    def to_jab_cam02ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, yellowbluepurplecorrect = None, mcat = 'cat02'):
         """
         See ?luxpy.xyz_to_jab_cam02ucs
         """
-        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02ucs', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02ucs', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
-    def to_jab_cam02lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+    def to_jab_cam02lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, yellowbluepurplecorrect = None, mcat = 'cat02'):
         """
         See ?luxpy.xyz_to_jab_cam02lcd
         """
-        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
-    def to_jab_cam02scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, yellowbluepurplecorrect = None, mcat = 'cat02'):
+    def to_jab_cam02scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, yellowbluepurplecorrect = None, mcat = 'cat02'):
         """
         See ?luxpy.xyz_to_jab_cam02scd
         """
-        value = xyz_to_jab_cam02scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02scd', xyzw = xyzw, Yw = Yw, conditions = conditions, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        value = xyz_to_jab_cam02scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam02scd', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
     
     
     #------------------------------------------------------------------------------
-    def to_jabM_ciecam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+    def to_jabM_ciecam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None,  mcat = 'cat16'):
         """
         See ?luxpy.xyz_to_jabM_ciecam16
         """
-        value = xyz_to_jabM_ciecam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_ciecam16', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jabM_ciecam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabM_ciecam16', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
 
 
 
-    def to_jabC_ciecam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+    def to_jabC_ciecam16(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, mcat = 'cat16'):
         """
         See ?luxpy.xyz_to_jabC_ciecam16
         """
-        value = xyz_to_jabC_ciecam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_ciecam16', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jabC_ciecam16(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_ciecam16', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
 
 
     
-    def to_jab_cam16ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, mcat = 'cat16'):
+    def to_jab_cam16ucs(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None, mcat = 'cat16'):
         """
         See ?luxpy.xyz_to_jab_cam02ucs
         """
-        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam162ucs', xyzw = xyzw, Yw = Yw, conditions = conditions,  mcat = mcat)
+        value = xyz_to_jab_cam02ucs(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam162ucs', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data,  mcat = mcat)
 
 
 
-    def to_jab_cam16lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+    def to_jab_cam16lcd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None,  mcat = 'cat16'):
         """
         See ?luxpy.xyz_to_jab_cam16lcd
         """
-        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jab_cam02lcd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16lcd', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
 
 
 
-    def to_jab_cam16scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
+    def to_jab_cam16scd(self, xyzw = _CAM_DEFAULT_WHITE_POINT, Yw = 100.0, conditions = _CAM_DEFAULT_CONDITIONS, naka_rushton_parameters = None, unique_hue_data = None,  mcat = 'cat16'):
         """
         See ?luxpy.xyz_to_jab_cam16scd
         """
-        value = xyz_to_jab_cam16scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions,  mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16scd', xyzw = xyzw, Yw = Yw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jab_cam16scd(self.value, xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data,  mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jab_cam16scd', xyzw = xyzw, Yw = Yw, conditions = conditions, naka_rushton_parameters = naka_rushton_parameters, unique_hue_data = unique_hue_data, mcat = mcat)
 
     #------------------------------------------------------------------------------
     def to_jabM_zcam(self, xyzw = None,  conditions = _CAM_DEFAULT_CONDITIONS,  mcat = 'cat16'):
@@ -757,8 +787,8 @@ class XYZ(CDATA):
         """
         See ?luxpy.xyz_to_jabC_zcam
         """
-        value = xyz_to_jabC_zcam(self.value, xyzw = xyzw, cieobs = self.cieobs, conditions = conditions, mcat = mcat)
-        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_zcam', xyzw = xyzw, conditions = conditions, mcat = mcat)
+        value = xyz_to_jabC_zcam(self.value, xyzw = xyzw, cieobs = self.cieobs, conditions = conditions,  mcat = mcat)
+        return LAB(value = value, relative = self.relative, cieobs = self.cieobs, dtype = 'jabC_zcam', xyzw = xyzw, conditions = conditions,  mcat = mcat)
 
    
     #--------------------------------------------------------------------------
@@ -800,7 +830,9 @@ class LAB(CDATA):
   
     def __init__(self, value = None, relative = True, cieobs = _CIEOBS, dtype = 'lab', \
                  xyzw = None, M = None, scaling = None, \
-                 Lw = None, Yw = None, Yb = None, conditions = None, yellowbluepurplecorrect = None, mcat = None, ucstype = None,\
+                 Lw = None, Yw = None, Yb = None, conditions = None, 
+                 naka_rushton_parameters = None, unique_hue_data = None,
+                 yellowbluepurplecorrect = None, mcat = None, ucstype = None,\
                  fov = None, parameters = None):
         super().__init__(value = value, relative = relative, cieobs = cieobs, dtype = dtype)
         
@@ -817,6 +849,8 @@ class LAB(CDATA):
         self.cspace_par['Yw'] = Yw
         self.cspace_par['Yb'] = Yb
         self.cspace_par['conditions'] = conditions
+        self.cspace_par['naka_rushton_parameters'] = naka_rushton_parameters
+        self.cspace_par['unique_hue_data'] = unique_hue_data
         self.cspace_par['yellowbluepurplecorrect'] = yellowbluepurplecorrect
         self.cspace_par['mcat'] = mcat
         self.cspace_par['ucstype'] = ucstype

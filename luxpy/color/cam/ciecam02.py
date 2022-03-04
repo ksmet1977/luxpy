@@ -70,8 +70,8 @@ _AXES['jabC_ciecam02'] = ["J (ciecam02)", "aC (ciecam02)", "bC (ciecam02)"]
 
 # Main function:
 def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM', 
-        conditions = None, forward = True, 
-        yellowbluepurplecorrect = False, mcat = 'cat02'):
+        conditions = None, naka_rushton_parameters = None, unique_hue_data = None,
+        forward = True, yellowbluepurplecorrect = False, mcat = 'cat02'):
     """ 
     Run CIECAM02 color appearance model in forward or backward modes.
     
@@ -101,6 +101,12 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             |      - dict with keys c, Nc, F.
             | None results in:
             |   {'La':100, 'Yb':20, 'D':1, 'surround':'avg'}
+        :naka_rushton_parameters:
+            | None, optional
+            | If None: use _NAKA_RUSHTON_PARAMETERS
+        :unique_hue_data:
+            | None, optional
+            | If None: use _UNIQUE_HUE_DATA
         :forward:
             | True, optional
             | If True: run in CAM in forward mode, else: inverse mode.
@@ -159,7 +165,9 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     if isinstance(surround, str):
         surround = surround_parameters[conditions['surround']]
     F, FLL, Nc, c = [surround[x] for x in sorted(surround.keys())]
-           
+    if naka_rushton_parameters is None: naka_rushton_parameters = _NAKA_RUSHTON_PARAMETERS
+    if unique_hue_data is None: unique_hue_data = _UNIQUE_HUE_DATA
+    
     #--------------------------------------------
     # Define sensor space and cat matrices:  
     # Hunt-Pointer-Estevez sensors (cone fundamentals)
@@ -224,7 +232,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     
     #--------------------------------------------
     # apply Naka_rushton repsonse compression to white:
-    NK = lambda x, forward: naka_rushton(x, scaling = 400, n = 0.42, sig = 27.13**(1/0.42), noise = 0.1, forward = forward)
+    NK = lambda x, forward: naka_rushton(x, forward = forward, **naka_rushton_parameters)
     
     pw = np.where(rgbwp<0)
     
@@ -237,6 +245,10 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     #--------------------------------------------
     # Calculate achromatic signal of white:
     Aw =  (2.0*rgbwpa[...,0] + rgbwpa[...,1] + (1.0/20.0)*rgbwpa[...,2] - 0.305)*Nbb
+    
+    #--------------------------------------------
+    # calculate brightness, Qw of white:
+    Qw = (4.0/c)* (1.0) * (Aw + 4.0)*(FL**0.25)
     
     # massage shape of data for broadcasting:
     original_ndim = data.ndim
@@ -287,7 +299,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
         if 'H' in outin:    
-            H = hue_quadrature(h, unique_hue_data = _UNIQUE_HUE_DATA)
+            H = hue_quadrature(h, unique_hue_data = unique_hue_data)
         else:
             H = None
         
@@ -355,7 +367,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
         if 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = unique_hue_data, forward = False)
 
             
         #--------------------------------------------    
@@ -367,7 +379,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
             MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5   
         elif 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = _UNIQUE_HUE_DATA, forward = False)
+            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = unique_hue_data, forward = False)
             MCs = data[...,1] 
         elif 'h' in outin:
             h = data[...,2]
@@ -461,48 +473,72 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
 #------------------------------------------------------------------------------
 ciecam02 = run
 def xyz_to_jabM_ciecam02(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                         conditions = None, yellowbluepurplecorrect = False,
+                         conditions = None, naka_rushton_parameters = None, 
+                         unique_hue_data = None,
+                         yellowbluepurplecorrect = False,
                          mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 forward mode with J,aM,bM output.
     
     | For help on parameter details: ?luxpy.cam.ciecam02 
     """
-    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = True, outin = 'J,aM,bM', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = True, outin = 'J,aM,bM', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
    
 
 def jabM_ciecam02_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                         conditions = None, yellowbluepurplecorrect = False,
+                         conditions = None, naka_rushton_parameters = None,
+                         unique_hue_data = None,
+                         yellowbluepurplecorrect = False,
                          mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 inverse mode with J,aM,bM input.
     
     | For help on parameter details: ?luxpy.cam.ciecam02 
     """
-    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = False, outin = 'J,aM,bM', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters, 
+                    unique_hue_data = unique_hue_data,
+                    forward = False, outin = 'J,aM,bM', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
 def xyz_to_jabC_ciecam02(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                         conditions = None, yellowbluepurplecorrect = False,
+                         conditions = None, naka_rushton_parameters = None,
+                         unique_hue_data = None,
+                         yellowbluepurplecorrect = False,
                          mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 forward mode with J,aC,bC output.
     
     | For help on parameter details: ?luxpy.cam.ciecam02 
     """
-    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = True, outin = 'J,aC,bC', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = True, outin = 'J,aC,bC', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
  
 
 def jabC_ciecam02_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                         conditions = None, yellowbluepurplecorrect = False,
+                         conditions = None, naka_rushton_parameters = None, 
+                         unique_hue_data = None,
+                         yellowbluepurplecorrect = False,
                          mcat = 'cat02', **kwargs):
     """
     Wrapper function for ciecam02 inverse mode with J,aC,bC input.
     
     | For help on parameter details: ?luxpy.cam.ciecam02 
     """
-    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = False, outin = 'J,aC,bC', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return ciecam02(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = False, outin = 'J,aC,bC', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
     
   
 #==============================================================================  

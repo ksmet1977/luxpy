@@ -131,7 +131,7 @@ def _triangle_mixer(Yxy_target, Yxyi, triangle_strengths):
         for i in range(N):
             M[:,i] = np.nansum(np.nansum(M_final*(combos == i)[None,...],axis=1),axis=-1)#/n_in_gamut
     else:
-        M = M3
+        M = M3[:,0,:]
     M[M.sum(axis=-1)==0] = np.nan
     return M
 
@@ -364,7 +364,8 @@ class PrimConstructor():
         
        
 class ObjFcns():
-    def __init__(self,f = None, fp = [{}], fw = [1], ft = [0], ft_tol = [0],  decimals = [5]):
+    def __init__(self,f = None, fp = [{}], fw = [1], ft = [0], ft_tol = [0],
+                 f_requires_solution_info = [False], decimals = [5]):
         """
         Setup instance with objective functions, their input parameters, their respective weights and target values.
         
@@ -387,6 +388,16 @@ class ObjFcns():
                 | If abs(f_j(x)-ft_j) < ft_tol_j:
                 |    then objective value F_j (see notes below) 
                 |    will be set to zero.
+            :f_requires_solution_info:
+                | [False] or list, optional
+                | Set to True if the user-defined objective function requires
+                | more info on the solution. 
+                | If True the objective function should contain a keyword argument 'solution_info'.
+                | In solution_info dict the user will find the following keys:
+                |   - 'xs' : the current optimization values x for the spds being evaluated.
+                |   - 'primss' : the primary spds corresponding to the current optimization values x.
+                |   - 'Ms' : the channel fluxes corresponding to the current optimization values x.
+                |   - 'Yxys' : the Yxy chromaticity coordinates corresponding to the current optimization values x.
             :decimals:
                 | [5], optional
                 | Rounding decimals of objective function values.
@@ -402,6 +413,7 @@ class ObjFcns():
         self.ft = self._equalize_sizes(ft)
         self.ft_tol = self._equalize_sizes(ft_tol)
         self.decimals = self._equalize_sizes(decimals)
+        self.f_requires_solution_info = self._equalize_sizes(f_requires_solution_info)
         self._get_normalization_factors()
         
         # get number of objectives:
@@ -430,15 +442,29 @@ class ObjFcns():
             xs = x
         return xs
         
-    def _calculate_fj(self, spdi, j = 0):
+    def _calculate_fj(self, spdi, j = 0, solution_info = {}):
         """
         Calculate objective function j for input spd.
         """
         # Calculate objective function j:
-        if isinstance(self.f[j],tuple): # one function for each objective:
-            return self.f[j][0](spdi, **self.fp[j])
-        else: # one function for multiple objectives for increased speed:
-            return self.f[j](spdi, **self.fp[j])
+        if not self.f_requires_solution_info[j]: 
+            if isinstance(self.f[j],tuple): # one function for each objective:
+                return self.f[j][0](spdi, **self.fp[j])
+            else: # one function for multiple objectives for increased speed:
+                return self.f[j](spdi, **self.fp[j])
+        else:
+
+            idx = solution_info['notnan_spds'] # to index notnan_spds
+            # print(idx.shape,solution_info['xs'].shape,solution_info['Ms'].shape,solution_info['primss'].shape, solution_info['Yxys'].shape )
+            solution_info_indexed = {'xs' : solution_info['xs'][idx],
+                                     'Ms' : solution_info['Ms'][idx],
+                                     'primss' : solution_info['primss'][idx],
+                                     'Yxys' : solution_info['Yxys'][idx]
+                                     }
+            if isinstance(self.f[j],tuple): # one function for each objective:
+                return self.f[j][0](spdi, solution_info = solution_info_indexed, **self.fp[j])
+            else: # one function for multiple objectives for increased speed:
+                return self.f[j](spdi, solution_info = solution_info_indexed, **self.fp[j])
         
     def _get_normalization_factors(self):
         """
@@ -1074,7 +1100,7 @@ class SpectralOptimizer():
         x = np.atleast_2d(x)
 
         # setup parameters for use in loop(s):
-        maxF = 1e308
+        maxF = 1e00
         F = []
         eps = 1e-16 #avoid division by zero
 
@@ -1131,7 +1157,7 @@ class SpectralOptimizer():
                 for j in range(len(self.obj_fcn.f)):
                     
                     # Calculate objective function j:
-                    obj_vals_j = self.obj_fcn._calculate_fj(spds_tmp, j = j).T 
+                    obj_vals_j = self.obj_fcn._calculate_fj(spds_tmp, j = j, solution_info = {'xs' : x, 'primss' : primss, 'Ms': Ms, 'Yxys' : Yxy_ests, 'notnan_spds' : notnan_spds}).T 
                     
                     # Round objective values:
                     decimals = self.obj_fcn.decimals[j]
@@ -1435,8 +1461,9 @@ if __name__ == '__main__':
 
     run_example_class_3 = False # # class based example with user-defined  minimization method   
 
-    run_example_class_4 = True # # class based example with pre-defined primaries and demo minimization
+    run_example_class_4 = False # # class based example with pre-defined primaries and demo minimization
 
+    run_example_class_5 = True # # class based example with pre-defined primaries and demo minimization with obj_fcn using 'solution_info' to steer the optimization to solutions with the max number of channels 'on'
     
     run_example_fcn_1 = False # function based example: use pre-defined minimization methods (spd_optimize2())
 
@@ -1455,7 +1482,9 @@ if __name__ == '__main__':
     
     def spd_to_cct(spd):
         xyz = lx.spd_to_xyz(spd,cieobs=cieobs)
-        return xyz_to_cct(xyz,cieobs=cieobs,out='cct,duv')[0]
+        cct, duv = xyz_to_cct(xyz,cieobs=cieobs,out='cct,duv')[0]
+        cct = np.abs(cct) # out-of-lut ccts are encoded as negative
+        return cct, duv
     
     #--------------------------------------------------------------------------
     if run_example_class_1 == True:
@@ -1608,7 +1637,57 @@ if __name__ == '__main__':
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
         
-    
+        #--------------------------------------------------------------------------
+    if run_example_class_5 == True:
+        
+        # define user obj functions that asks for solutions info to use
+        # when determining function output. For example, to give very 'bad'
+        # Rf,Rg values (forcing the optimization away from this type of solutions)
+        # when the number of channels with a relative weight smaller than 10%
+        # is larger than 1 (in other words, try and force te search towards
+        # solutins that have all channels sufficiently 'on'):
+        def spd_to_cris_with_solution_info(spd, solution_info = {}):
+            Ms = solution_info['Ms']
+            Ms = Ms/Ms.max(axis=-1,keepdims=True) # normalize to max
+            good_solutions = (Ms >= 0.1).sum(axis=-1) == Ms.shape[-1]
+            out = np.ones((2,spd.shape[0] - 1))*(good_solutions.sum()/good_solutions.shape)*30 # higher number of on-channels is better (just setting zeros no matter how many bad channels makes it more difficult to optimize, same as setting a really really low value like -1000)
+            if good_solutions.sum()>0:
+                spds_good = np.vstack((spd[:1],spd[1:][good_solutions])) # only good solutions need calculating
+                Rf,Rg = lx.cri.spd_to_cri(spds_good, cri_type='ies-tm30',out='Rf,Rg')
+                RfRg = np.vstack((Rf, Rg))
+                out[:,good_solutions] = RfRg 
+            return out
+              
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims = PrimConstructor(pdefs={'peakwl':[450,470,500,520,560,580,630],
+                                        'fwhm_bnds':[5,300]}).get_spd()
+
+        so4 = SpectralOptimizer(target = np2d([50,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                              wlr = [360,830,1], cieobs = cieobs, 
+                              out = 'spds,primss,Ms,results',
+                              optimizer_type = '3mixer', triangle_strengths_bnds = None,
+                              prim_constructor = None, 
+                              prims = prims,
+                              obj_fcn = ObjFcns(f=[(spd_to_cris_with_solution_info,'Rf','Rg')], 
+                                                ft = [(90,110)],
+                                                f_requires_solution_info=[True]),
+                              minimizer = Minimizer(method='ps',
+                                                    opts={'iters':50}),
+                              verbosity = 2)
+        # start optimization:
+        spd,M = so4.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+        
+        # check grahically:
+        plt.figure()
+        plt.plot(spd[0],spd[1],'k', label = 'optimized spd (Rf={:1.0f},Rg={:1.0f})'.format(Rf[0],Rg[0]))
+        cmap = lx.get_cmap(M.shape[-1],'jet')
+        for i,Mi in enumerate(M[0]):
+            plt.plot(prims[0],Mi*prims[i+1], color = cmap[i], linestyle = '--', label = 'channel {:1.0f} (rel. flux = {:1.3f})'.format(i,Mi/M[0].max()))
+        plt.legend()
     #--------------------------------------------------------------------------
     if run_example_fcn_1 == True:
 

@@ -159,7 +159,7 @@ def xyz_to_jabz(xyz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
 
     # Transform L',M',S' to Iabz:
     if use_zcam_parameters:
-        epsilon = 3.70352262101900054e-11
+        epsilon = 3.7035226210190005e-11
         M = _M_LMSP_TO_IAB_ZCAM 
     else:
         epsilon = 0
@@ -258,7 +258,8 @@ def jabz_to_xyz(jabz, ztype = 'jabz', use_zcam_parameters = False, **kwargs):
 
 
 def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
-            conditions = None, forward = True, mcat = 'cat02', **kwargs):
+            conditions = None, forward = True, 
+            mcat = 'cat02', apply_cat_to_whitepoint = False, **kwargs):
     """ 
     Run the Jz,az,bz based color appearance model in forward or backward modes.
     
@@ -303,6 +304,10 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             |    - str: see see luxpy.cat._MCATS.keys() for options 
             |         (details on type, ?luxpy.cat)
             |    - ndarray: matrix with sensor primaries
+        :apply_cat_to_whitepoint: 
+            | False, optional
+            | Apply a CAT to the white point.
+            | However, ZCAM as published doesn't do this for some reason.
     Returns:
         :camout: 
             | ndarray with color appearance correlates (forward mode) 
@@ -348,8 +353,9 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     
     #--------------------------------------------
     # Get white point of D65 fro chromatic adaptation transform (CAT)
-    xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
-    
+    # xyzw_d65 = np.array([[9.5047e+01, 1.0000e+02, 1.08883e+02]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
+    xyzw_d65 = np.array([[95.0429, 100, 108.89]]) if cieobs == '1931_2'  else  spd_to_xyz(_CIE_D65, cieobs = cieobs)
+
    
     #--------------------------------------------
     # Get default white point:
@@ -376,17 +382,21 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     
     #--------------------------------------------
     # Apply CAT to white point:
-    xyzwc = cat.apply_vonkries1(xyzw, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
+    if apply_cat_to_whitepoint: 
+        xyzwc = cat.apply_vonkries1(xyzw, xyzw1 = xyzw, xyzw2 = xyzw_d65, 
                                 D = D, mcat = mcat, invmcat = invmcat,
                                 use_Yw = True)
+    else: 
+        xyzwc = xyzw # use original unadapted white point in further calculations
     
     
     #--------------------------------------------
     # Get Iz,az,bz coordinates:
     iabzw = xyz_to_jabz(xyzwc, ztype = 'iabz', use_zcam_parameters = True)
+   
     
     # Get brightness of white point:
-    Qw = 2700 * (iabzw[...,0]**(1.6*Fs/Fb**0.12)) * ((Fs)**2.2) * ((Fb)**0.5) * ((FL)**0.2)
+    Qw = 2700 * (iabzw[...,0]**(1.6*Fs/(Fb**0.12))) * (Fs**2.2) * (Fb**0.5) * (FL**0.2)
     
     #===================================================================
     # STIMULUS transformations:
@@ -404,6 +414,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
  
         # Get Iz,az,bz coordinates:
         iabz = xyz_to_jabz(xyzc, ztype = 'iabz', use_zcam_parameters = True)
+        Iz, az, bz = iabz[...,0],iabz[...,1], iabz[...,2]
 
         #--------------------------------------------
         # calculate hue h and eccentricity factor, et:
@@ -420,7 +431,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
             
         #-------------------------------------------- 
         # calculate brightness, Q:
-        Q = 2700 * (iabz[...,0]**(1.6*Fs/Fb**0.12)) * ((Fs)**2.2) * ((Fb)**0.5) * ((FL)**0.2)
+        Q = 2700 * (iabz[...,0]**(1.6*Fs/(Fb**0.12))) * (Fs**2.2) * (Fb**0.5) * (FL**0.2)
             
         #--------------------------------------------   
         # calculate lightness, J:
@@ -475,6 +486,22 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
         if ('aM' in outin):
              aM = M*np.cos(h*np.pi/180.0)
              bM = M*np.sin(h*np.pi/180.0)
+             
+        if ('aKz' in outin):
+             aKz = Kz*np.cos(h*np.pi/180.0)
+             bKz = Kz*np.sin(h*np.pi/180.0)
+             
+        if ('aVz' in outin):
+             aVz = Vz*np.cos(h*np.pi/180.0)
+             bVz = Vz*np.sin(h*np.pi/180.0)
+             
+        if ('aWz' in outin):
+             aWz = Wz*np.cos(h*np.pi/180.0)
+             bWz = Wz*np.sin(h*np.pi/180.0)
+             
+        if ('aSz' in outin):
+             aSz = Sz*np.cos(h*np.pi/180.0)
+             bSz = Sz*np.sin(h*np.pi/180.0)
              
          
         #-------------------------------------------- 
@@ -590,44 +617,44 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
 #------------------------------------------------------------------------------
 zcam = run
 def xyz_to_jabM_zcam(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
-                         conditions = None, mcat = 'cat02', **kwargs):
+                         conditions = None, mcat = 'cat02', apply_cat_to_whitepoint = False, **kwargs):
     """
     Wrapper function for zcam forward mode with J,aM,bM output.
     
     | For help on parameter details: ?luxpy.cam.zcam 
     """
-    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aM,bM', mcat = mcat)
+    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aM,bM', mcat = mcat, apply_cat_to_whitepoint = apply_cat_to_whitepoint)
    
 
 def jabM_zcam_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
-                         conditions = None, mcat = 'cat02', **kwargs):
+                         conditions = None, mcat = 'cat02', apply_cat_to_whitepoint = False, **kwargs):
     """
     Wrapper function for zcam inverse mode with J,aM,bM input.
     
     | For help on parameter details: ?luxpy.cam.zcam 
     """
-    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aM,bM', mcat = mcat)
+    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aM,bM', mcat = mcat, apply_cat_to_whitepoint = apply_cat_to_whitepoint)
 
 
 
 def xyz_to_jabC_zcam(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
-                         conditions = None, mcat = 'cat02', **kwargs):
+                         conditions = None, mcat = 'cat02', apply_cat_to_whitepoint = False, **kwargs):
     """
     Wrapper function for zcam forward mode with J,aC,bC output.
     
     | For help on parameter details: ?luxpy.cam.zcam 
     """
-    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aC,bC', mcat = mcat)
+    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = True, outin = 'J,aC,bC', mcat = mcat, apply_cat_to_whitepoint = apply_cat_to_whitepoint)
  
 
 def jabC_zcam_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, cieobs = _CIEOBS,
-                         conditions = None, mcat = 'cat02', **kwargs):
+                         conditions = None, mcat = 'cat02', apply_cat_to_whitepoint = False, **kwargs):
     """
     Wrapper function for zcam inverse mode with J,aC,bC input.
     
     | For help on parameter details: ?luxpy.cam.zcam 
     """
-    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aC,bC', mcat = mcat)
+    return zcam(data, xyzw = xyzw, cieobs = cieobs, conditions = conditions, forward = False, outin = 'J,aC,bC', mcat = mcat, apply_cat_to_whitepoint = apply_cat_to_whitepoint)
     
   
 #==============================================================================  
@@ -743,16 +770,32 @@ if __name__ == '__main__':
     # axs[1].set_xlabel('azC (zcam)')
     # axs[1].set_ylabel('bzC (zcam)')
     
+    
+if __name__ == '__main__':
+    
+    #--------------------------------------------------------------------------
+    # Code test using examples in Table of supplement to paper
+    #--------------------------------------------------------------------------
+    
+   
+    import luxpy as lx
+    from luxpy.utils import np, plt
+
+    np.set_printoptions(formatter={'float_kind':"{:.6f}".format})
+
     # Test code with examples in Table of supplement to paper:
     xyzt =np.array([[185,206,163]])
     xyzw =np.array([[256,264,202]])
-    out1 = run(xyzt,xyzw=xyzw,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
-    print('out1', out1)
+    out1 = run(xyzt,xyzw=xyzw,outin='h,H,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':None,'Dtype':'cat02','surround':'avg'}, mcat='cat02')
+    print('\nout1', out1)
+    expected_1 = np.array([[196.3524, 237.6401, 321.3464, 92.25, 10.53, 3.0216, 19.1314, 34.7022, 25.2994, 91.6837]]) # from supplementary material of Z-CAM paper
+    print('expected1: ', expected_1)
+    print('diff1: ', out1 - expected_1)
     
     xyzt =np.array([[89,96,120]])
     xyzw =np.array([[256,264,202]])
-    out2 = run(xyzt,xyzw=xyzw,outin='h,Q,J,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':1,'Dtype':None,'surround':'avg'},mcat='cat02')
-    print('out2', out2)
+    out2 = run(xyzt,xyzw=xyzw,outin='h,Q,J,aM,bM,M,C,Sz,Vz,Kz,Wz',conditions={'La':264,'Yb':100,'D':None,'Dtype':None,'surround':'avg'},mcat='cat02')
+    print('\nout2', out2)
     
     print('\n !!!! REMARK !!!!')
     print('Output does not match perfectly with example in supplementary material of paper Safdar et al (2021).')

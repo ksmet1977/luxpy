@@ -65,7 +65,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'LuxPy'
-copyright = '2021, Kevin A.G. Smet'
+copyright = '2022, Kevin A.G. Smet'
 author = 'Kevin A.G. Smet'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -73,7 +73,7 @@ author = 'Kevin A.G. Smet'
 # built documents.
 #
 # The short X.Y version.
-version = '1.7.0'
+version = '1.9.6'
 # The full version, including alpha/beta/rc tags.
 release = version
 

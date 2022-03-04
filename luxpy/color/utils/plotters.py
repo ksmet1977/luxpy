@@ -19,6 +19,8 @@
 Module with functions related to plotting of color data
 =======================================================
 
+ :get_cmap(): Get an ndarray of rgb values representing a linearly sampled matplotlib colormap
+
  :get_subplot_layout(): Calculate layout of multiple subplots.
      
  :plot_color_data(): Plot color data (local helper function)
@@ -65,11 +67,31 @@ Module with functions related to plotting of color data
 from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
 from luxpy.utils import np, plt,_EPS, asplit
 from matplotlib.patches import Polygon
+from matplotlib import cm
 
-__all__ = ['get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
+__all__ = ['get_cmap','get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
            'plotceruleanline','plotUH','plotcircle','plotellipse',
            'plot_chromaticity_diagram_colors','plot_spectrum_colors',
            'plot_rfl_color_patches','plot_rgb_color_patches','plot_cmfs']
+
+def get_cmap(N, cmap_name = 'jet'):
+    """
+    Get an ndarray of rgba values representing a linearly sampled matplotlib colormap.
+    
+    Args:
+        :N:
+            | Number of rgba values in returned cmap.
+        :cmap_name:
+            | 'jet', optional
+            | Matplotlib color map name to sample from.
+            
+    Returns:
+        :cmap:
+            | ndarray with rgba values.
+    """
+    cmap = cm.get_cmap(cmap_name, N)
+    cmap = cmap(range(N))
+    return cmap
 
 def get_subplot_layout(N, min_1xncols = 3):
     """
@@ -128,8 +150,6 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
     
     Returns:
         :returns: 
-            | None (:show: == True) 
-            |  or 
             | handle to current axes (:show: == False)
     """
     x = np.atleast_1d(x)
@@ -157,8 +177,7 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
         axh.legend(loc = legend_loc)
     if show == True:
         plt.show()
-    else:
-        return axh
+    return axh
 
 
 
@@ -171,7 +190,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     Args: 
         :ccts: 
             | None or list[float], optional
-            | None defaults to [4000 K to 1e19 K] in 100 steps on a log10 scale.
+            | None defaults to [4000 K to 1e11 K] in 100 steps on a log10 scale.
         :force_daylight_below4000K: 
             | False or True, optional
             | CIE daylight phases are not defined below 4000 K. 
@@ -202,13 +221,11 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     
     Returns:
         :returns: 
-            | None (:show: == True) 
-            |  or 
             | handle to current axes (:show: == False)
     """
     
     if ccts is None:
-        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**19.0),100)
+        ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**11.0),100)
         
     xD,yD = daylightlocus(ccts, cieobs = cieobs, force_daylight_below4000K = force_daylight_below4000K)
     Y = 100*np.ones(xD.shape)
@@ -217,9 +234,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     Y,x,y = asplit(DL)
     
     axh = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show=show, formatstr=formatstr, **kwargs)    
-    
-    if show == False:
-        return axh
+    return axh
     
 def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels = True, show = True, cspace_pars = {}, formatstr = 'k-',  **kwargs):  
     """
@@ -231,7 +246,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
             | None defaults to [1000 to 1e19 K].
             | Range: 
             |     [1000,1500,2000,2500,3000,3500,4000,5000,6000,8000,10000] 
-            |    + [15000 K to 1e19 K] in 100 steps on a log10 scale
+            |    + [15000 K to 1e11 K] in 100 steps on a log10 scale
         :cctlabels:
             | True or False, optional
             | Add cct text labels at various points along the blackbody locus.
@@ -261,13 +276,11 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     
     Returns:
         :returns: 
-            | None (:show: == True) 
-            |  or 
             | handle to current axes (:show: == False)
     """
     if ccts is None:
         ccts1 = np.array([1000.0,1500.0,2000.0,2500.0,3000.0,3500.0,4000.0,5000.0,6000.0,8000.0,10000.0])
-        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**19.0),100)
+        ccts2 = 10**np.linspace(np.log10(15000.0),np.log10(10.0**11.0),100)
         ccts = np.hstack((ccts1,ccts2))
     else:
         ccts1 = None
@@ -287,8 +300,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
                     axh.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
         axh.plot(x[-1],y[-1],'k+', color = '0.5')
         axh.text(x[-1]*1.05,y[-1]*0.95,'{:1.0e}K'.format(ccts[-1]), color = '0.5')    
-    if show == False:
-        return axh
+    return axh
     
 def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = False,\
            EEW = False, cctlabels = False, axh = None, show = True,\
@@ -353,8 +365,6 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     
     Returns:
         :returns: 
-            | None (:show: == True) 
-            |  or 
             | handle to current axes (:show: == False)
     """
     if isinstance(cieobs,str):
@@ -373,27 +383,25 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         show = False
 
     if diagram_colors == True:
-        axh_ = plot_chromaticity_diagram_colors(axh = axh, show = diagram_colors, cspace = cspace, cieobs = cieobs,\
+        axh = plot_chromaticity_diagram_colors(axh = axh, show = diagram_colors, cspace = cspace, cieobs = cieobs,\
                                                 cspace_pars = cspace_pars,\
                                                 diagram_samples = diagram_samples,\
                                                 diagram_opacity = diagram_opacity,\
                                                 diagram_lightness = diagram_lightness,\
                                                 label_fontname = None, label_fontsize = None)
-    else:
-        axh_ = axh
      
-    axh_ = plot_color_data(x,y,axh = axh_, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
+    axh = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
 
 
     if DL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for DL
             kwargs.pop('label')
-        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
+        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
 
     if BBL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for BB
             kwargs.pop('label')
-        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh_, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
+        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
     
     if D65 == True:
         YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
@@ -402,13 +410,9 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E'], cieobs = cieobs), tf = cspace, tfa0 = cspace_pars)
         axh.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
     
-    
-    
-    if showcopy == False:
-        return axh_
-    else:
+    if showcopy:
         plt.show()
-        
+    return axh    
         
 def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 'ko-', cspace_pars = {}):
     """

@@ -54,6 +54,7 @@ _DEFAULT_CONDITIONS = {'La': 100.0, 'Yb': 20.0, 'surround': 'avg','D': 1.0, 'Dty
 _DEFAULT_WHITE_POINT = np.array([[100.0,100.0,100.0]])
 
 def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, conditions = None, 
+        naka_rushton_parameters = None, unique_hue_data = None, 
         ucstype = 'ucs', forward = True,
         yellowbluepurplecorrect = False, mcat = 'cat02'):
     """ 
@@ -70,6 +71,12 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, conditions = None,
             | None results in:
             |   {'La':100, 'Yb':20, 'D':1, 'surround':'avg'}
             | For more info see luxpy.cam.ciecam02()?
+        :naka_rushton_parameters:
+            | None, optional
+            | If None: use _NAKA_RUSHTON_PARAMETERS
+        :unique_hue_data:
+            | None, optional
+            | If None: use _UNIQUE_HUE_DATA
         :ucstype:
             | 'ucs', optional
             | String with type of color difference appearance space
@@ -125,7 +132,9 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, conditions = None,
         
         # run ciecam02 to get JMh:
         data = ciecam02(data, xyzw, outin = 'J,M,h', conditions = conditions, 
-                        forward = True, mcat = mcat,
+                        forward = True, mcat = mcat, 
+                        naka_rushton_parameters = naka_rushton_parameters,
+                        unique_hue_data = unique_hue_data,
                         yellowbluepurplecorrect = yellowbluepurplecorrect) 
         
         camout = np.zeros_like(data) # for output
@@ -161,75 +170,114 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, conditions = None,
         
          # run ciecam02 in inverse mode to get xyz:
         return ciecam02(ajoin((J,aM,bM)), xyzw, outin = 'J,aM,bM', 
-                        conditions = conditions, forward = False, mcat = mcat,
+                        conditions = conditions, 
+                        naka_rushton_parameters = naka_rushton_parameters,
+                        unique_hue_data = unique_hue_data,
+                        forward = False, mcat = mcat,
                         yellowbluepurplecorrect = yellowbluepurplecorrect) 
 
 #------------------------------------------------------------------------------
 # wrapper functions for use with colortf():
 cam02ucs = run
 def xyz_to_jab_cam02ucs(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None,
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aM,bM output.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = True, ucstype = 'ucs', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = True, ucstype = 'ucs', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
 def jab_cam02ucs_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None,
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aM,bM input.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = False, ucstype = 'ucs', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = False, ucstype = 'ucs', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
 def xyz_to_jab_cam02lcd(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None, 
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and ucstype = lcd.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = True, ucstype = 'lcd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = True, ucstype = 'lcd', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
 def jab_cam02lcd_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None,
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and ucstype = lcd.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = False, ucstype = 'lcd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = False, ucstype = 'lcd', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
 
 
 
 def xyz_to_jab_cam02scd(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None,
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs forward mode with J,aMp,bMp output and ucstype = scd.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = True, ucstype = 'scd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions,
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = True, ucstype = 'scd', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
                 
 def jab_cam02scd_to_xyz(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None,
-                        conditions = None, yellowbluepurplecorrect = None, 
+                        conditions = None, naka_rushton_parameters = None,
+                        unique_hue_data = None,
+                        yellowbluepurplecorrect = None, 
                         mcat = 'cat02', **kwargs):
     """
     Wrapper function for cam02ucs inverse mode with J,aMp,bMp input and ucstype = scd.
     
     | For help on parameter details: ?luxpy.cam.cam02ucs 
     """
-    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, forward = False, ucstype = 'scd', yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
+    return cam02ucs(data, xyzw = xyzw, Yw = Yw, conditions = conditions, 
+                    naka_rushton_parameters = naka_rushton_parameters,
+                    unique_hue_data = unique_hue_data,
+                    forward = False, ucstype = 'scd', 
+                    yellowbluepurplecorrect = yellowbluepurplecorrect, mcat = mcat)
         
 
 if __name__ == '__main__':

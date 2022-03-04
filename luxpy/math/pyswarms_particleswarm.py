@@ -24,12 +24,15 @@ if success:
     import pyswarms as ps
     from pyswarms.utils.plotters import (plot_cost_history, plot_contour, plot_surface)
 
+import logging
+
 __all__ = ['particleswarm']
 
 def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None,None), 
                   iters = 100, n_particles = 10, ftol = -np.inf,
                   options = {'c1': 0.5, 'c2': 0.3, 'w':0.9},
-                  verbosity = 1,
+                  verbosity = 1, 
+                  logging_on = False, logging_level_on = logging.INFO, logging_level_off = logging.ERROR,
                   **kwargs):
     """
     Global minimization function using particle swarms (wrapper around pyswarms.single.GlobalBestPSO)
@@ -69,7 +72,8 @@ def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None
             |  - 'w' : float, inertia parameter
         :verbosity:
             | 1, optional
-            | If > 0: plot the cost history (see pyswarms's plot_cost_history function)
+            | If > 0: print pyswarms progress.
+            | If > 1: plot the cost history (see pyswarms's plot_cost_history function)
         :kwargs: 
             | allows input for other type of arguments for GlobalBestPSO
          
@@ -88,21 +92,25 @@ def particleswarm(objfcn, dimensions, args = {}, use_bnds = True, bounds = (None
     Reference:
         1. pyswarms documentation: https://pyswarms.readthedocs.io/
     """
+    if logging_on == False:
+        logging.getLogger("pyswarms").setLevel(logging_level_off)
+    else:
+        logging.getLogger("pyswarms").setLevel(logging_level_on)
          
     if (bounds[0] is None) & (bounds[1] is None):
         use_bnds = False
     if use_bnds == True:
         kwargs['bounds'] = bounds
-        
+
     optimizer = ps.single.GlobalBestPSO(n_particles=n_particles, 
                                         dimensions=dimensions, 
                                         options=options,
                                         ftol = ftol,
                                         **kwargs)
 
-    cost, pos = optimizer.optimize(objfcn, iters = iters, **args)
-    
-    if verbosity > 0:
+    cost, pos = optimizer.optimize(objfcn, iters = iters, verbose = bool(verbosity), **args)
+
+    if verbosity > 1:
         # Plot cost history:
         plot_cost_history(cost_history=optimizer.cost_history)
     
