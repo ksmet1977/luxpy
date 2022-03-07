@@ -2201,7 +2201,9 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
     pn = (((v.T - vBB)**2 + (u.T - uBB)**2)).argmin(axis=0)
     
-    
+    # Deal with endpoints of lut + create intermediate variables to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+
     # Solve issue of zero-crossing of slope of planckian locus:
     # c = (np.sign(mBB[pn]) != np.sign(mBB[pn+1]))[:,0]  
     c = ((1 - mBB[pn+1]/mBB[pn])[:,0] > 1) # check for difference in sign between i and i+1
@@ -2209,7 +2211,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
 
     # Deal with endpoints of lut + create intermediate variables 
     # to save memory:
-    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+    # pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
     TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = 'm0p')
     # uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, m0p = '0p')
     # vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, m0p = '0p')
