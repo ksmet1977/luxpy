@@ -19,7 +19,7 @@ from luxpy.utils import np
 
 # load spd and rfl data in /spd/:
 from .spectral_databases import (_R_PATH, _S_PATH, _CIE_ILLUMINANTS, 
-                                  _CIE_E, _CIE_D65, _CIE_A, _CIE_B, _CIE_C, _CIE_F4,
+                                  _CIE_E, _CIE_D65, _CIE_A, _CIE_B, _CIE_C, _CIE_F4,_CIE_L41,
                                   _CIE_F_SERIES, _CIE_F3_SERIES,_CIE_HP_SERIES,_CIE_LED_SERIES,
                                   _IESTM3015, _IESTM3018, 
                                   _CIE_GLASS_ID, _CRI_RFL, _RFL, _MUNSELL)
@@ -46,7 +46,7 @@ from .illuminants import *
 __all__ += illuminants.__all__
 
 __all__ += ['_R_PATH','_S_PATH', '_CIE_ILLUMINANTS','_CIE_S',
-            '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4',
+            '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4','_CIE_L41',
             '_CIE_F_SERIES', '_CIE_F3_SERIES','_CIE_HP_SERIES','_CIE_LED_SERIES',
             '_IESTM3015','_IESTM3018',
             '_CIE_GLASS_ID', '_CRI_RFL','_RFL', '_MUNSELL']
