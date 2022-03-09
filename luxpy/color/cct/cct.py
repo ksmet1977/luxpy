@@ -1962,6 +1962,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
                           luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff,
                           max_iter = _CCT_MAX_ITER, mode_kwargs = {}, atol = 0.1, rtol = 1e-5, 
                           Tx = None, Duvx = None, out_of_lut = None, TBB_l = None, TBB_r = None,
+                          fast_duv = _CCT_FAST_DUV, 
                           **kwargs):
     """
     Determine Tx using a specified mode from u,v input using a cascading lut, 
@@ -1998,6 +1999,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
             Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
                                                                  ns = ns, out_of_lut = out_of_lut,
+                                                                 fast_duv = fast_duv,
                                                                  **{**mode_kwargs[mode],**{'max_iter':1}}) # cl takes over, so max_iter should be 1
 
         if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
@@ -2094,6 +2096,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
             pass
         elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
             lut_char = _get_lut_characteristics(lut, force_au = force_au)
+            use_fast_duv = False # True can generate large errors !!!
         else:
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
     
@@ -2130,6 +2133,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
         Tx, Duvx, out_of_lut, (TBB_l, TBB_r) = _CCT_UV_TO_TX_FCNS[mode](u, v, lut, lut_n_cols, 
                                                                         ns = lut_n_cols, 
                                                                         out_of_lut = out_of_lut,
+                                                                        fast_duv = use_fast_duv,
                                                                         **mode_kwargs[mode])  
 
 
@@ -2140,6 +2144,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                                 luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff, 
                                                 max_iter = max_iter[1], mode_kwargs = mode_kwargs, atol = atol, rtol = rtol,
                                                 Tx = Tx, Duvx = Duvx, out_of_lut = out_of_lut, TBB_l = TBB_l, TBB_r = TBB_r,
+                                                fast_duv = use_fast_duv
                                                 )
 
    
@@ -2219,7 +2224,6 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     
     # Estimate Tc (Robertson, 1968): 
     slope = (di_0/((di_0 - di_p1) + _CCT_AVOID_ZERO_DIV))
-    slope_m = slope.copy()
     Tx = ((((1/TBB_0) + slope * ((1/TBB_p1) - (1/TBB_0)))**(-1)))#".copy()
 
     if fast_duv:
@@ -3957,7 +3961,8 @@ if __name__ == '__main__':
                               mode = mode, force_tolerance = False, 
                               tol_method = 'nr',
                               lut = lut, #((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
-                              split_calculation_at_N = None)
+                              split_calculation_at_N = None,
+                              use_fast_duv = True)
     
     # Out of LUT conversions are coded with a negative CCT, so make positive again before calculating error:
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
