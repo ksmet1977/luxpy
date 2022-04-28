@@ -333,7 +333,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
     for key in data.keys():
         if key != 'wls':
             data[key] = cie_interp(np.vstack((wls,data[key])), wl, kind='linear',negative_values_allowed=True)
-    data['LMSa_interps'] = _create_LMSa_interpolators(data['LMSa'].copy(), kind = 3)
+    data['LMSa_interps'] = _create_LMSa_interpolators(data['LMSa'].copy(), kind = 1)
     return data
     
 def _docul_fine(ocular_sum_32, docul2):
@@ -408,21 +408,20 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
     docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = 'ext')
-    absorbance_interps = _create_LMSa_interpolators(absorbance.copy(), kind = 3)
+    absorbance_interps = _create_LMSa_interpolators(absorbance.copy(), kind = 1)
     data = {'wls': wl, 'rmd': macula_rel, 'docul':docul2, 'LMSa': absorbance,'LMSa_interps':absorbance_interps}
     return data
 
-def _create_LMSa_interpolators(LMSa, kind = 3):
+def _create_LMSa_interpolators(LMSa, kind = 1):
     _peak_shft = []
     for i in range(3):
         if i < 2: 
             # L, M:
-            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0],LMSa[i+1], k = kind, ext = "extrapolate"))
+            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0],LMSa[i+1], k = kind, ext = 0))
         else:
             # S:
-            LMSa[i + 1,np.isinf(LMSa[i + 1,:])] = np.nan
-            non_nan_indices = np.logical_not(np.isnan(LMSa[i + 1]))
-            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0][non_nan_indices],LMSa[i+1][non_nan_indices], k = kind, ext = "extrapolate"))
+            non_nan_indices = np.logical_not(np.isnan(LMSa[i + 1]) | np.isneginf(LMSa[i + 1]))
+            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0][non_nan_indices],LMSa[i+1][non_nan_indices], k = kind, ext = 0))
     return _peak_shft
 
 # Create the interpolators in advance for speed:
@@ -1194,8 +1193,8 @@ def _Vl_energy_and_LM_weights(fieldsize = 10, age = 32, strategy_2 = True,
                                                  out = 'kLq', odata0 = odata0)
     (Lo_max, Mo_max) = LMSe_o_max[:2]
     Vo_max = (kLq_rel * Lo_max * LMSe[1,:] + Mo_max * LMSe[2,:]).max()
-    a21 = my_round(kLq_rel * Lo_max / Vo_max, 8)
-    a22 = my_round(Mo_max / Vo_max, 8)
+    a21 = my_round(kLq_rel * Lo_max / Vo_max, 8)[0]
+    a22 = my_round(Mo_max / Vo_max, 8)[0]
     V = sign_figs(a21 * LMSe[1,:] + a22 * LMSe[2,:], 7)
     Vl = np.array(([LMSe[0,:], V]))
     return Vl, (a21, a22)
@@ -1345,7 +1344,7 @@ def _square_sum(a13, a21, a22, a33,
     a11 = my_round(a11[0], 8)
     a12 = my_round(a12[0], 8)
     a13 = my_round(a13[0], 8)
-    trans_mat = np.array([[a11, a12, a13], [a21, a22, 0.], [0., 0., a33]], dtype=np.float)
+    trans_mat = np.array([[a11, a12, a13], [a21, a22, 0.], [0., 0., a33]], dtype=float)
     XYZ = sign_figs(np.dot(trans_mat, LMS_390_830), 7)
 #    sumXYZ = X + Y + Z
 #    xyz = np.array([X / sumXYZ, Y / sumXYZ, Z / sumXYZ])
@@ -1455,7 +1454,7 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
     d = 1/getwld(LMS_all[0,:])
     if np.isclose(d,d.mean()).all():
         d = d.mean()
-    if isinstance(d,np.float):
+    if isinstance(d,float):
         if d < 1:
             d = 1
         LMS_main = LMS_all[:,::int(d)]
