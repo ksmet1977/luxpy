@@ -447,7 +447,9 @@ class ObjFcns():
         Calculate objective function j for input spd.
         """
         # Calculate objective function j:
-        if not self.f_requires_solution_info[j]: 
+        f_requires_solution_info = self.f_requires_solution_info[j][0] if isinstance(self.f_requires_solution_info[j],tuple) else self.f_requires_solution_info[j]
+        
+        if not f_requires_solution_info: 
             if isinstance(self.f[j],tuple): # one function for each objective:
                 return self.f[j][0](spdi, **self.fp[j])
             else: # one function for multiple objectives for increased speed:
@@ -1463,7 +1465,12 @@ if __name__ == '__main__':
 
     run_example_class_4 = False # # class based example with pre-defined primaries and demo minimization
 
-    run_example_class_5 = True # # class based example with pre-defined primaries and demo minimization with obj_fcn using 'solution_info' to steer the optimization to solutions with the max number of channels 'on'
+    run_example_class_4b = False # # class based example with pre-defined primaries and demo minimization (using slow approach of two separate functions)
+
+    run_example_class_5 = False # # class based example with pre-defined primaries and demo minimization with obj_fcn using 'solution_info' to steer the optimization to solutions with the max number of channels 'on'
+    
+    run_example_class_5b = True # # class based example with pre-defined primaries and demo minimization with obj_fcn using 'solution_info' to steer the optimization to solutions with the max number of channels 'on'
+    
     
     run_example_fcn_1 = False # function based example: use pre-defined minimization methods (spd_optimize2())
 
@@ -1638,6 +1645,36 @@ if __name__ == '__main__':
         print('obj_fcn2:',Rg)
         
         #--------------------------------------------------------------------------
+    if run_example_class_4b == True:
+
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims = PrimConstructor(pdefs={'peakwl':[450,520,580,630],'fwhm':[15],
+                                        'peakwl_bnds':[400,700],
+                                        'fwhm_bnds':[5,300]}).get_spd()
+        
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims2 = PrimConstructor(pdefs={'peakwl':[450,520,580,630],
+                                        'fwhm_bnds':[5,300]}).get_spd()
+
+        so4 = SpectralOptimizer(target = np2d([50,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                              wlr = [360,830,1], cieobs = cieobs, 
+                              out = 'spds,primss,Ms,results',
+                              optimizer_type = '3mixer', triangle_strengths_bnds = None,
+                              prim_constructor = None, 
+                              prims = prims2,
+                              obj_fcn = ObjFcns(f=[lx.cri.spd_to_iesrf,lx.cri.spd_to_iesrg], 
+                                                ft = [90,110]),
+                              minimizer = Minimizer(method='ps',
+                                                    opts={'iters':50}),
+                              verbosity = 2)
+        # start optimization:
+        spd,M = so4.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+        
+        #--------------------------------------------------------------------------
     if run_example_class_5 == True:
         
         # define user obj functions that asks for solutions info to use
@@ -1681,13 +1718,78 @@ if __name__ == '__main__':
         print('obj_fcn1:',Rf)
         print('obj_fcn2:',Rg)
         
-        # check grahically:
+        # check graphically:
         plt.figure()
         plt.plot(spd[0],spd[1],'k', label = 'optimized spd (Rf={:1.0f},Rg={:1.0f})'.format(Rf[0],Rg[0]))
         cmap = lx.get_cmap(M.shape[-1],'jet')
         for i,Mi in enumerate(M[0]):
             plt.plot(prims[0],Mi*prims[i+1], color = cmap[i], linestyle = '--', label = 'channel {:1.0f} (rel. flux = {:1.3f})'.format(i,Mi/M[0].max()))
         plt.legend()
+        
+        
+        
+    if run_example_class_5b == True:
+    
+        # define user obj functions that asks for solutions info to use
+        # when determining function output. For example, to give very 'bad'
+        # Rf,Rg values (forcing the optimization away from this type of solutions)
+        # when the number of channels with a relative weight smaller than 10%
+        # is larger than 1 (in other words, try and force te search towards
+        # solutins that have all channels sufficiently 'on'):
+        def spd_to_iesrf_with_solution_info(spd, solution_info = {}):
+            Ms = solution_info['Ms']
+            Ms = Ms/Ms.max(axis=-1,keepdims=True) # normalize to max
+            good_solutions = (Ms >= 0.1).sum(axis=-1) == Ms.shape[-1]
+            out = np.ones((1,spd.shape[0] - 1))*(good_solutions.sum()/good_solutions.shape)*30 # higher number of on-channels is better (just setting zeros no matter how many bad channels makes it more difficult to optimize, same as setting a really really low value like -1000)
+            if good_solutions.sum()>0:
+                spds_good = np.vstack((spd[:1],spd[1:][good_solutions])) # only good solutions need calculating
+                Rf = lx.cri.spd_to_iesrf(spds_good)
+                out[:,good_solutions] = Rf 
+            return out
+        
+        def spd_to_iesrg_with_solution_info(spd, solution_info = {}):
+            Ms = solution_info['Ms']
+            Ms = Ms/Ms.max(axis=-1,keepdims=True) # normalize to max
+            good_solutions = (Ms >= 0.1).sum(axis=-1) == Ms.shape[-1]
+            out = np.ones((1,spd.shape[0] - 1))*(good_solutions.sum()/good_solutions.shape)*30 # higher number of on-channels is better (just setting zeros no matter how many bad channels makes it more difficult to optimize, same as setting a really really low value like -1000)
+            if good_solutions.sum()>0:
+                spds_good = np.vstack((spd[:1],spd[1:][good_solutions])) # only good solutions need calculating
+                Rf = lx.cri.spd_to_iesrg(spds_good)
+                out[:,good_solutions] = Rf 
+            return out
+              
+        # create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:
+        prims = PrimConstructor(pdefs={'peakwl':[450,470,500,520,560,580,630],
+                                        'fwhm_bnds':[5,300]}).get_spd()
+    
+        so4 = SpectralOptimizer(target = np2d([50,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf = {},
+                              wlr = [360,830,1], cieobs = cieobs, 
+                              out = 'spds,primss,Ms,results',
+                              optimizer_type = '3mixer', triangle_strengths_bnds = None,
+                              prim_constructor = None, 
+                              prims = prims,
+                              obj_fcn = ObjFcns(f=[spd_to_iesrf_with_solution_info,
+                                                   spd_to_iesrf_with_solution_info], 
+                                                ft = [90,110],
+                                                f_requires_solution_info=[True,True]),
+                              minimizer = Minimizer(method='ps',
+                                                    opts={'iters':50}),
+                              verbosity = 2)
+        # start optimization:
+        spd,M = so4.start(out = 'spds,Ms')
+        
+        Rf, Rg = spd_to_cris(spd)
+        print('obj_fcn1:',Rf)
+        print('obj_fcn2:',Rg)
+        
+        # check graphically:
+        plt.figure()
+        plt.plot(spd[0],spd[1],'k', label = 'optimized spd (Rf={:1.0f},Rg={:1.0f})'.format(Rf[0],Rg[0]))
+        cmap = lx.get_cmap(M.shape[-1],'jet')
+        for i,Mi in enumerate(M[0]):
+            plt.plot(prims[0],Mi*prims[i+1], color = cmap[i], linestyle = '--', label = 'channel {:1.0f} (rel. flux = {:1.3f})'.format(i,Mi/M[0].max()))
+        plt.legend()
+
     #--------------------------------------------------------------------------
     if run_example_fcn_1 == True:
 
