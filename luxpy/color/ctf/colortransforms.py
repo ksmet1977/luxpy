@@ -221,7 +221,7 @@ def Yuv60_to_xyz(Yuv60, **kwargs):
         :xyz: 
             | ndarray with tristimulus values
     """
-    Yuv = np2d(Yuv60)
+    Yuv = np2d(Yuv60.copy())
     Yuv[...,2] *= 3/2 
     return Yuv_to_xyz(Yuv,**kwargs)
 

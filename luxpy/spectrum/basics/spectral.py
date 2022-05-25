@@ -69,6 +69,10 @@ Module supporting basic spectral calculations.
                   or quantal energy units.
          
  :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd. 
+ 
+ :create_spectral_interpolator(): Create an interpolator of kind for spectral data S. 
+ 
+ :wls_shift(): Wavelength-shift array S over shft wavelengths.
 
 References
 ----------
@@ -89,7 +93,8 @@ from scipy import signal
 __all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_TYPE',
            'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
            'vlbar_cie_mesopic', 'get_cie_mesopic_adaptation',
-           'spd_to_xyz', 'spd_to_ler', 'spd_to_power', 'detect_peakwl']
+           'spd_to_xyz', 'spd_to_ler', 'spd_to_power', 'detect_peakwl',
+           'create_spectral_interpolator','wls_shift']
 
 
 #--------------------------------------------------------------------------------------------------
@@ -994,3 +999,118 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
     return props
 
+#------------------------------------------------------------------------------
+def create_spectral_interpolator(S, wl = None, kind = 1):
+    """ 
+    Create an interpolator of kind for spectral data S. 
+    
+    Args:
+        :S:
+            | Spectral data array
+            | Row 0 should contain wavelengths if :wl:  is None.
+        :wl:
+            | None, optional 
+            | Wavelengths
+            | If wl is None: row 0 of S should contain wavelengths.
+        :kind:
+            | 1, optional
+            | Order of spline functions used in interpolator (1<=kind<=5)
+            | Interpolator = scipy.interpolate.InterpolatedUnivariateSpline
+            
+    Returns:
+        :interpolators:
+            | List of interpolator functions for each row in S (minus wl-row if present).
+    
+    Note:
+        1. Nan's, +infs, -infs will be ignored when generating the interpolators. 
+    """
+    if S.ndim == 1:
+        S = S[None,:] # make 2d
+    if wl is None:
+        wl = S[0]
+        S = S[1:]
+    interpolators = []
+    for i in range(S.shape[0]):
+        indices = np.logical_not(np.isnan(S[i]) | np.isneginf(S[i]) |  np.isposinf(S[i]))
+        interpolators.append(sp.interpolate.InterpolatedUnivariateSpline(wl[indices],S[i][indices], k = kind, ext = 0))
+    return interpolators
+
+def wls_shift(shfts, log_shft = False, wl = None, S = None, interpolators = None, kind = 1):
+    """ 
+    Wavelength-shift array S over shft wavelengths.
+    
+    Args:
+        :shfts:
+            | array with wavelength shifts.
+        :log_shft:
+            | False, optional
+            | If True: shift in log10 wavelength space.
+        :wl:
+            | None, optional 
+            | Wavelengths to return
+            | If wl is None: S will be used and row 0 should contain wavelengths.
+        :S:
+            | None, optional
+            | Spectral data array.
+            | Row 0 should contain wavelengths if :wl:  is None.
+            | If None: interpolators should be precalculated + wl must contain wavelength array !
+        :interpolators:
+            | None, optional
+            | Pre-calculated interpolators for the (non-wl) rows in S.
+            | If None: will be generated from :S: (which should contain wavelengths on row 0) 
+            | with specified :kind: using scipy.interpolate.InterpolatedUnivariateSpline
+            | If not None and S is not None: interpolators take precedence
+        :kind:
+            | 1, optional
+            | Order of spline functions used in interpolator (1<=kind<=5)
+            
+    Returns:
+        :wavelength_shifted:
+            | array with wavelength-shifted S (or interpolators) evaluated at wl.
+            | (row 0 contains) 
+    
+    Note:
+        1. Nan's, +infs, -infs will be ignored when generating the interpolators. 
+    """
+    if wl is None:
+        if S is None:
+            raise Exception('Either wl or S with wavelengths on row 0 must be supplied')
+        wl = S[0] 
+        if (S.shape[0] == 1) & (interpolators is None): 
+            raise Exception("Interpolators are not supplied and S contains no data to generate them")
+        N = S.shape[0] - 1
+    else:
+        if (S is None) & (interpolators is None):
+            raise Exception('Either the interpolators for S or S itself must be supplied')
+        elif (S is not None): 
+            if S.ndim == 1: 
+                S = S[None,:] # make 2d
+                N = 1
+                if (S.shape[1] == wl.shape[0]):
+                    raise Exception("Number of wavelengths in S doesn't match that in wl")
+                S = np.vstack((wl,S))
+                N = S.shape[0] - 1
+            else:
+                pass # S is assumed to contain wavelengths on row 0
+        else: # (S is not None and interpolators is not None) or (S is None and interpolators is not None)
+            N = None
+        
+    if (interpolators is None) | (S is not None): 
+        interpolators = create_spectral_interpolator(S, kind = kind)
+    else: 
+        if not isinstance(interpolators, (list,tuple)):
+            if N is None: N = len(shfts)
+            interpolators = [interpolators]*N
+            
+            
+    # Peak Wavelength Shift:
+    if not log_shft: 
+        wl_shifted = (wl - np.atleast_1d(shfts)[:,None])
+    else:
+        wl_shifted = 10**(np.log10(wl) - np.log10(np.atleast_1d(shfts) + 1e-308)[:,None])
+
+    peak_shft = np.empty(wl_shifted.shape)
+    for i in range(peak_shft.shape[0]): 
+        peak_shft[i] = interpolators[i](wl_shifted[i])
+    
+    return np.vstack((wl,peak_shft))
