@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.rgb2spec &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.toolboxes.rgb2spec &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../_static/language_data.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
@@ -91,8 +90,8 @@
 <span class="sd">Module for RGB to spectrum conversions</span>
 
 <span class="sd"> :_BASESPEC_SMITS: Default dict with base spectra for white, cyan, magenta, yellow, blue, green and red for each intent (&#39;rfl&#39; or &#39;spd&#39;)</span>
-<span class="sd"> :rgb_to_spec_smits(): Convert an array of RGB values to a spectrum using a smits like conversion as implemented in mitsuba (July 10, 2019)</span>
-<span class="sd"> :convert(): Convert an array of RGB values to a spectrum (wrapper around rgb_to_spec_smits(), future: implement other methods)</span>
+<span class="sd"> :rgb_to_spec_smits(): Convert an array of (linearized) RGB values to a spectrum using a smits like conversion as implemented in mitsuba (July 10, 2019)</span>
+<span class="sd"> :convert(): Convert an array of (linearized) RGB values to a spectrum (wrapper around rgb_to_spec_smits(), future: implement other methods)</span>
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -101,13 +100,18 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="n">smits_mitsuba</span><span class="o">.</span><span class="n">__all__</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;convert&#39;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="convert"><a class="viewcode-back" href="../../../toolboxes.html#luxpy.toolboxes.rgb2spec.convert">[docs]</a><span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;smits_mtsb&#39;</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="convert"><a class="viewcode-back" href="../../../toolboxes.html#luxpy.toolboxes.rgb2spec.convert">[docs]</a><span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;smits_mtsb&#39;</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an array of RGB values to a spectrum.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :rgb: </span>
 <span class="sd">            | ndarray of list of rgb values</span>
+<span class="sd">        :linearized_rgb:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If False: RGB values will be linearized using:</span>
+<span class="sd">            |     rgb_lin = xyz_to_srgb(srgb_to_xyz(rgb), gamma = 1, use_linear_part = False)</span>
+<span class="sd">            | If True: user has entered pre-linearized RGB values.</span>
 <span class="sd">        :method:</span>
 <span class="sd">            | &#39;smits_mtsb&#39;, optional</span>
 <span class="sd">            | Method to use for conversion:</span>
@@ -130,7 +134,7 @@
 <span class="sd">        :spec: </span>
 <span class="sd">            | ndarray with spectrum or spectra (one for each rgb value, first row are the wavelengths)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">rgb_to_spec_smits</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="n">intent</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="n">bitdepth</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">wlr</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="n">rgb2spec</span><span class="p">)</span></div>
+    <span class="k">return</span> <span class="n">rgb_to_spec_smits</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="n">intent</span><span class="p">,</span>  <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="n">linearized_rgb</span><span class="p">,</span> <span class="n">bitdepth</span> <span class="o">=</span> <span class="n">bitdepth</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">wlr</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="n">rgb2spec</span><span class="p">)</span></div>
 
 
 </pre></div>

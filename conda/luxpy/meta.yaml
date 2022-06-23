@@ -1,5 +1,5 @@
 {% set name = "luxpy" %}
-{% set version = "1.9.6" %}
+{% set version = "1.9.8" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,7 +7,7 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: 2fa938eb4b6ef5d6db52bad156fa61dd68be9193ab3068f087b946f80e80acae
+  sha256: bcd504fc8c9dad7b217eb4a1bd566bee30210d7855dcd1355326afe052afc7ee
 
 build:
   number: 0
@@ -37,6 +37,7 @@ test:
     - luxpy.color.cam
     - luxpy.color.cat
     - luxpy.color.cct
+    - luxpy.color.cct.robertson1968
     - luxpy.color.cri
     - luxpy.color.cri.VFPX
     - luxpy.color.cri.iestm30

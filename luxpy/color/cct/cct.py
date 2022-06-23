@@ -92,6 +92,9 @@ cct: Module with functions related to correlated color temperature calculations
                                 Computation of Correlated Color Temperature and Distribution Temperature. 
                                 Journal of the Optical Society of America,  58(11), 1528–1535. 
                                 <https://doi.org/10.1364/JOSA.58.001528>`_
+                              | Baxter D., Royer M., Smet K.A.G. (2022)
+                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+                                (in preparation, LEUKOS?)
   
  :xyz_to_cct_li2016(): | Calculates CCT, Duv from XYZ using Li's 2016 Newton-Raphson method.
                        | `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
@@ -2380,9 +2383,17 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         1.  `Robertson, A. R. (1968). 
         Computation of Correlated Color Temperature and Distribution Temperature. 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
-        <https://doi.org/10.1364/JOSA.58.001528>`_
+        <https://doi.org/10.1364/JOSA.58.001528>` 
+        
+        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),
+        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source
+        (in preparation, LEUKOS?)
+        
+        3. Baxter D., Royer M., Smet K.A.G. (2022)
+        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+        (in preparation, LEUKOS?)
          
-        2. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
+        4. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
         Accurate method for computing correlated color temperature. 
         Optics Express, 24(13), 14066–14078. 
         <https://doi.org/10.1364/OE.24.014066>`_
@@ -3333,7 +3344,7 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     a = (q_2 - q_1)/(2*hk) 
     b = (q_1*T_2 - q_2*T_1) / (hk)
     c = (q_2*T_1**2 - q_1*T_2**2)/(2*hk) + Ak
-    D = b**2 - 4*a*c # discriminant
+    D = np.abs(b**2 - 4*a*c) # discriminant # avoid invalid value warning when taking the sqrt later on.
 
     Txp_p, Txp_m = (-b + (D**0.5))/(2*a), (-b - (D**0.5))/(2*a)
     Spp_p =  2*a*Txp_p + b  # second deriv at Txp: check Spp(Topt) > 0 !!
@@ -4185,35 +4196,43 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
         Computation of Correlated Color Temperature and Distribution Temperature. 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
         <https://doi.org/10.1364/JOSA.58.001528>`_
+        
+        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),
+        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source
+        (in preparation, LEUKOS?)
+        
+        3. Baxter D., Royer M., Smet K.A.G. (2022)
+        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+        (in preparation, LEUKOS?)
          
-        2. `Ohno Y. Practical use and calculation of CCT and Duv. 
+        4. `Ohno Y. Practical use and calculation of CCT and Duv. 
         Leukos. 2014 Jan 2;10(1):47-55.
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
         
-        3. `Zhang, F. (2019). 
+        5. `Zhang, F. (2019). 
         High-accuracy method for calculating correlated color temperature with 
         a lookup table based on golden section search. 
         Optik, 193, 163018. 
         <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
          
-        3. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
+        6. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
         Accurate method for computing correlated color temperature. 
         Optics Express, 24(13), 14066–14078. 
         <https://doi.org/10.1364/OE.24.014066>`_
         
-        4. `McCamy, Calvin S. (April 1992). 
+        7. `McCamy, Calvin S. (April 1992). 
         "Correlated color temperature as an explicit function of 
         chromaticity coordinates".
         Color Research & Application. 17 (2): 142–144.
         <http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract>`_
         
-        5. `Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
+        8. `Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
         Calculating Correlated Color Temperatures Across the Entire Gamut 
         of Daylight and Skylight Chromaticities.
         Applied Optics. 38 (27), 5703–5709. P
         <https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703>`_
         
-        6. `Li, Y., Gao, C.,  Melgosa, M. and Li, C. (2022).
+        9. `Li, Y., Gao, C.,  Melgosa, M. and Li, C. (2022).
         Improved methods for computing CCT and Duv. 
         LEUKOS, (in press). <email://794962485@qq.com>`_
   

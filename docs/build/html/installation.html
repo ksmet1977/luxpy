@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Installation &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +28,7 @@
             <a href="index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License: GPLv3</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
@@ -77,110 +75,114 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="installation">
-<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline"></a></h1>
-<section id="install-luxpy">
-<h2>Install luxpy<a class="headerlink" href="#install-luxpy" title="Permalink to this headline"></a></h2>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="install-luxpy">
+<h2>Install luxpy<a class="headerlink" href="#install-luxpy" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ol class="arabic">
-<li><dl class="simple">
-<dt>Install miniconda</dt><dd><ul class="simple">
-<li><p>download the installer from: <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a>
-or <a class="reference external" href="https://repo.continuum.io/miniconda/">https://repo.continuum.io/miniconda/</a>)</p></li>
-<li><p>e.g. <a class="reference external" href="https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe</a></p></li>
-<li><p>Make sure ‘conda.exe’ can be found on the windows system path, if necessary do a manual add.</p></li>
+<li><dl class="first docutils">
+<dt>Install miniconda</dt>
+<dd><ul class="first last simple">
+<li>download the installer from: <a class="reference external" href="https://conda.io/miniconda.html">https://conda.io/miniconda.html</a>
+or <a class="reference external" href="https://repo.continuum.io/miniconda/">https://repo.continuum.io/miniconda/</a>)</li>
+<li>e.g. <a class="reference external" href="https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe">https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe</a></li>
+<li>Make sure ‘conda.exe’ can be found on the windows system path, if necessary do a manual add.</li>
 </ul>
 </dd>
 </dl>
 </li>
-<li><p>Create a virtual environment with full anaconda distribution by typing the following at the commandline:</p>
+<li><p class="first">Create a virtual environment with full anaconda distribution by typing the following at the commandline:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">create</span> <span class="pre">--name</span> <span class="pre">py36</span> <span class="pre">python=3.6</span> <span class="pre">anaconda</span></code></p>
 </div></blockquote>
 </li>
-<li><p>Activate the virtual environment:</p>
+<li><p class="first">Activate the virtual environment:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">activate</span> <span class="pre">py36</span></code></p>
 </div></blockquote>
 </li>
-<li><dl>
-<dt>Install pip to virtual environment (just to ensure any packages to be</dt><dd><p>installed with pip to this virt. env. will be installed here and not globally):</p>
-<p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">pip</span></code></p>
+<li><dl class="first docutils">
+<dt>Install pip to virtual environment (just to ensure any packages to be</dt>
+<dd><p class="first">installed with pip to this virt. env. will be installed here and not globally):</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">pip</span></code></p>
 </dd>
 </dl>
 </li>
 </ol>
 <p>5a. Install luxpy package from pypi:</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">luxpy</span></code></p>
-</div></blockquote>
+<div><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">luxpy</span></code></div></blockquote>
 <p>5b. Install luxpy package from anaconda:</p>
 <blockquote>
-<div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">ksmet1977</span> <span class="pre">luxpy</span></code></p>
+<div><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-c</span> <span class="pre">ksmet1977</span> <span class="pre">luxpy</span></code></div></blockquote>
 </div></blockquote>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Note</dt>
-<dd class="field-odd"><p>If any errors show up, try and do a manual install of the dependencies:
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Note:</th><td class="field-body">If any errors show up, try and do a manual install of the dependencies:
 scipy, numpy, pandas, matplotlib and setuptools,
 either using e.g.
 <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">scipy</span></code>
 or
 <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">pip</span> <span class="pre">install</span> <span class="pre">scipy</span></code>,
-and try and reinstall luxpy using pip.</p>
-</dd>
-</dl>
-</section>
-<section id="use-of-luxpy-package-in-spyder-ide">
-<h2>Use of LuxPy package in Spyder IDE<a class="headerlink" href="#use-of-luxpy-package-in-spyder-ide" title="Permalink to this headline"></a></h2>
+and try and reinstall luxpy using pip.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="use-of-luxpy-package-in-spyder-ide">
+<h2>Use of LuxPy package in Spyder IDE<a class="headerlink" href="#use-of-luxpy-package-in-spyder-ide" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ol class="arabic" start="6">
-<li><p>Install spyder in py36 environment:</p>
+<li><p class="first">Install spyder in py36 environment:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">spyder</span></code></p>
 </div></blockquote>
 </li>
-<li><p>Run spyder</p>
+<li><p class="first">Run spyder</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">spyder</span></code></p>
 </div></blockquote>
 </li>
-<li><p>To import the luxpy package, on Spyder’s commandline for the IPython kernel (or in script) type:</p>
+<li><p class="first">To import the luxpy package, on Spyder’s commandline for the IPython kernel (or in script) type:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
 </div></blockquote>
 </li>
 </ol>
 </div></blockquote>
-</section>
-<section id="use-of-luxpy-package-in-jupyter-notebook">
-<h2>Use of LuxPy package in Jupyter notebook<a class="headerlink" href="#use-of-luxpy-package-in-jupyter-notebook" title="Permalink to this headline"></a></h2>
+</div>
+<div class="section" id="use-of-luxpy-package-in-jupyter-notebook">
+<h2>Use of LuxPy package in Jupyter notebook<a class="headerlink" href="#use-of-luxpy-package-in-jupyter-notebook" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ol class="arabic" start="6">
-<li><p>Install jupyter in py36 environment:</p>
+<li><p class="first">Install jupyter in py36 environment:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">conda</span> <span class="pre">install</span> <span class="pre">-n</span> <span class="pre">py36</span> <span class="pre">jupyter</span></code></p>
 </div></blockquote>
 </li>
-<li><p>Start jupyter notebook:</p>
+<li><p class="first">Start jupyter notebook:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span> <span class="pre">jupyter</span> <span class="pre">notebook</span></code></p>
 </div></blockquote>
 </li>
-<li><dl class="simple">
-<dt>Open an existing or new notebook:</dt><dd><p>e.g. open “luxpy_basic_usage.ipynb” for an overview of how to use the LuxPy package.</p>
+<li><dl class="first docutils">
+<dt>Open an existing or new notebook:</dt>
+<dd><p class="first last">e.g. open “luxpy_basic_usage.ipynb” for an overview of how to use the LuxPy package.</p>
 </dd>
 </dl>
 </li>
-<li><p>To import LuxPy package type:</p>
+<li><p class="first">To import LuxPy package type:</p>
 <blockquote>
 <div><p><code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">luxpy</span> <span class="pre">as</span> <span class="pre">lx</span></code></p>
 </div></blockquote>
 </li>
 </ol>
 </div></blockquote>
-</section>
-</section>
+</div>
+</div>
 
 
            </div>

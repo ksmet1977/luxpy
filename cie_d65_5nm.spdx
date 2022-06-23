@@ -1,0 +1,115 @@
+<?xml version="1"?>
+<IESTM2714 xmlns="iestm2714" version="1">
+    <Header>
+        <Manufacturer>CIE</Manufacturer>
+        <CatalogNumber>Unknown</CatalogNumber>
+        <Description>CIE D65 illuminant (5nm)</Description>
+        <FileCreator>luxpy.spdx_iestm2714</FileCreator>
+        <Laboratory>CIE</Laboratory>
+        <UniqueIdentifier>CIE D65</UniqueIdentifier>
+        <ReportNumber>Unknown</ReportNumber>
+        <ReportDate>Unknown</ReportDate>
+        <DocumentCreationDate>Unknown</DocumentCreationDate>
+        <comments>Unknown</comments>
+    </Header>
+    <SpectralDistribution>
+        <SpectralQuantity>W/nm</SpectralQuantity>
+        <BandwidthFWHM>Unknown</BandwidthFWHM>
+        <BandwidthCorrected>Unknown</BandwidthCorrected>
+        <SpectralData wavelength="360.000000">46.638300</SpectralData>
+        <SpectralData wavelength="365.000000">49.363700</SpectralData>
+        <SpectralData wavelength="370.000000">52.089100</SpectralData>
+        <SpectralData wavelength="375.000000">51.032300</SpectralData>
+        <SpectralData wavelength="380.000000">49.975500</SpectralData>
+        <SpectralData wavelength="385.000000">52.311800</SpectralData>
+        <SpectralData wavelength="390.000000">54.648200</SpectralData>
+        <SpectralData wavelength="395.000000">68.701500</SpectralData>
+        <SpectralData wavelength="400.000000">82.754900</SpectralData>
+        <SpectralData wavelength="405.000000">87.120400</SpectralData>
+        <SpectralData wavelength="410.000000">91.486000</SpectralData>
+        <SpectralData wavelength="415.000000">92.458900</SpectralData>
+        <SpectralData wavelength="420.000000">93.431800</SpectralData>
+        <SpectralData wavelength="425.000000">90.057000</SpectralData>
+        <SpectralData wavelength="430.000000">86.682300</SpectralData>
+        <SpectralData wavelength="435.000000">95.773600</SpectralData>
+        <SpectralData wavelength="440.000000">104.865000</SpectralData>
+        <SpectralData wavelength="445.000000">110.936000</SpectralData>
+        <SpectralData wavelength="450.000000">117.008000</SpectralData>
+        <SpectralData wavelength="455.000000">117.410000</SpectralData>
+        <SpectralData wavelength="460.000000">117.812000</SpectralData>
+        <SpectralData wavelength="465.000000">116.336000</SpectralData>
+        <SpectralData wavelength="470.000000">114.861000</SpectralData>
+        <SpectralData wavelength="475.000000">115.392000</SpectralData>
+        <SpectralData wavelength="480.000000">115.923000</SpectralData>
+        <SpectralData wavelength="485.000000">112.367000</SpectralData>
+        <SpectralData wavelength="490.000000">108.811000</SpectralData>
+        <SpectralData wavelength="495.000000">109.082000</SpectralData>
+        <SpectralData wavelength="500.000000">109.354000</SpectralData>
+        <SpectralData wavelength="505.000000">108.578000</SpectralData>
+        <SpectralData wavelength="510.000000">107.802000</SpectralData>
+        <SpectralData wavelength="515.000000">106.296000</SpectralData>
+        <SpectralData wavelength="520.000000">104.790000</SpectralData>
+        <SpectralData wavelength="525.000000">106.239000</SpectralData>
+        <SpectralData wavelength="530.000000">107.689000</SpectralData>
+        <SpectralData wavelength="535.000000">106.047000</SpectralData>
+        <SpectralData wavelength="540.000000">104.405000</SpectralData>
+        <SpectralData wavelength="545.000000">104.225000</SpectralData>
+        <SpectralData wavelength="550.000000">104.046000</SpectralData>
+        <SpectralData wavelength="555.000000">102.023000</SpectralData>
+        <SpectralData wavelength="560.000000">100.000000</SpectralData>
+        <SpectralData wavelength="565.000000">98.167100</SpectralData>
+        <SpectralData wavelength="570.000000">96.334200</SpectralData>
+        <SpectralData wavelength="575.000000">96.061100</SpectralData>
+        <SpectralData wavelength="580.000000">95.788000</SpectralData>
+        <SpectralData wavelength="585.000000">92.236800</SpectralData>
+        <SpectralData wavelength="590.000000">88.685600</SpectralData>
+        <SpectralData wavelength="595.000000">89.345900</SpectralData>
+        <SpectralData wavelength="600.000000">90.006200</SpectralData>
+        <SpectralData wavelength="605.000000">89.802600</SpectralData>
+        <SpectralData wavelength="610.000000">89.599100</SpectralData>
+        <SpectralData wavelength="615.000000">88.648900</SpectralData>
+        <SpectralData wavelength="620.000000">87.698700</SpectralData>
+        <SpectralData wavelength="625.000000">85.493600</SpectralData>
+        <SpectralData wavelength="630.000000">83.288600</SpectralData>
+        <SpectralData wavelength="635.000000">83.493900</SpectralData>
+        <SpectralData wavelength="640.000000">83.699200</SpectralData>
+        <SpectralData wavelength="645.000000">81.863000</SpectralData>
+        <SpectralData wavelength="650.000000">80.026800</SpectralData>
+        <SpectralData wavelength="655.000000">80.120700</SpectralData>
+        <SpectralData wavelength="660.000000">80.214600</SpectralData>
+        <SpectralData wavelength="665.000000">81.246200</SpectralData>
+        <SpectralData wavelength="670.000000">82.277800</SpectralData>
+        <SpectralData wavelength="675.000000">80.281000</SpectralData>
+        <SpectralData wavelength="680.000000">78.284200</SpectralData>
+        <SpectralData wavelength="685.000000">74.002700</SpectralData>
+        <SpectralData wavelength="690.000000">69.721300</SpectralData>
+        <SpectralData wavelength="695.000000">70.665200</SpectralData>
+        <SpectralData wavelength="700.000000">71.609100</SpectralData>
+        <SpectralData wavelength="705.000000">72.979000</SpectralData>
+        <SpectralData wavelength="710.000000">74.349000</SpectralData>
+        <SpectralData wavelength="715.000000">67.976500</SpectralData>
+        <SpectralData wavelength="720.000000">61.604000</SpectralData>
+        <SpectralData wavelength="725.000000">65.744800</SpectralData>
+        <SpectralData wavelength="730.000000">69.885600</SpectralData>
+        <SpectralData wavelength="735.000000">72.486300</SpectralData>
+        <SpectralData wavelength="740.000000">75.087000</SpectralData>
+        <SpectralData wavelength="745.000000">69.339800</SpectralData>
+        <SpectralData wavelength="750.000000">63.592700</SpectralData>
+        <SpectralData wavelength="755.000000">55.005400</SpectralData>
+        <SpectralData wavelength="760.000000">46.418200</SpectralData>
+        <SpectralData wavelength="765.000000">56.611800</SpectralData>
+        <SpectralData wavelength="770.000000">66.805400</SpectralData>
+        <SpectralData wavelength="775.000000">65.094100</SpectralData>
+        <SpectralData wavelength="780.000000">63.382800</SpectralData>
+        <SpectralData wavelength="785.000000">63.843400</SpectralData>
+        <SpectralData wavelength="790.000000">64.304000</SpectralData>
+        <SpectralData wavelength="795.000000">61.877900</SpectralData>
+        <SpectralData wavelength="800.000000">59.451900</SpectralData>
+        <SpectralData wavelength="805.000000">55.705400</SpectralData>
+        <SpectralData wavelength="810.000000">51.959000</SpectralData>
+        <SpectralData wavelength="815.000000">54.699800</SpectralData>
+        <SpectralData wavelength="820.000000">57.440600</SpectralData>
+        <SpectralData wavelength="825.000000">58.876500</SpectralData>
+        <SpectralData wavelength="830.000000">60.312500</SpectralData>
+    </SpectralDistribution>
+</IESTM2714>

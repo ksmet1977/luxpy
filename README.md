@@ -4,8 +4,8 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.9.6
-* Date: February 15, 2022
+* Version: 1.9.8
+* Date: June 23, 2022
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
@@ -26,7 +26,7 @@ For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:
 * spectral data interpolation (conform CIE15-2018) and normalization
 * calculation of daylight phase, blackbody radiator and other reference illuminant spectra
 * calculation of tristimulus values
-* correlated color temperature and Duv (methods: robertson1968, ohno2014, li2016, zhang2019)
+* correlated color temperature and Duv (methods: robertson1968/2022, ohno2014, li2016, zhang2019, li2022)
 * color space transformations
 * chromatic adaptation transforms 
 * color appearance models 

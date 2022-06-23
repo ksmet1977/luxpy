@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -133,7 +132,7 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_data</span><span class="p">,</span><span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">):</span>
         <span class="n">content</span> <span class="o">=</span> <span class="n">string_data</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
         <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;StringIO&#39;</span>
-    <span class="k">elif</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">string_data</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">string_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.ies&#39;</span><span class="p">,</span> <span class="s1">&#39;.ldt&#39;</span><span class="p">)):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">string_data</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;.ies&#39;</span><span class="p">,</span> <span class="s1">&#39;.ldt&#39;</span><span class="p">)):</span>
         <span class="n">name</span> <span class="o">=</span> <span class="n">string_data</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span>
 
         <span class="c1"># file = open(filename, &#39;rt&#39;, encoding=&#39;cp1252&#39;)</span>
@@ -204,6 +203,7 @@
 <span class="sd">        3. &#39;map&#39; contains a dicionary with keys &#39;thetas&#39;, &#39;phis&#39;, &#39;values&#39;. This data has been complete to full angle ranges thetas: [0,180]; phis: [0,360]   </span>
 <span class="sd">        4. LDT map completion only supported for Isymm == 4 (since 31/10/2018), and Isymm == 1 (since, 02/10/2021), Map will be filled with original &#39;theta&#39;, &#39;phi&#39; and normalized &#39;candela_2d&#39; values !</span>
 <span class="sd">        5. LIDtype is checked by looking for the presence of &#39;TILT=&#39; in datasource content (if True-&gt;&#39;IES&#39; else &#39;LDT&#39;)</span>
+<span class="sd">        6. IES files with TILT=INCLUDE or TILT=&lt;filename&gt; are not supported!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">common_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;datasource&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;intensity&#39;</span><span class="p">,</span> <span class="s1">&#39;theta&#39;</span><span class="p">,</span> <span class="s1">&#39;phi&#39;</span><span class="p">,</span> \
                    <span class="s1">&#39;values&#39;</span><span class="p">,</span> <span class="s1">&#39;map&#39;</span><span class="p">,</span> <span class="s1">&#39;Iv0&#39;</span><span class="p">,</span> <span class="s1">&#39;candela_values&#39;</span><span class="p">,</span> <span class="s1">&#39;candela_2d&#39;</span><span class="p">]</span>
@@ -265,6 +265,9 @@
 <span class="sd">            | &#39;lamp_h_type&#39;, &#39;candela_values&#39;, &#39;candela_2d&#39;, &#39;v_same&#39;, &#39;h_same&#39;,</span>
 <span class="sd">            | &#39;intensity&#39;, &#39;theta&#39;, &#39;values&#39;, &#39;phi&#39;, &#39;map&#39;,&#39;Iv0&#39;]</span>
 <span class="sd">            | )</span>
+<span class="sd">            </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. Files with TILT=INCLUDE or TILT=&lt;filename&gt; are not supported!</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">version_table</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;IESNA:LM-63-1986&#39;</span><span class="p">:</span> <span class="mi">1986</span><span class="p">,</span>
@@ -293,7 +296,7 @@
 
     <span class="n">keywords</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
 
-    <span class="k">while</span> <span class="n">content</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">content</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TILT=&#39;</span><span class="p">):</span>
+    <span class="k">while</span> <span class="n">content</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">content</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TILT=NONE&#39;</span><span class="p">):</span>
         <span class="n">s</span><span class="p">,</span> <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">):</span>
@@ -304,8 +307,12 @@
     <span class="n">s</span><span class="p">,</span> <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TILT&#39;</span><span class="p">):</span>
-        <span class="n">displaymsg</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span> <span class="s2">&quot;TILT keyword not found, check your IES file&quot;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+        <span class="n">displaymsg</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">,</span> <span class="s2">&quot;TILT keyword not found, check your IES file&quot;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TILT=&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">s</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;TILT=NONE&#39;</span><span class="p">):</span>
+            <span class="n">displaymsg</span><span class="p">(</span><span class="s1">&#39;ERROR&#39;</span><span class="p">,</span> <span class="s2">&quot;TILT=INCLUDE or TILT=&lt;filename&gt; are not supported&quot;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
 
     <span class="c1"># fight against ill-formed files</span>
     <span class="n">file_data</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
@@ -508,9 +515,13 @@
         <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;Isym&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>
         
     <span class="k">elif</span> <span class="p">(</span><span class="n">IES</span><span class="p">[</span><span class="s1">&#39;lamp_h_type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;TYPE360&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
+        <span class="k">if</span> <span class="n">phis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span>
+            <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         
         <span class="c1"># complete thetas:</span>
         <span class="n">candela_2d</span><span class="p">,</span> <span class="n">thetas</span> <span class="o">=</span> <span class="n">_complete_thetas</span><span class="p">(</span><span class="n">candela_2d</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">thetas</span><span class="p">)</span>

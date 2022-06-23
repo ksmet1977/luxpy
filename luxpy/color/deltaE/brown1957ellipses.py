@@ -143,8 +143,8 @@ if __name__ == '__main__':
     #axh = plot_chromaticity_diagram_colors(cspace = cspace)
     axh = plotSL(cspace = cspace, cieobs = '1931_2', show = False, diagram_colors = True)
     axh = plotellipse(v_brown1957_weighted, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = 'k', out = 'axh', line_style = ':', line_color ='k',line_width = 1.5)
-    axh = plotellipse(v_brown1957_straight, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = 'w', out = 'axh', line_style = ':', line_color ='w',line_width = 1.5)
-    plotellipse(v_brown1957_est, show = True, axh = axh, cspace_out = cspace,line_color = 'k', plot_center = True, center_color = 'k')
+    #axh = plotellipse(v_brown1957_straight, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = 'w', out = 'axh', line_style = ':', line_color ='w',line_width = 1.5)
+    #plotellipse(v_brown1957_est, show = True, axh = axh, cspace_out = cspace,line_color = 'k', plot_center = True, center_color = 'k')
     if cspace == 'Yuv':
         axh.set_xlim([0,0.6])
         axh.set_ylim([0,0.6])

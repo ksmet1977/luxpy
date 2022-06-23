@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.deltaE.brown1957ellipses &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.color.deltaE.brown1957ellipses &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -215,8 +214,8 @@
     <span class="c1">#axh = plot_chromaticity_diagram_colors(cspace = cspace)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotSL</span><span class="p">(</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_weighted</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
-    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_straight</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
-    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_brown1957_est</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="c1">#axh = plotellipse(v_brown1957_straight, show = True, axh = axh, cspace_out = cspace,plot_center = False, center_color = &#39;w&#39;, out = &#39;axh&#39;, line_style = &#39;:&#39;, line_color =&#39;w&#39;,line_width = 1.5)</span>
+    <span class="c1">#plotellipse(v_brown1957_est, show = True, axh = axh, cspace_out = cspace,line_color = &#39;k&#39;, plot_center = True, center_color = &#39;k&#39;)</span>
     <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
         <span class="n">axh</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>

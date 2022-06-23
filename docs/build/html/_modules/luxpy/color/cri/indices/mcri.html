@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.color.cri.indices.mcri &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../../" id="documentation_options" src="../../../../../_static/documentation_options.js"></script>
-        <script src="../../../../../_static/jquery.js"></script>
-        <script src="../../../../../_static/underscore.js"></script>
-        <script src="../../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
@@ -96,7 +95,7 @@
 <span class="sd">    &lt;http://www.sciencedirect.com/science/article/pii/S0378778812000837&gt;`_</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_cct</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="kn">from</span> <span class="nn">..utils.DE_scalers</span> <span class="kn">import</span> <span class="n">psy_scale</span>
 <span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">_get_hue_bin_data</span><span class="p">,</span> <span class="n">_hue_bin_data_to_rg</span>
@@ -123,8 +122,11 @@
                 <span class="p">}</span>
 
 
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_mcri&#39;</span><span class="p">,</span><span class="s1">&#39;_MCRI_DEFAULTS&#39;</span><span class="p">]</span>
+
 <span class="c1">###############################################################################</span>
-<div class="viewcode-block" id="spd_to_mcri"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_mcri">[docs]</a><span class="k">def</span> <span class="nf">spd_to_mcri</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rm&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="spd_to_mcri"><a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_mcri">[docs]</a><span class="k">def</span> <span class="nf">spd_to_mcri</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rm&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                <span class="n">mcri_defaults</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the MCRI or Memory Color Rendition Index, Rm</span>
 <span class="sd">    </span>
@@ -154,6 +156,11 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
 <span class="sd">            | None: default to no interpolation   </span>
+<span class="sd">        :mcri_defaults:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Dictionary with structure of _MCRI_DEFAULTS containing everything</span>
+<span class="sd">            | needed to calculate MCRI.</span>
+<span class="sd">            | If None: _MCRI_DEFAULTS is used.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -173,12 +180,13 @@
     
     
     <span class="c1"># unpack metric default values:</span>
-    <span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="n">_MCRI_DEFAULTS</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">_MCRI_DEFAULTS</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
+    <span class="k">if</span> <span class="n">mcri_defaults</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">mcri_defaults</span> <span class="o">=</span> <span class="n">_MCRI_DEFAULTS</span>
+    <span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcri_defaults</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mcri_defaults</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
     <span class="n">similarity_ai</span> <span class="o">=</span> <span class="n">cri_specific_pars</span><span class="p">[</span><span class="s1">&#39;similarity_ai&#39;</span><span class="p">]</span>
-    <span class="n">Mxyz2lms</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">]</span> 
+    <span class="n">Mxyz2lms</span> <span class="o">=</span> <span class="n">cspace</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">,</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>
     <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale</span><span class="p">[</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>
-    <span class="n">sampleset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">sampleset</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampleset</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="n">sampleset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">sampleset</span><span class="p">)</span>
     
     <span class="c1"># A. calculate xyz:</span>
     <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyztw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span>  <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
@@ -210,7 +218,15 @@
         <span class="n">xyztw</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">xyztw</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="n">cattype_cat</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="n">catmode_cat</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">xyztw</span><span class="p">,</span><span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">xyzw_cat</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcat_cat</span><span class="p">],</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="n">Dtype_cat</span><span class="p">)</span>
      
     <span class="c1"># C. convert xyz to ipt and split:</span>
-    <span class="n">ipt</span> <span class="o">=</span> <span class="n">xyz_to_ipt</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">M</span> <span class="o">=</span> <span class="n">Mxyz2lms</span><span class="p">)</span> <span class="c1">#input matrix as published in Smet et al. 2012, Energy and Buildings</span>
+    <span class="k">if</span> <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ipt&#39;</span><span class="p">:</span> 
+        <span class="n">ipt</span> <span class="o">=</span> <span class="n">xyz_to_ipt</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">M</span> <span class="o">=</span> <span class="n">Mxyz2lms</span><span class="p">)</span> <span class="c1">#input matrix as published in Smet et al. 2012, Energy and Buildings</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cspace</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;type&#39;</span><span class="p">)</span> <span class="c1"># get rid of type key</span>
+        <span class="k">if</span> <span class="s1">&#39;xyzw&#39;</span> <span class="ow">in</span> <span class="n">cspace</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">cspace</span><span class="p">[</span><span class="s1">&#39;xyzw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyztw</span>
+        <span class="n">ipt</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyzti</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">)</span>
+        
     <span class="n">I</span><span class="p">,</span><span class="n">P</span><span class="p">,</span><span class="n">T</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">ipt</span><span class="p">)</span>  
 
     <span class="c1"># D. calculate specific (hue dependent) similarity indicators, Si:</span>
