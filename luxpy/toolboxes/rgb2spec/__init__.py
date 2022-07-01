@@ -19,8 +19,8 @@
 Module for RGB to spectrum conversions
 
  :_BASESPEC_SMITS: Default dict with base spectra for white, cyan, magenta, yellow, blue, green and red for each intent ('rfl' or 'spd')
- :rgb_to_spec_smits(): Convert an array of RGB values to a spectrum using a smits like conversion as implemented in mitsuba (July 10, 2019)
- :convert(): Convert an array of RGB values to a spectrum (wrapper around rgb_to_spec_smits(), future: implement other methods)
+ :rgb_to_spec_smits(): Convert an array of (linearized) RGB values to a spectrum using a smits like conversion as implemented in mitsuba (July 10, 2019)
+ :convert(): Convert an array of (linearized) RGB values to a spectrum (wrapper around rgb_to_spec_smits(), future: implement other methods)
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
@@ -29,13 +29,18 @@ from .smits_mitsuba import *
 __all__ = smits_mitsuba.__all__
 __all__ += ['convert']
 
-def convert(rgb, method = 'smits_mtsb', intent = 'rfl',  bitdepth = 8, wlr = _WL3, rgb2spec = None):
+def convert(rgb, linearized_rgb = True, method = 'smits_mtsb', intent = 'rfl',  bitdepth = 8, wlr = _WL3, rgb2spec = None):
     """
     Convert an array of RGB values to a spectrum.
     
     Args:
         :rgb: 
             | ndarray of list of rgb values
+        :linearized_rgb:
+            | True, optional
+            | If False: RGB values will be linearized using:
+            |     rgb_lin = xyz_to_srgb(srgb_to_xyz(rgb), gamma = 1, use_linear_part = False)
+            | If True: user has entered pre-linearized RGB values.
         :method:
             | 'smits_mtsb', optional
             | Method to use for conversion:
@@ -58,6 +63,6 @@ def convert(rgb, method = 'smits_mtsb', intent = 'rfl',  bitdepth = 8, wlr = _WL
         :spec: 
             | ndarray with spectrum or spectra (one for each rgb value, first row are the wavelengths)
     """
-    return rgb_to_spec_smits(rgb, intent = intent,  bitdepth = bitdepth, wlr = wlr, rgb2spec = rgb2spec)
+    return rgb_to_spec_smits(rgb, intent = intent,  linearized_rgb = linearized_rgb, bitdepth = bitdepth, wlr = wlr, rgb2spec = rgb2spec)
 
 

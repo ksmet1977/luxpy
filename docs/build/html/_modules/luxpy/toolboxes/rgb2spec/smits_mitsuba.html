@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.rgb2spec.smits_mitsuba &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.toolboxes.rgb2spec.smits_mitsuba &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -100,7 +99,7 @@
 
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">_WL3</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">xyz_to_srgb</span><span class="p">,</span> <span class="n">srgb_to_xyz</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 
@@ -391,7 +390,7 @@
 <span class="n">_BASESPEC_SMITS</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">rgb2spec_entries</span><span class="p">)</span>
     
 <span class="k">def</span> <span class="nf">_fromLinearRGB</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="n">_BASESPEC_SMITS</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">):</span>
-          
+    <span class="sd">&quot;&quot;&quot; Get rfl estimates from lunearized RGB values&quot;&quot;&quot;</span>
     <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">rgb</span> 
     <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">rgb2spec</span><span class="p">[</span><span class="s1">&#39;wlr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
 
@@ -428,16 +427,21 @@
         
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="c1"># no negative values allowed</span>
 
-<div class="viewcode-block" id="rgb_to_spec_smits"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.rgb2spec.rgb_to_spec_smits">[docs]</a><span class="k">def</span> <span class="nf">rgb_to_spec_smits</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="rgb_to_spec_smits"><a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.rgb2spec.rgb_to_spec_smits">[docs]</a><span class="k">def</span> <span class="nf">rgb_to_spec_smits</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert an array of RGB values to a spectrum using a Smits like conversion as implemented in Mitsuba.</span>
+<span class="sd">    Convert an array of (linearized) RGB values to a spectrum using a Smits like conversion as implemented in Mitsuba.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :rgb: </span>
-<span class="sd">            | ndarray of list of rgb values</span>
+<span class="sd">            | ndarray of list of (linearized) rgb values</span>
+<span class="sd">        :linearized_rgb:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If False: RGB values will be linearized using:</span>
+<span class="sd">            |     rgb_lin = xyz_to_srgb(srgb_to_xyz(rgb), gamma = 1, use_linear_part = False)</span>
+<span class="sd">            | If True: user has entered pre-linearized RGB values. </span>
 <span class="sd">        :intent:</span>
 <span class="sd">            | &#39;rfl&#39; (or &#39;spd&#39;), optional</span>
-<span class="sd">            | type of requested spectrum conversion .</span>
+<span class="sd">            | type of requested spectrum conversion.</span>
 <span class="sd">        :bitdepth:</span>
 <span class="sd">            | 8, optional</span>
 <span class="sd">            | bit depth of rgb values</span>
@@ -457,6 +461,8 @@
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">rgb</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">bitdepth</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">linearized_rgb</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz_to_srgb</span><span class="p">(</span><span class="n">srgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="o">*</span><span class="mi">255</span><span class="p">),</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">use_linear_part</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span><span class="o">/</span><span class="mf">255.0</span>
     <span class="k">if</span> <span class="n">rgb2spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">rgb2spec</span> <span class="o">=</span> <span class="n">_BASESPEC_SMITS</span> 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">rgb2spec</span><span class="p">[</span><span class="s1">&#39;wlr&#39;</span><span class="p">],</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wlr</span><span class="p">)):</span>
@@ -472,7 +478,11 @@
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
     <span class="n">rfl</span> <span class="o">=</span> <span class="n">rgb_to_spec_smits</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">200</span><span class="p">]],</span> <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
-    <span class="n">lx</span><span class="o">.</span><span class="n">SPD</span><span class="p">(</span><span class="n">rfl</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">()</span>
+    <span class="n">lx</span><span class="o">.</span><span class="n">SPD</span><span class="p">(</span><span class="n">rfl</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;linearized rgb input&#39;</span><span class="p">)</span>
+    <span class="n">rfl</span> <span class="o">=</span> <span class="n">rgb_to_spec_smits</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">200</span><span class="p">]],</span> <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">lx</span><span class="o">.</span><span class="n">SPD</span><span class="p">(</span><span class="n">rfl</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;non-linearized rgb input&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 </pre></div>
 
            </div>

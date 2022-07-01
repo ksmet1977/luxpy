@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.toolboxes.photbiochem.circadian_CS_CLa_lrc &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -94,7 +93,7 @@
 <span class="sd">:_LRC_CLA_CS_CONST: dict with model parameters and spectral data.</span>
 
 <span class="sd">:spd_to_CS_CLa_lrc(): Calculate Circadian Stimulus (CS) </span>
-<span class="sd">                        and Circadian Light (CLA: Rea et al 2012, CLA2.0: Rea et al 2021.</span>
+<span class="sd">                        and Circadian Light (CLA: Rea et al 2012, CLA2.0: Rea et al 2021, 2022.</span>
 <span class="sd">                                             </span>
 <span class="sd">:CLa_to_CS(): Convert Circadian Light to Circadian Stimulus.</span>
 
@@ -135,9 +134,16 @@
 <span class="sd">        Frontiers in Neuroscience, 15, 44. </span>
 <span class="sd">        &lt;https://doi.org/10.3389/fnins.2021.615322&gt;`_</span>
 <span class="sd">        </span>
-<span class="sd">    6. `LRC Online Circadian stimulus calculator  (CLa2.0, 2021)</span>
+<span class="sd">    6. `Rea, M. S., Nagare, R., &amp; Figueiro, M. G. (2022). </span>
+<span class="sd">        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. </span>
+<span class="sd">        Frontiers in Neuroscience, 16. </span>
+<span class="sd">        &lt;https://www.frontiersin.org/article/10.3389/fnins.2022.849800&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">    7. `LRC Online Circadian stimulus calculator  (CLa2.0, 2021)</span>
 <span class="sd">        &lt;https://docs.light-health.org/cscalc&gt;`_</span>
 
+<span class="sd">    8. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)</span>
+<span class="sd">        &lt;https://github.com/Light-and-Health-Research-Center/cscalc&gt;`_</span>
 <span class="sd">Note:</span>
 <span class="sd">----</span>
 <span class="sd">    1. The 2005 CLA formulation did not include a physiologically based </span>
@@ -229,8 +235,8 @@
             <span class="n">Vphotl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Vscotl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Vl_mpl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Scl_mpl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Mcl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">WL</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
             <span class="n">Scl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ybarl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Local helper function that calculate CLa2.0 from El based on Eq. 3 </span>
-<span class="sd">    in Rea et al (2021).</span>
+<span class="sd">    Local helper function that calculate CLa2.0 from El based on the correction of Eq. 3 </span>
+<span class="sd">    in Rea et al (2021, 2022).</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        The various model parameters as described in the paper and contained </span>
@@ -247,12 +253,23 @@
 <span class="sd">        </span>
 <span class="sd">        2. `LRC Online Circadian Stimulus calculator (CLa2.0, 2021)</span>
 <span class="sd">        &lt;https://docs.light-health.org/cscalc&gt;`_</span>
-
 <span class="sd">        </span>
+<span class="sd">        3. `Rea, M. S., Nagare, R., &amp; Figueiro, M. G. (2022). </span>
+<span class="sd">        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. </span>
+<span class="sd">        Frontiers in Neuroscience, 16. </span>
+<span class="sd">        &lt;https://www.frontiersin.org/article/10.3389/fnins.2022.849800&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        4. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)</span>
+<span class="sd">        &lt;https://github.com/Light-and-Health-Research-Center/cscalc&gt;`_</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">        1. The equations and parameter values used are those in the </span>
+<span class="sd">        github repository and corrigendum.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> 
     
-    <span class="c1"># Calculate piecewise function in Eq. 3 in Rea et al. 2021:</span>
+    <span class="c1"># Calculate piecewise function in Eq. 3 in Rea et al. 2021 </span>
+    <span class="c1"># -&gt; use corrected in corrigendum from 2022:</span>
     
     <span class="c1"># calculate value of condition function (b-y):</span>
     <span class="n">cond_number</span> <span class="o">=</span> <span class="n">integral</span><span class="p">(</span><span class="n">Elv</span><span class="o">*</span><span class="n">Scl_mpl</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span><span class="o">*</span><span class="n">integral</span><span class="p">(</span><span class="n">Elv</span><span class="o">*</span><span class="n">Vl_mpl</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
@@ -373,7 +390,7 @@
 <span class="sd">            | CLa version to calculate </span>
 <span class="sd">            | Options: </span>
 <span class="sd">            | - &#39;CLa1.0&#39;: Rea et al. 2012</span>
-<span class="sd">            | - &#39;CLa2.0&#39;: Rea et al. 2021</span>
+<span class="sd">            | - &#39;CLa2.0&#39;: Rea et al. 2021, 2022</span>
 <span class="sd">        :E: </span>
 <span class="sd">            | None, float or ndarray, optional</span>
 <span class="sd">            | Illuminance of light sources.</span>
@@ -445,7 +462,7 @@
 <span class="sd">        to estimate the equivalent photopic illuminance from CIE Illuminant D65</span>
 <span class="sd">        (an approximation of daylight with a CCT of 6500 K).</span>
 <span class="sd">        </span>
-<span class="sd">        2. Nov. 6, 2012: To get a value of CLa2.0 = 813, Eq. 3 from the paper </span>
+<span class="sd">        2. Nov. 6, 2021: To get a value of CLa2.0 = 813, Eq. 3 from the paper </span>
 <span class="sd">        must be adjusted to also divide by the transmision of the </span>
 <span class="sd">        macula (&#39;mp&#39; in paper) the S-cone and Vlambda functions prior to </span>
 <span class="sd">        calculating the integrals in the denominators of the first factor after</span>
@@ -454,6 +471,15 @@
 <span class="sd">        Verification of the code on github shows indeed that these denominators</span>
 <span class="sd">        are calculated by using the macular transmission divided S-cone and </span>
 <span class="sd">        Vlambda functions. Is this an error in the code or in the paper?</span>
+<span class="sd">        </span>
+<span class="sd">        3. Feb. 22, 2022: A corrigendum has been released for Eq. 3 in the original</span>
+<span class="sd">        paper, where the normalization is indeed done.</span>
+<span class="sd">        </span>
+<span class="sd">        4. Feb. 22, 2022: While the rodsat value in the corrigendum is defined as 6.50 W/m²,</span>
+<span class="sd">        this calculator uses the value as used in the online calculator: 6.5215 W/m².</span>
+<span class="sd">        (see `code base on github: &lt;https://github.com/Light-and-Health-Research-Center/cscalc&gt;`_)</span>
+<span class="sd">        </span>
+<span class="sd">        </span>
 <span class="sd">        </span>
 <span class="sd">    References:</span>
 <span class="sd">        </span>
@@ -479,9 +505,16 @@
 <span class="sd">        Frontiers in Neuroscience, 15, 44. </span>
 <span class="sd">        &lt;https://doi.org/10.3389/fnins.2021.615322&gt;`_</span>
 <span class="sd">        </span>
-<span class="sd">        6. `LRC Online Circadian stimulus calculator (CLa2.0, 2021)</span>
+<span class="sd">        6. `Rea, M. S., Nagare, R., &amp; Figueiro, M. G. (2022). </span>
+<span class="sd">        Corrigendum: Modeling Circadian Phototransduction: Quantitative Predictions of Psychophysical Data. </span>
+<span class="sd">        Frontiers in Neuroscience, 16. </span>
+<span class="sd">        &lt;https://www.frontiersin.org/article/10.3389/fnins.2022.849800&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        7. `LRC Online Circadian stimulus calculator (CLa2.0, 2021)</span>
 <span class="sd">        &lt;https://docs.light-health.org/cscalc&gt;`_</span>
-
+<span class="sd">        </span>
+<span class="sd">        8. `Github code: LRC Online Circadian stimulus calculator (CLa2.0, accessed Nov. 5, 2021)</span>
+<span class="sd">        &lt;https://github.com/Light-and-Health-Research-Center/cscalc&gt;`_</span>
 <span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Create copy of dict with model parameters and spectral data:</span>
@@ -501,7 +534,7 @@
     <span class="n">Elv</span> <span class="o">=</span> <span class="n">El</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
       
     <span class="c1"># define integral function:</span>
-    <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
+    <span class="c1"># integral = lambda x: integrate.trapz(x, x = wl, axis = -1) </span>
     <span class="n">integral</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span>  <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> 
     
     <span class="c1"># Rescale El to E (if not None):</span>

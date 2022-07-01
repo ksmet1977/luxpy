@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.toolboxes.spdbuild.spdoptimizer2020 &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -519,7 +518,9 @@
 <span class="sd">        Calculate objective function j for input spd.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Calculate objective function j:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_requires_solution_info</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span> 
+        <span class="n">f_requires_solution_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_requires_solution_info</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_requires_solution_info</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_requires_solution_info</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">f_requires_solution_info</span><span class="p">:</span> 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">],</span><span class="nb">tuple</span><span class="p">):</span> <span class="c1"># one function for each objective:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">](</span><span class="n">spdi</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">fp</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
             <span class="k">else</span><span class="p">:</span> <span class="c1"># one function for multiple objectives for increased speed:</span>
@@ -1535,7 +1536,12 @@
 
     <span class="n">run_example_class_4</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization</span>
 
-    <span class="n">run_example_class_5</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization with obj_fcn using &#39;solution_info&#39; to steer the optimization to solutions with the max number of channels &#39;on&#39;</span>
+    <span class="n">run_example_class_4b</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization (using slow approach of two separate functions)</span>
+
+    <span class="n">run_example_class_5</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization with obj_fcn using &#39;solution_info&#39; to steer the optimization to solutions with the max number of channels &#39;on&#39;</span>
+    
+    <span class="n">run_example_class_5b</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># # class based example with pre-defined primaries and demo minimization with obj_fcn using &#39;solution_info&#39; to steer the optimization to solutions with the max number of channels &#39;on&#39;</span>
+    
     
     <span class="n">run_example_fcn_1</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># function based example: use pre-defined minimization methods (spd_optimize2())</span>
 
@@ -1710,6 +1716,36 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn2:&#39;</span><span class="p">,</span><span class="n">Rg</span><span class="p">)</span>
         
         <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="k">if</span> <span class="n">run_example_class_4b</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
+        <span class="n">prims</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span><span class="s1">&#39;fwhm&#39;</span><span class="p">:[</span><span class="mi">15</span><span class="p">],</span>
+                                        <span class="s1">&#39;peakwl_bnds&#39;</span><span class="p">:[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+        
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
+        <span class="n">prims2</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+
+        <span class="n">so4</span> <span class="o">=</span> <span class="n">SpectralOptimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]),</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{},</span>
+                              <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                              <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,primss,Ms,results&#39;</span><span class="p">,</span>
+                              <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span> <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">prim_constructor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                              <span class="n">prims</span> <span class="o">=</span> <span class="n">prims2</span><span class="p">,</span>
+                              <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="n">lx</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrf</span><span class="p">,</span><span class="n">lx</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrg</span><span class="p">],</span> 
+                                                <span class="n">ft</span> <span class="o">=</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">]),</span>
+                              <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minimizer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span>
+                                                    <span class="n">opts</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;iters&#39;</span><span class="p">:</span><span class="mi">50</span><span class="p">}),</span>
+                              <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># start optimization:</span>
+        <span class="n">spd</span><span class="p">,</span><span class="n">M</span> <span class="o">=</span> <span class="n">so4</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,Ms&#39;</span><span class="p">)</span>
+        
+        <span class="n">Rf</span><span class="p">,</span> <span class="n">Rg</span> <span class="o">=</span> <span class="n">spd_to_cris</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn1:&#39;</span><span class="p">,</span><span class="n">Rf</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn2:&#39;</span><span class="p">,</span><span class="n">Rg</span><span class="p">)</span>
+        
+        <span class="c1">#--------------------------------------------------------------------------</span>
     <span class="k">if</span> <span class="n">run_example_class_5</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         
         <span class="c1"># define user obj functions that asks for solutions info to use</span>
@@ -1753,13 +1789,78 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn1:&#39;</span><span class="p">,</span><span class="n">Rf</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn2:&#39;</span><span class="p">,</span><span class="n">Rg</span><span class="p">)</span>
         
-        <span class="c1"># check grahically:</span>
+        <span class="c1"># check graphically:</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;optimized spd (Rf=</span><span class="si">{:1.0f}</span><span class="s1">,Rg=</span><span class="si">{:1.0f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Rg</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="n">cmap</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">Mi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Mi</span><span class="o">*</span><span class="n">prims</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;channel </span><span class="si">{:1.0f}</span><span class="s1"> (rel. flux = </span><span class="si">{:1.3f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">Mi</span><span class="o">/</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+        
+        
+        
+    <span class="k">if</span> <span class="n">run_example_class_5b</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+    
+        <span class="c1"># define user obj functions that asks for solutions info to use</span>
+        <span class="c1"># when determining function output. For example, to give very &#39;bad&#39;</span>
+        <span class="c1"># Rf,Rg values (forcing the optimization away from this type of solutions)</span>
+        <span class="c1"># when the number of channels with a relative weight smaller than 10%</span>
+        <span class="c1"># is larger than 1 (in other words, try and force te search towards</span>
+        <span class="c1"># solutins that have all channels sufficiently &#39;on&#39;):</span>
+        <span class="k">def</span> <span class="nf">spd_to_iesrf_with_solution_info</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">solution_info</span> <span class="o">=</span> <span class="p">{}):</span>
+            <span class="n">Ms</span> <span class="o">=</span> <span class="n">solution_info</span><span class="p">[</span><span class="s1">&#39;Ms&#39;</span><span class="p">]</span>
+            <span class="n">Ms</span> <span class="o">=</span> <span class="n">Ms</span><span class="o">/</span><span class="n">Ms</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># normalize to max</span>
+            <span class="n">good_solutions</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ms</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">Ms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">good_solutions</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">good_solutions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="mi">30</span> <span class="c1"># higher number of on-channels is better (just setting zeros no matter how many bad channels makes it more difficult to optimize, same as setting a really really low value like -1000)</span>
+            <span class="k">if</span> <span class="n">good_solutions</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">spds_good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">spd</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">good_solutions</span><span class="p">]))</span> <span class="c1"># only good solutions need calculating</span>
+                <span class="n">Rf</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrf</span><span class="p">(</span><span class="n">spds_good</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">[:,</span><span class="n">good_solutions</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rf</span> 
+            <span class="k">return</span> <span class="n">out</span>
+        
+        <span class="k">def</span> <span class="nf">spd_to_iesrg_with_solution_info</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">solution_info</span> <span class="o">=</span> <span class="p">{}):</span>
+            <span class="n">Ms</span> <span class="o">=</span> <span class="n">solution_info</span><span class="p">[</span><span class="s1">&#39;Ms&#39;</span><span class="p">]</span>
+            <span class="n">Ms</span> <span class="o">=</span> <span class="n">Ms</span><span class="o">/</span><span class="n">Ms</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># normalize to max</span>
+            <span class="n">good_solutions</span> <span class="o">=</span> <span class="p">(</span><span class="n">Ms</span> <span class="o">&gt;=</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="n">Ms</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">good_solutions</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">good_solutions</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="mi">30</span> <span class="c1"># higher number of on-channels is better (just setting zeros no matter how many bad channels makes it more difficult to optimize, same as setting a really really low value like -1000)</span>
+            <span class="k">if</span> <span class="n">good_solutions</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                <span class="n">spds_good</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">spd</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">:][</span><span class="n">good_solutions</span><span class="p">]))</span> <span class="c1"># only good solutions need calculating</span>
+                <span class="n">Rf</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cri</span><span class="o">.</span><span class="n">spd_to_iesrg</span><span class="p">(</span><span class="n">spds_good</span><span class="p">)</span>
+                <span class="n">out</span><span class="p">[:,</span><span class="n">good_solutions</span><span class="p">]</span> <span class="o">=</span> <span class="n">Rf</span> 
+            <span class="k">return</span> <span class="n">out</span>
+              
+        <span class="c1"># create set of 4 primaries with fixed peakwl and fwhm bounds set to [5,300]:</span>
+        <span class="n">prims</span> <span class="o">=</span> <span class="n">PrimConstructor</span><span class="p">(</span><span class="n">pdefs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;peakwl&#39;</span><span class="p">:[</span><span class="mi">450</span><span class="p">,</span><span class="mi">470</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">520</span><span class="p">,</span><span class="mi">560</span><span class="p">,</span><span class="mi">580</span><span class="p">,</span><span class="mi">630</span><span class="p">],</span>
+                                        <span class="s1">&#39;fwhm_bnds&#39;</span><span class="p">:[</span><span class="mi">5</span><span class="p">,</span><span class="mi">300</span><span class="p">]})</span><span class="o">.</span><span class="n">get_spd</span><span class="p">()</span>
+    
+        <span class="n">so4</span> <span class="o">=</span> <span class="n">SpectralOptimizer</span><span class="p">(</span><span class="n">target</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]),</span> <span class="n">tar_type</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">,</span> <span class="n">cspace_bwtf</span> <span class="o">=</span> <span class="p">{},</span>
+                              <span class="n">wlr</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                              <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,primss,Ms,results&#39;</span><span class="p">,</span>
+                              <span class="n">optimizer_type</span> <span class="o">=</span> <span class="s1">&#39;3mixer&#39;</span><span class="p">,</span> <span class="n">triangle_strengths_bnds</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                              <span class="n">prim_constructor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                              <span class="n">prims</span> <span class="o">=</span> <span class="n">prims</span><span class="p">,</span>
+                              <span class="n">obj_fcn</span> <span class="o">=</span> <span class="n">ObjFcns</span><span class="p">(</span><span class="n">f</span><span class="o">=</span><span class="p">[</span><span class="n">spd_to_iesrf_with_solution_info</span><span class="p">,</span>
+                                                   <span class="n">spd_to_iesrf_with_solution_info</span><span class="p">],</span> 
+                                                <span class="n">ft</span> <span class="o">=</span> <span class="p">[</span><span class="mi">90</span><span class="p">,</span><span class="mi">110</span><span class="p">],</span>
+                                                <span class="n">f_requires_solution_info</span><span class="o">=</span><span class="p">[</span><span class="kc">True</span><span class="p">,</span><span class="kc">True</span><span class="p">]),</span>
+                              <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minimizer</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;ps&#39;</span><span class="p">,</span>
+                                                    <span class="n">opts</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;iters&#39;</span><span class="p">:</span><span class="mi">50</span><span class="p">}),</span>
+                              <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="c1"># start optimization:</span>
+        <span class="n">spd</span><span class="p">,</span><span class="n">M</span> <span class="o">=</span> <span class="n">so4</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;spds,Ms&#39;</span><span class="p">)</span>
+        
+        <span class="n">Rf</span><span class="p">,</span> <span class="n">Rg</span> <span class="o">=</span> <span class="n">spd_to_cris</span><span class="p">(</span><span class="n">spd</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn1:&#39;</span><span class="p">,</span><span class="n">Rf</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;obj_fcn2:&#39;</span><span class="p">,</span><span class="n">Rg</span><span class="p">)</span>
+        
+        <span class="c1"># check graphically:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;optimized spd (Rf=</span><span class="si">{:1.0f}</span><span class="s1">,Rg=</span><span class="si">{:1.0f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Rf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Rg</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">cmap</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;jet&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">Mi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">prims</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Mi</span><span class="o">*</span><span class="n">prims</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;channel </span><span class="si">{:1.0f}</span><span class="s1"> (rel. flux = </span><span class="si">{:1.3f}</span><span class="s1">)&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">Mi</span><span class="o">/</span><span class="n">M</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
     <span class="c1">#--------------------------------------------------------------------------</span>
     <span class="k">if</span> <span class="n">run_example_fcn_1</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
 

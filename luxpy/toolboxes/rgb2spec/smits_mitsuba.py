@@ -27,7 +27,7 @@ Module for Smits-style RGB to Spectrum conversion
 
 """
 
-from luxpy import cie_interp, getwlr, _WL3
+from luxpy import cie_interp, getwlr, _WL3, xyz_to_srgb, srgb_to_xyz
 from luxpy.utils import np
 import copy
 
@@ -318,7 +318,7 @@ rgb2spec_entries = _convert_to_wlr()
 _BASESPEC_SMITS = copy.deepcopy(rgb2spec_entries)
     
 def _fromLinearRGB(rgb, intent = 'rfl', rgb2spec = _BASESPEC_SMITS, wlr = _WL3):
-          
+    """ Get rfl estimates from lunearized RGB values"""
     r, g, b = rgb 
     result = np.zeros((rgb2spec['wlr'].shape[0],))
 
@@ -355,16 +355,21 @@ def _fromLinearRGB(rgb, intent = 'rfl', rgb2spec = _BASESPEC_SMITS, wlr = _WL3):
         
     return np.clip(result, 0, None) # no negative values allowed
 
-def rgb_to_spec_smits(rgb, intent = 'rfl',  bitdepth = 8, wlr = _WL3, rgb2spec = None):
+def rgb_to_spec_smits(rgb, intent = 'rfl',  linearized_rgb = True, bitdepth = 8, wlr = _WL3, rgb2spec = None):
     """
-    Convert an array of RGB values to a spectrum using a Smits like conversion as implemented in Mitsuba.
+    Convert an array of (linearized) RGB values to a spectrum using a Smits like conversion as implemented in Mitsuba.
     
     Args:
         :rgb: 
-            | ndarray of list of rgb values
+            | ndarray of list of (linearized) rgb values
+        :linearized_rgb:
+            | True, optional
+            | If False: RGB values will be linearized using:
+            |     rgb_lin = xyz_to_srgb(srgb_to_xyz(rgb), gamma = 1, use_linear_part = False)
+            | If True: user has entered pre-linearized RGB values. 
         :intent:
             | 'rfl' (or 'spd'), optional
-            | type of requested spectrum conversion .
+            | type of requested spectrum conversion.
         :bitdepth:
             | 8, optional
             | bit depth of rgb values
@@ -384,6 +389,8 @@ def rgb_to_spec_smits(rgb, intent = 'rfl',  bitdepth = 8, wlr = _WL3, rgb2spec =
         rgb = np.atleast_2d(rgb)
     if rgb.max() > 1:
         rgb = rgb/(2**bitdepth - 1)
+    if linearized_rgb == False:
+        rgb = xyz_to_srgb(srgb_to_xyz(rgb*255), gamma = 1.0, use_linear_part = False)/255.0
     if rgb2spec is None:
         rgb2spec = _BASESPEC_SMITS 
     if not np.array_equal(rgb2spec['wlr'], getwlr(wlr)):
@@ -399,4 +406,8 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     rfl = rgb_to_spec_smits([[100,100,100], [100,150,200]], wlr = [360,830,1])
     plt.figure()
-    lx.SPD(rfl).plot()
+    lx.SPD(rfl).plot(label = 'linearized rgb input')
+    rfl = rgb_to_spec_smits([[100,100,100], [100,150,200]], wlr = [360,830,1], linearized_rgb = False)
+    lx.SPD(rfl).plot(label = 'non-linearized rgb input', linestyle='--')
+    plt.gca().set_ylim([0,1])
+    plt.legend()

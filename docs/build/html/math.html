@@ -1,20 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Math sub-package &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Math sub-package &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -30,7 +28,7 @@
             <a href="index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -40,7 +38,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
@@ -88,54 +86,60 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="math-sub-package">
-<h1>Math sub-package<a class="headerlink" href="#math-sub-package" title="Permalink to this headline"></a></h1>
+  <div class="section" id="math-sub-package">
+<h1>Math sub-package<a class="headerlink" href="#math-sub-package" title="Permalink to this headline">¶</a></h1>
 <blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">py</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>__init__.py</p></li>
-<li><p>basics.py</p></li>
-<li><p>minimizebnd.py</p></li>
-<li><p>mupolymodel.py</p></li>
-<li><p>Pyswarms_particleswarm.py</p></li>
-<li><p>pymoo_nsga_ii.py</p></li>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>basics.py</li>
+<li>minimizebnd.py</li>
+<li>mupolymodel.py</li>
+<li>Pyswarms_particleswarm.py</li>
+<li>pymoo_nsga_ii.py</li>
 </ul>
-</dd>
-<dt class="field-even">namespace</dt>
-<dd class="field-even"><p>luxpy.math</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.math</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div></blockquote>
-<span class="target" id="module-luxpy.math"></span><section id="module-with-useful-math-functions">
-<h2>Module with useful math functions<a class="headerlink" href="#module-with-useful-math-functions" title="Permalink to this headline"></a></h2>
+<span class="target" id="module-luxpy.math"></span><div class="section" id="module-with-useful-math-functions">
+<h2>Module with useful math functions<a class="headerlink" href="#module-with-useful-math-functions" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><dl class="field-list">
-<dt class="field-odd">normalize_3x3_matrix()</dt>
-<dd class="field-odd"><p>Normalize 3x3 matrix M to xyz0 – &gt; [1,1,1]</p>
-</dd>
-<dt class="field-even">line_intersect()</dt>
-<dd class="field-even"><div class="line-block">
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">normalize_3x3_matrix():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Normalize 3x3 matrix M to xyz0 – &gt; [1,1,1]</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">line_intersect():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">Line intersections of series of two line segments a and b. </div>
 <div class="line"><a class="reference external" href="https://stackoverflow.com/questions/3252194/numpy-and-line-intersections">https://stackoverflow.com/questions/3252194/numpy-and-line-intersections</a></div>
 </div>
-</dd>
-<dt class="field-odd">positive_arctan()</dt>
-<dd class="field-odd"><p>Calculates the positive angle (0°-360° or 0 - 2*pi rad.) 
-from x and y.</p>
-</dd>
-<dt class="field-even">dot23()</dt>
-<dd class="field-even"><p>Dot product of a 2-d ndarray 
-with a (N x K x L) 3-d ndarray using einsum().</p>
-</dd>
-<dt class="field-odd">check_symmetric()</dt>
-<dd class="field-odd"><p>Checks if A is symmetric.</p>
-</dd>
-<dt class="field-even">check_posdef()</dt>
-<dd class="field-even"><p>Checks positive definiteness of a matrix via Cholesky.</p>
-</dd>
-<dt class="field-odd">symmM_to_posdefM()</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">positive_arctan():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Calculates the positive angle (0°-360° or 0 - 2*pi rad.) 
+from x and y.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">dot23():</th><td class="field-body">Dot product of a 2-d ndarray 
+with a (N x K x L) 3-d ndarray using einsum().</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">check_symmetric():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Checks if A is symmetric.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">check_posdef():</th><td class="field-body">Checks positive definiteness of a matrix via Cholesky.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">symmM_to_posdefM():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">Converts a symmetric matrix to a positive definite one. </div>
 <div class="line">Two methods are supported:</div>
 <div class="line-block">
@@ -155,367 +159,415 @@ with a (N x K x L) 3-d ndarray using einsum().</p>
 </div>
 </div>
 </div>
-</dd>
-<dt class="field-even">bvgpdf()</dt>
-<dd class="field-even"><p>Evaluate bivariate Gaussian probability density function (BVGPDF) 
-at (x,y) with center mu and inverse covariance matric, sigmainv.</p>
-</dd>
-<dt class="field-odd">mahalanobis2()</dt>
-<dd class="field-odd"><p>Evaluate the squared mahalanobis distance with center mu and 
-shape and orientation determined by sigmainv.</p>
-</dd>
-<dt class="field-even">rms()</dt>
-<dd class="field-even"><p>Calculates root-mean-square along axis.</p>
-</dd>
-<dt class="field-odd">geomean()</dt>
-<dd class="field-odd"><p>Calculates geometric mean along axis.</p>
-</dd>
-<dt class="field-even">polyarea()</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">bvgpdf():</th><td class="field-body">Evaluate bivariate Gaussian probability density function (BVGPDF) 
+at (x,y) with center mu and inverse covariance matric, sigmainv.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">mahalanobis2():</th><td class="field-body">Evaluate the squared mahalanobis distance with center mu and 
+shape and orientation determined by sigmainv.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">rms():</th><td class="field-body">Calculates root-mean-square along axis.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">geomean():</th><td class="field-body">Calculates geometric mean along axis.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">polyarea():</th><td class="field-body"><div class="first last line-block">
 <div class="line">Calculates area of polygon. </div>
 <div class="line">(First coordinate should also be last)</div>
 </div>
-</dd>
-<dt class="field-odd">erf(), erfinv()</dt>
-<dd class="field-odd"><p>erf-function and its inverse, direct import from scipy.special</p>
-</dd>
-<dt class="field-even">cart2pol()</dt>
-<dd class="field-even"><p>Converts Cartesian to polar coordinates.</p>
-</dd>
-<dt class="field-odd">pol2cart()</dt>
-<dd class="field-odd"><p>Converts polar to Cartesian coordinates.</p>
-</dd>
-<dt class="field-even">cart2spher()</dt>
-<dd class="field-even"><p>Converts Cartesian to spherical coordinates.</p>
-</dd>
-<dt class="field-odd">spher2cart()</dt>
-<dd class="field-odd"><p>Converts spherical to Cartesian coordinates.</p>
-</dd>
-<dt class="field-even">magnitude_v()</dt>
-<dd class="field-even"><p>Calculates magnitude of vector.</p>
-</dd>
-<dt class="field-odd">angle_v1v2()</dt>
-<dd class="field-odd"><p>Calculates angle between two vectors.</p>
-</dd>
-<dt class="field-even">histogram()</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">erf(), erfinv():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">erf-function and its inverse, direct import from scipy.special</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cart2pol():</th><td class="field-body">Converts Cartesian to polar coordinates.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">pol2cart():</th><td class="field-body">Converts polar to Cartesian coordinates.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cart2spher():</th><td class="field-body">Converts Cartesian to spherical coordinates.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">spher2cart():</th><td class="field-body">Converts spherical to Cartesian coordinates.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">magnitude_v():</th><td class="field-body">Calculates magnitude of vector.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">angle_v1v2():</th><td class="field-body">Calculates angle between two vectors.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">histogram():</th><td class="field-body"><div class="first last line-block">
 <div class="line">Histogram function that can take as bins either the center</div>
 <div class="line">(cfr. matlab hist) or bin-edges.</div>
 </div>
-</dd>
-<dt class="field-odd">v_to_cik()</dt>
-<dd class="field-odd"><p>Calculate 2x2 ‘(covariance matrix)^-1’ elements cik from v-format ellipse descriptor.</p>
-</dd>
-<dt class="field-even">cik_to_v()</dt>
-<dd class="field-even"><p>Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik.</p>
-</dd>
-<dt class="field-odd">minimizebnd()</dt>
-<dd class="field-odd"><p>scipy.minimize() that allows contrained parameters on 
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">v_to_cik():</th><td class="field-body">Calculate 2x2 ‘(covariance matrix)^-1’ elements cik from v-format ellipse descriptor.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">cik_to_v():</th><td class="field-body">Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">minimizebnd():</th><td class="field-body">scipy.minimize() that allows contrained parameters on 
 unconstrained methods(port of Matlab’s fminsearchbnd). 
 Starting, lower and upper bounds values can also be provided 
-as a dict.</p>
-</dd>
-<dt class="field-even">DEMO</dt>
-<dd class="field-even"><p>Module for Differential Evolutionary Multi-objective Optimization  (DEMO).</p>
-</dd>
-<dt class="field-odd">vec3</dt>
-<dd class="field-odd"><p>Module for spherical vector coordinates.</p>
-</dd>
-<dt class="field-even">fmod()</dt>
-<dd class="field-even"><p>Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b</p>
-</dd>
-<dt class="field-odd">fit_ellipse()</dt>
-<dd class="field-odd"><p>Fit an ellipse to supplied data points.</p>
-</dd>
-<dt class="field-even">fit_cov_ellipse()</dt>
-<dd class="field-even"><p>Fit an covariance ellipse to supplied data points.</p>
-</dd>
-<dt class="field-odd">interp1()</dt>
-<dd class="field-odd"><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
-</dd>
-<dt class="field-even">ndinterp1()</dt>
-<dd class="field-even"><p>Perform n-dimensional interpolation using Delaunay triangulation.</p>
-</dd>
-<dt class="field-odd">ndinterp1_scipy()</dt>
-<dd class="field-odd"><p>Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)</p>
-</dd>
-<dt class="field-even">box_m()</dt>
-<dd class="field-even"><p>Performs a Box M test on covariance matrices.</p>
-</dd>
-<dt class="field-odd">pitman_morgan()</dt>
-<dd class="field-odd"><p>Pitman-Morgan Test for the difference between correlated variances with paired samples.</p>
-</dd>
-<dt class="field-even">mupolymod</dt>
-<dd class="field-even"><p>Module for Multivariate Polynomial Model Optimization (2D, 3D)</p>
-</dd>
-</dl>
+as a dict.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">DEMO:</th><td class="field-body">Module for Differential Evolutionary Multi-objective Optimization  (DEMO).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">vec3:</th><td class="field-body">Module for spherical vector coordinates.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fmod():</th><td class="field-body">Floating point modulus, e.g.: fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]b</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">fit_ellipse():</th><td class="field-body">Fit an ellipse to supplied data points.</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">fit_cov_ellipse():</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body">Fit an covariance ellipse to supplied data points.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">interp1():</th><td class="field-body">Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ndinterp1():</th><td class="field-body">Perform n-dimensional interpolation using Delaunay triangulation.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">ndinterp1_scipy():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Perform n-dimensional interpolation using Delaunay triangulation (wrapper around scipy.interpolate.LinearNDInterpolator)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">box_m():</th><td class="field-body">Performs a Box M test on covariance matrices.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">pitman_morgan():</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Pitman-Morgan Test for the difference between correlated variances with paired samples.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">mupolymod:</th><td class="field-body">Module for Multivariate Polynomial Model Optimization (2D, 3D)</td>
+</tr>
+</tbody>
+</table>
 </div></blockquote>
-<section id="not-imported-in-math-namespace-to-minimize-dependencies">
-<h3>NOT IMPORTED in math-namespace (to minimize dependencies)<a class="headerlink" href="#not-imported-in-math-namespace-to-minimize-dependencies" title="Permalink to this headline"></a></h3>
+<div class="section" id="not-imported-in-math-namespace-to-minimize-dependencies">
+<h3>NOT IMPORTED in math-namespace (to minimize dependencies)<a class="headerlink" href="#not-imported-in-math-namespace-to-minimize-dependencies" title="Permalink to this headline">¶</a></h3>
 <blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">pyswarms_particleswarm</dt>
-<dd class="field-odd"><p>Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO))</p>
-</dd>
-<dt class="field-even">pymoo_nsga_ii</dt>
-<dd class="field-even"><p>Module with nsga_ii() function for pareto-optimal boundary minimization using Non-Dominated-Sort-Genetic-Algorithm NSGA-II (wrapper around pymoo.NSGAII))</p>
-</dd>
-</dl>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">pyswarms_particleswarm:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">Module with particleswarm() function for global minimization using particle swarms (wrapper around pyswarms.single.GlobalBestPSO))</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pymoo_nsga_ii:</th><td class="field-body">Module with nsga_ii() function for pareto-optimal boundary minimization using Non-Dominated-Sort-Genetic-Algorithm NSGA-II (wrapper around pymoo.NSGAII))</td>
+</tr>
+</tbody>
+</table>
 </div></blockquote>
 <hr class="docutils" />
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.normalize_3x3_matrix">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">normalize_3x3_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">M</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyz0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.0,</span> <span class="pre">1.0,</span> <span class="pre">1.0]])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#normalize_3x3_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.normalize_3x3_matrix" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.normalize_3x3_matrix">
+<code class="descclassname">luxpy.math.</code><code class="descname">normalize_3x3_matrix</code><span class="sig-paren">(</span><em>M</em>, <em>xyz0=array([[1.0000e+00</em>, <em>1.0000e+00</em>, <em>1.0000e+00]])</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#normalize_3x3_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.normalize_3x3_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize 3x3 matrix M to xyz0 – &gt; [1,1,1]</p>
 <div class="line-block">
 <div class="line">If M.shape == (1,9): M is reshaped to (3,3)</div>
 </div>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">M</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">M:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray((3,3) or ndarray((1,9))</div>
 </div>
-</dd>
-<dt class="field-even">xyz0</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">xyz0:</th><td class="field-body"><div class="first last line-block">
 <div class="line">2darray, optional </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">normalized matrix such that M*xyz0 = [1,1,1]</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.symmM_to_posdefM">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">symmM_to_posdefM</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'make'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">forcesymm</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#symmM_to_posdefM"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.symmM_to_posdefM" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.symmM_to_posdefM">
+<code class="descclassname">luxpy.math.</code><code class="descname">symmM_to_posdefM</code><span class="sig-paren">(</span><em>A=None</em>, <em>atol=1e-09</em>, <em>rtol=1e-09</em>, <em>method='make'</em>, <em>forcesymm=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#symmM_to_posdefM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.symmM_to_posdefM" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert a symmetric matrix to a positive definite one.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">A</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">A:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray</div>
 </div>
-</dd>
-<dt class="field-even">atol</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">atol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The absolute tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
-</dd>
-<dt class="field-odd">rtol</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The relative tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
-</dd>
-<dt class="field-even">method</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">method:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘make’ or ‘nearest’, optional (see notes for more info)</div>
 </div>
-</dd>
-<dt class="field-odd">forcesymm</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">forcesymm:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True or False, optional</div>
 <div class="line">If A is not symmetric, force symmetry using: </div>
 <div class="line-block">
 <div class="line">A = numpy.triu(A) + numpy.triu(A).T - numpy.diag(numpy.diag(A))</div>
 </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with positive-definite matrix.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Notes on supported methods:</dt><dd><p>1. <a class="reference external" href="https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix">‘make’: A Python/Numpy port of Muhammad Asim Mubeen’s matlab function 
+<dt>Notes on supported methods:</dt>
+<dd>1. <a class="reference external" href="https://nl.mathworks.com/matlabcentral/fileexchange/45873-positive-definite-matrix">‘make’: A Python/Numpy port of Muhammad Asim Mubeen’s matlab function 
 Spd_Mat.m</a>
 2. <cite>‘nearest’: A Python/Numpy port of John D’Errico’s `nearestSPD</cite> 
 MATLAB code. 
-&lt;<a class="reference external" href="https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite">https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite</a>&gt;`_</p>
-</dd>
+&lt;<a class="reference external" href="https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite">https://stackoverflow.com/questions/43238173/python-convert-matrix-to-positive-semi-definite</a>&gt;`_</dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.check_symmetric">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">check_symmetric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_symmetric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.check_symmetric" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.check_symmetric">
+<code class="descclassname">luxpy.math.</code><code class="descname">check_symmetric</code><span class="sig-paren">(</span><em>A</em>, <em>atol=1e-09</em>, <em>rtol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_symmetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_symmetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check if A is symmetric.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">A</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">A:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray</div>
 </div>
-</dd>
-<dt class="field-even">atol</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">atol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The absolute tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
-</dd>
-<dt class="field-odd">rtol</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The relative tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Bool</div>
 <div class="line">True: the array is symmetric within the given tolerance</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.check_posdef">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">check_posdef</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-09</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_posdef"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.check_posdef" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.check_posdef">
+<code class="descclassname">luxpy.math.</code><code class="descname">check_posdef</code><span class="sig-paren">(</span><em>A</em>, <em>atol=1e-09</em>, <em>rtol=1e-09</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#check_posdef"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.check_posdef" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks positive definiteness of a matrix via Cholesky.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">A</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">A:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray</div>
 </div>
-</dd>
-<dt class="field-even">atol</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">atol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The absolute tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
-</dd>
-<dt class="field-odd">rtol</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">The relative tolerance parameter (see Notes of numpy.allclose())</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Bool</div>
 <div class="line">True: the array is positive-definite within the given tolerance</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.positive_arctan">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">positive_arctan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#positive_arctan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.positive_arctan" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.positive_arctan">
+<code class="descclassname">luxpy.math.</code><code class="descname">positive_arctan</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#positive_arctan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.positive_arctan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of x-coordinates</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of y-coordinates</div>
 </div>
-</dd>
-<dt class="field-odd">htype</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘deg’ or ‘rad’, optional</div>
 <div class="line-block">
 <div class="line">- ‘deg’: hue angle between 0° and 360°</div>
 <div class="line">- ‘rad’: hue angle between 0 and 2pi radians</div>
 </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of positive angles.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.line_intersect">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">line_intersect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#line_intersect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.line_intersect" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.line_intersect">
+<code class="descclassname">luxpy.math.</code><code class="descname">line_intersect</code><span class="sig-paren">(</span><em>a1</em>, <em>a2</em>, <em>b1</em>, <em>b2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#line_intersect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.line_intersect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Line intersections of series of two line segments a and b.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">a1</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">a1:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape  = (N,2)) specifying end-point 1 of line a</div>
 </div>
-</dd>
-<dt class="field-even">a2</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">a2:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape  = (N,2)) specifying end-point 2 of line a</div>
 </div>
-</dd>
-<dt class="field-odd">b1</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">b1:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape  = (N,2)) specifying end-point 1 of line b</div>
 </div>
-</dd>
-<dt class="field-even">b2</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">b2:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape  = (N,2)) specifying end-point 2 of line b</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Note: </dt><dd><p>N is the number of line segments a and b.</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Note: </dt>
+<dd>N is the number of line segments a and b.</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with line-intersections (.shape = (N,2))</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>References:</dt><dd><ol class="arabic simple">
-<li><p><a class="reference external" href="https://stackoverflow.com/questions/3252194/numpy-and-line-intersections">https://stackoverflow.com/questions/3252194/numpy-and-line-intersections</a></p></li>
+<dt>References:</dt>
+<dd><ol class="first last arabic simple">
+<li><a class="reference external" href="https://stackoverflow.com/questions/3252194/numpy-and-line-intersections">https://stackoverflow.com/questions/3252194/numpy-and-line-intersections</a></li>
 </ol>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.histogram">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bin_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weights</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">density</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#histogram"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.histogram" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.histogram">
+<code class="descclassname">luxpy.math.</code><code class="descname">histogram</code><span class="sig-paren">(</span><em>a</em>, <em>bins=10</em>, <em>bin_center=False</em>, <em>range=None</em>, <em>normed=False</em>, <em>weights=None</em>, <em>density=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#histogram"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.histogram" title="Permalink to this definition">¶</a></dt>
 <dd><p>Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.</p>
-<dl>
-<dt>Args: </dt><dd><dl class="field-list">
-<dt class="field-odd">bin_center</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args: </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">bin_center:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">False: if :bins: int, str or sequence of scalars:</div>
 <div class="line-block">
@@ -528,492 +580,630 @@ MATLAB code.
 <div class="line">Mimicks matlab hist (uses bin centers).</div>
 </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Note:</dt><dd><p>For other armuments and output, see ?numpy.histogram</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Note:</dt>
+<dd>For other armuments and output, see ?numpy.histogram</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with histogram</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.pol2cart">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">pol2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pol2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.pol2cart" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.pol2cart">
+<code class="descclassname">luxpy.math.</code><code class="descname">pol2cart</code><span class="sig-paren">(</span><em>theta</em>, <em>r=None</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pol2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pol2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Cartesion to polar coordinates.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">theta</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">theta:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float or ndarray with theta-coordinates</div>
 </div>
-</dd>
-<dt class="field-even">r</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">r:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or float or ndarray with r-coordinates, optional</div>
 <div class="line">If None, r-coordinates are assumed to be in :theta:.</div>
 </div>
-</dd>
-<dt class="field-odd">htype</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘deg’ or ‘rad, optional</div>
 <div class="line">Intput type of :theta:.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(float or ndarray of x, float or ndarray of y) coordinates </div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.cart2pol">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">cart2pol</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2pol"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.cart2pol" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.cart2pol">
+<code class="descclassname">luxpy.math.</code><code class="descname">cart2pol</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2pol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2pol" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert Cartesion to polar coordinates.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float or ndarray with x-coordinates</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or float or ndarray with x-coordinates, optional</div>
 <div class="line">If None, y-coordinates are assumed to be in :x:.</div>
 </div>
-</dd>
-<dt class="field-odd">htype</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘deg’ or ‘rad, optional</div>
 <div class="line">Output type of theta.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(float or ndarray of theta, float or ndarray of r) values</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.spher2cart">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">spher2cart</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#spher2cart"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.spher2cart" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.spher2cart">
+<code class="descclassname">luxpy.math.</code><code class="descname">spher2cart</code><span class="sig-paren">(</span><em>theta</em>, <em>phi</em>, <em>r=1.0</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#spher2cart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.spher2cart" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert spherical to cartesian coordinates.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">theta</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">theta:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Float, int or ndarray</div>
 <div class="line">Angle with positive z-axis.</div>
 </div>
-</dd>
-<dt class="field-even">phi</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">phi:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Float, int or ndarray</div>
 <div class="line">Angle around positive z-axis starting from x-axis.</div>
 </div>
-</dd>
-<dt class="field-odd">r</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">r:</th><td class="field-body"><div class="first last line-block">
 <div class="line">1, optional</div>
 <div class="line">Float, int or ndarray</div>
 <div class="line">radius</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">x, y, z</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x, y, z:</th><td class="field-body"><div class="first last line-block">
 <div class="line">tuple of floats, ints or ndarrays</div>
 <div class="line">Cartesian coordinates</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.cart2spher">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">cart2spher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2spher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.cart2spher" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.cart2spher">
+<code class="descclassname">luxpy.math.</code><code class="descname">cart2spher</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em>, <em>deg=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cart2spher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cart2spher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convert cartesian to spherical coordinates.</p>
-<dl>
-<dt>Args:        </dt><dd><dl class="field-list">
-<dt class="field-odd">x, y, z</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:        </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x, y, z:</th><td class="field-body"><div class="first last line-block">
 <div class="line">tuple of floats, ints or ndarrays</div>
 <div class="line">Cartesian coordinates</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">theta</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">theta:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Float, int or ndarray</div>
 <div class="line">Angle with positive z-axis.</div>
 </div>
-</dd>
-<dt class="field-even">phi</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">phi:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Float, int or ndarray</div>
 <div class="line">Angle around positive z-axis starting from x-axis.</div>
 </div>
-</dd>
-<dt class="field-odd">r</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">r:</th><td class="field-body"><div class="first last line-block">
 <div class="line">1, optional</div>
 <div class="line">Float, int or ndarray</div>
 <div class="line">radius</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.bvgpdf">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">bvgpdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigmainv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#bvgpdf"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.bvgpdf" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.bvgpdf">
+<code class="descclassname">luxpy.math.</code><code class="descname">bvgpdf</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>mu=None</em>, <em>sigmainv=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#bvgpdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.bvgpdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate bivariate Gaussian probability density function (BVGPDF)</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">scalar or list or ndarray (.ndim = 1 or 2) with </div>
 <div class="line">x(y)-coordinates at which to evaluate bivariate Gaussian PD.</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or scalar or list or ndarray (.ndim = 1) with </div>
 <div class="line">y-coordinates at which to evaluate bivariate Gaussian PD, optional.</div>
 <div class="line">If :y: is None, :x: should be a 2d array.</div>
 </div>
-</dd>
-<dt class="field-odd">mu</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">mu:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or ndarray (.ndim = 2) with center coordinates of </div>
 <div class="line">bivariate Gaussian PD, optional. </div>
 <div class="line">None defaults to ndarray([0,0]).</div>
 </div>
-</dd>
-<dt class="field-even">sigmainv</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">sigmainv:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or ndarray with ‘inverse covariance matrix’, optional </div>
 <div class="line">Determines the shape and orientation of the PD.</div>
 <div class="line">None default to numpy.eye(2).</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with magnitude of BVGPDF(x,y)   </div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.mahalanobis2">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">mahalanobis2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigmainv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mahalanobis2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.mahalanobis2" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.mahalanobis2">
+<code class="descclassname">luxpy.math.</code><code class="descname">mahalanobis2</code><span class="sig-paren">(</span><em>x</em>, <em>y=None</em>, <em>z=None</em>, <em>mu=None</em>, <em>sigmainv=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mahalanobis2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.mahalanobis2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the squared mahalanobis distance</p>
-<dl>
-<dt>Args: </dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args: </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">scalar or list or ndarray (.ndim = 1 or 2) with x(y)-coordinates 
 at which to evaluate the mahalanobis distance squared.</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or scalar or list or ndarray (.ndim = 1) with y-coordinates 
 at which to evaluate the mahalanobis distance squared, optional.</div>
 <div class="line">If :y: is None, :x: should be a 2d array.</div>
 </div>
-</dd>
-<dt class="field-odd">z</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">z:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or scalar or list or ndarray (.ndim = 1) with z-coordinates 
 at which to evaluate the mahalanobis distance squared, optional.</div>
 <div class="line">If :z: is None &amp; :y: is None, then :x: should be a 2d array.</div>
 </div>
-</dd>
-<dt class="field-even">mu</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">mu:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or ndarray (.ndim = 1) with center coordinates of the 
 mahalanobis ellipse, optional. </div>
 <div class="line">None defaults to zeros(2) or zeros(3).</div>
 </div>
-</dd>
-<dt class="field-odd">sigmainv</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">sigmainv:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None or ndarray with ‘inverse covariance matrix’, optional </div>
 <div class="line">Determines the shape and orientation of the PD.</div>
 <div class="line">None default to np.eye(2) or eye(3).</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with magnitude of mahalanobis2(x,y[,z])</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.dot23">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">dot23</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#dot23"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.dot23" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.dot23">
+<code class="descclassname">luxpy.math.</code><code class="descname">dot23</code><span class="sig-paren">(</span><em>A</em>, <em>B</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#dot23"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.dot23" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dot product of a 2-d ndarray with a (N x K x L) 3-d ndarray 
 using einsum().</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">A</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">A:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape = (M,N))</div>
 </div>
-</dd>
-<dt class="field-even">B</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">B:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape = (N,K,L))</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray (.shape = (M,K,L))</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.rms">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">rms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#rms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.rms" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.rms">
+<code class="descclassname">luxpy.math.</code><code class="descname">rms</code><span class="sig-paren">(</span><em>data</em>, <em>axis=0</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#rms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.rms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate root-mean-square along axis.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">data</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
 <div class="line">list of values or ndarray</div>
 </div>
-</dd>
-<dt class="field-even">axis</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axis:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">Axis along which to calculate rms.</div>
 </div>
-</dd>
-<dt class="field-odd">keepdims</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">keepdims:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False or True, optional</div>
 <div class="line">Keep original dimensions of array.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with rms values.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.geomean">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">geomean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#geomean"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.geomean" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.geomean">
+<code class="descclassname">luxpy.math.</code><code class="descname">geomean</code><span class="sig-paren">(</span><em>data</em>, <em>axis=0</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#geomean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.geomean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate geometric mean along axis.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">data</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
 <div class="line">list of values or ndarray</div>
 </div>
-</dd>
-<dt class="field-even">axis</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axis:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">Axis along which to calculate geomean.</div>
 </div>
-</dd>
-<dt class="field-odd">keepdims</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">keepdims:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False or True, optional</div>
 <div class="line">Keep original dimensions of array.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with geomean values. </div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.polyarea">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">polyarea</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#polyarea"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.polyarea" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.polyarea">
+<code class="descclassname">luxpy.math.</code><code class="descname">polyarea</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#polyarea"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.polyarea" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates area of polygon.</p>
 <div class="line-block">
 <div class="line">First coordinate should also be last.</div>
 </div>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of x-coordinates of polygon vertices.</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of x-coordinates of polygon vertices.     </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float (area or polygon)</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.magnitude_v">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">magnitude_v</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#magnitude_v"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.magnitude_v" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.magnitude_v">
+<code class="descclassname">luxpy.math.</code><code class="descname">magnitude_v</code><span class="sig-paren">(</span><em>v</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#magnitude_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.magnitude_v" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates magnitude of vector.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">v</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with vector</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">magnitude</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">magnitude:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray </div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.angle_v1v2">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">angle_v1v2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">v2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">htype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'deg'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#angle_v1v2"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.angle_v1v2" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.angle_v1v2">
+<code class="descclassname">luxpy.math.</code><code class="descname">angle_v1v2</code><span class="sig-paren">(</span><em>v1</em>, <em>v2</em>, <em>htype='deg'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#angle_v1v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.angle_v1v2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates angle between two vectors.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">v1</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v1:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with vector 1</div>
 </div>
-</dd>
-<dt class="field-even">v2</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">v2:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with vector 2</div>
 </div>
-</dd>
-<dt class="field-odd">htype</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">htype:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘deg’ or ‘rad’, optional</div>
 <div class="line">Requested angle type.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">ang</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">ang:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray </div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.v_to_cik">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">v_to_cik</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">v</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#v_to_cik"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.v_to_cik" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.v_to_cik">
+<code class="descclassname">luxpy.math.</code><code class="descname">v_to_cik</code><span class="sig-paren">(</span><em>v</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#v_to_cik"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.v_to_cik" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate 2x2 ‘(covariance matrix)^-1’ elements cik</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">v</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(Nx5) np.ndarray</div>
 <div class="line">ellipse parameters [Rmax,Rmin,xc,yc,theta]</div>
 </div>
-</dd>
-<dt class="field-even">inverse</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">inverse:</th><td class="field-body"><div class="first last line-block">
 <div class="line">If True: return inverse of cik.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">cik</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">cik:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘Nx2x2’ (covariance matrix)^-1</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Notes:</dt><dd><div class="line-block">
+<dt>Notes:</dt>
+<dd><div class="first last line-block">
 <div class="line">cik is not actually a covariance matrix,</div>
 <div class="line">only for a Gaussian or normal distribution!</div>
 </div>
@@ -1021,34 +1211,45 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.cik_to_v">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">cik_to_v</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cik</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xyc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cik_to_v"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.cik_to_v" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.cik_to_v">
+<code class="descclassname">luxpy.math.</code><code class="descname">cik_to_v</code><span class="sig-paren">(</span><em>cik</em>, <em>xyc=None</em>, <em>inverse=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#cik_to_v"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.cik_to_v" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate v-format ellipse descriptor from 2x2 ‘covariance matrix’^-1 cik</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">cik</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">cik:</th><td class="field-body"><div class="first last line-block">
 <div class="line">‘Nx2x2’ (covariance matrix)^-1</div>
 </div>
-</dd>
-<dt class="field-even">inverse</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">inverse:</th><td class="field-body"><div class="first last line-block">
 <div class="line">If True: input is inverse of cik.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">v</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(Nx5) np.ndarray</div>
 <div class="line">ellipse parameters [Rmax,Rmin,xc,yc,theta]</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Notes:</dt><dd><div class="line-block">
+<dt>Notes:</dt>
+<dd><div class="first last line-block">
 <div class="line">cik is not actually the inverse covariance matrix,</div>
 <div class="line">only for a Gaussian or normal distribution!</div>
 </div>
@@ -1056,219 +1257,272 @@ using einsum().</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.fmod">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">fmod</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fmod"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.fmod" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.fmod">
+<code class="descclassname">luxpy.math.</code><code class="descname">fmod</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fmod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fmod" title="Permalink to this definition">¶</a></dt>
 <dd><p>Floating point modulus</p>
 <div class="line-block">
 <div class="line">e.g., fmod(theta, np.pi * 2) would keep an angle in [0, 2pi]</div>
 </div>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">angle to restrict</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">end of  interval [0, y] to restrict to</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">r</dt>
-<dd class="field-odd"><p>floating point modulus</p>
-</dd>
-</dl>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">r:</th><td class="field-body">floating point modulus</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.remove_outliers">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">remove_outliers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#remove_outliers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.remove_outliers" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.remove_outliers">
+<code class="descclassname">luxpy.math.</code><code class="descname">remove_outliers</code><span class="sig-paren">(</span><em>data</em>, <em>alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#remove_outliers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.remove_outliers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Remove multivariate outliers from data when outside of alpha-level confidence ellipsoid.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">data</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Nxp ndarray with multivariate data (N samples, p variables)</div>
 </div>
-</dd>
-<dt class="field-even">alpha</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">alpha:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0.01, optional</div>
 <div class="line">Significance level of confidence ellipsoid marking the boundary for outliers.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Return:</dt><dd><dl class="field-list">
-<dt class="field-odd">data</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Return:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">data:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(N-… x p) ndarray with multivariate data; outliers removed.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.fit_ellipse">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">fit_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_on_mean_xy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.fit_ellipse" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.fit_ellipse">
+<code class="descclassname">luxpy.math.</code><code class="descname">fit_ellipse</code><span class="sig-paren">(</span><em>xy</em>, <em>center_on_mean_xy=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit an ellipse to supplied data points.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">xy</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xy:</th><td class="field-body"><div class="first last line-block">
 <div class="line">coordinates of points to fit (Nx2 array)</div>
 </div>
-</dd>
-<dt class="field-even">center_on_mean_xy</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">center_on_mean_xy:</th></tr>
+<tr class="field-even field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">Center ellipse on mean of xy </div>
 <div class="line">(otherwise it might be offset due to solving </div>
 <div class="line">the contrained minization problem: aT*S*a, see ref below.)</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">v</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Reference:</dt><dd><p>1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., 
+<dt>Reference:</dt>
+<dd>1. Fitzgibbon, A.W., Pilu, M., and Fischer R.B., 
 Direct least squares fitting of ellipsees, 
 Proc. of the 13th Internation Conference on Pattern Recognition, 
-pp 253–257, Vienna, 1996.</p>
-</dd>
+pp 253–257, Vienna, 1996.</dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.fit_cov_ellipse">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">fit_cov_ellipse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pdf</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'chi2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_cov_ellipse"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.fit_cov_ellipse" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.fit_cov_ellipse">
+<code class="descclassname">luxpy.math.</code><code class="descname">fit_cov_ellipse</code><span class="sig-paren">(</span><em>xy</em>, <em>alpha=0.05</em>, <em>pdf='chi2'</em>, <em>SE=False</em>, <em>robust=False</em>, <em>robust_alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#fit_cov_ellipse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.fit_cov_ellipse" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit covariance ellipse to xy data.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">xy</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">xy:</th><td class="field-body"><div class="first last line-block">
 <div class="line">coordinates of points to fit (Nx2 array)</div>
 </div>
-</dd>
-<dt class="field-even">alpha</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">alpha:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0.05, optional</div>
 <div class="line">alpha significance level </div>
 <div class="line">(e.g alpha = 0.05 for 95% confidence ellipse)</div>
 </div>
-</dd>
-<dt class="field-odd">pdf</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">pdf:</th><td class="field-body"><div class="first last line-block">
 <div class="line">chi2, optional</div>
 <div class="line">- ‘chi2’: Rescale using Chi2-distribution</div>
 <div class="line">- ‘t’: Rescale using Student t-distribution</div>
 <div class="line">- ‘norm’: Rescale using normal-distribution</div>
 <div class="line">- None: don’t rescale using pdf, use alpha as scalefactor (cfr. alpha* 1SD or alpha * 1SE)</div>
 </div>
-</dd>
-<dt class="field-even">SE</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">SE:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">If false, fit standard error ellipse at alpha significance level</div>
 <div class="line">If true, fit standard deviation ellipse at alpha significance level</div>
 </div>
-</dd>
-<dt class="field-odd">robust</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">robust:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">If True: remove outliers beyond the confidence ellipsoid before calculating</div>
 <div class="line-block">
 <div class="line">the covariances.</div>
 </div>
 </div>
-</dd>
-<dt class="field-even">robust_alpha</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">robust_alpha:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0.01, optional</div>
 <div class="line">Significance level of confidence ellipsoid marking the boundary for outliers.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">v</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">v:</th><td class="field-body"><div class="first last line-block">
 <div class="line">vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.in_hull">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">in_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.in_hull">
+<code class="descclassname">luxpy.math.</code><code class="descname">in_hull</code><span class="sig-paren">(</span><em>p</em>, <em>hull</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Permalink to this definition">¶</a></dt>
 <dd><p>Test if points in <cite>p</cite> are in <cite>hull</cite></p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">p</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">p:</th><td class="field-body"><div class="first last line-block">
 <div class="line">NxK coordinates of N points in K dimensions</div>
 </div>
-</dd>
-<dt class="field-even">hull</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">hull:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Either a scipy.spatial.Delaunay object or the MxK array of the </div>
 <div class="line">coordinates of M points in K dimensions for which Delaunay </div>
 <div class="line">triangulation will be computed</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">bool</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">bool:</th><td class="field-body"><div class="first last line-block">
 <div class="line">boolean ndarray with True for in-gamut and False for out-of-gamut points</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.interp1_sprague5">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1_sprague5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(nan,</span> <span class="pre">nan)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_sprague5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1_sprague5" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.interp1_sprague5">
+<code class="descclassname">luxpy.math.</code><code class="descname">interp1_sprague5</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>xn</em>, <em>extrap=(nan</em>, <em>nan)</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_sprague5"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.interp1_sprague5" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a 1-dimensional 5th order Sprague interpolation.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with n-dimensional coordinates.</div>
 </div>
-</dd>
-<dt class="field-even">y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with values at coordinates in x.</div>
 </div>
-</dd>
-<dt class="field-odd">xn</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">xn:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of new coordinates.</div>
 </div>
-</dd>
-<dt class="field-even">extrap</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">extrap:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(np.nan, np.nan) or string, optional</div>
 <div class="line">If tuple: fill with values in tuple (&lt;x[0],&gt;x[-1])</div>
 <div class="line">If string:  (‘zeros’,’linear’, ‘nearest’, ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,’next’)</div>
@@ -1276,426 +1530,519 @@ pp 253–257, Vienna, 1996.</p>
 <div class="line">for more info on the other options see: scipy.interpolate.interp1d?</div>
 </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">yn</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">yn:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with values at new coordinates in xn.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.interp1">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_finite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.interp1">
+<code class="descclassname">luxpy.math.</code><code class="descname">interp1</code><span class="sig-paren">(</span><em>X, Y, Xnew, kind='linear', ext='extrapolate', w=None, bbox=[None, None], check_finite=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.interp1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">X</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
 </div>
-</dd>
-<dt class="field-even">Y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with values at coordinates in X</div>
 </div>
-</dd>
-<dt class="field-odd">Xnew</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of new coordinates (last axis represents dimension)</div>
 </div>
-</dd>
-<dt class="field-even">kind</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">kind:</th><td class="field-body"><div class="first last line-block">
 <div class="line">str or int,  optional</div>
 <div class="line">if str: kind is ‘translated’ to an int value for input to scipy.interpolate.InterpolatedUnivariateSpline()</div>
 <div class="line">supported options for str: ‘linear’, ‘quadratic’, ‘cubic’, ‘quartic’, ‘quintic’</div>
 </div>
-</dd>
-<dt class="field-odd">other args</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">other args:</th><td class="field-body"><div class="first last line-block">
 <div class="line">see scipy.interpolate.InterpolatedUnivariateSpline()</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">Ynew</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with new values at coordinates in Xnew</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.ndinterp1">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">ndinterp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.ndinterp1" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.ndinterp1">
+<code class="descclassname">luxpy.math.</code><code class="descname">ndinterp1</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Xnew</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform nd-dimensional linear interpolation using Delaunay triangulation.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">X</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with n-dimensional coordinates (last axis represents dimension).</div>
 </div>
-</dd>
-<dt class="field-even">Y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with values at coordinates in X.</div>
 </div>
-</dd>
-<dt class="field-odd">Xnew</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of new coordinates (last axis represents dimension).</div>
 <div class="line">When outside of the convex hull of X, then a best estimate is </div>
 <div class="line">given based on the closest vertices.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">Ynew</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with new values at coordinates in Xnew.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.ndinterp1_scipy">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">ndinterp1_scipy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">nan</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1_scipy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.ndinterp1_scipy" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.ndinterp1_scipy">
+<code class="descclassname">luxpy.math.</code><code class="descname">ndinterp1_scipy</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>Xnew</em>, <em>fill_value=nan</em>, <em>rescale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#ndinterp1_scipy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.ndinterp1_scipy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform a n-dimensional linear interpolation (wrapper around scipy.interpolate.LinearNDInterpolator).</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">X</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
 </div>
-</dd>
-<dt class="field-even">Y</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with values at coordinates in X</div>
 </div>
-</dd>
-<dt class="field-odd">Xnew</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Xnew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray of new coordinates (last axis represents dimension)</div>
 </div>
-</dd>
-<dt class="field-even">fill_value</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">fill_value:</th><td class="field-body"><div class="first last line-block">
 <div class="line">float, optional</div>
 <div class="line">Value used to fill in for requested points outside of the</div>
 <div class="line">convex hull of the input points.  If not provided, then</div>
 <div class="line">the default is <code class="docutils literal notranslate"><span class="pre">nan</span></code>.</div>
 </div>
-</dd>
-<dt class="field-odd">rescale</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rescale:</th><td class="field-body"><div class="first last line-block">
 <div class="line">bool, optional</div>
 <div class="line">Rescale points to unit cube before performing interpolation.</div>
 <div class="line">This is useful if some of the input dimensions have</div>
 <div class="line">incommensurable units and differ by many orders of magnitude.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">Ynew</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Ynew:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with new values at coordinates in Xnew</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.box_m">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">box_m</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ni</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robust_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#box_m"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.box_m" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.box_m">
+<code class="descclassname">luxpy.math.</code><code class="descname">box_m</code><span class="sig-paren">(</span><em>*X</em>, <em>ni=None</em>, <em>verbosity=0</em>, <em>robust=False</em>, <em>robust_alpha=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#box_m"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.box_m" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform Box’s M test (p&gt;=2) to check equality of covariance matrices or Bartlett’s test (p==1) for equality of variances.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">X</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X:</th><td class="field-body"><div class="first last line-block">
 <div class="line">A number  (k groups) or list of 2d-ndarrays (rows: samples, cols: variables) with data.</div>
 <div class="line">or a number of 2d-ndarrays with covariance matrices (supply ni!)</div>
 </div>
-</dd>
-<dt class="field-even">ni</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ni:</th><td class="field-body"><div class="first last line-block">
 <div class="line">None, optional</div>
 <div class="line">If None: X contains data, else, X contains covariance matrices.</div>
 </div>
-</dd>
-<dt class="field-odd">verbosity</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">If 1: print results.</div>
 </div>
-</dd>
-<dt class="field-even">robust</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">robust:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">If True: remove outliers beyond the confidence ellipsoid before calculating</div>
 <div class="line-block">
 <div class="line">the covariances.</div>
 </div>
 </div>
-</dd>
-<dt class="field-odd">robust_alpha</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">robust_alpha:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0.01, optional</div>
 <div class="line">Significance level of confidence ellipsoid marking the boundary for outliers.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">statistic</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">statistic:</th><td class="field-body"><div class="first last line-block">
 <div class="line">F or chi2 value (see len(dfs))</div>
 </div>
-</dd>
-<dt class="field-even">pval</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pval:</th><td class="field-body"><div class="first last line-block">
 <div class="line">p-value</div>
 </div>
-</dd>
-<dt class="field-odd">df</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">df:</th><td class="field-body"><div class="first last line-block">
 <div class="line">degrees of freedom.</div>
 <div class="line">if len(dfs) == 2: F-test was used.</div>
 <div class="line">if len(dfs) == 1: chi2 approx. was used.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Notes:</dt><dd><ol class="arabic simple">
-<li><p>If p==1: Reduces to Bartlett’s test for equal variances.</p></li>
-<li><p>If (ni&gt;20).all() &amp; (p&lt;6) &amp; (k&lt;6): then a more appropriate chi2 test is used in a some cases.</p></li>
+<dt>Notes:</dt>
+<dd><ol class="first last arabic simple">
+<li>If p==1: Reduces to Bartlett’s test for equal variances.</li>
+<li>If (ni&gt;20).all() &amp; (p&lt;6) &amp; (k&lt;6): then a more appropriate chi2 test is used in a some cases.</li>
 </ol>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.pitman_morgan">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">pitman_morgan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pitman_morgan"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.pitman_morgan" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.pitman_morgan">
+<code class="descclassname">luxpy.math.</code><code class="descname">pitman_morgan</code><span class="sig-paren">(</span><em>X</em>, <em>Y</em>, <em>verbosity=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#pitman_morgan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.pitman_morgan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pitman-Morgan Test for the difference between correlated variances with paired samples.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">X,Y</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">X,Y:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarrays with data.</div>
 </div>
-</dd>
-<dt class="field-even">verbosity</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">verbosity:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">If 1: print results. </div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">tval</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">tval:</th><td class="field-body"><div class="first last line-block">
 <div class="line">statistic</div>
 </div>
-</dd>
-<dt class="field-even">pval</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">pval:</th><td class="field-body"><div class="first last line-block">
 <div class="line">p-value</div>
 </div>
-</dd>
-<dt class="field-odd">df</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">df:</th><td class="field-body"><div class="first last line-block">
 <div class="line">degree of freedom.</div>
 </div>
-</dd>
-<dt class="field-even">ratio</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">ratio:</th><td class="field-body"><div class="first last line-block">
 <div class="line">variance ratio var1/var2 (with var1 &gt; var2).</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Note:</dt><dd><ol class="arabic simple">
-<li><p>Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.</p></li>
-<li><p>Python port from matlab code by Janne Kauttonen (<a class="reference external" href="https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y">https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y</a>; accessed Sep 26, 2019)</p></li>
+<dt>Note:</dt>
+<dd><ol class="first last arabic simple">
+<li>Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.</li>
+<li>Python port from matlab code by Janne Kauttonen (<a class="reference external" href="https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y">https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y</a>; accessed Sep 26, 2019)</li>
 </ol>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.stress">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">stress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DE</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">DV</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.stress" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.stress">
+<code class="descclassname">luxpy.math.</code><code class="descname">stress</code><span class="sig-paren">(</span><em>DE</em>, <em>DV</em>, <em>axis=0</em>, <em>max_scale=100</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.stress" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate STandardize-Residual-Sum-of-Squares (STRESS).</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">DE, DV</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">DE, DV:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarrays of data to be compared.</div>
 </div>
-</dd>
-<dt class="field-even">axis</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axis:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0, optional</div>
 <div class="line">axis with samples</div>
 </div>
-</dd>
-<dt class="field-odd">max_scale</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">max_scale:</th><td class="field-body"><div class="first last line-block">
 <div class="line">100, optional</div>
 <div class="line">Maximum of scale.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">stress</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">stress:</th><td class="field-body"><div class="first last line-block">
 <div class="line">nadarray with stress value(s).</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Reference:</dt><dd><p>1. <a class="reference external" href="https://doi.org/10.1364/JOSAA.28.000949">Melgosa, M., García, P. A., Gómez-Robledo, L., Shamey, R., Hinks, D., Cui, G., &amp; Luo, M. R. (2011). 
+<dt>Reference:</dt>
+<dd>1. <a class="reference external" href="https://doi.org/10.1364/JOSAA.28.000949">Melgosa, M., García, P. A., Gómez-Robledo, L., Shamey, R., Hinks, D., Cui, G., &amp; Luo, M. R. (2011). 
 Notes on the application of the standardized residual sum of squares index 
 for the assessment of intra- and inter-observer variability in color-difference experiments. 
-Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
-</dd>
+Journal of the Optical Society of America A, 28(5), 949–953.</a></dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.stress_F_test">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">stress_F_test</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stressA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stressB</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress_F_test"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.stress_F_test" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.stress_F_test">
+<code class="descclassname">luxpy.math.</code><code class="descname">stress_F_test</code><span class="sig-paren">(</span><em>stressA</em>, <em>stressB</em>, <em>N</em>, <em>alpha=0.05</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#stress_F_test"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.stress_F_test" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform F-test on significance of difference between STRESS A and STRESS B.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">stressA, stressB</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">stressA, stressB:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with stress(es) values for A and B</div>
 </div>
-</dd>
-<dt class="field-even">N</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">N:</th><td class="field-body"><div class="first last line-block">
 <div class="line">int or ndarray with number of samples used to determine stress values.</div>
 </div>
-</dd>
-<dt class="field-odd">alpha</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">alpha:</th><td class="field-body"><div class="first last line-block">
 <div class="line">0.05, optional</div>
 <div class="line">significance level</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">Fstats</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Fstats:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Dictionary with keys:</div>
 <div class="line">- ‘p’: p-values</div>
 <div class="line">- ‘F’:  F-values</div>
 <div class="line">- ‘Fc’: critcal values</div>
 <div class="line">- ‘H’: string reporting on significance of A compared to B.</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.mean_distance_weighted">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">mean_distance_weighted</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center_x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_iter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cnt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mean_distance_weighted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.mean_distance_weighted" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.mean_distance_weighted">
+<code class="descclassname">luxpy.math.</code><code class="descname">mean_distance_weighted</code><span class="sig-paren">(</span><em>x</em>, <em>axis=0</em>, <em>keepdims=False</em>, <em>center_x=False</em>, <em>rtol=0.001</em>, <em>max_iter=100</em>, <em>cnt=0</em>, <em>mu=None</em>, <em>mu0=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#mean_distance_weighted"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.mean_distance_weighted" title="Permalink to this definition">¶</a></dt>
 <dd><p>Recursively calculate distance weighted mean.</p>
-<dl>
-<dt>Args: </dt><dd><dl class="field-list">
-<dt class="field-odd">x</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args: </dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">ndarray with data</div>
 </div>
-</dd>
-<dt class="field-even">axis</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">axis:</th><td class="field-body"><div class="first last line-block">
 <div class="line">dimension along which to take mean</div>
 </div>
-</dd>
-<dt class="field-odd">keepdims</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">keepdims:</th><td class="field-body"><div class="first last line-block">
 <div class="line">False, optional</div>
 <div class="line">If True: keep dimension of original ndarray</div>
 </div>
-</dd>
-<dt class="field-even">center_x</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">center_x:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True, optional</div>
 <div class="line">Center data first.</div>
 </div>
-</dd>
-<dt class="field-odd">rtol</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">rtol:</th><td class="field-body"><div class="first last line-block">
 <div class="line">1e-3, optional</div>
 <div class="line">Relative tolerance on recursive mean values. If two sequential</div>
 <div class="line">mean values differ less than this amount, the recursion stops.</div>
 </div>
-</dd>
-<dt class="field-even">max_iter</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">max_iter:</th><td class="field-body"><div class="first last line-block">
 <div class="line">100, optional</div>
 <div class="line">Maximum amount of recursions. If this number is reached the </div>
 <div class="line">recursion stops, even when rtol is not yet achieved. (to avoid</div>
 <div class="line">getting stuck in an infinite loop when the recursion doesn’t converge)</div>
 </div>
-</dd>
-<dt class="field-odd">cnt,mu,mu0</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">cnt,mu,mu0:</th><td class="field-body"><div class="first last line-block">
 <div class="line">Needed for passing values across recursions to be able to stop them.</div>
 <div class="line">DO NOT CHANGE.</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">mu_dw</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">mu_dw:</th><td class="field-body"><div class="first last line-block">
 <div class="line">distance weighted mean of the array</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.minimizebnd">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">minimizebnd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition"></a></dt>
+<dl class="function">
+<dt id="luxpy.math.minimizebnd">
+<code class="descclassname">luxpy.math.</code><code class="descname">minimizebnd</code><span class="sig-paren">(</span><em>fun</em>, <em>x0</em>, <em>args=()</em>, <em>method='Nelder-Mead'</em>, <em>use_bnd=True</em>, <em>bounds=(None</em>, <em>None)</em>, <em>options=None</em>, <em>x0_vsize=None</em>, <em>x0_keys=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Permalink to this definition">¶</a></dt>
 <dd><div class="line-block">
 <div class="line">Minimization function that allows for bounds on any type of method in </div>
 <div class="line">SciPy’s minimize function by transforming the parameters values </div>
 <div class="line">(see Matlab’s fminsearchbnd). </div>
 <div class="line">Starting values, and lower and upper bounds can also be provided as a dict.</div>
 </div>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x0</dt>
-<dd class="field-odd"><div class="line-block">
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">x0:</th><td class="field-body"><div class="first last line-block">
 <div class="line">parameter starting values</div>
 <div class="line">If x0_keys is None then :x0: is vector else, :x0: is dict and</div>
 <div class="line">x0_size should be provided with length/size of values for each of </div>
@@ -1703,79 +2050,94 @@ Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
 <div class="line">the keys in :x0: to convert it to a vector.                </div>
 </div>
 </div>
-</dd>
-<dt class="field-even">use_bnd</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">use_bnd:</th><td class="field-body"><div class="first last line-block">
 <div class="line">True, optional</div>
 <div class="line">False: omits bounds and defaults to regular minimize function.</div>
 </div>
-</dd>
-<dt class="field-odd">bounds</dt>
-<dd class="field-odd"><div class="line-block">
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">bounds:</th><td class="field-body"><div class="first last line-block">
 <div class="line">(lower, upper), optional</div>
 <div class="line">Tuple of lists or dicts (x0_keys is None) of lower and upper bounds </div>
 <div class="line">for each of the parameters values.</div>
 </div>
-</dd>
-<dt class="field-even">kwargs</dt>
-<dd class="field-even"><div class="line-block">
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">kwargs:</th><td class="field-body"><div class="first last line-block">
 <div class="line">allows input for other type of arguments (e.g. in OutputFcn)</div>
 </div>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
-</dl>
-</dd>
-<dt>Note:</dt><dd><p>For other input arguments, see ?scipy.optimize.minimize()</p>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">res</dt>
-<dd class="field-odd"><div class="line-block">
+<dt>Note:</dt>
+<dd>For other input arguments, see ?scipy.optimize.minimize()</dd>
+<dt>Returns:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">res:</th><td class="field-body"><div class="first last line-block">
 <div class="line">dict with minimize() output. </div>
 <div class="line">Additionally, function value, fval, of solution is also in :res:,</div>
 <div class="line">as well as a vector or dict (if x0 was dict) </div>
 <div class="line">with final solutions (res[‘x’])</div>
 </div>
-</dd>
-</dl>
+</td>
+</tr>
+</tbody>
+</table>
 </dd>
 </dl>
 </dd></dl>
 
-</section>
-</section>
-<section id="vec3">
-<h2>vec3/<a class="headerlink" href="#vec3" title="Permalink to this headline"></a></h2>
+</div>
+</div>
+<div class="section" id="vec3">
+<h2>vec3/<a class="headerlink" href="#vec3" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">py</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>__init__.py</p></li>
-<li><p>vec3.py</p></li>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>vec3.py</li>
 </ul>
-</dd>
-<dt class="field-even">namespace</dt>
-<dd class="field-even"><p>luxpy.math</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.math</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div></blockquote>
-<span class="target" id="module-luxpy.math.vec3"></span></section>
-<section id="demo">
-<h2>DEMO/<a class="headerlink" href="#demo" title="Permalink to this headline"></a></h2>
+<span class="target" id="module-luxpy.math.vec3"></span></div>
+<div class="section" id="demo">
+<h2>DEMO/<a class="headerlink" href="#demo" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">py</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p>__init__.py</p></li>
-<li><p>DEMO.py</p></li>
-<li><p>demo_opt.py</p></li>
+<div><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">py:</th><td class="field-body"><ul class="first simple">
+<li>__init__.py</li>
+<li>DEMO.py</li>
+<li>demo_opt.py</li>
 </ul>
-</dd>
-<dt class="field-even">namespace</dt>
-<dd class="field-even"><p>luxpy.math</p>
-</dd>
-</dl>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">namespace:</th><td class="field-body"><p class="first last">luxpy.math</p>
+</td>
+</tr>
+</tbody>
+</table>
 </div></blockquote>
-<span class="target" id="module-luxpy.math.DEMO"></span></section>
-</section>
+<span class="target" id="module-luxpy.math.DEMO"></span></div>
+</div>
 
 
            </div>

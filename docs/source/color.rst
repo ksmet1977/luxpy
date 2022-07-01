@@ -61,6 +61,19 @@ cct/
    :undoc-members:
    :private-members:
    
+cct/robertson1968 
+-----------------
+ :py:
+	* __init__.py
+	* robertson1968.py 
+	
+ :namespace: luxpy.color.cct.robertson1968
+
+.. automodule:: luxpy.color.cct.robertson1968
+   :members:
+   :undoc-members:
+   :private-members:
+   
 cat/ 
 ----
  :py:

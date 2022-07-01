@@ -92,12 +92,20 @@ cct: Module with functions related to correlated color temperature calculations
                                 Computation of Correlated Color Temperature and Distribution Temperature. 
                                 Journal of the Optical Society of America,  58(11), 1528–1535. 
                                 <https://doi.org/10.1364/JOSA.58.001528>`_
+                              | Baxter D., Royer M., Smet K.A.G. (2022)
+                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+                                (in preparation, LEUKOS?)
   
- :xyz_to_cct_li2016(): | Calculates CCT, Duv from XYZ using a Li's 2019 Newton-Raphson method.
+ :xyz_to_cct_li2016(): | Calculates CCT, Duv from XYZ using Li's 2016 Newton-Raphson method.
                        | `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
                          Accurate method for computing correlated color temperature. 
                          Optics Express, 24(13), 14066–14078. 
-                         <https://doi.org/10.1364/OE.24.014066>`_                        
+                         <https://doi.org/10.1364/OE.24.014066>`_   
+                         
+ :xyz_to_cct_li2022(): | Calculates CCT, Duv from XYZ using Li's 2022 update of Ohno's 2014 method.
+                       | `Li, Y., Gao, C.,  Melgosa, M. and Li, C. (2022).
+                          Improved methods for computing CCT and Duv. 
+                          LEUKOS, (in press). <email://794962485@qq.com>`_   
                                 
  :xyz_to_cct_fibonacci(): | Calculates CCT, Duv from XYZ using a Fibonacci search method.
                   
@@ -128,9 +136,11 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
            'xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
-           'xyz_to_cct_li2016','xyz_to_cct_zhang2019', 'xyz_to_cct_fibonacci',
+           'xyz_to_cct_li2016', 'xyz_to_cct_li2022',
+           'xyz_to_cct_zhang2019', 'xyz_to_cct_fibonacci',
            'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts', 'get_tcs4',
-           '_get_lut', '_generate_tcs', '_generate_lut','_generate_lut_ohno2014']
+           '_get_lut', '_generate_tcs', '_generate_lut',
+           '_generate_lut_ohno2014','_generate_lut_li2022']
 
 
 #==============================================================================
@@ -152,6 +162,7 @@ _CCT_MAX_ITER = 10
 _CCT_SPLIT_CALC_AT_N = 25 # some tests show that this seems to be the fastest (for 1000 conversions)
 
 _CCT_LUT_PATH = _PKG_PATH + _SEP + 'data'+ _SEP + 'cctluts' + _SEP #folder with cct lut data
+
 _CCT_LUT_PATH_LX_REPO = 'https://raw.github.com/ksmet1977/luxpy/master/luxpy/data/cctluts/' # luxpy repo url where cctluts are stored 
 _CCT_LUT_CALC = False
 _CCT_LUT = {}
@@ -163,30 +174,12 @@ _CCT_VERBOSITY_LUT_GENERATION = 1
 
 # flow control parameters:
 #-------------------------
-_CCT_LIST_OF_MODE_LUTS = ['robertson1968','ohno2014','zhang2019','fibonacci'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
+_CCT_LIST_OF_MODE_LUTS = ['robertson1968','ohno2014','zhang2019','fibonacci','li2022'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
 _CCT_LIST_OF_CIEOBS_LUTS = ['1931_2', '1964_10', '2015_2', '2015_10'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
 
+_CCT_LUT_MIN, _CCT_LUT_MAX = 1000.0, 41000
 
-_CCT_LUT_MIN, _CCT_LUT_MAX = 1000.0, 51000
-# _CCT_SHARED_LUT_TYPES = [((10,100,10,'K-1'),(100,625,25,'K-1'),True),
-#                         ((1,1,1,'K-1'),(25,1025,25,'K-1'),False),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 15, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 5, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.75, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.50, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, '%'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1000.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 500.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 250.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 100.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 50.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 25.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 10.0, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, 'K'),),
-#                         ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.1, 'K'),)] # possible LUT types, will be added to the default lut for each mode upon LUT generation 
-
-_CCT_SHARED_LUT_TYPES = [((_CCT_LUT_MIN, _CCT_LUT_MAX, 10.0, 'K'),),((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.50, '%'),)] # shared among all modes
+_CCT_SHARED_LUT_TYPES = [((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),)] # shared among all modes
 
 _CCT_LUT_ONE_NPY_PER_MODE = True # switch between generating one npy file per mode (3-.. columns) vs one for all modes (8 columns)
 
@@ -308,21 +301,33 @@ def _get_BB_BBp_BBpp(T, wl, out = 'BB,BBp,BBpp'):
     exp[np.isinf(exp)] = _CCT_AVOID_INF
     
     # avoid div by inf or zero:
-    exp_min_1, exp_plus_1 = exp - 1.0, exp + 1.0
+    exp_min_1 = exp - 1.0
     exp_min_1[exp_min_1==0] = _CCT_AVOID_ZERO_DIV
     exp_min_1[np.isinf(exp_min_1)] = _CCT_AVOID_INF
-    exp_min_1_squared = exp_min_1**2
-    exp_min_1_squared[np.isinf(exp_min_1_squared)] = _CCT_AVOID_INF # avoid warning "invalid value encountered in true_divide"
-    exp_min_1_squared[exp_min_1_squared == 0.0] = _CCT_AVOID_ZERO_DIV
-    exp_frac = exp/exp_min_1_squared
-    
+        
     BB = _BB['c1']*(wlt**(-5))*(1/(exp_min_1))
     BB[np.isinf(BB)] = _CCT_AVOID_INF
-    if 'BBp' in out: 
+        
+    if ('BBp' in out) | ('BBpp' in out): 
+        
+        exp_min_1_squared = exp_min_1**2
+        
+        # avoid div by inf or zero:
+        exp_min_1_squared[np.isinf(exp_min_1_squared)] = _CCT_AVOID_INF # avoid warning "invalid value encountered in true_divide"
+        exp_min_1_squared[exp_min_1_squared == 0.0] = _CCT_AVOID_ZERO_DIV
+        
+        exp_frac = exp/exp_min_1_squared
+
         BBp = (_BB['c1']*_BB['c2']*(T**(-2))*(wlt**(-6)))*exp_frac
+
+        
     if 'BBpp' in out:
+        exp_plus_1 = exp + 1.0
         BBpp = (BBp/T) * (c_wl_T * (exp_plus_1 / exp_min_1)  - 2) 
+        
+        
     return BB, BBp, BBpp
+
 
 def _get_tristim_of_BB_BBp_BBpp(T, xyzbar, wl, dl, out = 'BB,BBp,BBpp'):
     """ 
@@ -344,6 +349,43 @@ def _get_tristim_of_BB_BBp_BBpp(T, xyzbar, wl, dl, out = 'BB,BBp,BBpp'):
         xyzpp[np.isinf(xyzpp)] = _CCT_AVOID_INF
 
     return T, xyz, xyzp, xyzpp
+
+
+def _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp'):
+    """ 
+    Get the (u,v), (u',v') and (u",v") coordinates of one or more Planckians
+    with specified Tc. uvwbar (no wavelengths on row0, these are supplied seperately
+    in wl, with wavelength spacing in dl) is the cmf set corresponding to the tristimulus values
+    of the chosen chromaticity diagram or color space to do the CCT calculations in.
+    See: Li et al. (2016). Accurate method for computing correlated color temperature. Optics Express, 24(13), 14066–14078.
+
+    """
+    # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
+    T, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(T, uvwbar, wl, dl, out = out)
+    T = T[:,None]
+    
+    # get u,v & u',v' and u",v":
+    S = (UVW[...,0] + UVW[...,1] + UVW[...,2])[:,None]
+    uv = (UVW[...,:2] / (S + _CCT_AVOID_ZERO_DIV))
+    u,v = uv[...,0:1], uv[...,1:2]
+
+    if UVWp is not None:
+        Sp = (UVWp[...,0] + UVWp[...,1] + UVWp[...,2])[:,None]
+        PQ = (UVWp[...,:2] * S - UVW[...,:2] * Sp)
+        uvp = (PQ / ((S**2) + _CCT_AVOID_ZERO_DIV))
+        up,vp = uvp[...,0:1], uvp[...,1:2]
+    else:
+        up,vp = None, None
+        
+    if (UVWpp is not None) & (UVWp is not None):
+        Spp = (UVWpp[...,0] + UVWpp[...,1] + UVWpp[...,2])[:,None]
+        PQp = (UVWpp[...,:2] * S - UVW[...,:2] * Spp)
+        uvpp = ((PQp * S - 2 * PQ *Sp) / ((S**3) + _CCT_AVOID_ZERO_DIV))
+        upp,vpp = uvpp[...,0:1], uvpp[...,1:2]
+    else:
+        upp, vpp = None, None
+    
+    return T, u, v, up, vp, upp, vpp, (UVW, UVWp, UVWpp)
 
 
 #------------------------------------------------------------------------------
@@ -398,7 +440,7 @@ def _get_tcs4(tc4, uin = None, out = 'Ts',
         Ts[Ts==0] = _CCT_AVOID_ZERO_DIV
         Ts = 1e6/Ts[::-1] # scale was in mireds 
     
-    # Ts = np.round(Ts,_CCT_T_ROUNDING)
+    #Ts = np.round(Ts,_CCT_T_ROUNDING)
     
     if out == 'Ts': 
         return Ts
@@ -736,13 +778,7 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
     if ('uv' not in lut_vars) & ('uvp' not in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' not in lut_vars):
         # no need to calculate anything, only Tcs needed
         return np2d(ccts)
-    
-    # Determine what to calculate:
-    outBB = 'BB'
-    if ('uvp' in lut_vars) | ('iso-T-slope' in lut_vars): 
-        outBB = outBB + 'uvp'
-    if ('uvpp' in lut_vars): outBB = outBB + 'uvpp'
- 
+
 
     # get requested cmf set:
     xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
@@ -754,30 +790,40 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
     uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict) 
     
     # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
-    Ti, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+    #Ti, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+    _, u, v, up, vp, upp, vpp, (UVW, UVWp, UVWpp) = _get_uv_uvp_uvpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+    Ti = ccts
+    if 'uv' in lut_vars: uvi = np.hstack((u,v))
+    if 'uvp' in lut_vars: uvpi = np.hstack((up,vp))
+    if 'uvpp' in lut_vars: uvppi = np.hstack((upp,vpp))
 
-    # calculate li, mi:
-    R = UVW.sum(axis=-1, keepdims = True) # for Ohno, 2014 & Robertson, 1968 & Li, 2016
-    if UVWp is not None: Rp = UVWp.sum(axis=-1, keepdims = True) # for Robertson, 1968 & Li, 2016
-    if UVWpp is not None: Rpp = UVWpp.sum(axis=-1, keepdims = True) # for Li, 2016
 
-    # avoid div by zero:
+    # calculate li, mi (= slope of iso-T-lines):
     if 'iso-T-slope' in lut_vars:
+        
+        R = UVW.sum(axis=-1, keepdims = True) # for Ohno, 2014 & Robertson, 1968 & Li, 2016
+        if UVWp is not None: Rp = UVWp.sum(axis=-1, keepdims = True) # for Robertson, 1968 & Li, 2016
+        # if UVWpp is not None: Rpp = UVWpp.sum(axis=-1, keepdims = True) # for Li, 2016
+
         num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
         denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
+        
+        # avoid div by zero:
         num[(num == 0)] += _CCT_AVOID_ZERO_DIV
         denom[(denom == 0)] += _CCT_AVOID_ZERO_DIV
     
         li = num/denom  
         li = li + np.sign(li)*_CCT_AVOID_ZERO_DIV # avoid division by zero
         mi = -1.0/li # slope of isotemperature lines
+        
     else:
         mi = None
     
     # get u,v & u',v' and u",v":
-    uvi = UVW[:,:2]/R
-    if UVWp is not None: uvpi = UVWp[:,:2]/Rp
-    if UVWpp is not None: uvppi = UVWpp[:,:2]/Rpp
+    # uvi = UVW[:,:2]/R
+    # if UVWp is not None: uvpi = UVWp[:,:2]/Rp
+    # if UVWpp is not None: uvppi = UVWpp[:,:2]/Rpp
+
     
     # construct output (use comple if structure to avoid creating intermediate arrays for optimal speed):
     if   ('uvp' in lut_vars) & ('uvpp' in lut_vars) & ('iso-T-slope' in lut_vars):
@@ -801,6 +847,8 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
         lut = np.hstack((Ti,uvi,mi))
 
     return lut 
+
+
     
 def _generate_lut(tc4, uin = None, seamless_stitch = True, 
                   fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_UNIT,
@@ -1789,43 +1837,6 @@ def xyz_to_cct_hernandez1999(xyzw, cieobs = '1931_2', wl = None, out = 'cct',
 #------------------------------------------------------------------------------
 # Newton-Raphson estimator (cfr. Li, 2016):
 #------------------------------------------------------------------------------       
-def _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp'):
-    """ 
-    Get the (u,v), (u',v') and (u",v") coordinates of one or more Planckians
-    with specified Tc. uvwbar (no wavelengths on row0, these are supplied seperately
-    in wl, with wavelength spacing in dl) is the cmf set corresponding to the tristimulus values
-    of the chosen chromaticity diagram or color space to do the CCT calculations in.
-    See: Li et al. (2016). Accurate method for computing correlated color temperature. Optics Express, 24(13), 14066–14078.
-
-    """
-    # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
-    T, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(T, uvwbar, wl, dl, out = out)
-    T = T[:,None]
-    
-    # get u,v & u',v' and u",v":
-    S = (UVW[...,0] + UVW[...,1] + UVW[...,2])[:,None]
-    uv = (UVW[...,:2] / (S + _CCT_AVOID_ZERO_DIV))
-    u,v = uv[...,0:1], uv[...,1:2]
-
-    if UVWp is not None:
-        Sp = (UVWp[...,0] + UVWp[...,1] + UVWp[...,2])[:,None]
-        PQ = (UVWp[...,:2] * S - UVW[...,:2] * Sp)
-        uvp = (PQ / ((S**2) + _CCT_AVOID_ZERO_DIV))
-        up,vp = uvp[...,0:1], uvp[...,1:2]
-    else:
-        up,vp = None, None
-        
-    if (UVWpp is not None) & (UVWp is not None):
-        Spp = (UVWpp[...,0] + UVWpp[...,1] + UVWpp[...,2])[:,None]
-        PQp = (UVWpp[...,:2] * S - UVW[...,:2] * Spp)
-        uvpp = ((PQp * S - 2 * PQ *Sp) / ((S**3) + _CCT_AVOID_ZERO_DIV))
-        upp,vpp = uvpp[...,0:1], uvpp[...,1:2]
-    else:
-        upp, vpp = None, None
-    
-    return T, u, v, up, vp, upp, vpp
-
-
 def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-5,
                                      cieobs = None, xyzbar = None, uvwbar = None,
                                      cspace_dict = None, max_iter = _CCT_MAX_ITER,
@@ -1877,7 +1888,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
         T[T < _CCT_MIN] = _CCT_MIN # avoid infinities and convergence problems 
         
         # Get (u,v), (u',v'), (u",v"):
-        _, uBB, vBB, upBB, vpBB, uppBB, vppBB = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+        _, uBB, vBB, upBB, vpBB, uppBB, vppBB, _ = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
 
         # Calculate DT (ratio of f' and abs(f"):
         du, dv = (u - uBB), (v - vBB) # pre-calculate for speed
@@ -1894,7 +1905,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
         
     # get Duv:
     if ~(fast_duv & (np.abs(DT)<=1.0).all()):
-        _, uBB, vBB, _, _, _, _ = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB') # update one last time
+        _, uBB, vBB, _, _, _, _, _ = _get_uv_uvp_uvpp(T, uvwbar, wl, dl, out = 'BB') # update one last time
     
     Duv = _get_Duv_for_T_from_uvBB(u,v, uBB, vBB)
     return T, Duv
@@ -1962,6 +1973,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
                           luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff,
                           max_iter = _CCT_MAX_ITER, mode_kwargs = {}, atol = 0.1, rtol = 1e-5, 
                           Tx = None, Duvx = None, out_of_lut = None, TBB_l = None, TBB_r = None,
+                          fast_duv = _CCT_FAST_DUV,
                           **kwargs):
     """
     Determine Tx using a specified mode from u,v input using a cascading lut, 
@@ -1998,6 +2010,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
             Tx, Duvx, out_of_lut, (TBB_l,TBB_r) = _uv_to_Tx_mode(u, v, lut_i, lut_n_cols, 
                                                                  ns = ns, out_of_lut = out_of_lut,
+                                                                 fast_duv = fast_duv,
                                                                  **{**mode_kwargs[mode],**{'max_iter':1}}) # cl takes over, so max_iter should be 1
 
         if cascade_i == 0: Tx0 = Tx.copy() # keep copy of first estimate
@@ -2035,7 +2048,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                 max_iter = _CCT_MAX_ITER, force_au = False, 
                 split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                duv_parabolic_threshold = 0.002, 
+                duv_triangular_threshold = 0.002, 
                 first_guess_mode = 'robertson1968',
                 use_fast_duv = _CCT_FAST_DUV,
                 **kwargs):
@@ -2094,6 +2107,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
             pass
         elif (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
             lut_char = _get_lut_characteristics(lut, force_au = force_au)
+            use_fast_duv = False # True can generate large errors !!!
         else:
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
     
@@ -2111,7 +2125,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     mode_kwargs = {'robertson1968': {},
                    'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
-                   'ohno2014' : {**lut_kwargs, **{'duv_parabolic_threshold' : duv_parabolic_threshold}},
+                   'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold}},
+                   'li2022' :   {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold,'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl}},
                    'fibonacci' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
                    'none' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
@@ -2125,13 +2140,13 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
         # get data for split ii:
         uv = uvw[n_ii*ii:n_ii*ii+n_ii] if (ii < (N_ii-1)) else uvw[n_ii*ii:]
         u, v = uv[:,0,None], uv[:,1,None]
-    
+        
         # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
         Tx, Duvx, out_of_lut, (TBB_l, TBB_r) = _CCT_UV_TO_TX_FCNS[mode](u, v, lut, lut_n_cols, 
                                                                         ns = lut_n_cols, 
                                                                         out_of_lut = out_of_lut,
+                                                                        fast_duv = use_fast_duv,
                                                                         **mode_kwargs[mode])  
-
 
         if force_tolerance:
             if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
@@ -2140,6 +2155,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                                 luts_dict, cieobs, wl, cspace_str, cspace_dict, ignore_wl_diff, 
                                                 max_iter = max_iter[1], mode_kwargs = mode_kwargs, atol = atol, rtol = rtol,
                                                 Tx = Tx, Duvx = Duvx, out_of_lut = out_of_lut, TBB_l = TBB_l, TBB_r = TBB_r,
+                                                fast_duv = use_fast_duv
                                                 )
 
    
@@ -2162,7 +2178,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
         else: 
             ccts[n_ii*ii:] = Tx
             duvs[n_ii*ii:] = Duvx
-
+   
     # Regulate output:
     if (out == 'cct') | (out == 1):
         return ccts
@@ -2181,7 +2197,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
 # Robertson 1968:
 #------------------------------------------------------------------------------
 _CCT_LUT['robertson1968'] = {}
-_CCT_LUT['robertson1968']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.50, '%'),) # default LUT, must be in all_modes
+_CCT_LUT['robertson1968']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),) # default LUT, must be in all_modes
 _CCT_LUT['robertson1968']['lut_vars'] = ['T','uv','iso-T-slope']
 _CCT_LUT['robertson1968']['_generate_lut'] = _generate_lut 
 
@@ -2192,7 +2208,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     (lut_n_cols specifies the number of columns in the lut for 'robertson1968')
     """
     Duvx = None 
-    idx_sources = np.arange(u.shape[0],dtype=np.int32)
+    idx_sources = np.arange(u.shape[0], dtype = np.int32) # source/conversion index
     
     # get uBB, vBB, mBB from lut:
     TBB, uBB, vBB, mBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols], lut[:,-1::lut_n_cols]
@@ -2200,27 +2216,28 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     # calculate distances to coordinates in lut (Eq. 4 in Robertson, 1968):
     di = ((v.T - vBB) - mBB * (u.T - uBB)) / ((1 + mBB**2)**(0.5))
     pn = (((v.T - vBB)**2 + (u.T - uBB)**2)).argmin(axis=0)
+        
+    # Get di_0, mBB_0 values to check sign of di_0 * mBB_0 -> if positive (right of apex): [j,j+1] -> [j-1,j]
+    di_0 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0')
+    mBB_0 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0')
     
     # Deal with endpoints of lut + create intermediate variables to save memory:
     pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
-
-    # Solve issue of zero-crossing of slope of planckian locus:
-    # c = (np.sign(mBB[pn]) != np.sign(mBB[pn+1]))[:,0]  
-    c = ((1 - mBB[pn+1]/mBB[pn])[:,0] > 1) # check for difference in sign between i and i+1
-    pn[c] = pn[c] - 1
-
-    # Deal with endpoints of lut + create intermediate variables 
-    # to save memory:
-    # pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
-    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = 'm0p')
-    # uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, m0p = '0p')
-    # vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, m0p = '0p')
-    di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0p')
     
+    # Deal with positive slopes of iso-T lines
+    c = (di_0*mBB_0 < 0)[:,0]
+    pn[c] = pn[c] - 1
+    
+    # Get final values required for T calculation:
+    mBB_0, mBB_p1 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0p')
+    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = 'm0p')
+    di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0p')
+
+
     # Estimate Tc (Robertson, 1968): 
-    slope = (di_0/((di_0 - di_p1) + _CCT_AVOID_ZERO_DIV))
-    slope_m = slope.copy()
-    Tx = ((((1/TBB_0) + slope * ((1/TBB_p1) - (1/TBB_0)))**(-1)))#".copy()
+    sign = np.sign(mBB_0*mBB_p1) # Solve issue of zero-crossing of slope of planckian locus:
+    slope = (di_0/((di_0 - sign*di_p1) + _CCT_AVOID_ZERO_DIV))
+    Tx = ((((1/TBB_0) + slope * ((1/TBB_p1) - (1/TBB_0)))**(-1)))
 
     if fast_duv:
         uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, i = idx_sources, m0p = '0p')
@@ -2366,9 +2383,17 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         1.  `Robertson, A. R. (1968). 
         Computation of Correlated Color Temperature and Distribution Temperature. 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
-        <https://doi.org/10.1364/JOSA.58.001528>`_
+        <https://doi.org/10.1364/JOSA.58.001528>` 
+        
+        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),
+        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source
+        (in preparation, LEUKOS?)
+        
+        3. Baxter D., Royer M., Smet K.A.G. (2022)
+        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+        (in preparation, LEUKOS?)
          
-        2. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
+        4. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
         Accurate method for computing correlated color temperature. 
         Optics Express, 24(13), 14066–14078. 
         <https://doi.org/10.1364/OE.24.014066>`_
@@ -2667,7 +2692,7 @@ _initialize_lut(mode = 'zhang2019',lut_types = _unique_types([_CCT_LUT['zhang201
 # Ohno 2014 related functions:
 #------------------------------------------------------------------------------
 _CCT_LUT['ohno2014'] = {'luts':None}
-_CCT_LUT['ohno2014']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 10.0, 'K'),)
+_CCT_LUT['ohno2014']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, '%'),)
 _CCT_LUT['ohno2014']['lut_vars'] = ['T','uv']
 
 def _generate_lut_ohno2014(lut, 
@@ -2790,7 +2815,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
                                      is_uv_input = True, 
                                      force_tolerance = False, tol_method = None,
                                      out = '[cct,duv]',
-                                     duv_parabolic_threshold = 0, # force use of parabolic
+                                     duv_triangular_threshold = 0, # force use of parabolic
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
@@ -2840,7 +2865,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
 
 
 def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                       f_corr = 1.0, duv_parabolic_threshold = 0.002,
+                       f_corr = 1.0, duv_triangular_threshold = 0.002,
                        **kwargs):
     """ 
     Calculate Tx from u,v and lut using Ohno2014.
@@ -2894,7 +2919,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # Select triangular (threshold=0), parabolic (threshold=inf) or 
     # combined solution:
     Tx, Duvx = Txt, Duvxt 
-    cnd = np.abs(Duvx) >= duv_parabolic_threshold
+    cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
             
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
@@ -2904,7 +2929,7 @@ _CCT_UV_TO_TX_FCNS['ohno2014']= _uv_to_Tx_ohno2014
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        duv_parabolic_threshold = 0.002,
+                        duv_triangular_threshold = 0.002,
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
@@ -2965,10 +2990,10 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             | _CCT_LUT_RESOLUTION_REDUCTION_FACTOR, optional
             | Number of times the interval spanned by the adjacent Tc in a search or lut
             | method is downsampled (the search process will then start again)
-        :duv_parabolic_threshold:
+        :duv_triangular_threshold:
             | 0.002, optional
-            | Threshold for use of the parabolic solution 
-            |  (if larger then use parabolic, else use triangular solution)
+            | Threshold for use of the triangular solution.
+            |  (if smaller use triangular solution, else use the non-triangular one -> 3e-order poly)
         :max_iter:
             | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
@@ -3056,12 +3081,451 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                        split_calculation_at_N = split_calculation_at_N, 
                        lut = lut, luts_dict = luts_dict, 
                        ignore_wl_diff = ignore_wl_diff, 
-                       duv_parabolic_threshold = duv_parabolic_threshold,
+                       duv_triangular_threshold = duv_triangular_threshold,
                        use_fast_duv = use_fast_duv,
                        **kwargs)
 
 # pre-generate / load from disk / load from github some LUTs for Ohno2014:
 _initialize_lut(mode = 'ohno2014', lut_types = _unique_types([_CCT_LUT['ohno2014']['lut_type_def'], ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1.0, '%'),)] + _CCT_SHARED_LUT_TYPES))
+
+
+#------------------------------------------------------------------------------
+# Li 2022 (i.e. update of Ohno 2014) related functions:
+#------------------------------------------------------------------------------
+_CCT_LUT['li2022'] = {'luts':None}
+_CCT_LUT['li2022']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, '%'),)
+_CCT_LUT['li2022']['lut_vars'] = ['T','uv','uvp','uvpp']
+
+def _generate_lut_li2022(lut, 
+                           uin = None, seamless_stitch = True, 
+                           fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+                           resample_ndarray = False,
+                           cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+                           luts_dict = None, lut_type_def = None, lut_vars = ['T','uv','uvp','uvpp'],
+                           cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
+                           lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+                           cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                           f_corr = None, ignore_f_corr_is_None = False,
+                           ignore_wl_diff = False, 
+                           **kwargs):
+    """
+    Lut generator function for li2022 (= updated ohno2014). 
+    
+    Args:
+        :...: 
+            | see docstring for _generate_lut
+        :f_corr:
+            | Tc,x correction factor for the non-triangular solution in Ohno2014.
+            |   If None, it will be recalculated (note that it depends on the lut) for increased accuracy.
+        :ignore_f_corr_is_None: 
+            |   If True, ignore f_corr is None, i.e. don't re-calculate f_corr.
+                             
+    Returns:
+        :lut: 
+            | an ndarray with the lut 
+        :dict:
+            | a dictionary with the (re-optmized) value for f_corr and for ignore_f_cor_is_None.)
+    """    
+
+    # generate lut:
+    lut, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                        resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
+                        wl = wl, cieobs = cieobs, lut_vars = lut_vars,
+                        cspace =  cspace, cspace_kwargs = cspace_kwargs)        
+    
+    # No f_corr needed for high resolution luts:
+    if (np.round(np.diff(lut[:,0]).min(),6) == np.round(np.diff(lut[:,0]).max(),6) == np.round(lut[-1,0]-lut[-2,0],6)): # K scale
+        if lut[-1,0]-lut[-2,0] <= 10:
+            f_corr = 1
+    
+    # Get correction factor for Tx in parabolic solution:
+    if (f_corr is None): 
+        if (ignore_f_corr_is_None == False):
+            f_corr = get_correction_factor_for_Tx_li2022(lut, 
+                                                  uin = uin, 
+                                                  seamless_stitch = seamless_stitch, 
+                                                  fallback_unit = _CCT_FALLBACK_UNIT,
+                                                  fallback_n = lut.shape[0]*4,
+                                                  resample_ndarray = True,
+                                                  cct_max = cct_max, 
+                                                  cct_min = cct_min,
+                                                  wl = wl, cieobs = cieobs, 
+                                                  lut_vars = lut_vars,
+                                                  cspace =  cspace, 
+                                                  cspace_kwargs = cspace_kwargs,
+                                                  ignore_wl_diff = ignore_wl_diff)
+
+        else: 
+            f_corr = 1.0 # use this a backup value
+
+
+    return list([lut, {'f_corr':f_corr,'ignore_f_corr_is_None':ignore_f_corr_is_None}])
+
+_CCT_LUT['li2022']['_generate_lut'] = _generate_lut_li2022
+
+def get_correction_factor_for_Tx_li2022(lut, lut_fine = None,
+                                 uin = None, seamless_stitch = True, 
+                                 fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
+                                 resample_ndarray = True,
+                                 cct_max = _CCT_MAX, cct_min = _CCT_MIN,
+                                 luts_dict = None, lut_type_def = None, lut_vars = ['T','uv','uvp','uvpp'],
+                                 cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
+                                 lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+                                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                                 f_corr = None, ignore_f_corr_is_None = False,
+                                 ignore_wl_diff = False,
+                                 verbosity = 0):
+    """ 
+    Ohno's 2014 method uses a correction factor to correct the
+    calculated CCT. However, this factor depends on the lut used. This function
+    optimizes a new correction factor. Not using the right f_corr can lead to errors
+    of several Kelvin. (it generates a finer resolution lut and optimizes the correction
+                        factor such that predictions of the working lut for eacg of the
+                        entries in this fine-resolution lut is minimized.)
+    
+    Args:
+        :lut:
+            | ndarray with lut to optimize factor for.
+        :...: 
+            | see docstring for _generate_lut
+        :f_corr:
+            | Tc,x correction factor for the non-triangular solution in Ohno2014.
+            |   If None, it will be recalculated (note that it depends on the lut) for increased accuracy.
+        :ignore_f_corr_is_None: 
+            |   If True, ignore f_corr is None, i.e. don't re-calculate f_corr.
+                             
+
+    Returns:
+         :f_corr:
+             | Tc,x correction factor.
+    """
+
+    # Generate a finer resolution lut to estimate the f_corr correction factor:
+    if lut_fine is None:
+        lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                                    fallback_unit = fallback_unit, fallback_n = fallback_n,
+                                    resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
+                                    wl = wl, cieobs = cieobs, 
+                                    cspace =  cspace, cspace_kwargs = cspace_kwargs,
+                                    lut_vars = _CCT_LUT['li2022']['lut_vars'])
+
+    # define shorthand lambda fcn:
+    TxDuvx_p = lambda x: _xyz_to_cct(lut_fine[:,1:3], mode = 'li2022', 
+                                     lut = [lut, {'f_corr': np.round(x,5)}], 
+                                     is_uv_input = True, 
+                                     force_tolerance = False, tol_method = None,
+                                     out = '[cct,duv]',
+                                     duv_triangular_threshold = 0, # force use of parabolic
+                                     lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                                     wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
+                                     cspace = cspace, cspace_kwargs = cspace_kwargs,
+                                     luts_dict = _CCT_LUT['li2022']['luts'],
+                                     )[1:-1,:]
+ 
+    T = lut_fine[1:-1,0] 
+    Duv = 0.0
+    
+    # define objective function:
+    def optfcn(x, T, Duv, out = 'F'):
+        f_corr = np.abs(x[0])
+        if f_corr > 100: f_corr = 100 # limit search, avoid invalid values
+        TxDuvx = TxDuvx_p(f_corr)
+        Tx,Duvx = np.abs(TxDuvx[:,0]),TxDuvx[:,1] # abs needed as out_of_lut's are encode as negative!
+        dT2 = (T-Tx)**2
+        dDuv2 = (Duv - Duvx)**2
+        F = (dT2/1000**2 + dDuv2).mean()
+        
+        if out == 'F':
+            return F
+        else:
+            return eval(out)
+        
+    # setup and run optimization:    
+    x0 = np.array([1])
+    options = {'maxiter': 1e3, 'maxfev': 1e3,  'xatol': 1e-6, 'fatol': 1e-6}
+    res = minimize(optfcn, x0, args = (T,Duv,'F'),method = 'Nelder-Mead', options = options)
+    f_corr = np.round(res['x'][0],5)
+    F, dT2, dDuv2, Tx, Duvx = optfcn(res['x'], T, Duv, out = 'F,dT2,dDuv2,Tx,Duvx')
+    
+    if verbosity > 1: 
+        fig,ax = plt.subplots(1,2,figsize=(10,5))
+        ax[0].plot(T,dT2**0.5)
+        ax[0].set_title('dT (f_corr = {:1.5f})'.format(f_corr))
+        ax[0].set_ylabel('dT')
+        ax[0].set_xlabel('T (K)')
+        ax[1].plot(T,dDuv2**0.5)
+        ax[1].set_title('dDuv (f_corr = {:1.5f})'.format(f_corr))
+        ax[1].set_ylabel('dDuv')
+        ax[1].set_xlabel('T (K)')
+        
+    if verbosity > 0: 
+        print('    f_corr = {:1.5f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
+
+    return f_corr
+
+
+def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
+                       f_corr = 1.0, duv_triangular_threshold = 0.002,
+                       uvwbar = None, wl = None, dl = None,
+                       **kwargs):
+    """ 
+    Calculate Tx from u,v and lut using li2022.
+    """ 
+    # get uBB, vBB from lut:
+    TBB, uBB, vBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols]
+    upBB, vpBB, uppBB, vppBB = lut[:,3::lut_n_cols], lut[:,4::lut_n_cols], lut[:,5::lut_n_cols], lut[:,6::lut_n_cols]
+    idx_sources = np.arange(u.shape[0],dtype=np.int32)
+    
+    # calculate distances to coordinates in lut:
+    di = ((u.T - uBB)**2 + (v.T - vBB)**2)**0.5
+    pn = di.argmin(axis=0)
+
+    # Deal with endpoints of lut + create intermediate variables 
+    # to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+
+    TBB_m1, TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = 'm0p')
+    uBB_m1, uBB_0, uBB_p1 = _get_pns_from_x(uBB, pn, i = idx_sources, m0p = 'm0p')
+    vBB_m1, vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, i = idx_sources, m0p = 'm0p')
+    upBB_m1, upBB_0, upBB_p1 = _get_pns_from_x(upBB, pn, i = idx_sources, m0p = 'm0p')
+    vpBB_m1, vpBB_0, vpBB_p1 = _get_pns_from_x(vpBB, pn, i = idx_sources, m0p = 'm0p')
+    uppBB_m1, uppBB_0, uppBB_p1 = _get_pns_from_x(uppBB, pn, i = idx_sources, m0p = 'm0p')
+    vppBB_m1, vppBB_0, vppBB_p1 = _get_pns_from_x(vppBB, pn, i = idx_sources, m0p = 'm0p')
+    di_m1, di_0, di_p1 = _get_pns_from_x(di, pn, i = idx_sources, m0p = 'm0p')
+    
+    #---------------------------------------------
+    # Triangular solution:        
+    l = ((uBB_p1 - uBB_m1)**2 + (vBB_p1 - vBB_m1)**2)**0.5
+    l[l==0] += -_CCT_AVOID_ZERO_DIV 
+    x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
+    # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
+    vTx = vBB_m1 + (vBB_p1 - vBB_m1)*(x/l)
+    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
+    Duvxt = (di_m1**2 - x**2)
+    Duvxt[Duvxt<0] = 0
+    Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
+    # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
+
+
+    #---------------------------------------------
+    # Pm solution:
+    #f_corr = 1 # force to 1
+    
+    # Get data for two shortest distances: 
+    c_p1_m1 = di_p1 > di_m1 # if True: second shortest distance is at position m1 (m-1), so switch
+    d_1, T_1, u_1, v_1, up_1, vp_1, upp_1, vpp_1 = di_0.copy(), TBB_0.copy(), uBB_0.copy(), vBB_0.copy(), upBB_0.copy(), vpBB_0.copy(), uppBB_0.copy(), vppBB_0.copy()
+    d_2, T_2, u_2, v_2, up_2, vp_2, upp_2, vpp_2 = di_p1.copy(), TBB_p1.copy(), uBB_p1.copy(), vBB_p1.copy(), upBB_p1.copy(), vpBB_p1.copy(), uppBB_p1.copy(), vppBB_p1.copy()
+    d_1[c_p1_m1], d_2[c_p1_m1] = di_m1[c_p1_m1], di_0[c_p1_m1]
+    T_1[c_p1_m1], T_2[c_p1_m1] = TBB_m1[c_p1_m1], TBB_0[c_p1_m1]
+    u_1[c_p1_m1], u_2[c_p1_m1] = uBB_m1[c_p1_m1], uBB_0[c_p1_m1]
+    v_1[c_p1_m1], v_2[c_p1_m1] = vBB_m1[c_p1_m1], vBB_0[c_p1_m1]
+    up_1[c_p1_m1], up_1[c_p1_m1] = upBB_m1[c_p1_m1], upBB_0[c_p1_m1]
+    vp_1[c_p1_m1], vp_1[c_p1_m1] = vpBB_m1[c_p1_m1], vpBB_0[c_p1_m1]
+    upp_1[c_p1_m1], upp_1[c_p1_m1] = uppBB_m1[c_p1_m1], uppBB_0[c_p1_m1]
+    vpp_1[c_p1_m1], vpp_1[c_p1_m1] = vppBB_m1[c_p1_m1], vppBB_0[c_p1_m1]
+
+    g_1, g_2 = 1/(d_1 + _CCT_AVOID_ZERO_DIV), 1/(d_2 + _CCT_AVOID_ZERO_DIV)
+    
+    # # Should be pre-calculated and stored in LUT:
+    # _, u_1, v_1, up_1, vp_1, upp_1, vpp_1, _ = _get_uv_uvp_uvpp(T_1, uvwbar, wl, dl,  out = 'BB,BBp,BBpp')
+    # _, u_2, v_2, up_2, vp_2, upp_2, vpp_2, _ = _get_uv_uvp_uvpp(T_2, uvwbar, wl, dl,  out = 'BB,BBp,BBpp')
+   
+    e_1, e_2 = (u - u_1)*up_1 + (v - v_1)*vp_1, (u - u_2)*up_2 + (v - v_2)*vp_2
+    gp_1, gp_2 = (g_1**3)*e_1, (g_2**3)*e_2 # f**(-3/2) = (1/g**2)**(-3/2) = (g**2)**(3/2) = g**3
+    ep_1 = -up_1**2 - vp_1**2 + (u - u_1)*upp_1 + (v - v_1)*vpp_1
+    ep_2 = -up_2**2 - vp_2**2 + (u - u_2)*upp_2 + (v - v_2)*vpp_2
+    q_1, q_2 = -gp_1*e_1 - g_1*ep_1, -gp_2*e_2 - g_2*ep_2
+
+    hk = (T_2 - T_1) 
+    Ak = (d_2 - d_1)/hk - hk/6 * (q_2 - q_1) # Am, eq.7 
+    Bk = d_2 - q_1*(hk**2)/6
+    
+    a = (q_2 - q_1)/(2*hk) 
+    b = (q_1*T_2 - q_2*T_1) / (hk)
+    c = (q_2*T_1**2 - q_1*T_2**2)/(2*hk) + Ak
+    D = np.abs(b**2 - 4*a*c) # discriminant # avoid invalid value warning when taking the sqrt later on.
+
+    Txp_p, Txp_m = (-b + (D**0.5))/(2*a), (-b - (D**0.5))/(2*a)
+    Spp_p =  2*a*Txp_p + b  # second deriv at Txp: check Spp(Topt) > 0 !!
+    Txp = Txp_p # Spp(Topt) > 0
+    Txp[Spp_p<=0] = Txp_m[Spp_p<=0] # Spp(Topt) > 0
+    Txp_corr = Txp * f_corr # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+    Txp = Txp_corr
+    S = q_1*((T_2 - Txp)**3)/(6*hk) + q_2*((Txp - T_1)**3)/(6*hk) + Ak*(Txp - T_1) + Bk # local approx of distance function 
+    Duvxp = np.sign(v - vTx) * S
+
+    # Select triangular (threshold=0), parabolic (threshold=inf) or 
+    # combined solution:
+    Tx, Duvx = Txt, Duvxt 
+    cnd = np.abs(Duvx) >= duv_triangular_threshold
+    Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
+            
+    return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
+
+_CCT_UV_TO_TX_FCNS['li2022']= _uv_to_Tx_li2022
+    
+def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
+                        atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
+                        lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                        duv_triangular_threshold = 0.002,
+                        split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
+                        cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                        lut = None, luts_dict = None, ignore_wl_diff = False,
+                        use_fast_duv = _CCT_FAST_DUV,
+                        **kwargs):
+    """
+    Convert XYZ tristimulus values to correlated color temperature (CCT) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) 
+    using Li's 2022 update (proposal 2) of Ohno's 2014 method. 
+        
+    Args:
+        :xyzw: 
+            | ndarray of tristimulus values
+        :cieobs: 
+            | luxpy._CIEOBS, optional
+            | CMF set used to calculated xyzw.
+        :out: 
+            | 'cct' (or 1), optional
+            | Determines what to return.
+            | Other options: 'duv' (or -1), 'cct,duv'(or 2), "[cct,duv]" (or -2)
+        :is_uv_input:
+            | False, optional
+            | If True: xyzw contain uv input data, not xyz data!
+        :wl: 
+            | None, optional
+            | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
+        :rtol: 
+            | 1e-5, float, optional
+            | Stop search when cct a relative tolerance is reached.
+            | The relative tolerance is calculated as dCCT/CCT_est, 
+            | with CCT_est the current intermediate estimate in the 
+            | search and with dCCT the difference between
+            | the present and former estimates.
+        :atol: 
+            | 0.1, optional
+            | Stop search when cct a absolute tolerance (K) is reached.
+        :force_tolerance:
+            | True, optional
+            | If False: search only using the list of CCTs in the used lut. 
+            |           Only one loop of the full algorithm is performed. 
+            |           Accuracy depends on CCT of test source and the location
+            |           and spacing of the CCTs in the list.
+            | If True:  search will use adjacent CCTs to test source to create a new LUT,
+            |           (repeat the algoritm at higher resolution, progessively zooming in
+            |            toward the ground-truth) for tol_method == 'cl'; when 
+            |           tol_method == 'nr' a newton-raphson method is used.
+            |           Because the CCT for multiple source is calculated in one go,
+            |           the atol and rtol values have to be met for all! 
+        :tol_method:
+            | 'newton-raphson', optional
+            | (Additional) method to try and achieve set tolerances. 
+            | Options: 
+            | - 'cl', 'cascading-lut': use increasingly higher CCT-resolution
+            |       to 'zoom-in' on the ground-truth.
+            | - 'nr', 'newton-raphson': use the method as described in Li, 2016.
+        :lut_resolution_reduction_factor:
+            | _CCT_LUT_RESOLUTION_REDUCTION_FACTOR, optional
+            | Number of times the interval spanned by the adjacent Tc in a search or lut
+            | method is downsampled (the search process will then start again)
+        :duv_triangular_threshold:
+            | 0.002, optional
+            | Threshold for use of the triangular solution 
+            |  (if smaller use triangular solution, else use the non-triangular (third order polynomial))
+        :max_iter:
+            | _CCT_MAX_ITER, optional
+            | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
+        :split_calculation_at_N:
+            | _CCT_SPLIT_CALC_AT_N, optional
+            | Split calculation when xyzw.shape[0] > split_calculation_at_N. 
+            | Splitting speeds up the calculation. If None: no splitting is done.
+        :lut:
+            | None, optional
+            | Look-Up-Table with Ti, u,v,u',v',u",v",slope values of Planckians. 
+            | Options:
+            |  - None: defaults to the lut specified in _CCT_LUT['li2022']['lut_type_def'].
+            |  - list (lut,lut_kwargs): use this pre-calculated lut 
+            |       (add additional kwargs for the lut_generator_fcn(), defaults to None if omitted)
+            |  - tuple: must be key (label) in :luts_dict: (pre-calculated dict of luts),
+            |           if not: then a new lut will be generated from scratch using the info in the tuple.
+            |  - str: must be key (label) in :luts_dict: (pre-calculated dict of luts)
+            |  - ndarray [Nx1]: list of luts for which to generate a lut
+            |  - ndarray [Nxn] with n>3: pre-calculated lut (last col must contain slope of the isotemperature lines).
+        :luts_dict:
+            | None, optional
+            | Dictionary of pre-calculated luts for various cspaces and cmf sets.
+            |  Must have structure luts_dict[cspace][cieobs][lut_label] with the
+            |   lut part of a two-element list [lut, lut_kwargs]. It must contain
+            |   at the top-level a key 'wl' containing the wavelengths of the 
+            |   Planckians used to generate the luts in this dictionary.
+            | If None: luts_dict defaults to _CCT_LUT['li2022']['luts']    
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+        :ignore_wl_diff:
+            | False, optional
+            | When getting a lut from the dictionary, if differences are
+            | detected in the wavelengts of the lut and the ones used to calculate any
+            | plankcians then a new lut should be generated. Seting this to True ignores
+            | these differences and proceeds anyway.
+        :use_fast_duv:
+            | _CCT_FAST_DUV, optional
+            | If True: use a fast estimator of the Duv 
+            |   (one that avoids calculation of Planckians and uses the former
+            |    best estimate's u,v coordinates. This method is accurate enough
+            |    when the atol is small enough -> as long as abs(T-T_former)<=1K
+            |    the Duv estimate should be ok.)
+            
+    Returns:
+        :returns: 
+            | ndarray with:
+            |    cct: out == 'cct' (or 1)
+            |    duv: out == 'duv' (or -1)
+            |    cct, duv: out == 'cct,duv' (or 2)
+            |    [cct,duv]: out == "[cct,duv]" (or -2) 
+            
+            
+    Note: 
+        1. Out-of-lut CCTs are encoded as negative CCTs (with as absolute value
+        the value of the closest CCT from the lut.)
+    
+    References:
+        1. `Ohno Y. Practical use and calculation of CCT and Duv. 
+        Leukos. 2014 Jan 2;10(1):47-55.
+        <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
+         
+        2. `Li, Y., Gao, C.,  Melgosa, M. and Li, C. (2022).
+        Improved methods for computing CCT and Duv. 
+        LEUKOS, (in press). <email://794962485@qq.com>`_
+    
+    """ 
+    return _xyz_to_cct(xyzw, mode = 'li2022', cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                       tol_method = tol_method, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       duv_triangular_threshold = duv_triangular_threshold,
+                       use_fast_duv = use_fast_duv,
+                       **kwargs)
+
+# pre-generate / load from disk / load from github some LUTs for Li2022:
+_initialize_lut(mode = 'li2022', lut_types = _unique_types([_CCT_LUT['li2022']['lut_type_def'], ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1.0, '%'),)] + _CCT_SHARED_LUT_TYPES))
+
 
 
 #------------------------------------------------------------------------------
@@ -3216,7 +3680,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
 # Fibonacci search on lut:
 #------------------------------------------------------------------------------
 _CCT_LUT['fibonacci'] = {} 
-_CCT_LUT['fibonacci']['lut_type_def'] = ((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),)
+_CCT_LUT['fibonacci']['lut_type_def'] = ((_CCT_LUT_MIN,_CCT_LUT_MAX,0.2,'K'),)
 _CCT_LUT['fibonacci']['lut_vars'] = ['T','uv'] # with 'uv' is faster than calculating the BB on the spot !
 _CCT_LUT['fibonacci']['_generate_lut'] = _generate_lut 
 
@@ -3231,6 +3695,8 @@ def _fib_poly(a = None,b=None,t=None,d = None):
         f.append(f[-1]+f[-2])
     return f[1:], n 
 
+
+
 def _uv_to_Tx_fibonacci(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
                         max_iter = _CCT_MAX_ITER, uvwbar = None, wl = None, dl = None, 
                         atol = 0.1, rtol = 1e-5, lut_vars = ['T','uv'],
@@ -3243,61 +3709,98 @@ def _uv_to_Tx_fibonacci(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     TBB = lut[:,0::lut_n_cols]
     if 'uv' in lut_vars: 
         uBB, vBB  = lut[:,1::lut_n_cols], lut[:,2::lut_n_cols] 
-
+    
+    def dsq(x, c = None):
+        if c is None:
+            return (((u - uBB[x])**2 + (v - vBB[x])**2))
+        else:
+            return (((u[c] - uBB[x][c])**2 + (v[c] - vBB[x][c])**2))
+    
+    
     # get list of fibonacci nrs:
     fib, n = _fib_poly(d = TBB.shape[0])
     
-    a, b = np.zeros((u.shape[0],), dtype = int), np.ones((u.shape[0],), dtype = int)*(TBB.shape[0]-1) # work in indices in lut
-    for k in range(1,n+1):
-        
-        d = np.ceil((b - a) * (fib[n - k] / fib[n - k + 1])).astype(int)  # indices -> ints 
-        x1 = (b - d)
-        x2 = (a + d)
-
-        Tx_a, Tx_b = TBB[a], TBB[b]  
-        if fast_duv:
-            ux_a, ux_b = uBB[a], uBB[b]
-            vx_a, vx_b = vBB[a], vBB[b]
-        dTx = np.round(np.abs(Tx_a - Tx_b),11)
-        Tx =  (Tx_a + Tx_b)/2
-
-        if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())) | (k == n + 2):
-            break
-        
-        # preparation for next loop:
-        if 'uv' not in lut_vars: 
-            if (uvwbar is not None) & (wl is not None) & (dl is not None):
-                tc_x12 = TBB[(x1,x2),].reshape((2*x1.shape[0],1)) 
-                _,UVWBB_x12,_,_ = _get_tristim_of_BB_BBp_BBpp(tc_x12, uvwbar, wl, dl, out='BB')
-            else:
-                raise Exception('uvwbar, wl & dl must all be not None !!!')
-            
-            uvBB_x12 = (UVWBB_x12/UVWBB_x12.sum(axis=-1,keepdims=True))[...,1:]
-            N = uvBB_x12.shape[0]//2 
-            uBB_x1, vBB_x1 = uvBB_x12[:N,0:1],  uvBB_x12[:N,1:2]
-            uBB_x2, vBB_x2 = uvBB_x12[N:,0:1],  uvBB_x12[N:,1:2]
-        
-        else:
-            uBB_x1, vBB_x1 = uBB[x1], vBB[x1]
-            uBB_x2, vBB_x2 = uBB[x2], vBB[x2]
-        
-        d2_1 = (((v - vBB_x1)**2 + (u - uBB_x1)**2)) 
-        d2_2 = (((v - vBB_x2)**2 + (u - uBB_x2)**2)) 
-       
-        cs = (d2_1 <= d2_2)[:,0]
-        cl = (d2_1 > d2_2)[:,0]
-        b[cs] = x2[cs] # when d2_1 < d2_2
-        a[cl] = x1[cl] # when d2_2 < d2_1
-        
+    fib_p = [fib[-3], fib[-2]]
     
+    tail = TBB.shape[0]-1
+    
+    left, right = np.zeros((u.shape[0],), dtype = int), np.ones((u.shape[0],), dtype = int)*tail#fib[-1]
+    dsql = dsq(left)
+    dsqr = dsq(right)
+    
+    a = left + fib_p[0]
+    dsqa = dsq(a)
+    
+    b = left + fib_p[1]
+    dsqb = dsq(b)
+    iptr = -3 
+    while np.abs(iptr) < (len(fib) - 1): 
+        iptr -= 1
+        
+        fib_p = [fib[iptr], fib[iptr + 1]]
+
+        # Make search range (l,b):
+        c = dsqa[:,0] <= dsqb[:,0] # dsqa <= dsqb 
+        right[c] = b[c]
+        b[c] = a[c]
+        dsqr[c] = dsqb[c]
+        dsqb[c] = dsqa[c]
+        a[c] = left[c] + fib_p[0]
+
+        # Check for a walking off the end.
+        # AND if it does keep it to the left of b.        
+        c_e = a>tail
+        a[c & c_e] = b[c & c_e] - 1
+
+        dsqa[c] = dsq(a, c)
+
+        # Make search range (a,r):
+        c = ~c 
+        left[c] = a[c]
+        a[c] = b[c]
+        dsql[c] = dsqa[c]
+        dsqa[c] = dsqb[c]
+        b[c] = left[c] + fib_p[1]
+
+        # Check for a walking off the end.
+        c_e = b > tail
+        b[c_e] = tail
+        dsqb[c & c_e] = dsqr[c & c_e]
+
+        dsqb[c & ~c_e] = dsq(b, (c & ~c_e))
+
+               
+    # Get Tx, Tx_min, Tx_max, ux, vx, ...
+    Tx = TBB[a]     
+    if fast_duv: 
+        ux = uBB[a]
+        vx = vBB[a]
+    Tx_min = TBB[left]
+    Tx_max = TBB[b]
+    # closest_index = a#.copy()
+    
+    c = dsqa[:,0] >= dsqb[:,0]
+    Tx[c] = TBB[b[c]]
+    if fast_duv: 
+        ux[c] = uBB[b[c]]
+        vx[c] = vBB[b[c]]
+    Tx_min[c] = TBB[a[c]]
+    Tx_max[c] = TBB[right[c]]
+    # closest_index[c] = b[c]
+        
+        # dTx = np.round(np.abs(Tx_max - Tx_min),11)
+    
+        # if (((dTx <= atol).all() | ((dTx/Tx) <= rtol).all())):
+        #     break
+        
+
     if fast_duv:
-        Duvx = _get_Duv_for_T_from_uvBB(u, v, (ux_a+ux_b)/2, (vx_a+vx_b)/2)
+        Duvx = _get_Duv_for_T_from_uvBB(u, v, ux, vx)
     else:
         Duvx = None
     
-    Tx_min, Tx_max = Tx_a, Tx_b
     if out_of_lut is None: 
-        closest_endpoint = -np.vstack((np.abs(Tx - TBB[0,0]).T,np.abs(Tx - TBB[-1,0]).T)).argmin(axis=0)
+        closest_endpoint = -np.hstack((np.abs(Tx - TBB[0,0]),np.abs(Tx - TBB[-1,0]))).argmin(axis=-1)
         TBB_closest_end = TBB[closest_endpoint]
         out_of_lut = (np.abs(Tx - TBB_closest_end) <= 2*np.abs(TBB_closest_end - TBB[closest_endpoint - 1 + 3*(closest_endpoint==0)]))
 
@@ -3453,14 +3956,12 @@ def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
                        use_fast_duv = use_fast_duv,
                        **kwargs)
 
-
 # pre-generate / load from disk / load from github some LUTs for fibonacci based search:
 # BUT: only when its pkl file exists or when _CCT_LUT_CAL is True, otherwise let user init(download the LUT manually)!!
 def init_fibonacci(force_calc = _CCT_LUT_CALC):
     _initialize_lut(mode = 'fibonacci', force_calc = force_calc, lut_types = _unique_types([_CCT_LUT['fibonacci']['lut_type_def']] + _CCT_SHARED_LUT_TYPES))
 if os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format('fibonacci'))) | (_CCT_LUT_CALC):
     init_fibonacci(force_calc = _CCT_LUT_CALC) 
-
     
 #------------------------------------------------------------------------------
 # none method:
@@ -3501,7 +4002,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
     # (later copy and adjust as needed on a mode per mode basis)
     # (reduce memory and storage consumption and speed up re-calculation of luts):
     _CCT_LUT['all_modes'] = {}
-    _CCT_LUT['all_modes']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 10.0, 'K'),) # default LUT
+    _CCT_LUT['all_modes']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),) # default LUT
     _CCT_LUT['all_modes']['lut_vars'] = ['T','uv','uvp','uvpp','iso-T-slope']
     _CCT_LUT['all_modes']['_generate_lut'] = _generate_lut 
     
@@ -3524,6 +4025,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
     _CCT_LUT['robertson1968']['luts'] = _sample_lut_vars(_CCT_LUT['robertson1968']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['zhang2019']['luts'] = _sample_lut_vars(_CCT_LUT['zhang2019']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['ohno2014']['luts'] = _sample_lut_vars(_CCT_LUT['ohno2014']['lut_vars'], _CCT_LUT['all_modes']['luts'])
+    _CCT_LUT['li2022']['luts'] = _sample_lut_vars(_CCT_LUT['li2022']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['fibonacci']['luts'] = _sample_lut_vars(_CCT_LUT['fibonacci']['lut_vars'], _CCT_LUT['all_modes']['luts'])
 
 
@@ -3534,12 +4036,12 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
 
 def xyz_to_cct(xyzw, mode = 'robertson1968',
                cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
-               atol = 0.1, rtol = 1e-10, force_tolerance = True, tol_method = 'newton-raphson', 
+               atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                lut = None, luts_dict = None, ignore_wl_diff = False,
-               duv_parabolic_threshold = 0.002,
+               duv_triangular_threshold = 0.002,
                first_guess_mode = 'robertson1968', fgm_kwargs = {},
                use_fast_duv = _CCT_FAST_DUV,
                **kwargs):
@@ -3554,7 +4056,7 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
         :mode:
             | 'robertson1968', optional
             | String with name of method to use.
-            | Options: 'robertson1968', 'ohno2014', 'li2016', 'zhang2019', 'fibonacci',
+            | Options: 'robertson1968', 'ohno2014', 'li2016', 'li2022','zhang2019', 'fibonacci',
             |       (also, but see note below: 'mcamy1992', 'hernandez1999')
             | Note: first_guess_mode for li2016 can also be specified using a ':' separator,
             |        e.g. 'li2016:robertson1968'
@@ -3653,15 +4155,16 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
             | detected in the wavelengts of the lut and the ones used to calculate any
             | plankcians then a new lut should be generated. Seting this to True ignores
             | these differences and proceeds anyway.
-        :duv_parabolic_threshold:
-            | 0.002, optional  (cfr. mode == 'ohno2014')
-            | Threshold for use of the parabolic solution 
-            |  (if larger then use parabolic, else use triangular solution)
+        :duv_triangular_threshold:
+            | 0.002, optional
+            | Threshold for use of the triangular solution.
+            |  (if smaller use triangular solution, else use the non-triangular one:  
+            |     If mode == 'ohno2014' -> parabolic, if mode == 'li2022' -> 3e-order poly)
         :first_guess_mode:
             | 'robertson1968', optional (cfr. mode == 'li2016')
             | Method used to get an approximate (first guess) estimate of the cct,
             | after which the newton-raphson method is started.
-            | Options: 'robertson1968', 'ohno2014', 'zhang2019'
+            | Options: 'robertson1968', 'ohno2014', 'zhang2019','li2022'
         :use_fast_duv:
             | _CCT_FAST_DUV, optional
             | If True: use a fast estimator of the Duv 
@@ -3693,33 +4196,46 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
         Computation of Correlated Color Temperature and Distribution Temperature. 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
         <https://doi.org/10.1364/JOSA.58.001528>`_
+        
+        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),
+        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source
+        (in preparation, LEUKOS?)
+        
+        3. Baxter D., Royer M., Smet K.A.G. (2022)
+        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
+        (in preparation, LEUKOS?)
          
-        2. `Ohno Y. Practical use and calculation of CCT and Duv. 
+        4. `Ohno Y. Practical use and calculation of CCT and Duv. 
         Leukos. 2014 Jan 2;10(1):47-55.
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2014.839020>`_
         
-        3. `Zhang, F. (2019). 
+        5. `Zhang, F. (2019). 
         High-accuracy method for calculating correlated color temperature with 
         a lookup table based on golden section search. 
         Optik, 193, 163018. 
         <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
          
-        3. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
+        6. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
         Accurate method for computing correlated color temperature. 
         Optics Express, 24(13), 14066–14078. 
         <https://doi.org/10.1364/OE.24.014066>`_
         
-        4. `McCamy, Calvin S. (April 1992). 
+        7. `McCamy, Calvin S. (April 1992). 
         "Correlated color temperature as an explicit function of 
         chromaticity coordinates".
         Color Research & Application. 17 (2): 142–144.
         <http://onlinelibrary.wiley.com/doi/10.1002/col.5080170211/abstract>`_
         
-        5. `Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
+        8. `Hernández-Andrés, Javier; Lee, RL; Romero, J (September 20, 1999). 
         Calculating Correlated Color Temperatures Across the Entire Gamut 
         of Daylight and Skylight Chromaticities.
         Applied Optics. 38 (27), 5703–5709. P
         <https://www.osapublishing.org/ao/abstract.cfm?uri=ao-38-27-5703>`_
+        
+        9. `Li, Y., Gao, C.,  Melgosa, M. and Li, C. (2022).
+        Improved methods for computing CCT and Duv. 
+        LEUKOS, (in press). <email://794962485@qq.com>`_
+  
     """  
     if (mode != 'mcamy1992') & (mode != 'hernandez1999'):
         
@@ -3729,7 +4245,7 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
                 print('\nInitializing (generate or download) Fibonacci LUTs on first use.')
                 init_fibonacci() # initialize LUTs for fibonacci
                 print('\n')
-                
+        
         return _xyz_to_cct(xyzw, mode, cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
                            cspace = cspace, cspace_kwargs = cspace_kwargs,
                            atol = atol, rtol = rtol, force_tolerance = force_tolerance,
@@ -3738,7 +4254,7 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
                            split_calculation_at_N = split_calculation_at_N, 
                            lut = lut, luts_dict = luts_dict, 
                            ignore_wl_diff = ignore_wl_diff, 
-                           duv_parabolic_threshold = duv_parabolic_threshold,
+                           duv_triangular_threshold = duv_triangular_threshold,
                            first_guess_mode = first_guess_mode,
                            use_fast_duv = use_fast_duv,
                            **kwargs)
@@ -3917,26 +4433,32 @@ if __name__ == '__main__':
     # ------------------------------
     # Setup some tests:
     
-    # test 1:
-    # cct = 5000    
-    # duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T
-    # ccts = np.array([[cct]*duvs.shape[0]]).T
+    # # test 1:
+    cct = 5000    
+    duvs = np.array([[-0.05,-0.025,0,0.025,0.05]]).T
+    # duvs = np.array([[-0.03]]).T
+    ccts = np.array([[cct]*duvs.shape[0]]).T
     
     # test 2:
-    duv = -0.04
+    # duv = -0.04
     # duvs = np.array([[0,*[duv]*(ccts.shape[0]-1)]]).T
     # ccts = np.array([[1000,1050,1100,1150,1200,1250,1300,1350,1400,1450,1500,1550,1600,1650,1700,1750,1800,1850,1900,1950,2000, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
 
     # test 3:
-    ccts = np.array([[1625.92608972303,1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
-    duvs = np.array([[duv]*ccts.shape[0]]).T
-    duvs[0] = 0.0037117089512229
+    # ccts = np.array([[1625.92608972303,1626.26, 3500, 4500.0, 5500, 6500, 15500,25500,35500,45500,50500]]).T
+    # duvs = np.array([[duv]*ccts.shape[0]]).T
+    # duvs[0] = 0.0037117089512229
     
     cctsduvs_t = np.hstack((ccts,duvs))
 
-    # Test 4 (from disk):
-    # cctsduvs_t = pd.read_csv('test_rob_error.csv',header=None,index_col=None).values
-    # ccts, duvs = cctsduvs_t[:,:1], cctsduvs_t[:,1:]
+    # # Test 4 (from disk): 'ref_cct_duv_1500-40000K.csv' or 'test_rob_error.csv'
+    # # cctsduvs_t = pd.read_csv('test_rob_error.csv',header=None,index_col=None).values
+    # cctsduvs_t = pd.read_csv('ref_cct_duv_1500-40000K.csv',header='infer',index_col=None).values
+    # cctsduvs_t = cctsduvs_t[cctsduvs_t[:,0] <= 40000,:2]
+    # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,0] >= 2000) & (cctsduvs_t[:,0] <= 20000),:2]
+    # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,1] >= -0.03) & (cctsduvs_t[:,1] <= 0.03),:2]
+
+    # ccts, duvs = cctsduvs_t[:,:1], cctsduvs_t[:,1:2]
     
     
     #--------------------------------
@@ -3944,20 +4466,25 @@ if __name__ == '__main__':
     cct_offset = None
     print('cct_to_xyz:')
     xyz = cct_to_xyz(ccts = ccts, duv = duvs, cieobs = cieobs, cct_offset = cct_offset)
-    
+    # Yuv60 = lx.xyz_to_Yuv60(xyz)
+    # Yuv60 = np.round(Yuv60,4)
+    # xyz = lx.Yuv60_to_xyz(Yuv60)
+    # print('Yuv60:', Yuv60)
     
     #--------------------------------
     # Forward transform from xyz to CCT,Duv using Robertson 1968 or several other methods:
-    modes = ['robertson1968'] #,'ohno2014','zhang2019','fibonacci']
-    lut = ((1000.0,51000.0,0.5,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
-    # lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,51000.0,0.5,'%'),)]
+    modes = ['robertson1968'] #['robertson1968','ohno2014','zhang2019','fibonacci']
+    lut = ((1000.0,41000.0,1,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
+    # lut = ((1000.0,41000.0,1,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
+    # lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,41000.0,1,'%'),)]
     for mode in modes:
         print('mode:',mode)
         cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 
                               mode = mode, force_tolerance = False, 
                               tol_method = 'nr',
                               lut = lut, #((_CCT_LUT_MIN,_CCT_LUT_MAX,0.1,'K'),),
-                              split_calculation_at_N = None)
+                              split_calculation_at_N = None,
+                              use_fast_duv = True)
     
     # Out of LUT conversions are coded with a negative CCT, so make positive again before calculating error:
     cctsduvs_ = cctsduvs.copy();cctsduvs_[:,0] = np.abs(cctsduvs_[:,0]) # outof gamut ccts are encoded as negative!!
@@ -3983,6 +4510,9 @@ if __name__ == '__main__':
         ax[i].plot(np.array([*lut[0][:2]]), np.array([0,0]),'r.')
         ax[i].set_ylim([-d[:,i].max()*1.1,d[:,i].max()*1.1])
     
+  
+    xyz_to_cct_ = lambda xyz: xyz_to_cct(xyz, mode = mode, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', 
+                          force_tolerance = False, lut = lut,split_calculation_at_N=None)
 
     
     

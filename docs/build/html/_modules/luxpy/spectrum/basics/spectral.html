@@ -1,19 +1,18 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html4" lang="en" >
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.9.6 documentation</title>
-      <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.9.8 documentation</title><link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
-  
-        <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js"></script>
-        <script src="../../../../_static/jquery.js"></script>
-        <script src="../../../../_static/underscore.js"></script>
-        <script src="../../../../_static/doctools.js"></script>
+  <script id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../../../_static/language_data.js"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -27,7 +26,7 @@
             <a href="../../../../index.html" class="icon icon-home"> LuxPy
           </a>
               <div class="version">
-                1.9.6
+                1.9.8
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -37,7 +36,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
@@ -141,6 +140,10 @@
 <span class="sd">                  or quantal energy units.</span>
 <span class="sd">         </span>
 <span class="sd"> :detect_peakwl(): Detect peak wavelengths and fwhm of peaks in spectrum spd. </span>
+<span class="sd"> </span>
+<span class="sd"> :create_spectral_interpolator(): Create an interpolator of kind for spectral data S. </span>
+<span class="sd"> </span>
+<span class="sd"> :wls_shift(): Wavelength-shift array S over shft wavelengths.</span>
 
 <span class="sd">References</span>
 <span class="sd">----------</span>
@@ -161,7 +164,8 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_BB&#39;</span><span class="p">,</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_C_INTERP_TYPE&#39;</span><span class="p">,</span>
            <span class="s1">&#39;getwlr&#39;</span><span class="p">,</span><span class="s1">&#39;getwld&#39;</span><span class="p">,</span><span class="s1">&#39;spd_normalize&#39;</span><span class="p">,</span><span class="s1">&#39;cie_interp&#39;</span><span class="p">,</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;xyzbar&#39;</span><span class="p">,</span> <span class="s1">&#39;vlbar&#39;</span><span class="p">,</span> 
            <span class="s1">&#39;vlbar_cie_mesopic&#39;</span><span class="p">,</span> <span class="s1">&#39;get_cie_mesopic_adaptation&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;spd_to_xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_ler&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_power&#39;</span><span class="p">,</span> <span class="s1">&#39;detect_peakwl&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;spd_to_xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_ler&#39;</span><span class="p">,</span> <span class="s1">&#39;spd_to_power&#39;</span><span class="p">,</span> <span class="s1">&#39;detect_peakwl&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;create_spectral_interpolator&#39;</span><span class="p">,</span><span class="s1">&#39;wls_shift&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
@@ -1066,6 +1070,121 @@
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">,</span><span class="n">hmpeaks</span><span class="p">,</span><span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;middle of FWHM range&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">props</span></div>
 
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="create_spectral_interpolator"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.create_spectral_interpolator">[docs]</a><span class="k">def</span> <span class="nf">create_spectral_interpolator</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Create an interpolator of kind for spectral data S. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :S:</span>
+<span class="sd">            | Spectral data array</span>
+<span class="sd">            | Row 0 should contain wavelengths if :wl:  is None.</span>
+<span class="sd">        :wl:</span>
+<span class="sd">            | None, optional </span>
+<span class="sd">            | Wavelengths</span>
+<span class="sd">            | If wl is None: row 0 of S should contain wavelengths.</span>
+<span class="sd">        :kind:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Order of spline functions used in interpolator (1&lt;=kind&lt;=5)</span>
+<span class="sd">            | Interpolator = scipy.interpolate.InterpolatedUnivariateSpline</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :interpolators:</span>
+<span class="sd">            | List of interpolator functions for each row in S (minus wl-row if present).</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. Nan&#39;s, +infs, -infs will be ignored when generating the interpolators. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">S</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># make 2d</span>
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">interpolators</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">|</span> <span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">|</span>  <span class="n">np</span><span class="o">.</span><span class="n">isposinf</span><span class="p">(</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="n">interpolators</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="o">.</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span><span class="n">S</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">indices</span><span class="p">],</span> <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">interpolators</span></div>
+
+<div class="viewcode-block" id="wls_shift"><a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.wls_shift">[docs]</a><span class="k">def</span> <span class="nf">wls_shift</span><span class="p">(</span><span class="n">shfts</span><span class="p">,</span> <span class="n">log_shft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interpolators</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Wavelength-shift array S over shft wavelengths.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :shfts:</span>
+<span class="sd">            | array with wavelength shifts.</span>
+<span class="sd">        :log_shft:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: shift in log10 wavelength space.</span>
+<span class="sd">        :wl:</span>
+<span class="sd">            | None, optional </span>
+<span class="sd">            | Wavelengths to return</span>
+<span class="sd">            | If wl is None: S will be used and row 0 should contain wavelengths.</span>
+<span class="sd">        :S:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Spectral data array.</span>
+<span class="sd">            | Row 0 should contain wavelengths if :wl:  is None.</span>
+<span class="sd">            | If None: interpolators should be precalculated + wl must contain wavelength array !</span>
+<span class="sd">        :interpolators:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Pre-calculated interpolators for the (non-wl) rows in S.</span>
+<span class="sd">            | If None: will be generated from :S: (which should contain wavelengths on row 0) </span>
+<span class="sd">            | with specified :kind: using scipy.interpolate.InterpolatedUnivariateSpline</span>
+<span class="sd">            | If not None and S is not None: interpolators take precedence</span>
+<span class="sd">        :kind:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Order of spline functions used in interpolator (1&lt;=kind&lt;=5)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :wavelength_shifted:</span>
+<span class="sd">            | array with wavelength-shifted S (or interpolators) evaluated at wl.</span>
+<span class="sd">            | (row 0 contains) </span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. Nan&#39;s, +infs, -infs will be ignored when generating the interpolators. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">S</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Either wl or S with wavelengths on row 0 must be supplied&#39;</span><span class="p">)</span>
+        <span class="n">wl</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">interpolators</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> 
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Interpolators are not supplied and S contains no data to generate them&quot;</span><span class="p">)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">S</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">interpolators</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Either the interpolators for S or S itself must be supplied&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">S</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span> 
+            <span class="k">if</span> <span class="n">S</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+                <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># make 2d</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">wl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Number of wavelengths in S doesn&#39;t match that in wl&quot;</span><span class="p">)</span>
+                <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">S</span><span class="p">))</span>
+                <span class="n">N</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">pass</span> <span class="c1"># S is assumed to contain wavelengths on row 0</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># (S is not None and interpolators is not None) or (S is None and interpolators is not None)</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="k">if</span> <span class="p">(</span><span class="n">interpolators</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">S</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span> 
+        <span class="n">interpolators</span> <span class="o">=</span> <span class="n">create_spectral_interpolator</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">interpolators</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">N</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">shfts</span><span class="p">)</span>
+            <span class="n">interpolators</span> <span class="o">=</span> <span class="p">[</span><span class="n">interpolators</span><span class="p">]</span><span class="o">*</span><span class="n">N</span>
+            
+            
+    <span class="c1"># Peak Wavelength Shift:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">log_shft</span><span class="p">:</span> 
+        <span class="n">wl_shifted</span> <span class="o">=</span> <span class="p">(</span><span class="n">wl</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">shfts</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">wl_shifted</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">shfts</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-308</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">])</span>
+
+    <span class="n">peak_shft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">wl_shifted</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">peak_shft</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> 
+        <span class="n">peak_shft</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">interpolators</span><span class="p">[</span><span class="n">i</span><span class="p">](</span><span class="n">wl_shifted</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">peak_shft</span><span class="p">))</span></div>
 </pre></div>
 
            </div>

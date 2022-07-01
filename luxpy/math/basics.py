@@ -916,7 +916,7 @@ def fit_ellipse(xy, center_on_mean_xy = False):
     D = np.hstack((x * x, x * y, y * y, x, y, np.ones_like(x)))
     S, C = np.dot(D.T, D), np.zeros([6, 6])
     C[0, 2], C[2, 0], C[1, 1] = 2, 2, -1
-    U, s, V = np.linalg.svd(np.dot(np.linalg.inv(S), C))
+    U, s, V = np.linalg.svd(np.dot(np.linalg.pinv(S), C))
     e = U[:, 0]
 #    E, V =  np.linalg.eig(np.dot(np.linalg.inv(S), C))
 #    n = np.argmax(np.abs(E))
@@ -951,7 +951,7 @@ def fit_ellipse(xy, center_on_mean_xy = False):
     up = 2 * (a * f * f + c * d * d + g * b * b - 2 * b * d * f - a * c * g)
     down1 = (b * b - a * c) * ((c - a) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
     down2 = (b * b - a * c) * ((a - c) * np.sqrt(1 + 4 * b * b / ((a - c) * (a - c))) - (c + a))
-    a, b  = np.sqrt((up / down1)), np.sqrt((up / down2))
+    a, b  = np.sqrt(np.abs(up / down1)), np.sqrt(np.abs(up / down2))
 
 
     # assert that a is the major axis (otherwise swap and correct angle)

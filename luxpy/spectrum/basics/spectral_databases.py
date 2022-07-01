@@ -40,9 +40,9 @@ Module for loading light source (spd) and reflectance (rfl) spectra databases
  :_CIE_ILLUMINANTS: | Database with CIE illuminants: 
                     | * 'E', 'D65', 'A', 'C',
                     | * 'F1', 'F2', 'F3', 'F4', 'F5', 'F6',
-                      'F7', 'F8', 'F9', 'F10', 'F11', 'F12'
+                      'F7', 'F8', 'F9', 'F10', 'F11', 'F12',...
                       
- :_CIE_E, _CIE_D65, _CIE_A, ',_CIE_B', _CIE_C, _CIE_F4: Some CIE illuminants for easy use.
+ :_CIE_E, _CIE_D65, _CIE_A, ',_CIE_B', _CIE_C, _CIE_F4, _CIE_L41: Some CIE illuminants for easy use.
 
  :_CRI_RFL: | Database with spectral reflectance functions for various 
               color rendition calculators:
@@ -71,7 +71,7 @@ Module for loading light source (spd) and reflectance (rfl) spectra databases
 import copy
 from luxpy.utils import np, _PKG_PATH, _SEP, getdata
 __all__ = ['_R_PATH','_S_PATH', 
-           '_CIE_ILLUMINANTS', '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4',
+           '_CIE_ILLUMINANTS', '_CIE_E', '_CIE_D65', '_CIE_A', '_CIE_B', '_CIE_C', '_CIE_F4', '_CIE_L41',
            '_CIE_F_SERIES', '_CIE_F3_SERIES','_CIE_HP_SERIES','_CIE_LED_SERIES',
            '_IESTM3015','_IESTM3015_S','_IESTM3018','_IESTM3018_S','_IESTM3020','_IESTM3020_S',
            '_CIE_GLASS_ID','_CRI_RFL','_RFL', '_MUNSELL']
@@ -99,6 +99,9 @@ _CIE_A = A
 B = getdata(_S_PATH + 'CIE_B.csv',kind='np').T
 _CIE_B = B
 
+L41 = getdata(_S_PATH + 'CIE_L41.csv',kind='np').T # illuminant for spectral mismatch calculations (cfr. CIE TC2-90)
+_CIE_L41 = L41
+
 _CIE_F_SERIES = getdata(_S_PATH + 'CIE_F_1to12_1nm.csv',kind='np').T
 _CIE_F_SERIES_dict = {'F{:1.0f}'.format(i+1):np.vstack((_CIE_F_SERIES[0],_CIE_F_SERIES[i+1])) for i in range(12)}
 _CIE_F4 = _CIE_F_SERIES_dict['F4']
@@ -113,7 +116,7 @@ _CIE_LED_SERIES = getdata(_S_PATH + 'CIE_LED_B1toB5_BH1_RGB1_V1_V2_ext.csv',kind
 _CIE_LED_types = ['B1','B2','B3','B4','B5','BH1','RGB1','V1','V2','L41']
 _CIE_LED_SERIES_dict = {'LED_{:s}'.format(_CIE_LED_types[i]):np.vstack((_CIE_LED_SERIES[0],_CIE_LED_SERIES[i+1])) for i in range(len(_CIE_LED_types))}
 
-_CIE_ILLUMINANTS = {'E':E,'D65':D65,'A':A,'B':B,'C':C,'F4':_CIE_F4}
+_CIE_ILLUMINANTS = {'E':E,'D65':D65,'A':A,'B':B,'C':C,'F4':_CIE_F4,'L41':_CIE_L41}
 _CIE_ILLUMINANTS.update(_CIE_F_SERIES_dict)
 _CIE_ILLUMINANTS.update(_CIE_F3_SERIES_dict)
 _CIE_ILLUMINANTS.update(_CIE_HP_SERIES_dict)

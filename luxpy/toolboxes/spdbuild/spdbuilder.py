@@ -1141,7 +1141,9 @@ def get_w_summed_spd(w,spds):
 
 
 #------------------------------------------------------------------------------
-def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, decimals = [3], obj_fcn = [None], obj_fcn_pars = [{}], obj_fcn_weights = [1], obj_tar_vals = [0], verbosity = 0, out = 'F'):
+def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, 
+               decimals = [3], obj_fcn = [None], obj_fcn_pars = [{}], 
+               obj_fcn_weights = [1], obj_tar_vals = [0], verbosity = 0, out = 'F'):
     """
     Fitness function that calculates closeness of solution x to target values 
     for specified objective functions.
@@ -1212,7 +1214,7 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True, de
             obj_fcn_weights =  obj_fcn_weights*N
         if len(obj_fcn_pars) == 1: 
             obj_fcn_pars = np.asarray(obj_fcn_pars*N)
-        obj_tar_vals = np.asarray(obj_tar_vals)
+        obj_tar_vals = np.asarray(obj_tar_vals, dtype = object)
         
         # Calculate all objective functions and closeness to target values
         # store squared weighted differences for speed:
