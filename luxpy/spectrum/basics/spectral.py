@@ -271,7 +271,7 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
             | 'ext', optional
             | If 'ext': extrapolate using 'linear' ('cie167:2005'), 'quadratic' ('cie15:2018') 
             |           'nearest' ('cie15:2004') recommended or other (e.g. 'cubic') methods.
-            | If None: use CIE15:2004 recommended 'nearest value' approach when extrapolating.
+            | If None: same as 'ext'
             | If float or list or ndarray, use those values to fill extrapolated value(s).
         :extrap_kind:
             | 'linear', optional
@@ -436,7 +436,7 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
     return data.copy()
 
 #--------------------------------------------------------------------------------------------------
-def spd(data = None, interpolation = None, kind = 'np', wl = None,\
+def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values = None, \
         columns = None, sep = ',',header = None, datatype = 'S', \
         norm_type = None, norm_f = None):
     """
@@ -464,6 +464,9 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
+        :extrap_values:
+            | None, optional
+            | Controls extrapolation. See cie_interp.
         :columns: 
             | -  None or list[str] of column names for dataframe, optional
         :header: 
@@ -511,7 +514,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
         else:
             data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype, copy = True)#interpolation requires np-array as input
             if (transpose == True): data = data.T
-            data = cie_interp(data = data, wl_new = wl,kind = interpolation)
+            data = cie_interp(data = data, wl_new = wl,kind = interpolation, extrap_values = extrap_values)
             data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
         
         if isinstance(data,pd.DataFrame): columns = data.columns #get possibly updated column names
@@ -531,7 +534,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None,\
 
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np'):
+def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = (0,0)):
     """
     Get color matching functions.  
     
@@ -550,6 +553,10 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np'):
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
+        :extrap_values:
+            | (0,0), optional
+            | If (0,0): Don't extrapolate, but set missing values to 0 on both ends.
+            | Else use 'ext'.
 
     Returns:
         :returns: 
@@ -565,10 +572,10 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np'):
         dict_or_file = _CMF[cieobs]['bar']
     elif scr == 'cieobs':
         dict_or_file = cieobs #can be file or data itself
-    return spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','xb','yb','zb'])
+    return spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','xb','yb','zb'])
 
 #--------------------------------------------------------------------------------------------------
-def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', out = 1):
+def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = (0,0), out = 1):
     """
     Get Vlambda functions.  
     
@@ -590,6 +597,10 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', out = 1):
         :kind: 
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
+        :extrap_values:
+            | (0,0), optional
+            | If (0,0): Don't extrapolate, but set missing values to 0 on both ends.
+            | Else use 'ext'.
         :out: 
             | 1 or 2, optional
             |     1: returns Vlambda
@@ -609,7 +620,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', out = 1):
     elif scr == 'vltype':
         dict_or_file = cieobs #can be file or data itself
         K = 1
-    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'linear', kind = kind, columns = ['wl','Vl'])
+    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','Vl'])
 
     if out == 2:
         return Vl, K
@@ -646,7 +657,7 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
             | None, optional
             | S/P ratio
             | If None: Ls must be supplied.
-            
+        
     Returns:
         :Vmes: 
             | ndarray with mesopic luminous efficiency function 
@@ -679,7 +690,7 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
             columns.append('Vmes{:0.2f}'.format(m[i,0]))
     else:
         columns = ['wl',['Vmes']*m.size]
-    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear', 
+    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear',
                 norm_type = 'max', norm_f = 1, kind = kind, columns = columns)
     
     if out == 2:
