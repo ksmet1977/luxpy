@@ -534,7 +534,7 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values
 
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = (0,0)):
+def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = 'ext'):
     """
     Get color matching functions.  
     
@@ -554,8 +554,9 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_va
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
         :extrap_values:
-            | (0,0), optional
-            | If (0,0): Don't extrapolate, but set missing values to 0 on both ends.
+            | 'ext', optional
+            | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
+            | If None: fill out with np.nan,
             | Else use 'ext'.
 
     Returns:
@@ -571,11 +572,12 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_va
     elif scr == 'dict':
         dict_or_file = _CMF[cieobs]['bar']
     elif scr == 'cieobs':
-        dict_or_file = cieobs #can be file or data itself
+        dict_or_file = cieobs #can be file or data itselfµ
+    if extrap_values is None: extrap_values = (np.nan, np.nan)
     return spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','xb','yb','zb'])
 
 #--------------------------------------------------------------------------------------------------
-def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = (0,0), out = 1):
+def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = 'ext', out = 1):
     """
     Get Vlambda functions.  
     
@@ -598,8 +600,9 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_val
             | str ['np','df'], optional 
             | Determines type(:returns:), np: ndarray, df: pandas.dataframe
         :extrap_values:
-            | (0,0), optional
-            | If (0,0): Don't extrapolate, but set missing values to 0 on both ends.
+            | 'ext', optional
+            | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
+            | If None: fill out with np.nan,
             | Else use 'ext'.
         :out: 
             | 1 or 2, optional
@@ -620,8 +623,8 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_val
     elif scr == 'vltype':
         dict_or_file = cieobs #can be file or data itself
         K = 1
+    if extrap_values is None: extrap_values = (np.nan, np.nan)
     Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','Vl'])
-
     if out == 2:
         return Vl, K
     else:
