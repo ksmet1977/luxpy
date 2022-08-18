@@ -3320,10 +3320,10 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     T_1[c_p1_m1], T_2[c_p1_m1] = TBB_m1[c_p1_m1], TBB_0[c_p1_m1]
     u_1[c_p1_m1], u_2[c_p1_m1] = uBB_m1[c_p1_m1], uBB_0[c_p1_m1]
     v_1[c_p1_m1], v_2[c_p1_m1] = vBB_m1[c_p1_m1], vBB_0[c_p1_m1]
-    up_1[c_p1_m1], up_1[c_p1_m1] = upBB_m1[c_p1_m1], upBB_0[c_p1_m1]
-    vp_1[c_p1_m1], vp_1[c_p1_m1] = vpBB_m1[c_p1_m1], vpBB_0[c_p1_m1]
-    upp_1[c_p1_m1], upp_1[c_p1_m1] = uppBB_m1[c_p1_m1], uppBB_0[c_p1_m1]
-    vpp_1[c_p1_m1], vpp_1[c_p1_m1] = vppBB_m1[c_p1_m1], vppBB_0[c_p1_m1]
+    up_1[c_p1_m1], up_2[c_p1_m1] = upBB_m1[c_p1_m1], upBB_0[c_p1_m1]
+    vp_1[c_p1_m1], vp_2[c_p1_m1] = vpBB_m1[c_p1_m1], vpBB_0[c_p1_m1]
+    upp_1[c_p1_m1], upp_2[c_p1_m1] = uppBB_m1[c_p1_m1], uppBB_0[c_p1_m1]
+    vpp_1[c_p1_m1], vpp_2[c_p1_m1] = vppBB_m1[c_p1_m1], vppBB_0[c_p1_m1]
 
     g_1, g_2 = 1/(d_1 + _CCT_AVOID_ZERO_DIV), 1/(d_2 + _CCT_AVOID_ZERO_DIV)
     
@@ -3339,7 +3339,7 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     hk = (T_2 - T_1) 
     Ak = (d_2 - d_1)/hk - hk/6 * (q_2 - q_1) # Am, eq.7 
-    Bk = d_2 - q_1*(hk**2)/6
+    Bk = d_1 - q_1*(hk**2)/6
     
     a = (q_2 - q_1)/(2*hk) 
     b = (q_1*T_2 - q_2*T_1) / (hk)
