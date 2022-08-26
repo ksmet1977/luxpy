@@ -771,7 +771,7 @@ def _get_pns_from_x(x, idx, i = None, m0p = 'm0p'):
     
 def _deal_with_lut_end_points(pn, TBB, out_of_lut = None):
     ce = pn == (TBB.shape[0]-1) # end point
-    cb = pn==0 # begin point
+    cb = pn<=0 # begin point
     if out_of_lut is None: out_of_lut = (cb | ce)[:,None]
     pn[cb] =  1 # begin point 
     ce = pn == (TBB.shape[0]-1) # end point double-check !!
@@ -907,13 +907,13 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     di_0 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0')
     mBB_0 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0')
 
-    # Deal with endpoints of lut + create intermediate variables to save memory:
-    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
-
     # Deal with positive slopes of iso-T lines
     c = (di_0*mBB_0 < 0)[:,0]
     pn[c] = pn[c] - 1
     
+    # Deal with endpoints of lut + create intermediate variables to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
+
     # Get final values required for T calculation:
     mBB_0, mBB_p1 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0p')
     TBB_0, TBB_p1 = _get_pns_from_x(TBB, pn, i = idx_sources, m0p = '0p')
@@ -1272,7 +1272,7 @@ if __name__ == '__main__':
     modes = ['robertson1968']
     lut = _CCT_LUT['luts']['1931_2'].copy()
     #lut_ = lx._CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,51000.0,0.5,'%'),)][0]
-    lut = (1000.0,41000.0,1,'%')
+    lut = (1000.0,40000.0,1,'%')
     # lut = None
     for mode in modes:
         print('mode:',mode)
