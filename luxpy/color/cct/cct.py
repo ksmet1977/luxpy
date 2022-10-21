@@ -1460,7 +1460,7 @@ def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
         save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'),lut)
     
         
-def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
+def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None, lut_generator_kwargs = {}):
     """ Pre-generate / load from disk / download from github some LUTs for a specific mode """
     if (mode in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
         lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode)))
@@ -1480,7 +1480,8 @@ def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
                                                 cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                                 lut_vars = _CCT_LUT[mode]['lut_vars'],
                                                 verbosity = _CCT_VERBOSITY_LUT_GENERATION,
-                                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'])
+                                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                                lut_generator_kwargs = lut_generator_kwargs)
         # _CCT_LUT[mode]['luts'] = _lut_to_float64(_CCT_LUT[mode]['luts'])
         _copy_luts(mode, lut = _CCT_LUT) # 2015_2 -> 2006_2, 2015_10 -> 2006_10
 

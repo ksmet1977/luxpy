@@ -40,16 +40,28 @@ Imported core packages/modules/functions:
  * mpl_toolkits.mplot3d.Axes3D
  
  
-Imported 3e party dependencies (automatic install):
----------------------------------------------------
- * numpy, scipy, matplotlib.pyplot, pandas, imageio
- * pyswarms (luxpy tries a forced pip install if not already installed)
+Imported 3e party dependencies :
+--------------------------------
+ * numpy (automatic install)
+ * scipy (stats, optimize, interpolate, ...)
+ * matplotlib.pyplot (any graphic output anywhere)
+ * imageio (imread(), imsave())
+ * pandas (in luxpy.utils.write_to_excel)
  
-Imported 3e party dependencies (requiring manual install):
-----------------------------------------------------------
+Lazily imported 3e party dependencies:
+--------------------------------------
+ * openpyxl (in luxpy.utils.write_to_excel) 
+ 
+3e party dependencies (automatic install on import)
+---------------------------------------------------
+ * import pyswarms (when importing particleswarms from math)
+ 
+3e party dependencies (requiring manual install)
+------------------------------------------------
 To control Ocean Optics spectrometers with spectro toolbox:
  * import seabreeze (conda install -c poehlmann python-seabreeze)
  * pip install pyusb (for use with 'pyseabreeze' backend of python-seabreeze)
+
 
 
 Global constants

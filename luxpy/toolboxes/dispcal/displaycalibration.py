@@ -45,7 +45,7 @@ def _rgb_linearizer(rgb, tr, tr_type = 'lut'):
     if tr_type == 'gog':
         return _clamp0(np.array([TR(rgb[:,i],*tr[i]) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'lut':
-        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=np.int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
 
 def _rgb_delinearizer(rgblin, tr, tr_type = 'lut'):
     """ De-linearize linear rgblin using tr tone response function or lut """
@@ -71,7 +71,8 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     return rgb, xyz
 
 def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2', 
-              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_at_low_rgb = 0.2,
+              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), 
+              ensure_increasing_lut_at_low_rgb = 0.2, force_monotonically_increasing_lut = True,
               verbosity = 1, sep=',',header=None): 
     """
     Calculate TR parameters/lut and conversion matrices.
@@ -123,6 +124,10 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | Non-strictly increasing lut values can be caused at low RGB values due
             | to noise and low measurement signal. 
             | If None: don't force lut, but keep as is.
+        :force_monotonically_increasing_lut:
+            | True, optional
+            | If True: ensure the tone response curves in the lut are monotonically increasing.
+            |          by finding the first 1.0 value and setting all values after that also to 1.0.
         :verbosity:
             | 1, optional
             | > 0: print and plot optimization results
@@ -176,7 +181,8 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
     elif tr_type == 'lut':
         dac = np.arange(2**nbit)
         # lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind ='cubic')[1,:] for i in range(3)]).T
-        lut = np.array([sp.interpolate.PchipInterpolator(rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
+        idxs = [rgbcal[p_pure[i],i].argsort() for i in range(3)] # make sure we get monotonically increasing values for interpolation
+        lut = np.array([sp.interpolate.PchipInterpolator(rgbcal[p_pure[i],i][idxs[i]],L[p_pure[i],i][idxs[i]]/L[p_pure[i],i][idxs[i]].max())(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
         lut[lut<0] = 0
           
         # ensure monotonically increasing lut values for low signal:
@@ -188,6 +194,11 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
                     p0 = range(0,p0[-1])
                     lut[p0,i] = 0
         tr = lut
+        
+        if force_monotonically_increasing_lut:
+            for i in range(3): 
+                tr[np.where(tr[:,i] == 1)[0][0]:,i] = 1
+            
 
     
     # plot:
