@@ -37,8 +37,8 @@ def _clamp0(x):
     x[x<0] = 0 
     return x    
  
-TR = lambda x, *p: p[1] + p[2]*x**p[0] # set up simple gog tone response curve function
-TRi = lambda x, *p: ((x.T-p[1])/p[2])**(1/p[0]) # set up inverse of gog tone response curve function
+TR = lambda x, *p: -p[1] + p[2]*x**p[0] # set up simple gog tone response curve function
+TRi = lambda x, *p: ((x.T+p[1])/p[2])**(1/p[0]) # set up inverse of gog tone response curve function
 
 def _rgb_linearizer(rgb, tr, tr_type = 'lut'):
     """ Linearize rgb using tr tone response function or lut """
@@ -176,7 +176,7 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         
     # Get rgb linearizer parameters or lut and apply to all rgb's:
     if tr_type == 'gog':
-        par = np.array([sp.optimize.curve_fit(TR, rgbcal[p_pure[i],i], L[p_pure[i],i]/L[p_pure[i],i].max(), p0=[1,0,1])[0] for i in range(3)]) # calculate parameters of each TR
+        par = np.array([sp.optimize.curve_fit(TR, rgbcal[p_pure[i],i] + 1e-300, L[p_pure[i],i]/L[p_pure[i],i].max(), p0=[1,0,1], bounds = (0, np.inf))[0] for i in range(3)]) # calculate parameters of each TR
         tr = par
     elif tr_type == 'lut':
         dac = np.arange(2**nbit)
