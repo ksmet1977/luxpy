@@ -81,7 +81,7 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
 def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2', 
               nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), 
               ensure_increasing_lut_at_low_rgb = 0.2, force_increasing_lut_at_high_rgb = True,
-              verbosity = 1, sep=',',header=None): 
+              verbosity = 1, sep = ',',header = None, optimize_M = True): 
     """
     Calculate TR parameters/lut and conversion matrices.
     
@@ -147,6 +147,11 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | None, optional
             | header specifier for files with rgbcal and xyzcal data 
             | (see pandas.read_csv)
+        :optimize_M:
+            | True, optional
+            | If True: optimize transfer matrix M
+            | Else: use column matrix of tristimulus values of R,G,B channels at max.
+
             
     Returns:
         :M:
@@ -239,41 +244,52 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         plt.legend()
         plt.title('Tone response curves')
     
-    # linearize all rgb values and clamp to 0
-    rgblin = _rgb_linearizer(rgbcal, tr, tr_type = tr_type) 
- 
-    # get rgblin to xyz_fc matrix:
-    M = np.linalg.lstsq(rgblin, xyz_fc, rcond=None)[0].T 
-    
-    # get xyz_fc to rgblin matrix:
-    N = np.linalg.inv(M)
-    
-    # get better approximation for conversion matrices:
-    p_grays = (rgbcal[:,0] == rgbcal[:,1]) & (rgbcal[:,0] == rgbcal[:,2])
+    # get xyz_white
     p_whites = (rgbcal[:,0] == (2**nbit-1)) & (rgbcal[:,1] == (2**nbit-1)) & (rgbcal[:,2] == (2**nbit-1))
     xyz_white = xyzcal[p_whites,:].mean(axis=0,keepdims=True) # get xyzw for input into xyz_to_lab() or colortf()
-    def optfcn(x, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,out,verbosity):
-        M = x.reshape((3,3))
-        xyzest = rgb_to_xyz(rgbcal, M, tr, xyz_black, tr_type)
-        xyzw = xyzcal[p_whites,:].mean(axis=0) # get xyzw for input into xyz_to_lab() or colortf()
-        labcal, labest = colortf(xyzcal,tf=cspace,xyzw=xyzw), colortf(xyzest,tf=cspace,xyzw=xyzw) # calculate lab coord. of cal. and est.
-        DEs = ((labcal-labest)**2).sum(axis=1)**0.5
-        DEg = DEs[p_grays]
-        DEw = DEs[p_whites]
-        F = (avg(DEs)**2 + avg(DEg)**2 + avg(DEw**2))**0.5
-        if verbosity > 1:
-            print('\nPerformance of TR + rgb-to-xyz conversion matrix M:')
-            print('all: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEs),np.std(DEs)))
-            print('grays: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEg),np.std(DEg)))
-            print('whites(s) DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEw),np.std(DEw)))
-        if out == 'F':
-            return F
-        else:
-            return eval(out)
-    x0 = M.ravel()
-    res = math.minimizebnd(optfcn, x0, args =(rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'F',0), use_bnd=False)
-    xf = res['x_final']
-    M = optfcn(xf, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'M',verbosity)
+
+    if optimize_M: 
+        # linearize all rgb values and clamp to 0
+        rgblin = _rgb_linearizer(rgbcal, tr, tr_type = tr_type) 
+        
+        # get rgblin to xyz_fc matrix:
+        M = np.linalg.lstsq(rgblin, xyz_fc, rcond=None)[0].T 
+        
+        # get xyz_fc to rgblin matrix:
+        N = np.linalg.inv(M)
+        
+        # get better approximation for conversion matrices:
+        p_grays = (rgbcal[:,0] == rgbcal[:,1]) & (rgbcal[:,0] == rgbcal[:,2])
+        def optfcn(x, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,out,verbosity):
+            M = x.reshape((3,3))
+            xyzest = rgb_to_xyz(rgbcal, M, tr, xyz_black, tr_type)
+            xyzw = xyzcal[p_whites,:].mean(axis=0) # get xyzw for input into xyz_to_lab() or colortf()
+            labcal, labest = colortf(xyzcal,tf=cspace,xyzw=xyzw), colortf(xyzest,tf=cspace,xyzw=xyzw) # calculate lab coord. of cal. and est.
+            DEs = ((labcal-labest)**2).sum(axis=1)**0.5
+            DEg = DEs[p_grays]
+            DEw = DEs[p_whites]
+            F = (avg(DEs)**2 + avg(DEg)**2 + avg(DEw**2))**0.5
+            if verbosity > 1:
+                print('\nPerformance of TR + rgb-to-xyz conversion matrix M:')
+                print('all: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEs),np.std(DEs)))
+                print('grays: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEg),np.std(DEg)))
+                print('whites(s) DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEw),np.std(DEw)))
+            if out == 'F':
+                return F
+            else:
+                return eval(out)
+        x0 = M.ravel()
+        res = math.minimizebnd(optfcn, x0, args =(rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'F',0), use_bnd=False)
+        xf = res['x_final']
+        M = optfcn(xf, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'M',verbosity)
+    else:
+        p_pure_max =  [(rgbcal[:,0]==rgbcal[:,0].max()) & (rgbcal[:,1]==0) & (rgbcal[:,2]==0), 
+                       (rgbcal[:,0]==0) & (rgbcal[:,1]==rgbcal[:,1].max()) & (rgbcal[:,2]==0), 
+                       (rgbcal[:,0]==0) & (rgbcal[:,1]==0) & (rgbcal[:,2]==rgbcal[:,2].max())]
+        M = np.vstack((xyz_fc[p_pure_max[0]],
+                       xyz_fc[p_pure_max[1]],
+                       xyz_fc[p_pure_max[2]])).T
+        
     N = np.linalg.inv(M)
     return M, N, tr, xyz_black, xyz_white
 
@@ -572,6 +588,11 @@ class DisplayCalibration():
             | None, optional
             | header specifier for files with rgbcal and xyzcal data 
             | (see pandas.read_csv)
+        :optimize_M:
+            | True, optional
+            | If True: optimize transfer matrix M
+            | Else: use column matrix of tristimulus values of R,G,B channels at max.
+
 
     Return:
         :calobject:
@@ -598,7 +619,8 @@ class DisplayCalibration():
                  ensure_increasing_lut_at_low_rgb = 0.2,
                  verbosity = 1,
                  sep = ',',
-                 header = None):
+                 header = None,
+                 optimize_M = True):
         # process rgb, xyzcal inputs:
         rgbcal, xyzcal = _parse_rgbxyz_input(rgbcal, xyz = xyzcal, sep = sep, header=header)
 
@@ -608,8 +630,10 @@ class DisplayCalibration():
                                                    avg = avg, cspace = cspace,
                                                    ensure_increasing_lut_at_low_rgb = ensure_increasing_lut_at_low_rgb,
                                                    verbosity = verbosity,
-                                                   sep = sep, header = header) 
+                                                   sep = sep, header = header,
+                                                   optimize_M = optimize_M) 
         self.M = M
+        self.optimize_M = optimize_M
         self.N = N
         self.TR = tr
         self.xyz_black = xyz_black
