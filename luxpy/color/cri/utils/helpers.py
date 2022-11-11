@@ -1438,7 +1438,7 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
      xyzti,xyztw,
      xyzri,xyzrw,
      xyztw_cct,
-     cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
+     cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, ref_type=ref_type, 
                                           out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
 
     # E. calculate DEi, DEa:
