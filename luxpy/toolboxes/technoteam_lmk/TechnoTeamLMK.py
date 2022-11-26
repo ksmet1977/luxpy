@@ -21,10 +21,6 @@ Module for TechnoTeam LMK camera basic control
  
  * xyz_to_ciergb(): convert XYZ to CIE-RGB
 
-Notes:
-    1. TechnoTeam LabSoft software must be installed. 
-    2. Specify installation path in labsoft_path.txt in toolbox folder.
-
 Created on Sat Nov 26 10:52:42 2022
 
 @author: ksmet1977
@@ -40,7 +36,7 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 
-from luxpy.utils import Dictate, is_importable
+from luxpy.utils import is_importable
 
 
 # import win32 (and if necessary install it):
@@ -103,7 +99,7 @@ def define_lens(lens_type, name, focusFactors = None):
             focusFactors = (focusFactors_str,[i for i in range(len(focusFactors_str))])
         tmp = {('{:s}{:s}'.format(ff_base,i)) : j for i,j in zip(*focusFactors)}
         lens['focusFactors'] = tmp
-    return Dictate(lens)
+    return lens
 
 #------------------------------------------------------------------------------
 def kill_lmk4_process(verbosity = 1):
@@ -118,27 +114,27 @@ def kill_lmk4_process(verbosity = 1):
 #============================================================================== 
 # Define supported cameras and lenses:
     
-_CAMERAS = Dictate({
-                'ttf8847' : {
-                            'name'   : 'ttf8847',
-                            'lenses' : Dictate({'x6_5mm' : define_lens('x6_5mm','o13196f6_5',focusFactors = None),
-                                                'x12mm'  : define_lens('x12mm','o95653f12',focusFactors = ['0_3','0_5','1','3','Infinite']),
-                                                'x25mm'  : define_lens('x25mm','oB225463f25',focusFactors = [i for i in range(20)]),
-                                                'x50mm'  : define_lens('x50mm','oC216813f50',focusFactors = [i for i in range(20)])
-                                                })
-                            },
     
-                'tts20035' : {
-                            'name'   : 'tts20035',
-                            'lenses' : Dictate({'x50mm_M00442'   : define_lens('x50mm_M00442','oM00442f50',focusFactors = [i for i in range(24)]),
-                                                'x12mm_TTC_163'  : define_lens('x12mm_TTC_163','oTTC-163_D0224',focusFactors = None),
-                                                'x12f50mm_2mm'   : define_lens('x12f50mm_2mm','oTTNED-12_50_2mmEP',focusFactors = None),
-                                                'x12f50mm_4mm'   : define_lens('x12f50mm_4mm','oTTNED-12_50_4mmEP',focusFactors = None),
-                                                'xvr'            : define_lens('xvr','oTTC-163_D0224',focusFactors = None)    
-                                                })
+_CAMERAS = {'ttf8847' : {
+                            'name'   : 'ttf8847',
+                            'lenses' : {'x6_5mm' : define_lens('x6_5mm','o13196f6_5',focusFactors = None),
+                                        'x12mm'  : define_lens('x12mm','o95653f12',focusFactors = ['0_3','0_5','1','3','Infinite']),
+                                        'x25mm'  : define_lens('x25mm','oB225463f25',focusFactors = [i for i in range(20)]),
+                                        'x50mm'  : define_lens('x50mm','oC216813f50',focusFactors = [i for i in range(20)])
+                                        }
+                        },
+    
+            'tts20035' : {
+                        'name'   : 'tts20035',
+                        'lenses' : {'x50mm_M00442'   : define_lens('x50mm_M00442','oM00442f50',focusFactors = [i for i in range(24)]),
+                                    'x12mm_TTC_163'  : define_lens('x12mm_TTC_163','oTTC-163_D0224',focusFactors = None),
+                                    'x12f50mm_2mm'   : define_lens('x12f50mm_2mm','oTTNED-12_50_2mmEP',focusFactors = None),
+                                    'x12f50mm_4mm'   : define_lens('x12f50mm_4mm','oTTNED-12_50_4mmEP',focusFactors = None),
+                                    'xvr'            : define_lens('xvr','oTTC-163_D0224',focusFactors = None)    
+                                    }
 
-                            }
-                })
+                         }
+            }
 
 
 class lmkActiveX:
@@ -164,80 +160,80 @@ class lmkActiveX:
     workingImage = None
     errorFlag = None
     
-    colorSpace = Dictate({
-                        'CIE-RGB'       : 1,
-                        'S-RGB'         : 2,
-                        'EBU-RGB'       : 4,
-                        'XYZ'           : 16,
-                        'Lxy'           : 32,
-                        'Luv'           : 64,
-                        'Lu_v_'         : 128,
-                        'L*u*v*'        : 256,
-                        'C*h*s*_uv'     : 512,
-                        'L*a*b*'        : 1024,
-                        'C*h*_ab'       : 2048,
-                        'HSV'           : 4096,
-                        'HSI'           : 8192,
-                        'WST'           : 16384,
-                        'Lrg'           : 32768,
-                        'LWS'           : 65536
-                        })
+    colorSpace = {
+                'CIE-RGB'       : 1,
+                'S-RGB'         : 2,
+                'EBU-RGB'       : 4,
+                'XYZ'           : 16,
+                'Lxy'           : 32,
+                'Luv'           : 64,
+                'Lu_v_'         : 128,
+                'L*u*v*'        : 256,
+                'C*h*s*_uv'     : 512,
+                'L*a*b*'        : 1024,
+                'C*h*_ab'       : 2048,
+                'HSV'           : 4096,
+                'HSI'           : 8192,
+                'WST'           : 16384,
+                'Lrg'           : 32768,
+                'LWS'           : 65536
+                }
                 
-    imageType =  Dictate({
-                        'Camera'        : -3,
-                        'Luminance'     : -2,
-                        'Color'         : -1,
-                        'Evaluation[1]' :  0,
-                        'Evaluation[2]' :  1,
-                        'Evaluation[3]' :  2,
-                        'Evaluation[4]' :  3,
-                        'Evaluation[5]' :  4
-                        })
-        
-    regionType = Dictate({
-                    'Rectangle': {
-                        'identifier'    : 0,
-                        'points'        : 2
-                        },
-                    'Line': {
-                        'identifier'    : 1,
-                        'points'        : 2
-                        },
-                    'Circle': {
-                        'identifier'    : 2,
-                        'points'        : 2
-                        },
-                    'Polygon': {
-                        'identifier'    : 3,
-                        'points'        : 3
-                        },
-                    'Polyline': {
-                        'identifier'    : 4,
-                        'points'        : 3
-                        },
-                    'Ellipse': {
-                        'identifier'    : 5,
-                        'points'        : 3
-                        },
-                    'CircularRing': {
-                        'identifier'    : 6,
-                        'points'        : 3
-                        },
-                    'OR': {
-                        'identifier'    : 7,
-                        'points'        : 2
-                        },
-                    'XOR': {
-                        'identifier'    : 8,
-                        'points'        : 2
-                        },
-                    'AND': {
-                        'identifier'    : 9,
-                        'points'        : 2
-                        }
-                    })
+    imageType = {
+                'Camera'        : -3,
+                'Luminance'     : -2,
+                'Color'         : -1,
+                'Evaluation[1]' :  0,
+                'Evaluation[2]' :  1,
+                'Evaluation[3]' :  2,
+                'Evaluation[4]' :  3,
+                'Evaluation[5]' :  4
+                }
+
+    regionType = {
+                'Rectangle': {
+                    'identifier'    : 0,
+                    'points'        : 2
+                    },
+                'Line': {
+                    'identifier'    : 1,
+                    'points'        : 2
+                    },
+                'Circle': {
+                    'identifier'    : 2,
+                    'points'        : 2
+                    },
+                'Polygon': {
+                    'identifier'    : 3,
+                    'points'        : 3
+                    },
+                'Polyline': {
+                    'identifier'    : 4,
+                    'points'        : 3
+                    },
+                'Ellipse': {
+                    'identifier'    : 5,
+                    'points'        : 3
+                    },
+                'CircularRing': {
+                    'identifier'    : 6,
+                    'points'        : 3
+                    },
+                'OR': {
+                    'identifier'    : 7,
+                    'points'        : 2
+                    },
+                'XOR': {
+                    'identifier'    : 8,
+                    'points'        : 2
+                    },
+                'AND': {
+                    'identifier'    : 9,
+                    'points'        : 2
+                    }
+                }
     
-    statisticType = Dictate({
+    statisticType = {
                     'standardGrey'          : 0,   # 0 	Standard statistic in grey images
                     'standardColor'         : 1,   # 1 	Standard statistic in color images
                     'sectionalGrey'         : 2,   # 2 	Sectional view in grey images
@@ -262,7 +258,7 @@ class lmkActiveX:
                     'integralNegativeColor' :38,   # 38 Symbol objects in grey images (negative contrast)
                     'symbolNegativeColor'   :39,   # 39 Symbol objects in color images (negative contrast)
                     'contrastGrey'          :40    # 40 Contrasts objects in grey images
-                    })
+                    }
                     
     camera = copy.deepcopy(_CAMERAS)
 
@@ -294,11 +290,11 @@ class lmkActiveX:
             if lens in cls.camera['lenses'].keys():
                 cls.lens = cls.camera['lenses'][lens]
             else:
-                raise Exception('Lens {:s} not in lensList for camera {:s}'.format(lens, camera.name))
-        elif isinstance(lens,(dict,Dictate)):
-            cls.lens = lens if isinstance(lens, Dictate) else Dictate(lens)
+                raise Exception('Lens {:s} not in lensList for camera {:s}'.format(lens, camera['name']))
+        elif isinstance(lens,dict):
+            cls.lens = lens 
         else:
-            raise Exception ('lens must be str, dict or Dictate object')
+            raise Exception ('lens must be str or dict object')
                     
         cls.focusfactor = focusfactor 
         cls.autoscan = bool2num(autoscan) # Determination of a good exposure time before the capturing algorithm.
@@ -309,7 +305,7 @@ class lmkActiveX:
         if verbosity is not None: cls.verbosity = verbosity 
         
         cls.labsoft_camera_path = labsoft_camera_path
-        cls.objectiveCalibrationPath = cls.labsoft_camera_path + cls.camera.name.upper() + '/' + cls.lens.name + '/' 
+        cls.objectiveCalibrationPath = cls.labsoft_camera_path + cls.camera['name'].upper() + '/' + cls.lens['name'] + '/' 
         
         if cls.lmk is not None:
             if cls.verbosity > 1: print("Already connected to LMK Labsoft ! Close connection first.")
@@ -474,7 +470,7 @@ class lmkActiveX:
         Get max. number of filter wheels and their names.
         """
         config = configparser.ConfigParser()
-        config.read(cls.labsoft_camera_path + '/' + cls.camera.name + '/' + 'camera.ini')
+        config.read(cls.labsoft_camera_path + '/' + cls.camera['name'] + '/' + 'camera.ini')
         filter_wheel_max = int(config.get('PropertyList', 'FILTER_WHEEL_MAX'))
         filter_wheel_names = config.get('PropertyList', 'FILTER_WHEEL_NAMES')
         filter_wheel_names = filter_wheel_names.split(' ')
@@ -1061,7 +1057,7 @@ class lmkActiveX:
             tempFlag = cls.lmk.iSetNewCamera2('','');
             return None
         else:
-            tempFlag = cls.lmk.iSetNewCamera2(cls.camera.name,cls.lens.name);
+            tempFlag = cls.lmk.iSetNewCamera2(cls.camera['name'],cls.lens['name']);
 
         if tempFlag == 0:
             if cls.verbosity > 1: print('iSetNewCamera2 ok!\n')

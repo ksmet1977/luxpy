@@ -82,9 +82,7 @@ Module with utility functions and parameters
  
  :load_pkl(): load object in pickle file
  
- :Dictate(): Create an object that can be accessed as either a struct (using X.Y) or as a dictionary (X['Y']).
-
- 
+  
 ===============================================================================
 """
 #------------------------------------------------------------------------------
@@ -134,7 +132,7 @@ __all__ += ['np2d','np3d','np2dT','np3dT',
            'dictkv','OD','meshblock','asplit','ajoin',
            'broadcast_shape','todim','read_excel','write_excel','show_luxpy_tree',
            'is_importable','get_function_kwargs','profile_fcn','unique',
-           'save_pkl', 'load_pkl','Dictate']
+           'save_pkl', 'load_pkl']
 
 ##############################################################################
 # Start function definitions
@@ -1160,43 +1158,3 @@ def load_pkl(filename):
     return obj
 
 #------------------------------------------------------------------------------
-class Dictate(object):
-    """
-    Create an object that can be accessed as either a struct (using X.Y) or as a dictionary (X['Y']).
-    """
-
-    def __init__(self, d):
-        # since __setattr__ is overridden, self.__dict = d doesn't work
-        object.__setattr__(self, '_Dictate__dict', d)
-
-    # Dictionary-like access / updates
-    def __getitem__(self, name):
-        value = self.__dict[name]
-        if isinstance(value, dict):  # recursively view sub-dicts as objects
-            value = Dictate(value)
-        return value
-
-    def __setitem__(self, name, value):
-        self.__dict[name] = value
-    def __delitem__(self, name):
-        del self.__dict[name]
-
-    # Object-like access / updates
-    def __getattr__(self, name):
-        return self[name]
-
-    def __setattr__(self, name, value):
-        self[name] = value
-    def __delattr__(self, name):
-        del self[name]
-
-    def __repr__(self):
-        return "%s(%r)" % (type(self).__name__, self.__dict)
-    def __str__(self):
-        return str(self.__dict)
-    
-    def keys(self):
-        return self.__dict__['_Dictate__dict'].keys()
-    
-    def values(self):
-        return self.__dict__['_Dictate__dict'].values()
