@@ -664,7 +664,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     #Override input parameters with data specified in cri_type:
     args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
-    
+
     # unpack and update dict with parameters:
     (avg, catf, cieobs,
      cri_specific_pars, cspace, 

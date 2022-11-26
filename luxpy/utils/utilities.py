@@ -82,6 +82,9 @@ Module with utility functions and parameters
  
  :load_pkl(): load object in pickle file
  
+ :Dictate(): Create an object that can be accessed as either a struct (using X.Y) or as a dictionary (X['Y']).
+
+ 
 ===============================================================================
 """
 #------------------------------------------------------------------------------
@@ -131,7 +134,7 @@ __all__ += ['np2d','np3d','np2dT','np3dT',
            'dictkv','OD','meshblock','asplit','ajoin',
            'broadcast_shape','todim','read_excel','write_excel','show_luxpy_tree',
            'is_importable','get_function_kwargs','profile_fcn','unique',
-           'save_pkl', 'load_pkl']
+           'save_pkl', 'load_pkl','Dictate']
 
 ##############################################################################
 # Start function definitions
@@ -997,7 +1000,7 @@ def show_luxpy_tree(omit = ['.pyc','__pycache__',
 
 
 #------------------------------------------------------------------------------
-def is_importable(string, try_pip_install = False):
+def is_importable(string, pip_string = None, try_pip_install = False):
     """
     Check if string is importable/loadable. If it doesn't then try to 'pip install' it using subprocess.
     Returns None if succesful, otherwise throws and error or outputs False.
@@ -1005,6 +1008,9 @@ def is_importable(string, try_pip_install = False):
     Args:
         :string:
             | string with package or module name
+        :pip_string:
+            | string with package or module name as known by pip
+            | If None: use the import string
         :try_pip_install:
             | False, optional
             | True: try pip installing it using subprocess
@@ -1014,19 +1020,20 @@ def is_importable(string, try_pip_install = False):
             | True if importable, False if not.
     """ 
     success = importlib.util.find_spec(string) is not None
-    if (not success) & (try_pip_install == True):  
+    if (not success) & (try_pip_install == True): 
+        if pip_string is None: pip_string = string
         try:
-            print("Trying to 'pip install {:s}' using subprocess.".format(string))
-            success = subprocess.call(["pip", "install", "{:s}".format(string)])
+            print("Trying to 'pip install {:s}' using subprocess.".format(pip_string))
+            success = subprocess.call(["pip", "install", "{:s}".format(pip_string)])
             print("subprocess output: ", success)
             if success != 0:
-                raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))  
+                raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,pip_string))  
             else:
-                print("'pip install {:s}' succesful".format(string))
+                print("'pip install {:s}' succesful".format(pip_string))
             success = importlib.util.find_spec(string) is not None
         except:
             success = False
-            raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))   
+            raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,pip_string))   
     return success
     
 #------------------------------------------------------------------------------
@@ -1151,3 +1158,45 @@ def load_pkl(filename):
     with open(filename, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
+
+#------------------------------------------------------------------------------
+class Dictate(object):
+    """
+    Create an object that can be accessed as either a struct (using X.Y) or as a dictionary (X['Y']).
+    """
+
+    def __init__(self, d):
+        # since __setattr__ is overridden, self.__dict = d doesn't work
+        object.__setattr__(self, '_Dictate__dict', d)
+
+    # Dictionary-like access / updates
+    def __getitem__(self, name):
+        value = self.__dict[name]
+        if isinstance(value, dict):  # recursively view sub-dicts as objects
+            value = Dictate(value)
+        return value
+
+    def __setitem__(self, name, value):
+        self.__dict[name] = value
+    def __delitem__(self, name):
+        del self.__dict[name]
+
+    # Object-like access / updates
+    def __getattr__(self, name):
+        return self[name]
+
+    def __setattr__(self, name, value):
+        self[name] = value
+    def __delattr__(self, name):
+        del self[name]
+
+    def __repr__(self):
+        return "%s(%r)" % (type(self).__name__, self.__dict)
+    def __str__(self):
+        return str(self.__dict)
+    
+    def keys(self):
+        return self.__dict__['_Dictate__dict'].keys()
+    
+    def values(self):
+        return self.__dict__['_Dictate__dict'].values()

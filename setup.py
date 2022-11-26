@@ -4,13 +4,13 @@ from setuptools import setup, find_packages
 setup(
   name = 'luxpy',
   packages = find_packages(), 
-  version = '1.9.9',
+  version = '1.10.0',
   license = 'GPLv3',
   description = 'Python package for lighting and color science',
   author = 'Kevin A.G. Smet',
   author_email = 'ksmet1977@gmail.com',
   url = 'https://github.com/ksmet1977/luxpy',
-  download_url = 'https://github.com/ksmet1977/luxpy/archive/1.9.9.tar.gz',
+  download_url = 'https://github.com/ksmet1977/luxpy/archive/1.10.0.tar.gz',
   keywords = ['color', 'color appearance', 'colorimetry','photometry','CIE','color perception','lighting','color rendering','IES'], 
   install_requires=[
         'numpy',
@@ -48,7 +48,8 @@ setup(
                           'luxpy/toolboxes/dispcal/data/*.csv',
                           'luxpy/toolboxes/iolidfiles/data/*.ies',
                           'luxpy/toolboxes/iolidfiles/data/*.ldt',
-                          'luxpy/toolboxes/sherbrooke_spectral_indices/data/*.csv'
+                          'luxpy/toolboxes/sherbrooke_spectral_indices/data/*.csv',
+                          'luxpy/toolboxes/technoteam_lmk/*.txt'
                           ]},
   include_package_data = True,
   classifiers=[

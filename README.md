@@ -4,8 +4,8 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.9.9
-* Date: August 16, 2022
+* Version: 1.10.0
+* Date: December 1, 2022
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)
@@ -41,6 +41,7 @@ For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:
 * display characterization
 * reading and visualizing IES and LDT photometric files (vizualizations: 2D polar plots, 3D plots, single-bounce physical-based rendering)
 * spectral mismatch (f1', correction factors) and measurement uncertainty (under development)
+* Basic TechnoTeam LMK (LabSoft) control: do XYZ-map and Y-map measurements
 * ...
 
 As of May 2019, LuxPy now also has a toolbox **spectro** for **spectral measurements** with **JETI** and **OceanOptics** spectrometers:

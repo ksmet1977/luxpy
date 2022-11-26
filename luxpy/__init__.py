@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.9.9
-    * Date: August 16, 2022
+    * Version: 1.10.0
+    * Date: Dec 1, 2022
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -55,6 +55,7 @@ Lazily imported 3e party dependencies:
 3e party dependencies (automatic install on import)
 ---------------------------------------------------
  * import pyswarms (when importing particleswarms from math)
+ * import pymoo (when importing pymoo_nsga_ii from math)
  
 3e party dependencies (requiring manual install)
 ------------------------------------------------
@@ -80,9 +81,9 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.9.9'; """Current version"""
+__VERSION__ = 'v1.10.0'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = 'Aug-16-2022'; """release date"""
+__DATE__ = 'Dec-01-2022'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2022 - Kevin A.G. Smet'; """copyright info"""
 
@@ -110,7 +111,7 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'platform','subprocess',
                       'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
-              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms']}
+              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui']}
 # (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
 __all__ += ['__REQUIRED__']
@@ -271,7 +272,9 @@ __all__ += ['SPD']
 #----------------------------------------
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
-                      'spectral_mismatch_and_uncertainty']
+                      'spectral_mismatch_and_uncertainty'
+                      # 'technoteam_lmk' # don't import to not force additional dependencies: pywin32 and easygui
+                      ]
 try:
     #   load ciephotbio sub_package:
     from luxpy.toolboxes import photbiochem 
@@ -312,6 +315,10 @@ try:
     #   Load spectral mismatch and uncertainty sub_package:
     from luxpy.toolboxes import spectral_mismatch_and_uncertainty
     __all__ += ['spectral_mismatch_and_uncertainty']
+    
+    #   Load TechnoTeamLMK sub_package:
+    #from luxpy.toolboxes import technoteam_lmk
+    #__all__ += ['technoteam_lmk']
 except:
     pass
 
