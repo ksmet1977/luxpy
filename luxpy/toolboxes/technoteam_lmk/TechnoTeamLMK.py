@@ -21,6 +21,10 @@ Module for TechnoTeam LMK camera basic control
  
  * xyz_to_ciergb(): convert XYZ to CIE-RGB
 
+Notes:
+    1. TechnoTeam LabSoft software must be installed. 
+    2. Specify installation path in labsoft_path.txt in toolbox folder.
+
 Created on Sat Nov 26 10:52:42 2022
 
 @author: ksmet1977
