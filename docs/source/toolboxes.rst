@@ -147,16 +147,16 @@ spectral_mismatch_and_uncertainty/
    :undoc-members:
    :private-members: 
    
-technoteam_lmk/ 
+technoteamlmk/ 
 ---------------
  :py:
 	* __init__.py
 	* TechnoTeamLMK.py 
 
 	
- :namespace: luxpy.technoteam_lmk
+ :namespace: luxpy.technoteamlmk
 
-.. automodule:: luxpy.toolboxes.technoteam_lmk
+.. automodule:: luxpy.toolboxes.technoteamlmk
    :members:
    :undoc-members:
    :private-members:

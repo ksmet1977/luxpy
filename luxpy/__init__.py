@@ -274,7 +274,7 @@ __all__ += ['SPD']
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
                       'spectral_mismatch_and_uncertainty'
-                      # 'technoteam_lmk', # don't import to not force additional dependencies: pywin32 and easygui
+                      # 'technoteamlmk', # don't import to not force additional dependencies: pywin32 and easygui
                       # 'stereoscopicviewer' # don't import to not force additional dependencies: harfang
                       ]
 try:
@@ -319,8 +319,8 @@ try:
     __all__ += ['spectral_mismatch_and_uncertainty']
     
     #   Load TechnoTeamLMK sub_package:
-    #from luxpy.toolboxes import technoteam_lmk
-    #__all__ += ['technoteam_lmk']
+    #from luxpy.toolboxes import technoteamlmk
+    #__all__ += ['technoteamlmk']
     
     #   Load sterescopicoviewer sub_package:
     #from luxpy.toolboxes import stereoscopicviewer

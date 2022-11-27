@@ -1,2 +1,2 @@
-from .harfang import *
-__all__ = harfang.__all__
+import harfang
+__all__ = ['harfang']

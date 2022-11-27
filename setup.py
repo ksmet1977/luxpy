@@ -49,7 +49,7 @@ setup(
                           'luxpy/toolboxes/iolidfiles/data/*.ies',
                           'luxpy/toolboxes/iolidfiles/data/*.ldt',
                           'luxpy/toolboxes/sherbrooke_spectral_indices/data/*.csv',
-                          'luxpy/toolboxes/technoteam_lmk/*.txt',
+                          'luxpy/toolboxes/technoteamlmk/*.txt',
                           'luxpy/toolboxes/stereoscopicviewer/harfang/assets/core/noise/*.png',
                           'luxpy/toolboxes/stereoscopicviewer/harfang/assets/core/noise/64/*.png',
                           'luxpy/toolboxes/stereoscopicviewer/harfang/assets/core/pbr/*.*',

@@ -11,7 +11,7 @@ Created on Sun Nov 27 13:57:50 2022
 import os
 import time
 import numpy as np
-from luxpy.toolboxes import stereoscopicviewer as sv
+from luxpy.toolboxes.stereoscopicviewer import harfang as hv
 
 if __name__ == '__main__':       
     
@@ -75,7 +75,7 @@ if __name__ == '__main__':
     #==== Prepare stimuli =====================================================
         
     stimulus_list = np.array([[1,0,0,1],[0,1,0,1],[0,0,1,1]])*255
-    texFiles, _ = sv.generate_stimulus_tex_list(stimulus_list, rgba_save_folder = 'rgba_texs')
+    texFiles, _ = hv.generate_stimulus_tex_list(stimulus_list, rgba_save_folder = 'rgba_texs')
     
     # # Generate stimulus textures:
     # os.makedirs('./temp_color_stimulus_folder/', exist_ok = True)
@@ -86,11 +86,11 @@ if __name__ == '__main__':
     # texFiles = [(texFile,texFile) for texFile in texFiles]
     
     # or load files from folder or list.iml file:
-    texFiles, _ = sv.generate_stimulus_tex_list('./luxpy/toolboxes/stereoscopicviewer/harfang/spheremaps/list.iml')
+    texFiles, _ = hv.generate_stimulus_tex_list('./luxpy/toolboxes/stereoscopicviewer/harfang/spheremaps/list.iml')
     
     #==== Prepare hmdviewer ===================================================
     
-    hmdviewer = sv.HmdStereoViewer(screen_uSelfMapTexture = texFiles, 
+    hmdviewer = hv.HmdStereoViewer(screen_uSelfMapTexture = texFiles, 
                                 screen_geometry = 'sphere',vrFlag = False)
     
     # pipeFcns = copy.deepcopy(hmdviewer.pipeFcnsDef) 
