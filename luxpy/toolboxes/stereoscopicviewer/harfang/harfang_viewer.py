@@ -38,7 +38,9 @@ __all__ = ['_PKG_PATH', 'CreateSphereModel','CreatePlaneModel',
            'create_material','update_material_texture',
            'makeColorTex', 'split_SingleSphericalTex',
            'Shader', 'Scene','Camera','Material','Screen', 'Eye', 
-           'HmdStereoViewer','generate_stimulus_tex_list']
+           'HmdStereoViewer','generate_stimulus_tex_list',
+           'generate_rgba_texs_iml','get_rgbFromTexPaths',
+           'get_xyz_from_xyzmap_roi','get_rgb_from_rgbtexpath']
 
 #==============================================================================
 
@@ -1095,23 +1097,20 @@ class HmdStereoViewer:
         self.screen_position = screen_position
         self.screen_rotation = screen_rotation
         
+        # set textures
+        self.prmatin = lambda x: _processMaterialInput(x, equiRectImageLeftIsRight, equiRectImageLeftPos)
         self.equiRectImageLeftPos = equiRectImageLeftPos
         self.equiRectImageLeftIsRight = equiRectImageLeftIsRight
-   
-        prmatin = lambda x: _processMaterialInput(x, equiRectImageLeftIsRight, equiRectImageLeftPos)
-        self.screen_uSelfMapTexture, self.screen_uSelfMapTextureList = prmatin(screen_uSelfMapTexture)
-        _, self.screen_uSelfMapTextureListPreloaded = prmatin(screen_uSelfMapTextureListPreloaded)
-        
-        # split in left & right textures
-        tmpL, tmpR = [], []
-        for tmap in self.screen_uSelfMapTextureListPreloaded:
-            tmpL.append(tmap[0])
-            tmpR.append(tmap[1])
-        self.screen_uSelfMapTextureListPreloaded = (tmpL,tmpR)
-        
-        self.screen_uBaseOpacityColor, self.screen_uBaseOpacityColorList = prmatin(screen_uBaseOpacityColor)
-        self.screen_uSelfColor,self.screen_uSelfColorList = prmatin(screen_uSelfColor)
-        self.screen_uOcclusionRoughnessMetalnessColor, self.screen_uOcclusionRoughnessMetalnessColorList = prmatin(screen_uOcclusionRoughnessMetalnessColor)
+        if screen_uSelfMapTexture is None: screen_uSelfMapTexture = [None]
+        self.set_texture(screen_uSelfMapTexture,
+                         equiRectImageLeftPos = equiRectImageLeftPos, 
+                         equiRectImageLeftIsRight = equiRectImageLeftIsRight,
+                         screen_uSelfMapTextureListPreloaded = screen_uSelfMapTextureListPreloaded
+                         )
+
+        self.screen_uBaseOpacityColor, self.screen_uBaseOpacityColorList = self.prmatin(screen_uBaseOpacityColor)
+        self.screen_uSelfColor,self.screen_uSelfColorList = self.prmatin(screen_uSelfColor)
+        self.screen_uOcclusionRoughnessMetalnessColor, self.screen_uOcclusionRoughnessMetalnessColorList = self.prmatin(screen_uOcclusionRoughnessMetalnessColor)
         self.screen_blend_mode = screen_blend_mode 
         
         self.leftEyeScreen = Eye(0, vrFlag = self.vrFlag, cam_fov = self.cam_fov, 
@@ -1154,6 +1153,29 @@ class HmdStereoViewer:
         
         self.pipeFcns = pipeFcns
         self.generate_defaultPipeFcns()
+        
+    def set_texture(self, screen_uSelfMapTexture,
+                    equiRectImageLeftPos = None, 
+                    equiRectImageLeftIsRight = None,
+                    screen_uSelfMapTextureListPreloaded = None
+                    ):
+        
+        if equiRectImageLeftPos is not None: self.equiRectImageLeftPos = equiRectImageLeftPos
+        if equiRectImageLeftIsRight is not None: self.equiRectImageLeftIsRight = equiRectImageLeftIsRight
+   
+        #prmatin = lambda x: _processMaterialInput(x, equiRectImageLeftIsRight, equiRectImageLeftPos)
+        if screen_uSelfMapTexture is not None: 
+            self.screen_uSelfMapTexture, self.screen_uSelfMapTextureList = self.prmatin(screen_uSelfMapTexture)
+        
+        if screen_uSelfMapTextureListPreloaded is not None: 
+            _, self.screen_uSelfMapTextureListPreloaded = self.prmatin(screen_uSelfMapTextureListPreloaded)
+        
+            # split in left & right textures
+            tmpL, tmpR = [], []
+            for tmap in self.screen_uSelfMapTextureListPreloaded:
+                tmpL.append(tmap[0])
+                tmpR.append(tmap[1])
+            self.screen_uSelfMapTextureListPreloaded = (tmpL,tmpR)
     
     def init_main(self):
         """ Initialize Input and Window, add folder with compiled assets"""
@@ -1305,7 +1327,7 @@ class HmdStereoViewer:
         
         
     def run(self, pipeFcns = None, pipeFcnsUpdate = None, only_once = False, 
-            u_delay = None, a_delay = None):
+            u_delay = None, a_delay = None, autoShutdown = True):
         """
         Run through all textures specified at initialization (and do some action) .
         
@@ -1347,11 +1369,11 @@ class HmdStereoViewer:
                 if pipeFcnUpdate is not None: 
                     if isinstance(pipeFcnUpdate,(tuple,list)):
                         if pipeFcnUpdate[0] is None: 
-                            temp = (pipeFcns[i][0], pipeFcnUpdate[1]) 
+                            temp = [pipeFcns[i][0], pipeFcnUpdate[1]]
                         else:
                             temp = pipeFcnUpdate 
                     elif isinstance(pipeFcnUpdate,dict):
-                        temp = (pipeFcns[i][0], pipeFcnUpdate)
+                        temp = [pipeFcns[i][0], pipeFcnUpdate]
                     elif isinstance(pipeFcnUpdate,(tuple,list)):
                         temp = pipeFcnUpdate
                     pipeFcns[i] = temp
@@ -1381,7 +1403,9 @@ class HmdStereoViewer:
             if isinstance(out[2],str) and (out[2] == 'break'): 
                 break
             self.frame()
-        self.shutdown()
+            
+        if autoShutdown:    
+            self.shutdown()
         
 
     def frame(self):        
@@ -1518,11 +1542,11 @@ class HmdStereoViewer:
                 dt = t_now - out[1][1] 
                 return dt >= delay
     
-            self.pipeFcnsDef = [(initWrapper,   {'action' : (i_action, {'initial_out' : [False, True, 0, 1e100]})}),
-                                (updateWrapper, {'action' : (u_action, {}),
-                                                 'check'  : (u_check,  {'delay' : 2})}), # wait some time so that image can be show on HMD: find by trial-and error. 1 sec should be ok though 
-                                (actionWrapper, {'action' : (a_action, {}),
-                                                 'check'  : (a_check,  {'delay' : 2})})
+            self.pipeFcnsDef = [[initWrapper,   {'action' : [i_action, {'initial_out' : [False, True, 0, 1e100]}]}],
+                                [updateWrapper, {'action' : [u_action, {}],
+                                                 'check'  : [u_check,  {'delay' : 2}]}], # wait some time so that image can be show on HMD: find by trial-and error. 1 sec should be ok though 
+                                [actionWrapper, {'action' : [a_action, {}],
+                                                 'check'  : [a_check,  {'delay' : 2}]}]
                                 ]
         else:
             self.pipeFcnsDef = pipeFcnDef 
@@ -1594,7 +1618,75 @@ def generate_stimulus_tex_list(stimulus_list = None,
         pass # assume list of tex-images
         
     return stimulus_list, (equiRectImageLeftIsRight, equiRectImageLeftPos)
+
+#------------------------------------------------------------------------------
+
+def get_rgb_from_rgbtexpath(path):
+    """ Get rgb values from filename """
+    path = path[(path.index('tex_')+4):]
+    r, path = int(path[:path.index('_')]), path[(path.index('_')+1):]
+    g, path = int(path[:path.index('_')]), path[(path.index('_')+1):]
+    b = int(path[:path.index('.')])
+    rgb = np.array([r,g,b])
+    return rgb
+
+def getRectMask(roi, shape):
+    """ Get a boolean rectangular mask with mask-area determined by the (row,col) coordinates of the top-left & bottom-right corners of the ROI """
+    rm, rM = roi[0][0], roi[1][0]
+    cm, cM = roi[0][1], roi[1][1]
+    r = np.arange(shape[0])
+    c = np.arange(shape[1])
+    mask = np.zeros(shape) 
+    mask[(r>=rm) & (r<=rM),:] += 1
+    mask[:,(c>=cm) & (c<=cM)] += 1
+    mask[mask<2] = 0
+    return mask.astype(bool)
+
+def get_xyz_from_xyzmap_roi(xyzmap, roi):
+    """ Get xyz values of Region-Of-Interest in XYZ-map """
+    m, n = xyzmap.shape[:2]
+    M,N = np.arange(m).astype(int), np.arange(n).astype(int)
+    if roi is None:
+        f = 2*10 # 1/10 of size of each image dimension
+        roi = [[M//2-M//f,N//2-N//f],[M//2+M//f,N//2+N//f]] # (upper-left, lower-right) XY of rectangular Region-Of-Interest coordinates
+    mask = getRectMask(roi, (M,N))
+    xyzmap_ = xyzmap.copy() 
+    xyzmap_[mask] = np.nan
+    xyz = xyzmap_[~mask[...,0],:]
+    return xyz, xyzmap_
+
+def get_rgbFromTexPaths(rgbatexFiles):
+    """ Get rgb values read from the filenames of the tex-files """
+    if isinstance(rgbatexFiles, str):
+        with open(rgbatexFiles,'r') as fid:
+            rgbatexFiles = fid.readlines()
+        rgbatexFiles = rgbatexFiles[1:] # get rid of path line
+        rgbatexFiles = [x[x.index('tex_'):][:-1] for x in rgbatexFiles]
+    rgbs = []
+    for i, rgbatexFile in enumerate(rgbatexFiles):
+        rgbs.append(get_rgb_from_rgbtexpath(rgbatexFile))  
+    rgbs = np.array(rgbs)
+    return rgbs    
+    
+def get_avgXYZFromXYZmaps(xyzmaps, roi = None):
+    """ Get average xyz values of Region-Of-Interest in XYZ-maps """
+    xyzs = []
+    for xyzmap in enumerate(xyzmaps):
+        xyzs.append(get_xyz_from_xyzmap_roi(xyzmap, roi).mean(0, keepdims = True))
+    return np.array(xyzs)  
         
+    
+def generate_rgba_texs_iml(rgb, rgba_save_folder):
+    """ Generate rgba texture images, save them in a folder and return a list of texFiles and a .iml file with the paths to the texFiles"""
+    rgba = np.hstack((rgb,np.ones_like(rgb[:,:1])*255)) # add alpha channel required by HMDviewer
+    texFiles, _ = generate_stimulus_tex_list(rgba, rgba_save_folder = rgba_save_folder)
+    stimulus_iml = rgba_save_folder + 'stimulus_list.iml'
+    texFiles_ = ['path' + '' + '\n'] + [file[0]+'\n' for file in texFiles]
+    with open(stimulus_iml,'w') as fid:
+        fid.writelines(texFiles_)
+    return texFiles, stimulus_iml
+
+#------------------------------------------------------------------------------
 
 
 if __name__ == '__main__':       
@@ -1640,8 +1732,8 @@ if __name__ == '__main__':
             else:
                 return bool(os.path.exists(out[1][1]))
         
-        actionWrapperDict = {'action' : (a_action, {'lmkX':lmkX, 'folder_name' : script_path+'./temp_color_stimulus_folder/','file_name_base':'lmk-23-11-2022'}),
-                             'check'  : (a_check,  {})}
+        actionWrapperDict = {'action' : [a_action, {'lmkX':lmkX, 'folder_name' : script_path+'./lmk_xyzmaps/','file_name_base':'lmk-xyzmap'}],
+                             'check'  : [a_check,  {}]}
     else:
         #--------------------------------------------------------------------------
         def a_action(self, frameNumber, out, **kwargs):
@@ -1653,8 +1745,8 @@ if __name__ == '__main__':
             dt = t_now - out[1][1] 
             return dt >= delay
         
-        actionWrapperDict =  {'action' : (a_action, {}),
-                              'check'  : (a_check,  {'delay' : 0.1})}
+        actionWrapperDict =  {'action' : [a_action, {}],
+                              'check'  : [a_check,  {'delay' : 0.1}]}
     
     #==== Prepare stimuli =====================================================
         
@@ -1689,7 +1781,7 @@ if __name__ == '__main__':
     # hmdviewer.run(only_once = True)
     t_begin = time.time()
     
-    hmdviewer.run(pipeFcnsUpdate = [None,None, (None, actionWrapperDict)],  only_once = False,
+    hmdviewer.run(pipeFcnsUpdate = [None,None, [None, actionWrapperDict]],  only_once = False,
                   u_delay = 1, a_delay = 1)
        
     t_end = time.time()
