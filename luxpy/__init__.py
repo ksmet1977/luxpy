@@ -56,6 +56,7 @@ Lazily imported 3e party dependencies:
 ---------------------------------------------------
  * import pyswarms (when importing particleswarms from math)
  * import pymoo (when importing pymoo_nsga_ii from math)
+ * import harfang as hg (when importing toolbox.stereoscopicviewer)
  
 3e party dependencies (requiring manual install)
 ------------------------------------------------
@@ -111,7 +112,7 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'platform','subprocess',
                       'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
-              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui']}
+              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang']}
 # (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
 __all__ += ['__REQUIRED__']
@@ -273,7 +274,8 @@ __all__ += ['SPD']
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
                       'spectral_mismatch_and_uncertainty'
-                      # 'technoteam_lmk' # don't import to not force additional dependencies: pywin32 and easygui
+                      # 'technoteam_lmk', # don't import to not force additional dependencies: pywin32 and easygui
+                      # 'stereoscopicviewer' # don't import to not force additional dependencies: harfang
                       ]
 try:
     #   load ciephotbio sub_package:
@@ -319,6 +321,10 @@ try:
     #   Load TechnoTeamLMK sub_package:
     #from luxpy.toolboxes import technoteam_lmk
     #__all__ += ['technoteam_lmk']
+    
+    #   Load sterescopicoviewer sub_package:
+    #from luxpy.toolboxes import stereoscopicviewer
+    #__all__ += ['stereoscopicviewer']
 except:
     pass
 

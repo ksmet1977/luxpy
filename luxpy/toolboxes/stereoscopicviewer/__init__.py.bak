@@ -1,0 +1,3 @@
+from .harfang3d import *
+__all__ = harfang3d.__all__
+print(__all__)

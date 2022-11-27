@@ -147,3 +147,31 @@ spectral_mismatch_and_uncertainty/
    :undoc-members:
    :private-members: 
    
+technoteam_lmk/ 
+---------------
+ :py:
+	* __init__.py
+	* TechnoTeamLMK.py 
+
+	
+ :namespace: luxpy.technoteam_lmk
+
+.. automodule:: luxpy.toolboxes.technoteam_lmk
+   :members:
+   :undoc-members:
+   :private-members:
+   
+stereoscopicviewer/ 
+-------------------
+ :py:
+	* __init__.py
+	* /harfang/
+    	* harfang_viewer.py 
+	
+ :namespace: luxpy.stereoscopicviewer
+
+.. automodule:: luxpy.toolboxes.stereoscopicviewer
+   :members:
+   :undoc-members:
+   :private-members:
+   
