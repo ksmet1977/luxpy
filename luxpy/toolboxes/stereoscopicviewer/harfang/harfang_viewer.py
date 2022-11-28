@@ -40,6 +40,7 @@ __all__ = ['_PKG_PATH', 'CreateSphereModel','CreatePlaneModel',
            'Shader', 'Scene','Camera','Material','Screen', 'Eye', 
            'HmdStereoViewer','generate_stimulus_tex_list',
            'generate_rgba_texs_iml','get_rgbFromTexPaths',
+           'getRectMask', 'getRoiImage',
            'get_xyz_from_xyzmap_roi','get_rgb_from_rgbtexpath']
 
 #==============================================================================
@@ -1641,6 +1642,11 @@ def getRectMask(roi, shape):
     mask[:,(c>=cm) & (c<=cM)] += 1
     mask[mask<2] = 0
     return mask.astype(bool)
+
+def getRoiImage(img, roi):
+    mask = getRectMask(roi, img.shape)
+    subimg = img[mask].reshape((*(roi[1] - roi[0] + 1),3))
+    return subimg
 
 def get_xyz_from_xyzmap_roi(xyzmap, roi):
     """ Get xyz values of Region-Of-Interest in XYZ-map """
