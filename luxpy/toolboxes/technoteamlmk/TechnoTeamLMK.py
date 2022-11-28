@@ -606,9 +606,9 @@ class lmkActiveX:
         
         # setWeorkingImage:
         if X_type == 'XYZ':
-            cls.setWorkingImage(cls.imageType.Color)
+            cls.setWorkingImage(cls.imageType['Color'])
         elif X_type == 'Y':
-            cls.setWorkingImage(cls.imageType.Luminance)
+            cls.setWorkingImage(cls.imageType['Luminance'])
         
         # Capture image:
         tempFlag = 1
@@ -697,8 +697,8 @@ class lmkActiveX:
         int32 = lambda x: np.array(x).astype(np.int32) if x is not None else None# check if iCreateRegion really does require int32 values as input (for now: pass python int)
         
         cls.errorFlag,_,_ = cls.lmk.iCreateRegion(int32(cls.workingImage),
-                                                  int32(cls.regionType.Ellipse.identifier),
-                                                  int32(cls.regionType.Ellipse.points),
+                                                  int32(cls.regionType['Ellipse']['identifier']),
+                                                  int32(cls.regionType['Ellipse']['points']),
                                                   listXpts,
                                                   listYpts)
             
@@ -726,7 +726,7 @@ class lmkActiveX:
 
         cls.errorFlag,_,_ = cls.lmk.iCreateRegion(
                                                  int32(cls.workingImage),
-                                                 int32(cls.regionType.Polygon.identifier),
+                                                 int32(cls.regionType['Polygon']['identifier']),
                                                  int32((len(listXpts))),
                                                  listXpts,
                                                  listYpts
@@ -755,7 +755,7 @@ class lmkActiveX:
 
         cls.errorFlag,_,_ = cls.lmk.iCreateRegion(
                                                  int32(cls.workingImage),
-                                                 int32(cls.regionType.Polygon.identifier),
+                                                 int32(cls.regionType['Polygon']['identifier']),
                                                  int32((len(listXpts))),
                                                  listXpts,
                                                  listYpts
@@ -791,7 +791,7 @@ class lmkActiveX:
         """ 
         Create a color statistic object
             call as follows:
-            createStatisticObjectOfRegion('regionTestName',statisticType.standardColor)
+            createStatisticObjectOfRegion('regionTestName',statisticType['standardColor'])
         """
         cls.lmk.iCreateStatistic(statisticType,cls.workingImage,cls.getRegionIndexByName(regionName),1,['1'])
         
