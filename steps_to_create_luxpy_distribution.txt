@@ -1,6 +1,9 @@
 # if large pkl file with fibonacci lut is not to be included in distribution: 
 # --> remove it temporarily from ./data/cctluts/ and disable internet !!
 
+# Clean __pycache__ :
+pyclean . #pip install pyclean
+
 # Make documentation:
 cd docs
 make html
