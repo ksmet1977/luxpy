@@ -116,7 +116,6 @@ cct: Module with functions related to correlated color temperature calculations
 
 import os
 import copy 
-import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import minimize
@@ -133,7 +132,7 @@ from luxpy.color.ctf.colortf import colortf
 
 __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            '_CCT_LUT_PATH','_CCT_LUT', '_CCT_LUT_RESOLUTION_REDUCTION_FACTOR',
-           '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT',
+           '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT','_CCT_PKL_COMPRESSLEVEL',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
            'xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
            'xyz_to_cct_li2016', 'xyz_to_cct_li2022',
@@ -1454,6 +1453,8 @@ def _lut_to_float64(luts):
 def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
     """ Download lut(s) from the luxpy github repo """
     import requests 
+    import pickle
+    import gzip
     from io import BytesIO
     if modes is None: modes = _CCT_LIST_OF_MODE_LUTS
     for mode in modes:
@@ -1462,7 +1463,6 @@ def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
             lut = pickle.load(BytesIO(r.content))
             save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
         else:
-            import gzip
             r = requests.get(os.path.join(url,mode+'_luts.pkl.gz'))
             with gzip.open(BytesIO(r.content),mode='r') as fobj:
                 lut = pickle.load(fobj)

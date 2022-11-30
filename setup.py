@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 setup(
   name = 'luxpy',
-  packages = find_packages(exclude=['assets_compiled']), 
+  packages = find_packages(), 
   version = '1.10.0',
   license = 'GPLv3',
   description = 'Python package for lighting and color science',
@@ -26,6 +26,7 @@ setup(
 # 						  'luxpy/data/cmfs/*.csv',
 #                           'luxpy/data/cmfs/*.txt',
 #                           'luxpy/data/cctluts/*.pkl',
+#                           'luxpy/data/cctluts/*.pkl.gz',
 #                           'luxpy/data/cctluts/legacy/*.dat',
 # 						  'luxpy/data/cctluts/legacy/*.csv',
 #                           'luxpy/data/cctluts/legacy/*.txt', 
@@ -35,6 +36,10 @@ setup(
 #                           'luxpy/data/rfls/*.dat',
 # 						  'luxpy/data/rfls/*.csv',
 #                           'luxpy/data/rfls/*.txt',
+#                           'luxpy/data/rfls/*.npy',
+#                           'luxpy/data/rfls/*.npz',
+#                           'luxpy/data/rfls/*.pkl',
+#                           'luxpy/data/rfls/*.pkl.gz',
 #                           'luxpy/color/cct/robertson1968/luts/*.pkl',
 #                           'luxpy/color/cri/iestm30/*.jfif',
 #                           'luxpy/toolboxes/photbiochem/data/*.dat',
