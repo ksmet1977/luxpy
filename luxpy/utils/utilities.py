@@ -97,6 +97,7 @@ import cProfile
 import pstats
 import io
 import pickle
+import gzip
 from collections import OrderedDict as odict
 from mpl_toolkits.mplot3d import Axes3D
 __all__ = ['odict','Axes3D']
@@ -1124,36 +1125,45 @@ def unique(array, sort = True):
         return uniq[index.argsort()]
 
 #------------------------------------------------------------------------------
-def save_pkl(filename, obj): 
+def save_pkl(filename, obj, compresslevel = 0): 
     """ 
-    Save an object in a pickle file.
+    Save an object in a (gzipped) pickle file.
     
     Args:
         :filename:
             | str with filename of pickle file.
         :obj:
             | python object to save
+        :compresslevel:
+            | 0, optional
+            | If > 0: use gzip to compress pkl file.
     
     Returns:
         :None:
     """
-    with open(filename, 'wb') as handle:
+    _open = (lambda file,w: gzip.open(file+'.gz', w, compresslevel = compresslevel)) if (compresslevel > 0) else (lambda file, w: open(file,w))
+    with _open(filename, 'wb') as handle:
         pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
-def load_pkl(filename):
+def load_pkl(filename, gzipped = False):
     """ 
-    Load the object in a pickle file.
+    Load the object in a (gzipped) pickle file.
     
     Args:
         :filename:
             | str with filename of pickle file.
+        :gzipped:
+            | False, optional 
+            | If True: '.gz' will be added to filename before opening. 
         
     Returns:
         :obj:
             | loaded python object
     """
     obj = None
-    with open(filename, 'rb') as handle:
+    if gzipped and (filename[-3:] != '.gz'): filename = filename + '.gz'
+    _open = gzip.open if filename[-3:] == '.gz' else open
+    with _open(filename, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
 

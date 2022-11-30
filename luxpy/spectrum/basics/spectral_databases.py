@@ -155,8 +155,8 @@ _CIE133_1995['8'] = _CIE133_1995['14'][0:9].copy()
    
 #------------------------------------------------------------------------------  
 # IES TM30-15 color fidelity and color gamut indices:
-# _IESTM3015['R'] = {'4880' : {'1nm': np.load(_R_PATH + 'IESTM30_15_R4880.npy')}}
-_IESTM3015['R'] = {'4880' : {'1nm': getdata(_R_PATH + 'IESTM30_15_R4880.csv',kind='np')}}
+_IESTM3015['R'] = {'4880' : {'1nm': np.load(_R_PATH + 'IESTM30_15_R4880.npz')['_IESTM30_R4880']}}
+# _IESTM3015['R'] = {'4880' : {'1nm': getdata(_R_PATH + 'IESTM30_15_R4880.csv',kind='np')}}
 _IESTM3015['R']['99'] = {'1nm' : getdata(_R_PATH + 'IESTM30_15_R99_1nm.dat',kind='np').T}
 _IESTM3015['R']['99']['5nm'] = getdata(_R_PATH + 'IESTM30_15_R99_5nm.dat',kind='np').T
 temp = getdata(_R_PATH + 'IESTM30_15_R99info.dat',kind='df').values[0]
@@ -252,12 +252,12 @@ _MACBETH_RFL = {'CC': {'R': getdata(_R_PATH + 'MacbethColorChecker.dat',kind='np
 #------------------------------------------------------------------------------
 # 114120 RFLs from https://capbone.com/spectral-reflectance-database/
 try:
-    # _CAPBONE_100K_RFL = {'R': np.load(_R_PATH + 'capbone_100k_rfls.npz')['_CAPBONE_100K_RFL']}
-    _CAPBONE_100K_RFL = {'R': getdata(_R_PATH + 'capbone_100k_rfls.csv',kind='np')['_CAPBONE_100K_RFL']}
-    _CAPBONE_100K_RFL['file'] = _R_PATH + 'capbone_100k_rfls.csv'
+    _CAPBONE_100K_RFL = {'R': np.load(_R_PATH + 'capbone_100k_rfls.npz')['_CAPBONE_100K_RFL']}
+    # _CAPBONE_100K_RFL = {'R': getdata(_R_PATH + 'capbone_100k_rfls.csv',kind='np')}
+    _CAPBONE_100K_RFL['file'] = _R_PATH + 'capbone_100k_rfls.npz'
 except:
     _CAPBONE_100K_RFL = {'R': None}
-    _CAPBONE_100K_RFL['file']  = _R_PATH + 'capbone_100k_rfls.csv'
+    _CAPBONE_100K_RFL['file']  = _R_PATH + 'capbone_100k_rfls.npz'
 finally:
     _CAPBONE_RFL = {'100k': _CAPBONE_100K_RFL}
     

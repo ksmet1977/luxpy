@@ -183,6 +183,8 @@ _CCT_SHARED_LUT_TYPES = [((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),)] # shared among
 
 _CCT_LUT_ONE_NPY_PER_MODE = True # switch between generating one npy file per mode (3-.. columns) vs one for all modes (8 columns)
 
+_CCT_PKL_COMPRESSLEVEL = 9
+
 #==============================================================================
 # define general helper functions:
 #==============================================================================
@@ -1374,14 +1376,14 @@ def generate_luts(types = [None], seamless_stitch = True,
                     file_path = os.path.join(lut_path,lut_file)
                     if verbosity > 0:
                         print('Saving dict with luts in {:s}'.format(file_path))                                                 
-                    save_pkl(file_path,luts)
-        luts = load_pkl(file_path)
+                    save_pkl(file_path,luts, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+        luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
     else:
         if lut_file is not None:
             file_path = os.path.join(lut_path, lut_file)
             if verbosity > 1:
                 print('Loading dict with luts in {:s}'.format(file_path))                                                 
-            luts = load_pkl(file_path)
+            luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
         else:
             raise Exception('Trying to load lut file but no lut_file has been supplied.')
     return luts
@@ -1455,15 +1457,23 @@ def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
     from io import BytesIO
     if modes is None: modes = _CCT_LIST_OF_MODE_LUTS
     for mode in modes:
-        r = requests.get(os.path.join(url,mode+'_luts.pkl'))
-        lut = pickle.load(BytesIO(r.content))
-        save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'),lut)
-    
+        if _CCT_PKL_COMPRESSLEVEL == 0: 
+            r = requests.get(os.path.join(url,mode+'_luts.pkl'))
+            lut = pickle.load(BytesIO(r.content))
+            save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+        else:
+            import gzip
+            r = requests.get(os.path.join(url,mode+'_luts.pkl.gz'))
+            with gzip.open(BytesIO(r.content),mode='r') as fobj:
+                lut = pickle.load(fobj)
+            save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+
+            
         
 def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None, lut_generator_kwargs = {}):
     """ Pre-generate / load from disk / download from github some LUTs for a specific mode """
     if (mode in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
-        lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode)))
+        lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode))) | os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl.gz'.format(mode)))
         if (not lut_exists) & (force_calc == False):
             try:
                 print("LUT pickle file for mode '{:s}' doesn't exist. Trying download from luxpy github repo.".format(mode))
