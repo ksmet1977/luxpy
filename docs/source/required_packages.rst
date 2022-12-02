@@ -32,6 +32,8 @@ Core
 3e party dependencies (automatic install on import)
 ---------------------------------------------------
  * import pyswarms (when importing particleswarms from math)
+ * import pymoo (when importing pymoo_nsga_ii from math)
+ * import harfang as hg (when importing toolbox.stereoscopicviewer)
  
  
 3e party dependencies (requiring manual install)

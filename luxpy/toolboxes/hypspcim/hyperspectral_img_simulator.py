@@ -52,7 +52,8 @@ _CSF_NIKON_D700 = np.vstack((np.arange(400,710,10),
 def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
                  refspd = None, D = None, cieobs = _CIEOBS, \
                  cspace = 'xyz', cspace_tf = {},\
-                 interp_type = 'nd', k_neighbours = 4, verbosity = 0,
+                 interp_type = 'nd', k_neighbours_nd = 1,
+                 k_neighbours = 4, verbosity = 0,
                  csf_based_rgb_rounding = _ROUNDING):
     """
     Approximate spectral reflectance of xyz values based on nd-dimensional linear interpolation 
@@ -95,6 +96,10 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
             | 4 or int, optional
             | Number of nearest neighbours for reflectance spectrum interpolation.
             | Neighbours are found using scipy.spatial.cKDTree
+        :k_neighbours_nd:
+            | 1, optional
+            | Number of nearest neighbours for reflectance spectrum interpolation when interp_type 'nd' fails.$
+            | If None: use the value set in :k_neighbours:
         :verbosity:
             | 0, optional
             | If > 0: make a plot of the color coordinates of original and 
@@ -166,14 +171,15 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
         _isnan = np.isnan(rfl_est[:,0]) 
 
         if (_isnan.any()): #do nearest neigbour method for those that fail using Delaunay (i.e. ndinterp1_scipy)
-
+            if k_neighbours_nd is None: k_neighbours_nd = k_neighbours 
+            
             # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
             # color coordinates for each value in lab_ur (i.e. smallest DE):
             # Construct cKDTree:
             tree = sp.spatial.cKDTree(lab_rr, copy_data = True)
 
             # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
-            d, inds = tree.query(lab[_isnan,...], k = k_neighbours )
+            d, inds = tree.query(lab[_isnan,...], k = k_neighbours_nd)
 
             if k_neighbours  > 1:
                 d += _EPS

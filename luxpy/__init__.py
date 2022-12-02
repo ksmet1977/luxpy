@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.9.8
-    * Date: June 23, 2022
+    * Version: 1.10.0
+    * Date: Dec 1, 2022
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -40,16 +40,30 @@ Imported core packages/modules/functions:
  * mpl_toolkits.mplot3d.Axes3D
  
  
-Imported 3e party dependencies (automatic install):
----------------------------------------------------
- * numpy, scipy, matplotlib.pyplot, pandas, imageio
- * pyswarms (luxpy tries a forced pip install if not already installed)
+Imported 3e party dependencies :
+--------------------------------
+ * numpy (automatic install)
+ * scipy (stats, optimize, interpolate, ...)
+ * matplotlib.pyplot (any graphic output anywhere)
+ * imageio (imread(), imsave())
+ * pandas (in luxpy.utils.write_to_excel)
  
-Imported 3e party dependencies (requiring manual install):
-----------------------------------------------------------
+Lazily imported 3e party dependencies:
+--------------------------------------
+ * openpyxl (in luxpy.utils.write_to_excel) 
+ 
+3e party dependencies (automatic install on import)
+---------------------------------------------------
+ * import pyswarms (when importing particleswarms from math)
+ * import pymoo (when importing pymoo_nsga_ii from math)
+ * import harfang as hg (when importing toolbox.stereoscopicviewer)
+ 
+3e party dependencies (requiring manual install)
+------------------------------------------------
 To control Ocean Optics spectrometers with spectro toolbox:
  * import seabreeze (conda install -c poehlmann python-seabreeze)
  * pip install pyusb (for use with 'pyseabreeze' backend of python-seabreeze)
+
 
 
 Global constants
@@ -68,9 +82,9 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.9.8'; """Current version"""
+__VERSION__ = 'v1.10.0'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = '23-Jun-2022'; """release date"""
+__DATE__ = 'Dec-01-2022'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2022 - Kevin A.G. Smet'; """copyright info"""
 
@@ -98,7 +112,7 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'platform','subprocess',
                       'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
-              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms']}
+              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang']}
 # (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
 __all__ += ['__REQUIRED__']
@@ -259,7 +273,10 @@ __all__ += ['SPD']
 #----------------------------------------
 list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       'spectro','rgb2spec','dispcal','sherbrooke_spectral_indices',
-                      'spectral_mismatch_and_uncertainty']
+                      'spectral_mismatch_and_uncertainty'
+                      # 'technoteamlmk', # don't import to not force additional dependencies: pywin32 and easygui
+                      # 'stereoscopicviewer' # don't import to not force additional dependencies: harfang
+                      ]
 try:
     #   load ciephotbio sub_package:
     from luxpy.toolboxes import photbiochem 
@@ -300,6 +317,14 @@ try:
     #   Load spectral mismatch and uncertainty sub_package:
     from luxpy.toolboxes import spectral_mismatch_and_uncertainty
     __all__ += ['spectral_mismatch_and_uncertainty']
+    
+    #   Load TechnoTeamLMK sub_package:
+    #from luxpy.toolboxes import technoteamlmk
+    #__all__ += ['technoteamlmk']
+    
+    #   Load sterescopicoviewer sub_package:
+    #from luxpy.toolboxes import stereoscopicviewer
+    #__all__ += ['stereoscopicviewer']
 except:
     pass
 

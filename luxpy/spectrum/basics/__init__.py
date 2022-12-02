@@ -28,14 +28,14 @@ from .spectral_databases import (_R_PATH, _S_PATH, _CIE_ILLUMINANTS,
 from .cmf import *
 __all__ = cmf.__all__
 
+
 # Load spectral module:
 from .spectral import *
 __all__ += spectral.__all__
 
-## Set xyzbar in _CMF dict:
+## Set xyzbar in _CMF dict (note that any missing wavelength data is filled in with nan's):
 for i, cmf_type in enumerate(_CMF['types']): # store all in single nested dict
-    _CMF[cmf_type]['bar'] =  xyzbar(cieobs = cmf_type, scr = 'file', kind = 'np')
-
+    _CMF[cmf_type]['bar'] =  xyzbar(cieobs = cmf_type, scr = 'file', kind = 'np',extrap_values = (np.nan,np.nan))
 
 # add 'all' key to _CIE_ILLUMINANTS that  contains all CIE_ILLUMINANTS in a stack:
 _CIE_ILLUMINANTS['all'] = np.vstack((_CIE_E[0,:],np.array([cie_interp(_CIE_ILLUMINANTS[x],_CIE_E[0,:],kind = 'spd', extrap_values = 'ext')[1,:] for x in _CIE_ILLUMINANTS['types'] if 'series' not in x])))

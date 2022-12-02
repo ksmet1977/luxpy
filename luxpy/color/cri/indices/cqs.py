@@ -3,11 +3,12 @@ Module for color quality scale, CQS
 ===================================
 
  :_CQS_DEFAULTS: default settings for CQS 
-                 (major dict has 9 keys (04-Jul-2017): 
+                 (major dict has 10 keys (26-Aug-2022): 
                  sampleset [str/dict], 
                  ref_type [str], 
                  cieobs [str], 
                  avg [fcn handle], 
+                 rf_from_avg_rounded_rfi [bool],
                  scale [dict], 
                  cspace [dict], 
                  catf [dict], 
@@ -38,6 +39,7 @@ _CQS_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",
                              'ref_type' : 'ciera', 
                              'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
                              'avg' : math.rms, 
+                             'rf_from_avg_rounded_rfi' : False,
                              'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 
                              'cspace' : {'type': 'lab', 'xyzw' : None}, 
                              'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 
@@ -47,6 +49,7 @@ _CQS_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",
 _CQS_DEFAULTS['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']", 
                              'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
                              'avg' : math.rms, 
+                             'rf_from_avg_rounded_rfi' : False,
                              'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 
                              'cspace' : {'type': 'lab', 'xyzw' : None}, 
                              'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 

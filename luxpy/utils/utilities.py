@@ -64,8 +64,10 @@ Module with utility functions and parameters
  :todim(): Expand x to dimensions that are broadcast-compatable 
            with shape of another array.
            
- :write_to_excel(): Write a DataFrame to existing an Excel file into specific Sheet.
- 
+ :read_excel(): Read data from a specific Sheet and Cell_Range of an existing an Excel file.
+          
+ :write_excel(): Write an ndarray into specific Sheet and Cell_Range of an (existing) Excel file.
+            
  :show_luxpy_tree(): Show luxpy folder structure
  
  :is_importable(): Check if a module is importable / loaded and if it doesn't exist installing it using subprocess
@@ -80,6 +82,7 @@ Module with utility functions and parameters
  
  :load_pkl(): load object in pickle file
  
+  
 ===============================================================================
 """
 #------------------------------------------------------------------------------
@@ -94,6 +97,7 @@ import cProfile
 import pstats
 import io
 import pickle
+import gzip
 from collections import OrderedDict as odict
 from mpl_toolkits.mplot3d import Axes3D
 __all__ = ['odict','Axes3D']
@@ -125,8 +129,9 @@ __all__+=['_EPS']
 from .folder_tree import tree
 __all__ += ['np2d','np3d','np2dT','np3dT',
            'put_args_in_db','vec_to_dict',
-           'getdata','dictkv','OD','meshblock','asplit','ajoin',
-           'broadcast_shape','todim','write_to_excel','show_luxpy_tree',
+           'loadtxt','savetxt', 'getdata',
+           'dictkv','OD','meshblock','asplit','ajoin',
+           'broadcast_shape','todim','read_excel','write_excel','show_luxpy_tree',
            'is_importable','get_function_kwargs','profile_fcn','unique',
            'save_pkl', 'load_pkl']
 
@@ -307,6 +312,96 @@ def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
             vsize.append(dic[v].shape[0])
         return vec, vsize
 
+#------------------------------------------------------------------------------
+def loadtxt(filename, header = None, sep = ',', dtype = float, missing_values = np.nan):
+    """ 
+    Load data from text file. 
+    
+    Args:
+        :filename:
+            | String with filename [+path]
+        :header:
+            | None, optional
+            | None: no header present, 'infer' get from file.
+        :sep:
+            | ',', optional
+            | Delimiter (',' -> csv file)
+        :dtype:
+            | float, optional
+            | Try casting output array to this datatype.
+        :missing_values:
+            | np.nan, optional
+            | Replace missing values with this.
+            
+    Returns:
+        :ndarray:
+            | loaded data in ndarray of type dtype or object (in case of mixed types)
+    """
+    with open(filename,'r') as f:
+        lines = f.readlines()
+    out = np.array([line.strip().split(sep) for line in lines], dtype = object)
+    N = len(lines)
+    if header == 'infer':
+        header = out[0]
+        out = out[1:]
+    if dtype is not None:
+        try: 
+            out[out==''] = missing_values
+            out = out.astype(dtype)
+        except:
+            out = out.astype(object)
+    return out, header
+
+def savetxt(filename, X, header = None, sep = ',', fmt = ':1.18f', aw = 'w'):
+    """ 
+    Save data to text file. 
+    
+    Args:
+        :filename:
+            | String with filename [+path]
+        :X:
+            | ndarray with data
+        :header:
+            | None, optional
+            | None: no header present, 'infer' get from file.
+        :sep:
+            | ',', optional
+            | Delimiter (',' -> csv file)
+        :fmt:
+            | ':1.18f', optional
+            | Format string for numerical data output.
+            | Can be tuple/list for different output formats per column.
+        :aw:
+            | 'w', optional
+            | options: 'w' -> write or 'a' -> append to file
+    """
+
+    if isinstance(header,list):
+        header = sep.join(header)
+    if X.dtype == object:    
+        if fmt is None: fmt = ':g'
+        lines  = [] if header is None else [header + '\n']
+        for i in range(X.shape[0]):
+            line = ''
+            for j in range(X.shape[-1]):
+                if isinstance(X[i,j],str): 
+                    line = line + sep + '{:s}'.format(X[i,j])
+                else:
+                    fmtj = fmt[j] if isinstance(fmt,(list,tuple)) else fmt 
+                    if fmtj[0] == '%': fmtj = ':' + fmtj[1:]
+                    fmtj = '{' + fmtj + '}'
+                    line = line + sep + fmtj.format(X[i,j])
+            lines.append(line[1:] + '\n')
+
+        with open(filename,aw) as f:
+            f.writelines(lines)    
+    else:
+        if fmt[0] == ':': fmt = '%' + fmt[1:] 
+        if header is not None:
+            np.savetxt(filename, X, fmt = fmt, delimiter = sep, header = header, comments = '')
+        else:
+            np.savetxt(filename, X, fmt = fmt, delimiter = sep)
+
 #--------------------------------------------------------------------------------------------------
 def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatype = 'S', copy = True, verbosity = True):
     """
@@ -357,7 +452,7 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
         if header == 'infer':
             if verbosity == True:
                 warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(datafile))
-                columns = data.columns
+            columns = data.columns
         elif (columns is None):
             data.columns = ['{}{}'.format(datatype,x) for x in range(len(data.columns))] 
         if columns is not None:
@@ -578,82 +673,313 @@ def todim(x,tshape, add_axis = 1, equal_shape = False):
             return x
         else:
             return np.ones(tshape)*x #make dims of x equal to those of a (tshape)
-        
+       
 #------------------------------------------------------------------------------
-def write_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
-                       truncate_sheet=False, 
-                       **to_excel_kwargs):
+def read_excel(filename, sheet_name = None, cell_range = None, dtype = float, 
+               force_dictoutput = False, out = 'X'):
     """
-    Writes a DataFrame to an existing Excel file into a specified sheet.
-    | If [filename] doesn't exist, then this function will create it.
-
+    Read excel file using openpyxl.
+    
     Args:
-      :filename: 
-          | File path or existing ExcelWriter
-          | (Example: '/path/to/file.xlsx')
-      :df: 
-          | dataframe to save to workbook
-      :sheet_name: 
-          | Name of sheet which will contain DataFrame.
-          | (default: 'Sheet1')
-      :startrow: 
-          | upper left cell row to dump data frame.
-          | Per default (startrow=None) calculate the last row
-          | in the existing DF and write to the next row...
-      :truncate_sheet: 
-          | truncate (remove and recreate) [sheet_name]
-          | before writing DataFrame to Excel file
-      :to_excel_kwargs: 
-          | arguments which will be passed to `DataFrame.to_excel()`
-          | [can be dictionary]
-
-    Returns: None
-    
-    Notes:
-        Copied from https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas
+        :filename:
+            | string with [path/]filename of Excel file.
+        :sheet_name:
+            | None, optional
+            | If None: read all sheets
+            | If string or tuple/list of strings: read these sheets.
+        :cell_range:
+            | None, optional
+            | Read all data on sheet(s).
+            | If string range (e.g. 'B2:C4') or tuple/list of cell_ranges: read this range.
+            | If tuple/list: then length must match that of the list of sheet_names!
+        :dtype:
+            | float, optional
+            | Try to cast the output data array(s) to this type. In case of failure, 
+            | data type will be 'object'.
+        :force_dictoutput:
+            | False, optional
+            | If True: output will always be a dictionary (sheet_names are keys) 
+            |          with the requested data arrays.
+            |If False: in case only a single sheet_name is supplied or only a single
+            |          sheet is present, then the output will be an ndarray!
+        :out:
+            | 'X', optional
+            | String specifying requested output (eg. 'X' or 'X,wb' with wb the loaded workbook)
+            
+    Returns:
+        :X:
+            | dict or ndarray (single sheet and force_dictoutput==False) 
+            | with data in requested ranges. 
+        :wb:
+            | If in :out: the loaded workbook is also output.
     """
-    from openpyxl import load_workbook
-
-    # ignore [engine] parameter if it was passed
-    if 'engine' in to_excel_kwargs:
-        to_excel_kwargs.pop('engine')
-
-    writer = pd.ExcelWriter(filename, engine='openpyxl')
-
-    try:
-        # try to open an existing workbook
-        writer.book = load_workbook(filename)
-
-        # get the last row in the existing Excel sheet
-        # if it was not specified explicitly
-        if startrow is None and sheet_name in writer.book.sheetnames:
-            startrow = writer.book[sheet_name].max_row
-
-        # truncate sheet
-        if truncate_sheet and sheet_name in writer.book.sheetnames:
-            # index of [sheet_name] sheet
-            idx = writer.book.sheetnames.index(sheet_name)
-            # remove [sheet_name]
-            writer.book.remove(writer.book.worksheets[idx])
-            # create an empty sheet [sheet_name] using old index
-            writer.book.create_sheet(sheet_name, idx)
-
-        # copy existing sheets
-        writer.sheets = {ws.title:ws for ws in writer.book.worksheets}
     
-    except FileNotFoundError:
-        # file does not exist yet, we will create it
-        pass
-
-    if startrow is None:
-        startrow = 0
-
-    # write out the new sheet
-    df.to_excel(writer, sheet_name, startrow=startrow, **to_excel_kwargs)
-
-    # save the workbook
-    writer.save()
+    import openpyxl 
+    wb = openpyxl.load_workbook(filename = filename, data_only=True)
     
+    # process sheet_names:
+    if sheet_name is None:
+        sheet_names = wb.sheetnames
+        single_sheet = True if len(sheet_names) == 1 else False 
+    else:
+        if isinstance(sheet_name,str): 
+            sheet_names = [sheet_name]
+            single_sheet = True
+        else:
+            sheet_names = sheet_name
+            single_sheet = True if len(sheet_names) == 1 else False 
+    if force_dictoutput: single_sheet = False
+            
+    # process cell_ranges:
+    if cell_range is not None: 
+        if isinstance(cell_range,str): 
+            cell_ranges = [cell_range]*len(sheet_names)
+        else:
+            cell_ranges = cell_range
+            if len(sheet_names) != len(cell_ranges):
+                raise Exception("Number of cell_ranges doesn't match number of sheet_names")
+    else:
+        cell_ranges = [None]*len(sheet_names)
+    
+    
+    # loop of sheet_names and cell_ranges:
+    X = {}
+    for sheet_name, cell_range in zip(sheet_names,cell_ranges):
+        if sheet_name in wb.sheetnames:
+            sheet = wb[sheet_name]
+            
+            if cell_range is not None:
+                if ':' in cell_range:
+                    left = cell_range[:cell_range.index(':')]
+                    right = cell_range[(cell_range.index(':')+1):]
+                else:
+                    left = cell_range
+                    right = None
+                left = openpyxl.utils.cell.coordinate_to_tuple(left)
+                right = openpyxl.utils.cell.coordinate_to_tuple(right) if right is not None else None
+                
+                nrows = 1 if right is None else (right[0] - left[0]) + 1
+                ncols = 1 if right is None else (right[1] - left[1]) + 1
+            else:
+                nrows, ncols = 0, 0
+                for row in sheet.rows:
+                    nrows += 1
+                    for cell in row:
+                        ncols += 1
+                left = (1,1)
+                
+            X[sheet_name] = np.empty((nrows,ncols),dtype = object)
+            for i in range(nrows):
+                row = left[0] + i
+                for j in range(ncols):
+                    col = left[1] + j
+                    X[sheet_name][i,j] = sheet.cell(row,col).value
+                    
+            # get rid of extra None cols:
+            if cell_range is None: 
+                x = X[sheet_name]
+                X[sheet_name] = x[:,:-np.hstack((1,np.diff((((x != None)*1).sum(0)!=0).cumsum())))[::-1].argmax()]
+                
+            try: 
+                X[sheet_name] = X[sheet_name].astype(dtype)
+            except:
+                pass
+            
+    if single_sheet: X = X[sheet_name]
+    
+    if out == 'X': 
+        return X
+    elif out == 'X,wb':
+        return X,wb
+    else:
+        return eval(out)
+
+def write_excel(filename, X, sheet_name = None, cell_range = None):
+    """
+    Write data to an excel file using openpyxl.
+    
+    Args:
+        :filename:
+            | string with [path/]filename of Excel file.
+        :sheet_name:
+            | None, optional
+            | If None: use first one (or the keys in :X: when it is a dictionary)
+            | If string: use this sheet.
+            | If tuple/list of strings: use these to write the data in :X: (if :X: is a list/tuple of ndarrays)
+        :X:
+            | ndarray, list/tuple or dict
+            | If ndarray/list/tuple: sheet_names must be supplied explicitely in :sheet_names:
+            | If dict: keys must be sheet_names        
+        :cell_range:
+            | None, optional
+            | Read all data on sheet(s).
+            | If string range (e.g. 'B2:C4') or tuple/list of cell_ranges: read this range.
+            | If tuple/list: then length must match that of the list of sheet_names!
+    """
+    
+    import openpyxl 
+    if os.path.exists(filename):
+        #wb = openpyxl.load_workbook(filename = filename, data_only = True)
+
+        # Get pre-existing data from workbook
+        X0, wb = read_excel(filename, sheet_name = None, cell_range = None, dtype = float, force_dictoutput = True, out = 'X,wb')
+        
+    else:
+        head_tail = os.path.split(filename)
+        if not os.path.exists(head_tail[0]):
+            os.makedirs(head_tail[0], exist_ok = True)
+        wb = openpyxl.Workbook()
+        
+    # Get number of data arrays to write: 
+    if isinstance(X, np.ndarray): X = [X] 
+    N = len(X) 
+
+    # process sheet_names:
+    if sheet_name is None:
+        if N == 1: 
+            sheet_names = wb.sheetnames
+            sheet_names = [sheet_names[0]] # use first sheet
+        else:
+            if isinstance(X,dict):
+                sheet_names = list(X.keys())
+            else:
+                raise Exception('List/tuple of ndarrays as input, but no sheet_names provided!')
+    else:
+        if isinstance(sheet_name,str): 
+            sheet_names = [sheet_name]
+        else:
+            sheet_names = sheet_name
+    if len(sheet_names) != N:
+        raise Exception("Number of sheet_names doesn't match number of supplied data arrays.")
+
+    # process cell_ranges:
+    if cell_range is not None: 
+        if isinstance(cell_range,str): 
+            cell_ranges = [cell_range]*N
+        else:
+            cell_ranges = cell_range
+            if len(cell_ranges) != N:
+                raise Exception("Number of cell_ranges doesn't match number of supplied data arrays")
+    else:
+        cell_ranges = [None]*N
+    
+    # prepare X -> convert to dict:
+    X = dict(zip(sheet_names,X))
+
+    # loop of sheet_names and cell_ranges:
+    for sheet_name, cell_range  in zip(sheet_names,cell_ranges):
+        x = X[sheet_name] # get data to write
+        
+        if sheet_name not in wb.sheetnames: wb.create_sheet(sheet_name)
+        sheet = wb[sheet_name]
+        
+        if cell_range is not None:
+            if ':' in cell_range:
+                left = cell_range[:cell_range.index(':')]
+                right = cell_range[(cell_range.index(':')+1):]
+            else:
+                left = cell_range
+                right = None
+            left = openpyxl.utils.cell.coordinate_to_tuple(left)
+            right = openpyxl.utils.cell.coordinate_to_tuple(right) if right is not None else None
+            
+            nrows = 1 if right is None else (right[0] - left[0]) + 1
+            ncols = 1 if right is None else (right[1] - left[1]) + 1
+        else:
+            nrows, ncols = 0, 0
+            for row in sheet.rows:
+                nrows += 1
+                for cell in row:
+                    ncols += 1
+            left = (1,1)
+                
+        for i in range(nrows):
+            row = left[0] + i
+            for j in range(ncols):
+                col = left[1] + j
+                sheet.cell(row, col, value = x[i,j])
+                
+    wb.save(filename = filename)
+    
+    return None
+
+
+# #------------------------------------------------------------------------------
+# def write_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
+#                        truncate_sheet=False, 
+#                        **to_excel_kwargs):
+#     """
+#     Writes a DataFrame to an existing Excel file into a specified sheet.
+#     | If [filename] doesn't exist, then this function will create it.
+
+#     Args:
+#       :filename: 
+#           | File path or existing ExcelWriter
+#           | (Example: '/path/to/file.xlsx')
+#       :df: 
+#           | dataframe to save to workbook
+#       :sheet_name: 
+#           | Name of sheet which will contain DataFrame.
+#           | (default: 'Sheet1')
+#       :startrow: 
+#           | upper left cell row to dump data frame.
+#           | Per default (startrow=None) calculate the last row
+#           | in the existing DF and write to the next row...
+#       :truncate_sheet: 
+#           | truncate (remove and recreate) [sheet_name]
+#           | before writing DataFrame to Excel file
+#       :to_excel_kwargs: 
+#           | arguments which will be passed to `DataFrame.to_excel()`
+#           | [can be dictionary]
+
+#     Returns: None
+    
+#     Notes:
+#         Copied from https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas
+#     """
+#     from openpyxl import load_workbook
+
+#     # ignore [engine] parameter if it was passed
+#     if 'engine' in to_excel_kwargs:
+#         to_excel_kwargs.pop('engine')
+
+#     writer = pd.ExcelWriter(filename, engine='openpyxl')
+
+#     try:
+#         # try to open an existing workbook
+#         writer.book = load_workbook(filename)
+
+#         # get the last row in the existing Excel sheet
+#         # if it was not specified explicitly
+#         if startrow is None and sheet_name in writer.book.sheetnames:
+#             startrow = writer.book[sheet_name].max_row
+
+#         # truncate sheet
+#         if truncate_sheet and sheet_name in writer.book.sheetnames:
+#             # index of [sheet_name] sheet
+#             idx = writer.book.sheetnames.index(sheet_name)
+#             # remove [sheet_name]
+#             writer.book.remove(writer.book.worksheets[idx])
+#             # create an empty sheet [sheet_name] using old index
+#             writer.book.create_sheet(sheet_name, idx)
+
+#         # copy existing sheets
+#         writer.sheets = {ws.title:ws for ws in writer.book.worksheets}
+    
+#     except FileNotFoundError:
+#         # file does not exist yet, we will create it
+#         pass
+
+#     if startrow is None:
+#         startrow = 0
+
+#     # write out the new sheet
+#     df.to_excel(writer, sheet_name, startrow=startrow, **to_excel_kwargs)
+
+#     # save the workbook
+#     writer.save()
+    
+#------------------------------------------------------------------------------
 def show_luxpy_tree(omit = ['.pyc','__pycache__',
                             '.txt','.dat','.csv','.npz',
                             '.png','.jpg','.md','.pdf','.ini','.log', '.rar',
@@ -673,7 +999,7 @@ def show_luxpy_tree(omit = ['.pyc','__pycache__',
 
 
 #------------------------------------------------------------------------------
-def is_importable(string, try_pip_install = False):
+def is_importable(string, pip_string = None, try_pip_install = False):
     """
     Check if string is importable/loadable. If it doesn't then try to 'pip install' it using subprocess.
     Returns None if succesful, otherwise throws and error or outputs False.
@@ -681,6 +1007,9 @@ def is_importable(string, try_pip_install = False):
     Args:
         :string:
             | string with package or module name
+        :pip_string:
+            | string with package or module name as known by pip
+            | If None: use the import string
         :try_pip_install:
             | False, optional
             | True: try pip installing it using subprocess
@@ -690,19 +1019,20 @@ def is_importable(string, try_pip_install = False):
             | True if importable, False if not.
     """ 
     success = importlib.util.find_spec(string) is not None
-    if (not success) & (try_pip_install == True):  
+    if (not success) & (try_pip_install == True): 
+        if pip_string is None: pip_string = string
         try:
-            print("Trying to 'pip install {:s}' using subprocess.".format(string))
-            success = subprocess.call(["pip", "install", "{:s}".format(string)])
+            print("Trying to 'pip install {:s}' using subprocess.".format(pip_string))
+            success = subprocess.call(["pip", "install", "{:s}".format(pip_string)])
             print("subprocess output: ", success)
             if success != 0:
-                raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))  
+                raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,pip_string))  
             else:
-                print("'pip install {:s}' succesful".format(string))
+                print("'pip install {:s}' succesful".format(pip_string))
             success = importlib.util.find_spec(string) is not None
         except:
             success = False
-            raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,string))   
+            raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,pip_string))   
     return success
     
 #------------------------------------------------------------------------------
@@ -795,35 +1125,46 @@ def unique(array, sort = True):
         return uniq[index.argsort()]
 
 #------------------------------------------------------------------------------
-def save_pkl(filename, obj): 
+def save_pkl(filename, obj, compresslevel = 0): 
     """ 
-    Save an object in a pickle file.
+    Save an object in a (gzipped) pickle file.
     
     Args:
         :filename:
             | str with filename of pickle file.
         :obj:
             | python object to save
+        :compresslevel:
+            | 0, optional
+            | If > 0: use gzip to compress pkl file.
     
     Returns:
         :None:
     """
-    with open(filename, 'wb') as handle:
+    _open = (lambda file,w: gzip.open(file+'.gz', w, compresslevel = compresslevel)) if (compresslevel > 0) else (lambda file, w: open(file,w))
+    with _open(filename, 'wb') as handle:
         pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
-def load_pkl(filename):
+def load_pkl(filename, gzipped = False):
     """ 
-    Load the object in a pickle file.
+    Load the object in a (gzipped) pickle file.
     
     Args:
         :filename:
             | str with filename of pickle file.
+        :gzipped:
+            | False, optional 
+            | If True: '.gz' will be added to filename before opening. 
         
     Returns:
         :obj:
             | loaded python object
     """
     obj = None
-    with open(filename, 'rb') as handle:
+    if gzipped and (filename[-3:] != '.gz'): filename = filename + '.gz'
+    _open = gzip.open if filename[-3:] == '.gz' else open
+    with _open(filename, 'rb') as handle:
         obj = pickle.load(handle)
     return obj
+
+#------------------------------------------------------------------------------

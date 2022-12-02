@@ -6,16 +6,17 @@ Module with color fidelity and color gamut area parameter dicts
  :_CRI_TYPE_DEFAULT: Default cri_type.
 
  :CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-                (major dict has 9 keys (04-Jul-2017): 
-                sampleset [str/dict], 
-                ref_type [str], 
-                cieobs [str], 
-                avg [fcn handle], 
-                scale [dict], 
-                cspace [dict], 
-                catf [dict], 
-                rg_pars [dict], 
-                cri_specific_pars [dict])
+               (major dict has 10 keys (2022): 
+               sampleset [str/dict], 
+               ref_type [str], 
+               cieobs [str], 
+               avg [fcn handle], 
+               rf_from_avg_rounded_rfi [bool],
+               scale [dict], 
+               cspace [dict], 
+               catf [dict], 
+               rg_pars [dict], 
+               cri_specific_pars [dict])
             
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function

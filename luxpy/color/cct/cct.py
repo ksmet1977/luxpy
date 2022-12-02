@@ -116,7 +116,6 @@ cct: Module with functions related to correlated color temperature calculations
 
 import os
 import copy 
-import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import minimize
@@ -133,7 +132,7 @@ from luxpy.color.ctf.colortf import colortf
 
 __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            '_CCT_LUT_PATH','_CCT_LUT', '_CCT_LUT_RESOLUTION_REDUCTION_FACTOR',
-           '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT',
+           '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT','_CCT_PKL_COMPRESSLEVEL',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
            'xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
            'xyz_to_cct_li2016', 'xyz_to_cct_li2022',
@@ -182,6 +181,8 @@ _CCT_LUT_MIN, _CCT_LUT_MAX = 1000.0, 41000
 _CCT_SHARED_LUT_TYPES = [((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),)] # shared among all modes
 
 _CCT_LUT_ONE_NPY_PER_MODE = True # switch between generating one npy file per mode (3-.. columns) vs one for all modes (8 columns)
+
+_CCT_PKL_COMPRESSLEVEL = 9
 
 #==============================================================================
 # define general helper functions:
@@ -1374,14 +1375,14 @@ def generate_luts(types = [None], seamless_stitch = True,
                     file_path = os.path.join(lut_path,lut_file)
                     if verbosity > 0:
                         print('Saving dict with luts in {:s}'.format(file_path))                                                 
-                    save_pkl(file_path,luts)
-        luts = load_pkl(file_path)
+                    save_pkl(file_path,luts, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+        luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
     else:
         if lut_file is not None:
             file_path = os.path.join(lut_path, lut_file)
             if verbosity > 1:
                 print('Loading dict with luts in {:s}'.format(file_path))                                                 
-            luts = load_pkl(file_path)
+            luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
         else:
             raise Exception('Trying to load lut file but no lut_file has been supplied.')
     return luts
@@ -1452,18 +1453,27 @@ def _lut_to_float64(luts):
 def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
     """ Download lut(s) from the luxpy github repo """
     import requests 
+    import pickle
+    import gzip
     from io import BytesIO
     if modes is None: modes = _CCT_LIST_OF_MODE_LUTS
     for mode in modes:
-        r = requests.get(os.path.join(url,mode+'_luts.pkl'))
-        lut = pickle.load(BytesIO(r.content))
-        save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'),lut)
-    
+        if _CCT_PKL_COMPRESSLEVEL == 0: 
+            r = requests.get(os.path.join(url,mode+'_luts.pkl'))
+            lut = pickle.load(BytesIO(r.content))
+            save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+        else:
+            r = requests.get(os.path.join(url,mode+'_luts.pkl.gz'))
+            with gzip.open(BytesIO(r.content),mode='r') as fobj:
+                lut = pickle.load(fobj)
+            save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
+
+            
         
-def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
+def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None, lut_generator_kwargs = {}):
     """ Pre-generate / load from disk / download from github some LUTs for a specific mode """
     if (mode in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
-        lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode)))
+        lut_exists = os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl'.format(mode))) | os.path.exists(os.path.join(_CCT_LUT_PATH,'{:s}_luts.pkl.gz'.format(mode)))
         if (not lut_exists) & (force_calc == False):
             try:
                 print("LUT pickle file for mode '{:s}' doesn't exist. Trying download from luxpy github repo.".format(mode))
@@ -1480,7 +1490,8 @@ def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None):
                                                 cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
                                                 lut_vars = _CCT_LUT[mode]['lut_vars'],
                                                 verbosity = _CCT_VERBOSITY_LUT_GENERATION,
-                                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'])
+                                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                                lut_generator_kwargs = lut_generator_kwargs)
         # _CCT_LUT[mode]['luts'] = _lut_to_float64(_CCT_LUT[mode]['luts'])
         _copy_luts(mode, lut = _CCT_LUT) # 2015_2 -> 2006_2, 2015_10 -> 2006_10
 
@@ -1591,13 +1602,145 @@ def _get_pns_from_x(x, idx, i = None, m0p = 'm0p'):
     
 def _deal_with_lut_end_points(pn, TBB, out_of_lut = None):
     ce = pn == (TBB.shape[0]-1) # end point
-    cb = pn==0 # begin point
+    cb = pn<=0 # begin point
     if out_of_lut is None: out_of_lut = (cb | ce)[:,None]
     pn[cb] =  1 # begin point 
     ce = pn == (TBB.shape[0]-1) # end point double-check !!
     pn[ce] = (TBB.shape[0] - 2) # end of lut (results in TBB_0==TBB_p1 -> (1/TBB_0)-(1/TBB_p1)) == 0 !
 
     return pn, out_of_lut
+
+#==============================================================================
+# Define cct, duv to xyz conversion function:
+#==============================================================================
+
+#---------------------------------------------------------------------------------------------------
+def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
+               cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
+    """
+    Convert correlated color temperature (550 K <= CCT <= 1e11 K) and 
+    Duv (distance above (>0) or below (<0) the Planckian locus) to 
+    XYZ tristimulus values.
+    
+    | Finds xyzw_estimated by determining the iso-temperature line 
+    |   (= line perpendicular to the Planckian locus): 
+    |   Option 1 (fastest):
+    |       First, the angle between the coordinates corresponding to ccts 
+    |       and ccts-cct_offset are calculated, then 90° is added, and finally
+    |       the new coordinates are determined, while taking sign of duv into account.
+    |   Option 2 (slowest, about 55% slower):
+    |       Calculate the slope of the iso-T-line directly using the Planckian
+    |       spectrum and its derivative.
+     
+    Args:
+        :ccts: 
+            | ndarray [N,1] of cct values
+        :duv: 
+            | None or ndarray [N,1] of duv values, optional
+            | Note that duv can be supplied together with cct values in :ccts: 
+            | as ndarray with shape [N,2].
+        :cct_offset:
+            | None, optional
+            | If None: use option 2 (direct iso-T slope calculation, more accurate,
+            |                        but slower: about 1.55 slower)
+            | else: use option 1 (estimate slope from 90° + angle of small cct_offset)
+        :cieobs: 
+            | luxpy._CIEOBS, optional
+            | CMF set used to calculated xyzw.
+        :wl: 
+            | None, optional
+            | Wavelengths used when calculating Planckian radiators.
+            | If None: use same wavelengths as CMFs in :cieobs:.
+        :cspace:
+            | _CCT_SPACE, optional
+            | Color space to do calculations in. 
+            | Options: 
+            |    - cspace string: 
+            |        e.g. 'Yuv60' for use with luxpy.colortf()
+            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
+            |      (and an optional string describing the cspace): 
+            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
+            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
+            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
+        :cspace_kwargs:
+            | _CCT_CSPACE_KWARGS, optional
+            | Parameter nested dictionary for the forward and backward transforms.
+        
+    Returns:
+        :returns: 
+            | ndarray with estimated XYZ tristimulus values
+    
+    Note:
+        1. If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
+        source is assumed to be on the Planckian locus.
+        2. Minimum CCT is 550 K (lower than 550 K, some negative Duv values
+        will result in coordinates outside of the Spectrum Locus !!!)
+    """
+    # make ccts a min. 2d np.array:
+    if isinstance(ccts,list):
+        ccts = np2dT(np.array(ccts))
+    else:
+        ccts = np2d(ccts) 
+    
+    if len(ccts.shape)>2:
+        raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
+    
+    # get cct and duv arrays from :ccts:
+    cct = np2d(ccts[:,0,None])
+
+    if (duv is None) & (ccts.shape[1] == 2):
+        duv = np2d(ccts[:,1,None])
+    if (duv is None) & (ccts.shape[1] == 1):
+        duv = np.zeros_like(ccts)
+    elif duv is not None:
+        duv = np2d(duv)
+
+    cspace_dict,_ = _process_cspace(cspace, cspace_kwargs)
+    if cspace_dict['bwtf'] is None:
+        raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
+
+    xyzbar,wl, dl = _get_xyzbar_wl_dl(cieobs, wl = wl)
+    if cct_offset is not None:
+        # estimate iso-T-line from estimated slope using small cct offset:
+        #-----------------------------------------------------------------
+        _,xyzBB,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack((cct, cct-cct_offset,cct+cct_offset)),xyzbar,wl,dl,out='BB') 
+        YuvBB = cspace_dict['fwtf'](xyzBB)
+
+        N = (xyzBB.shape[0])//3
+        YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
+        theta = np.arctan2(YuvBB_centered[...,2:3],YuvBB_centered[...,1:2])
+        theta = (theta[:N] + (theta[N:] - np.pi*np.sign(theta[N:])))/2 # take average for increased accuracy
+        theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
+        u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
+
+    else:
+        # estimate iso-T-line from calculated slope:
+        #-------------------------------------------
+        uvwbar = _convert_xyzbar_to_uvwbar(xyzbar,cspace_dict)
+        _,UVW,UVWp,_ = _get_tristim_of_BB_BBp_BBpp(cct,uvwbar,wl,dl,out='BB,BBp') 
+        
+        R = UVW.sum(axis=-1, keepdims = True) 
+        Rp = UVWp.sum(axis=-1, keepdims = True) 
+        num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
+        denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
+        num[(num == 0)] += _CCT_AVOID_ZERO_DIV
+        denom[(denom == 0)] += _CCT_AVOID_ZERO_DIV
+        li = num/denom  
+        li = li + np.sign(li)*_CCT_AVOID_ZERO_DIV # avoid division by zero
+        mi = -1.0/li # slope of isotemperature lines
+
+        YuvBB = xyz_to_Yxy(UVW)
+        u, v = YuvBB[:,1:2] + np.sign(mi) * duv*(1/((1+mi**2)**0.5)), YuvBB[:,2:3] + np.sign(mi)* duv*((mi)/(1+mi**2)**0.5)
+        
+    # plt.plot(YuvBB[...,1],YuvBB[...,2],'gx')
+    # lx.plotSL(cspace='Yuv60',axh=plt.gca())
+    # plt.plot(u,v,'b+')    
+    
+    Yuv = np.hstack((100*np.ones_like(u),u,v))
+    return cspace_dict['bwtf'](Yuv)
+
+
+
 
 #==============================================================================
 # define original versions of various cct methods:
@@ -2221,12 +2364,12 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     di_0 = _get_pns_from_x(di, pn, i = idx_sources, m0p = '0')
     mBB_0 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0')
     
-    # Deal with endpoints of lut + create intermediate variables to save memory:
-    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
-    
     # Deal with positive slopes of iso-T lines
     c = (di_0*mBB_0 < 0)[:,0]
-    pn[c] = pn[c] - 1
+    pn[c] = pn[c] - 1 
+    
+    # Deal with endpoints of lut + create intermediate variables to save memory:
+    pn, out_of_lut = _deal_with_lut_end_points(pn, TBB, out_of_lut)
     
     # Get final values required for T calculation:
     mBB_0, mBB_p1 = _get_pns_from_x(mBB, pn, i = idx_sources, m0p = '0p')
@@ -2702,9 +2845,10 @@ def _generate_lut_ohno2014(lut,
                            cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                            luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
                            cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
-                           lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+                           #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                           f_corr = None, ignore_f_corr_is_None = False,
+                           f_corr = None, ignore_f_corr_is_None = False, 
+                           duv_triangular_threshold = 0.002,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -2725,26 +2869,38 @@ def _generate_lut_ohno2014(lut,
         :dict:
             | a dictionary with the (re-optmized) value for f_corr and for ignore_f_cor_is_None.)
     """    
-
+    # get/estimate lut unit:
+    if isinstance(lut,tuple):
+        if isinstance(lut[0],tuple):
+            fallback_unit_lut = lut[0][-1]
+        else:
+            fallback_unit_lut = lut[-1]
+    else:
+        fallback_unit_lut = _get_lut_characteristics(lut,force_au = False)[0][-1]
+        if fallback_unit_lut == 'au': fallback_unit_lut = _CCT_FALLBACK_UNIT
+        
     # generate lut:
     lut, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
-                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                        fallback_unit = fallback_unit_lut, fallback_n = fallback_n,
                         resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
                         wl = wl, cieobs = cieobs, lut_vars = lut_vars,
                         cspace =  cspace, cspace_kwargs = cspace_kwargs)        
     
     # No f_corr needed for high resolution luts:
-    if (np.round(np.diff(lut[:,0]).min(),6) == np.round(np.diff(lut[:,0]).max(),6) == np.round(lut[-1,0]-lut[-2,0],6)): # K scale
+    if ((np.round(np.diff(lut[:,0]).min(),6) == np.round(np.diff(lut[:,0]).max(),6) == np.round(lut[-1,0]-lut[-2,0],6))) | (fallback_unit_lut == 'K'): # K scale
         if lut[-1,0]-lut[-2,0] <= 10:
             f_corr = 1
-    
+    elif (fallback_unit_lut == '%'):
+        if np.round((lut[-1,0]/lut[-2,0] - 1)*100,4) < 0.2:
+            f_corr = 1
+        
     # Get correction factor for Tx in parabolic solution:
     if (f_corr is None): 
         if (ignore_f_corr_is_None == False):
             f_corr = get_correction_factor_for_Tx(lut, 
                                                   uin = uin, 
                                                   seamless_stitch = seamless_stitch, 
-                                                  fallback_unit = _CCT_FALLBACK_UNIT,
+                                                  fallback_unit = fallback_unit_lut,
                                                   fallback_n = lut.shape[0]*4,
                                                   resample_ndarray = True,
                                                   cct_max = cct_max, 
@@ -2753,7 +2909,8 @@ def _generate_lut_ohno2014(lut,
                                                   lut_vars = lut_vars,
                                                   cspace =  cspace, 
                                                   cspace_kwargs = cspace_kwargs,
-                                                  ignore_wl_diff = ignore_wl_diff)
+                                                  ignore_wl_diff = ignore_wl_diff,
+                                                  duv_triangular_threshold = duv_triangular_threshold)
 
         else: 
             f_corr = 1.0 # use this a backup value
@@ -2763,16 +2920,17 @@ def _generate_lut_ohno2014(lut,
 
 _CCT_LUT['ohno2014']['_generate_lut'] = _generate_lut_ohno2014
 
-def get_correction_factor_for_Tx(lut, lut_fine = None,
+def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
                                  uin = None, seamless_stitch = True, 
                                  fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
                                  resample_ndarray = True,
                                  cct_max = _CCT_MAX, cct_min = _CCT_MIN,
                                  luts_dict = None, lut_type_def = None, lut_vars = ['T','uv'],
                                  cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
-                                 lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
+                                 #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                                 f_corr = None, ignore_f_corr_is_None = False,
+                                 f_corr = None, ignore_f_corr_is_None = False, 
+                                 duv_triangular_threshold = 0.002,
                                  ignore_wl_diff = False,
                                  verbosity = 0):
     """ 
@@ -2780,7 +2938,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
     calculated CCT. However, this factor depends on the lut used. This function
     optimizes a new correction factor. Not using the right f_corr can lead to errors
     of several Kelvin. (it generates a finer resolution lut and optimizes the correction
-                        factor such that predictions of the working lut for eacg of the
+                        factor such that predictions of the working lut for each of the
                         entries in this fine-resolution lut is minimized.)
     
     Args:
@@ -2799,31 +2957,48 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
          :f_corr:
              | Tc,x correction factor.
     """
+    if cctduv is None:
+    
+        # Generate a finer resolution lut of ccts to estimate the f_corr correction factor:    
+        if lut_fine is None:
+            lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                                        resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
+                                        wl = wl, cieobs = cieobs, 
+                                        cspace =  cspace, cspace_kwargs = cspace_kwargs,
+                                        lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
 
-    # Generate a finer resolution lut to estimate the f_corr correction factor:
-    if lut_fine is None:
-        lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
-                                    fallback_unit = fallback_unit, fallback_n = fallback_n,
-                                    resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
-                                    wl = wl, cieobs = cieobs, 
-                                    cspace =  cspace, cspace_kwargs = cspace_kwargs,
-                                    lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
-
+        # add Duv offsets to ccts from finer lut:
+        cct = lut_fine[1:-1,:1]
+        duv = 0.0
+        cctduv = np.hstack((cct,np.ones_like(cct)*duv))
+        #cctduv = np.vstack((cctduv,np.hstack((cct,-np.ones_like(cct)*duv))))
+        while duv <= 0.05:
+            duv = duv + 0.001
+            cctduv = np.vstack((cctduv,np.hstack((cct,np.ones_like(cct)*duv))))
+            cctduv = np.vstack((cctduv,np.hstack((cct,-np.ones_like(cct)*duv))))
+        np.random.shuffle(cctduv)
+        cctduv = cctduv[:min(cctduv.shape[0],max(lut_fine.shape[0],1000)),:]
+        
+    xyz = cct_to_xyz(cctduv, cieobs = cieobs, wl = wl, cspace = cspace, cspace_kwargs = cspace_kwargs)
+        
+    
     # define shorthand lambda fcn:
-    TxDuvx_p = lambda x: _xyz_to_cct(lut_fine[:,1:3], mode = 'ohno2014', 
-                                     lut = [lut, {'f_corr': np.round(x,5)}], 
-                                     is_uv_input = True, 
+    rr = 10 # rounding of f_corr
+    TxDuvx_p = lambda x: _xyz_to_cct(xyz, mode = 'ohno2014', 
+                                     lut = [lut, {'f_corr': np.round(x,rr)}], 
+                                     is_uv_input = False,#True, 
                                      force_tolerance = False, tol_method = None,
                                      out = '[cct,duv]',
-                                     duv_triangular_threshold = 0, # force use of parabolic
+                                     duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
                                      luts_dict = _CCT_LUT['ohno2014']['luts'],
-                                     )[1:-1,:]
+                                     )
  
-    T = lut_fine[1:-1,0] 
-    Duv = 0.0
+    T = cctduv[:,0] 
+    Duv = cctduv[:,1]#0.0
     
     # define objective function:
     def optfcn(x, T, Duv, out = 'F'):
@@ -2844,22 +3019,22 @@ def get_correction_factor_for_Tx(lut, lut_fine = None,
     x0 = np.array([1])
     options = {'maxiter': 1e3, 'maxfev': 1e3,  'xatol': 1e-6, 'fatol': 1e-6}
     res = minimize(optfcn, x0, args = (T,Duv,'F'),method = 'Nelder-Mead', options = options)
-    f_corr = np.round(res['x'][0],5)
+    f_corr = np.round(res['x'][0],rr)
     F, dT2, dDuv2, Tx, Duvx = optfcn(res['x'], T, Duv, out = 'F,dT2,dDuv2,Tx,Duvx')
     
     if verbosity > 1: 
         fig,ax = plt.subplots(1,2,figsize=(10,5))
-        ax[0].plot(T,dT2**0.5)
+        ax[0].plot(T,dT2**0.5,'.')
         ax[0].set_title('dT (f_corr = {:1.5f})'.format(f_corr))
         ax[0].set_ylabel('dT')
         ax[0].set_xlabel('T (K)')
-        ax[1].plot(T,dDuv2**0.5)
+        ax[1].plot(T,dDuv2**0.5,'.')
         ax[1].set_title('dDuv (f_corr = {:1.5f})'.format(f_corr))
         ax[1].set_ylabel('dDuv')
         ax[1].set_xlabel('T (K)')
         
     if verbosity > 0: 
-        print('    f_corr = {:1.5f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
+        print('    f_corr = {:1.12f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
 
     return f_corr
 
@@ -2893,12 +3068,12 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     l[l==0] += -_CCT_AVOID_ZERO_DIV 
     x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
     # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
-    vTx = vBB_m1 + (vBB_p1 - vBB_m1)*(x/l)
+    vTx = vBB_m1 + (vBB_p1 - vBB_m1) * (x/l)
     Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
     Duvxt = (di_m1**2 - x**2)
     Duvxt[Duvxt<0] = 0
     Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
-    # _plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
+    #_plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
 
 
     #---------------------------------------------
@@ -2912,8 +3087,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
           di_0  * (TBB_m1 - TBB_p1) * TBB_m1 * TBB_p1 +\
           di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
     Txp = -b/(2*a)
-    Txp_corr = Txp * f_corr # correction factor depends on the LUT !!!!! (0.0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
-    Txp = Txp_corr
+
     Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
 
     # Select triangular (threshold=0), parabolic (threshold=inf) or 
@@ -2921,6 +3095,9 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     Tx, Duvx = Txt, Duvxt 
     cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
+    
+    Tx = Tx * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+
             
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
 
@@ -3105,7 +3282,7 @@ def _generate_lut_li2022(lut,
                            cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                            lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                           f_corr = None, ignore_f_corr_is_None = False,
+                           f_corr = None, ignore_f_corr_is_None = False,duv_triangular_threshold = 0.002,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -3126,26 +3303,38 @@ def _generate_lut_li2022(lut,
         :dict:
             | a dictionary with the (re-optmized) value for f_corr and for ignore_f_cor_is_None.)
     """    
-
+    # get/estimate lut unit:
+    if isinstance(lut,tuple):
+        if isinstance(lut[0],tuple):
+            fallback_unit_lut = lut[0][-1]
+        else:
+            fallback_unit_lut = lut[-1]
+    else:
+        fallback_unit_lut = _get_lut_characteristics(lut,force_au = False)[0][-1]
+        if fallback_unit_lut == 'au': fallback_unit_lut = _CCT_FALLBACK_UNIT
+        
     # generate lut:
     lut, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
-                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                        fallback_unit = fallback_unit_lut, fallback_n = fallback_n,
                         resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
                         wl = wl, cieobs = cieobs, lut_vars = lut_vars,
                         cspace =  cspace, cspace_kwargs = cspace_kwargs)        
     
     # No f_corr needed for high resolution luts:
-    if (np.round(np.diff(lut[:,0]).min(),6) == np.round(np.diff(lut[:,0]).max(),6) == np.round(lut[-1,0]-lut[-2,0],6)): # K scale
+    if ((np.round(np.diff(lut[:,0]).min(),6) == np.round(np.diff(lut[:,0]).max(),6) == np.round(lut[-1,0]-lut[-2,0],6))) | (fallback_unit_lut == 'K'): # K scale
         if lut[-1,0]-lut[-2,0] <= 10:
             f_corr = 1
-    
+    elif (fallback_unit_lut == '%'):
+        if np.round((lut[-1,0]/lut[-2,0] - 1)*100,4) < 0.25:
+            f_corr = 1
+        
     # Get correction factor for Tx in parabolic solution:
     if (f_corr is None): 
         if (ignore_f_corr_is_None == False):
-            f_corr = get_correction_factor_for_Tx_li2022(lut, 
+            f_corr = get_correction_factor_for_Tx(lut, 
                                                   uin = uin, 
                                                   seamless_stitch = seamless_stitch, 
-                                                  fallback_unit = _CCT_FALLBACK_UNIT,
+                                                  fallback_unit = fallback_unit_lut,
                                                   fallback_n = lut.shape[0]*4,
                                                   resample_ndarray = True,
                                                   cct_max = cct_max, 
@@ -3154,7 +3343,8 @@ def _generate_lut_li2022(lut,
                                                   lut_vars = lut_vars,
                                                   cspace =  cspace, 
                                                   cspace_kwargs = cspace_kwargs,
-                                                  ignore_wl_diff = ignore_wl_diff)
+                                                  ignore_wl_diff = ignore_wl_diff,
+                                                  duv_triangular_threshold = duv_triangular_threshold)
 
         else: 
             f_corr = 1.0 # use this a backup value
@@ -3164,7 +3354,7 @@ def _generate_lut_li2022(lut,
 
 _CCT_LUT['li2022']['_generate_lut'] = _generate_lut_li2022
 
-def get_correction_factor_for_Tx_li2022(lut, lut_fine = None,
+def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
                                  uin = None, seamless_stitch = True, 
                                  fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
                                  resample_ndarray = True,
@@ -3173,7 +3363,7 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None,
                                  cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                                  lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                                 f_corr = None, ignore_f_corr_is_None = False,
+                                 f_corr = None, ignore_f_corr_is_None = False,duv_triangular_threshold=0.002,
                                  ignore_wl_diff = False,
                                  verbosity = 0):
     """ 
@@ -3201,30 +3391,48 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None,
              | Tc,x correction factor.
     """
 
-    # Generate a finer resolution lut to estimate the f_corr correction factor:
-    if lut_fine is None:
-        lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
-                                    fallback_unit = fallback_unit, fallback_n = fallback_n,
-                                    resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
-                                    wl = wl, cieobs = cieobs, 
-                                    cspace =  cspace, cspace_kwargs = cspace_kwargs,
-                                    lut_vars = _CCT_LUT['li2022']['lut_vars'])
-
+    if cctduv is None:
+    
+        # Generate a finer resolution lut of ccts to estimate the f_corr correction factor:    
+        if lut_fine is None:
+            lut_fine, _ = _generate_lut(lut, uin = uin, seamless_stitch = seamless_stitch, 
+                                        fallback_unit = fallback_unit, fallback_n = fallback_n,
+                                        resample_ndarray = resample_ndarray, cct_max = cct_max, cct_min = cct_min,
+                                        wl = wl, cieobs = cieobs, 
+                                        cspace =  cspace, cspace_kwargs = cspace_kwargs,
+                                        lut_vars = _CCT_LUT['li2022']['lut_vars'])
+    
+        # add Duv offsets to ccts from finer lut:
+        cct = lut_fine[1:-1,:1]
+        duv = 0.0
+        cctduv = np.hstack((cct,np.ones_like(cct)*duv))
+        #cctduv = np.vstack((cctduv,np.hstack((cct,-np.ones_like(cct)*duv))))
+        while duv <= 0.05:
+            duv = duv + 0.001
+            cctduv = np.vstack((cctduv,np.hstack((cct,np.ones_like(cct)*duv))))
+            cctduv = np.vstack((cctduv,np.hstack((cct,-np.ones_like(cct)*duv))))
+        np.random.shuffle(cctduv)
+        cctduv = cctduv[:min(cctduv.shape[0],max(lut_fine.shape[0],1000)),:]
+        
+    xyz = cct_to_xyz(cctduv, cieobs = cieobs, wl = wl, cspace = cspace, cspace_kwargs = cspace_kwargs)
+        
+    
     # define shorthand lambda fcn:
-    TxDuvx_p = lambda x: _xyz_to_cct(lut_fine[:,1:3], mode = 'li2022', 
-                                     lut = [lut, {'f_corr': np.round(x,5)}], 
-                                     is_uv_input = True, 
+    rr = 10 # rounding of f_corr
+    TxDuvx_p = lambda x: _xyz_to_cct(xyz, mode = 'li2022', 
+                                     lut = [lut, {'f_corr': np.round(x,rr)}], 
+                                     is_uv_input = False,#True, 
                                      force_tolerance = False, tol_method = None,
                                      out = '[cct,duv]',
-                                     duv_triangular_threshold = 0, # force use of parabolic
+                                     duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
                                      luts_dict = _CCT_LUT['li2022']['luts'],
-                                     )[1:-1,:]
- 
-    T = lut_fine[1:-1,0] 
-    Duv = 0.0
+                                     )
+    
+    T = cctduv[:,0] 
+    Duv = cctduv[:,1]#0.0
     
     # define objective function:
     def optfcn(x, T, Duv, out = 'F'):
@@ -3245,24 +3453,25 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None,
     x0 = np.array([1])
     options = {'maxiter': 1e3, 'maxfev': 1e3,  'xatol': 1e-6, 'fatol': 1e-6}
     res = minimize(optfcn, x0, args = (T,Duv,'F'),method = 'Nelder-Mead', options = options)
-    f_corr = np.round(res['x'][0],5)
+    f_corr = np.round(res['x'][0],rr)
     F, dT2, dDuv2, Tx, Duvx = optfcn(res['x'], T, Duv, out = 'F,dT2,dDuv2,Tx,Duvx')
     
     if verbosity > 1: 
         fig,ax = plt.subplots(1,2,figsize=(10,5))
-        ax[0].plot(T,dT2**0.5)
+        ax[0].plot(T,dT2**0.5,'.')
         ax[0].set_title('dT (f_corr = {:1.5f})'.format(f_corr))
         ax[0].set_ylabel('dT')
         ax[0].set_xlabel('T (K)')
-        ax[1].plot(T,dDuv2**0.5)
+        ax[1].plot(T,dDuv2**0.5,'.')
         ax[1].set_title('dDuv (f_corr = {:1.5f})'.format(f_corr))
         ax[1].set_ylabel('dDuv')
         ax[1].set_xlabel('T (K)')
         
     if verbosity > 0: 
-        print('    f_corr = {:1.5f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
-
+        print('    f_corr = {:1.12f}: rmse dT={:1.4f}, dDuv={:1.6f}'.format(f_corr, dT2.mean()**0.5, dDuv2.mean()**0.5))
+    
     return f_corr
+
 
 
 def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
@@ -3302,6 +3511,7 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
     vTx = vBB_m1 + (vBB_p1 - vBB_m1)*(x/l)
     Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
+    Txt = Txt * f_corr # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
     Duvxt = (di_m1**2 - x**2)
     Duvxt[Duvxt<0] = 0
     Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
@@ -3320,10 +3530,10 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     T_1[c_p1_m1], T_2[c_p1_m1] = TBB_m1[c_p1_m1], TBB_0[c_p1_m1]
     u_1[c_p1_m1], u_2[c_p1_m1] = uBB_m1[c_p1_m1], uBB_0[c_p1_m1]
     v_1[c_p1_m1], v_2[c_p1_m1] = vBB_m1[c_p1_m1], vBB_0[c_p1_m1]
-    up_1[c_p1_m1], up_1[c_p1_m1] = upBB_m1[c_p1_m1], upBB_0[c_p1_m1]
-    vp_1[c_p1_m1], vp_1[c_p1_m1] = vpBB_m1[c_p1_m1], vpBB_0[c_p1_m1]
-    upp_1[c_p1_m1], upp_1[c_p1_m1] = uppBB_m1[c_p1_m1], uppBB_0[c_p1_m1]
-    vpp_1[c_p1_m1], vpp_1[c_p1_m1] = vppBB_m1[c_p1_m1], vppBB_0[c_p1_m1]
+    up_1[c_p1_m1], up_2[c_p1_m1] = upBB_m1[c_p1_m1], upBB_0[c_p1_m1]
+    vp_1[c_p1_m1], vp_2[c_p1_m1] = vpBB_m1[c_p1_m1], vpBB_0[c_p1_m1]
+    upp_1[c_p1_m1], upp_2[c_p1_m1] = uppBB_m1[c_p1_m1], uppBB_0[c_p1_m1]
+    vpp_1[c_p1_m1], vpp_2[c_p1_m1] = vppBB_m1[c_p1_m1], vppBB_0[c_p1_m1]
 
     g_1, g_2 = 1/(d_1 + _CCT_AVOID_ZERO_DIV), 1/(d_2 + _CCT_AVOID_ZERO_DIV)
     
@@ -3339,7 +3549,7 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     hk = (T_2 - T_1) 
     Ak = (d_2 - d_1)/hk - hk/6 * (q_2 - q_1) # Am, eq.7 
-    Bk = d_2 - q_1*(hk**2)/6
+    Bk = d_1 - q_1*(hk**2)/6
     
     a = (q_2 - q_1)/(2*hk) 
     b = (q_1*T_2 - q_2*T_1) / (hk)
@@ -3362,6 +3572,7 @@ def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
             
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
+
 
 _CCT_UV_TO_TX_FCNS['li2022']= _uv_to_Tx_li2022
     
@@ -4277,130 +4488,6 @@ def xyz_to_duv(xyzw, out = 'duv', **kwargs):
     """
     return xyz_to_cct(xyzw, out = out, **kwargs)
         
-#---------------------------------------------------------------------------------------------------
-def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
-               cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS):
-    """
-    Convert correlated color temperature (550 K <= CCT <= 1e11 K) and 
-    Duv (distance above (>0) or below (<0) the Planckian locus) to 
-    XYZ tristimulus values.
-    
-    | Finds xyzw_estimated by determining the iso-temperature line 
-    |   (= line perpendicular to the Planckian locus): 
-    |   Option 1 (fastest):
-    |       First, the angle between the coordinates corresponding to ccts 
-    |       and ccts-cct_offset are calculated, then 90° is added, and finally
-    |       the new coordinates are determined, while taking sign of duv into account.
-    |   Option 2 (slowest, about 55% slower):
-    |       Calculate the slope of the iso-T-line directly using the Planckian
-    |       spectrum and its derivative.
-     
-    Args:
-        :ccts: 
-            | ndarray [N,1] of cct values
-        :duv: 
-            | None or ndarray [N,1] of duv values, optional
-            | Note that duv can be supplied together with cct values in :ccts: 
-            | as ndarray with shape [N,2].
-        :cct_offset:
-            | None, optional
-            | If None: use option 2 (direct iso-T slope calculation, more accurate,
-            |                        but slower: about 1.55 slower)
-            | else: use option 1 (estimate slope from 90° + angle of small cct_offset)
-        :cieobs: 
-            | luxpy._CIEOBS, optional
-            | CMF set used to calculated xyzw.
-        :wl: 
-            | None, optional
-            | Wavelengths used when calculating Planckian radiators.
-            | If None: use same wavelengths as CMFs in :cieobs:.
-        :cspace:
-            | _CCT_SPACE, optional
-            | Color space to do calculations in. 
-            | Options: 
-            |    - cspace string: 
-            |        e.g. 'Yuv60' for use with luxpy.colortf()
-            |    - tuple with forward (i.e. xyz_to..) [and backward (i.e. ..to_xyz)] functions 
-            |      (and an optional string describing the cspace): 
-            |        e.g. (forward, backward) or (forward, backward, cspace string) or (forward, cspace string) 
-            |    - dict with keys: 'fwtf' (foward), 'bwtf' (backward) [, optional: 'str' (cspace string)]
-            |  Note: if the backward tf is not supplied, optimization in cct_to_xyz() is done in the CIE 1976 u'v' diagram
-        :cspace_kwargs:
-            | _CCT_CSPACE_KWARGS, optional
-            | Parameter nested dictionary for the forward and backward transforms.
-        
-    Returns:
-        :returns: 
-            | ndarray with estimated XYZ tristimulus values
-    
-    Note:
-        1. If duv is not supplied (:ccts:.shape is (N,1) and :duv: is None), 
-        source is assumed to be on the Planckian locus.
-        2. Minimum CCT is 550 K (lower than 550 K, some negative Duv values
-        will result in coordinates outside of the Spectrum Locus !!!)
-    """
-    # make ccts a min. 2d np.array:
-    if isinstance(ccts,list):
-        ccts = np2dT(np.array(ccts))
-    else:
-        ccts = np2d(ccts) 
-    
-    if len(ccts.shape)>2:
-        raise Exception('cct_to_xyz(): Input ccts.shape must be <= 2 !')
-    
-    # get cct and duv arrays from :ccts:
-    cct = np2d(ccts[:,0,None])
-
-    if (duv is None) & (ccts.shape[1] == 2):
-        duv = np2d(ccts[:,1,None])
-    if (duv is None) & (ccts.shape[1] == 1):
-        duv = np.zeros_like(ccts)
-    elif duv is not None:
-        duv = np2d(duv)
-
-    cspace_dict,_ = _process_cspace(cspace, cspace_kwargs)
-    if cspace_dict['bwtf'] is None:
-        raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
-
-    xyzbar,wl, dl = _get_xyzbar_wl_dl(cieobs, wl = wl)
-    if cct_offset is not None:
-        # estimate iso-T-line from estimated slope using small cct offset:
-        #-----------------------------------------------------------------
-        _,xyzBB,_,_ = _get_tristim_of_BB_BBp_BBpp(np.vstack((cct, cct-cct_offset,cct+cct_offset)),xyzbar,wl,dl,out='BB') 
-        YuvBB = cspace_dict['fwtf'](xyzBB)
-
-        N = (xyzBB.shape[0])//3
-        YuvBB_centered = (YuvBB[N:] - np.vstack((YuvBB[:N],YuvBB[:N])))
-        theta = np.arctan2(YuvBB_centered[...,2:3],YuvBB_centered[...,1:2])
-        theta = (theta[:N] + (theta[N:] - np.pi*np.sign(theta[N:])))/2 # take average for increased accuracy
-        theta = theta + np.pi/2*np.sign(duv) # add 90° to obtain the direction perpendicular to the blackbody locus
-        u, v = YuvBB[:N,1:2] + np.abs(duv)*np.cos(theta), YuvBB[:N,2:3] + np.abs(duv)*np.sin(theta)
-
-    else:
-        # estimate iso-T-line from calculated slope:
-        #-------------------------------------------
-        uvwbar = _convert_xyzbar_to_uvwbar(xyzbar,cspace_dict)
-        _,UVW,UVWp,_ = _get_tristim_of_BB_BBp_BBpp(cct,uvwbar,wl,dl,out='BB,BBp') 
-        
-        R = UVW.sum(axis=-1, keepdims = True) 
-        Rp = UVWp.sum(axis=-1, keepdims = True) 
-        num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
-        denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
-        num[(num == 0)] += _CCT_AVOID_ZERO_DIV
-        denom[(denom == 0)] += _CCT_AVOID_ZERO_DIV
-        li = num/denom  
-        li = li + np.sign(li)*_CCT_AVOID_ZERO_DIV # avoid division by zero
-        mi = -1.0/li # slope of isotemperature lines
-
-        YuvBB = xyz_to_Yxy(UVW)
-        u, v = YuvBB[:,1:2] + np.sign(mi) * duv*(1/((1+mi**2)**0.5)), YuvBB[:,2:3] + np.sign(mi)* duv*((mi)/(1+mi**2)**0.5)
-        
-    # plt.plot(YuvBB[...,1],YuvBB[...,2],'gx')
-    # lx.plotSL(cspace='Yuv60',axh=plt.gca())
-    # plt.plot(u,v,'b+')    
-    
-    Yuv = np.hstack((100*np.ones_like(u),u,v))
-    return cspace_dict['bwtf'](Yuv)
 
 #------------------------------------------------------------------------------
 def cct_to_mired(data):

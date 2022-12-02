@@ -37,27 +37,35 @@ def _clamp0(x):
     x[x<0] = 0 
     return x    
  
-TR = lambda x, *p: p[1] + p[2]*x**p[0] # set up simple gog tone response curve function
-TRi = lambda x, *p: ((x.T-p[1])/p[2])**(1/p[0]) # set up inverse of gog tone response curve function
+TR = lambda x, *p: -p[1] + p[2]*x**p[0] # set up simple gog tone response curve function
+TRi = lambda x, *p: ((x.T+p[1])/p[2])**(1/p[0]) # set up inverse of gog tone response curve function
+
 
 def _rgb_linearizer(rgb, tr, tr_type = 'lut'):
-    """ Linearize rgb using tr tone response function or lut """
+    """ Linearize rgb using tr tone response function or lut or PLCC (cfr. piecewise linear interpolator) """
     if tr_type == 'gog':
         return _clamp0(np.array([TR(rgb[:,i],*tr[i]) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'lut':
-        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=np.int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+    elif tr_type == 'plcc':
+        return _clamp0(np.array([tr['fw'][i](np.asarray(rgb[:,i],dtype=int)) for i in range(3)]).T) # linearize all rgb values and clamp to 0
 
 def _rgb_delinearizer(rgblin, tr, tr_type = 'lut'):
-    """ De-linearize linear rgblin using tr tone response function or lut """
+    """ De-linearize linear rgblin using tr tone response function or lut or PLCC (cfr. piecewise linear interpolator)"""
     if tr_type == 'gog':
         return np.array([TRi(rgblin[:,i],*tr[i]) for i in range(3)]).T
     elif tr_type == 'lut':
         maxv = (tr.shape[0] - 1)
         bins = np.vstack((tr-np.diff(tr,axis=0,prepend=0)/2,tr[-1,:]+0.01)) # create bins
+        bins_mono_increasing = np.array([np.all(x[1:] >= x[:-1]) for x in bins.T])
+        if not bins_mono_increasing.all():
+            raise Exception('Bins not monotonically increasing -> lut cannot be inverted !')
         idxs = np.array([(np.digitize(rgblin[:,i],bins[:,i]) - 1)  for i in range(3)]).T # find bin indices
         idxs[idxs>maxv] = maxv 
         rgb = np.arange(tr.shape[0])[idxs]
         return rgb
+    elif tr_type == 'plcc':
+        return np.array([tr['bw'][i](rgblin[:,i]) for i in range(3)]).T
 
 def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     """ Parse the rgb and xyz inputs """
@@ -71,8 +79,9 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     return rgb, xyz
 
 def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2', 
-              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), ensure_increasing_lut_at_low_rgb = 0.2,
-              verbosity = 1, sep=',',header=None): 
+              nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), 
+              ensure_increasing_lut_at_low_rgb = 0.2, force_increasing_lut_at_high_rgb = True,
+              verbosity = 1, sep = ',',header = None, optimize_M = True): 
     """
     Calculate TR parameters/lut and conversion matrices.
     
@@ -100,6 +109,7 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | options:
             |  - 'lut': Derive/specify Tone-Response as a look-up-table
             |  - 'gog': Derive/specify Tone-Response as a gain-offset-gamma function
+            |  - 'plcc': Derive/specify Tone-Response as a piecewise linear interpolation function
         :cieobs:
             | '1931_2', optional
             | CIE CMF set used to determine the XYZ tristimulus values
@@ -123,6 +133,10 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | Non-strictly increasing lut values can be caused at low RGB values due
             | to noise and low measurement signal. 
             | If None: don't force lut, but keep as is.
+        :force_increasing_lut_at_high_rgb:
+            | True, optional
+            | If True: ensure the tone response curves in the lut are monotonically increasing.
+            |          by finding the first 1.0 value and setting all values after that also to 1.0.
         :verbosity:
             | 1, optional
             | > 0: print and plot optimization results
@@ -133,6 +147,11 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             | None, optional
             | header specifier for files with rgbcal and xyzcal data 
             | (see pandas.read_csv)
+        :optimize_M:
+            | True, optional
+            | If True: optimize transfer matrix M
+            | Else: use column matrix of tristimulus values of R,G,B channels at max.
+
             
     Returns:
         :M:
@@ -140,7 +159,7 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         :N:
             | xyz to linear rgb conversion matrix
         :tr:
-            | Tone Response function parameters or lut
+            | Tone Response function parameters or lut or piecewise linear interpolation functions (forward and backward)
         :xyz_black:
             | ndarray with XYZ tristimulus values of black
         :xyz_white:
@@ -156,6 +175,7 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
     
     # Calculate flare corrected xyz:
     xyz_fc = xyzcal - xyz_black
+    xyz_fc[xyz_fc<0] = 0
     
     # get positions of pure r, g, b values:
     p_pure = [(rgbcal[:,1]==0) & (rgbcal[:,2]==0), 
@@ -171,13 +191,18 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         
     # Get rgb linearizer parameters or lut and apply to all rgb's:
     if tr_type == 'gog':
-        par = np.array([sp.optimize.curve_fit(TR, rgbcal[p_pure[i],i], L[p_pure[i],i]/L[p_pure[i],i].max(), p0=[1,0,1])[0] for i in range(3)]) # calculate parameters of each TR
+        par = np.array([sp.optimize.curve_fit(TR, rgbcal[p_pure[i],i] + 1e-300, L[p_pure[i],i]/L[p_pure[i],i].max(), p0=[1,0,1], bounds = (0,np.inf))[0] for i in range(3)]) # calculate parameters of each TR
         tr = par
+
     elif tr_type == 'lut':
         dac = np.arange(2**nbit)
         # lut = np.array([cie_interp(np.vstack((rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())), dac, kind ='cubic')[1,:] for i in range(3)]).T
-        lut = np.array([sp.interpolate.PchipInterpolator(rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max())(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
+        idxs = [rgbcal[p_pure[i],i].argsort() for i in range(3)] # make sure we get monotonically increasing values for interpolation
+        lut = np.array([sp.interpolate.PchipInterpolator(rgbcal[p_pure[i],i][idxs[i]],L[p_pure[i],i][idxs[i]]/L[p_pure[i],i][idxs[i]].max())(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
         lut[lut<0] = 0
+        
+        lut = lut/lut.max(axis=0,keepdims=True) # ensure lut has max 1! not 0.99999999999
+        #lut[np.isclose(lut,1,atol = 1e-10,rtol = 1e-10)] = 1
           
         # ensure monotonically increasing lut values for low signal:
         if ensure_increasing_lut_at_low_rgb is not None:
@@ -185,9 +210,23 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
             for i in range(3):
                 p0 = np.where((np.diff(lut[dac/dac.max() < ensure_increasing_lut_at_low_rgb,i])<=0))[0]
                 if p0.any():
-                    p0 = range(0,p0[-1])
+                    p0 = range(0,p0[-1]+1)
                     lut[p0,i] = 0
         tr = lut
+        
+        # ensure monotonically increasing lut values for high signal:
+        if force_increasing_lut_at_high_rgb:
+            for i in range(3): 
+                tr[np.where(tr[:,i] == 1)[0][0]:,i] = 1
+                
+    elif tr_type == 'plcc':
+        #dac = np.arange(2**nbit)
+        #idxs = [rgbcal[p_pure[i],i].argsort() for i in range(3)] # make sure we get monotonically increasing values for interpolation
+        plcc = {
+                'fw' : np.array([sp.interpolate.interp1d(rgbcal[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max()) for i in range(3)]).T,
+                'bw' : np.array([sp.interpolate.interp1d(L[p_pure[i],i]/L[p_pure[i],i].max(), rgbcal[p_pure[i],i]) for i in range(3)]).T
+                }
+        tr = plcc
 
     
     # plot:
@@ -205,41 +244,52 @@ def calibrate(rgbcal, xyzcal, L_type = 'lms', tr_type = 'lut', cieobs = '1931_2'
         plt.legend()
         plt.title('Tone response curves')
     
-    # linearize all rgb values and clamp to 0
-    rgblin = _rgb_linearizer(rgbcal, tr, tr_type = tr_type) 
- 
-    # get rgblin to xyz_fc matrix:
-    M = np.linalg.lstsq(rgblin, xyz_fc, rcond=None)[0].T 
-    
-    # get xyz_fc to rgblin matrix:
-    N = np.linalg.inv(M)
-    
-    # get better approximation for conversion matrices:
-    p_grays = (rgbcal[:,0] == rgbcal[:,1]) & (rgbcal[:,0] == rgbcal[:,2])
+    # get xyz_white
     p_whites = (rgbcal[:,0] == (2**nbit-1)) & (rgbcal[:,1] == (2**nbit-1)) & (rgbcal[:,2] == (2**nbit-1))
     xyz_white = xyzcal[p_whites,:].mean(axis=0,keepdims=True) # get xyzw for input into xyz_to_lab() or colortf()
-    def optfcn(x, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,out,verbosity):
-        M = x.reshape((3,3))
-        xyzest = rgb_to_xyz(rgbcal, M, tr, xyz_black, tr_type)
-        xyzw = xyzcal[p_whites,:].mean(axis=0) # get xyzw for input into xyz_to_lab() or colortf()
-        labcal, labest = colortf(xyzcal,tf=cspace,xyzw=xyzw), colortf(xyzest,tf=cspace,xyzw=xyzw) # calculate lab coord. of cal. and est.
-        DEs = ((labcal-labest)**2).sum(axis=1)**0.5
-        DEg = DEs[p_grays]
-        DEw = DEs[p_whites]
-        F = (avg(DEs)**2 + avg(DEg)**2 + avg(DEw**2))**0.5
-        if verbosity > 1:
-            print('\nPerformance of TR + rgb-to-xyz conversion matrix M:')
-            print('all: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEs),np.std(DEs)))
-            print('grays: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEg),np.std(DEg)))
-            print('whites(s) DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEw),np.std(DEw)))
-        if out == 'F':
-            return F
-        else:
-            return eval(out)
-    x0 = M.ravel()
-    res = math.minimizebnd(optfcn, x0, args =(rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'F',0), use_bnd=False)
-    xf = res['x_final']
-    M = optfcn(xf, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'M',verbosity)
+
+    if optimize_M: 
+        # linearize all rgb values and clamp to 0
+        rgblin = _rgb_linearizer(rgbcal, tr, tr_type = tr_type) 
+        
+        # get rgblin to xyz_fc matrix:
+        M = np.linalg.lstsq(rgblin, xyz_fc, rcond=None)[0].T 
+        
+        # get xyz_fc to rgblin matrix:
+        N = np.linalg.inv(M)
+        
+        # get better approximation for conversion matrices:
+        p_grays = (rgbcal[:,0] == rgbcal[:,1]) & (rgbcal[:,0] == rgbcal[:,2])
+        def optfcn(x, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,out,verbosity):
+            M = x.reshape((3,3))
+            xyzest = rgb_to_xyz(rgbcal, M, tr, xyz_black, tr_type)
+            xyzw = xyzcal[p_whites,:].mean(axis=0) # get xyzw for input into xyz_to_lab() or colortf()
+            labcal, labest = colortf(xyzcal,tf=cspace,xyzw=xyzw), colortf(xyzest,tf=cspace,xyzw=xyzw) # calculate lab coord. of cal. and est.
+            DEs = ((labcal-labest)**2).sum(axis=1)**0.5
+            DEg = DEs[p_grays]
+            DEw = DEs[p_whites]
+            F = (avg(DEs)**2 + avg(DEg)**2 + avg(DEw**2))**0.5
+            if verbosity > 1:
+                print('\nPerformance of TR + rgb-to-xyz conversion matrix M:')
+                print('all: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEs),np.std(DEs)))
+                print('grays: DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEg),np.std(DEg)))
+                print('whites(s) DE(jab): avg = {:1.4f}, std = {:1.4f}'.format(avg(DEw),np.std(DEw)))
+            if out == 'F':
+                return F
+            else:
+                return eval(out)
+        x0 = M.ravel()
+        res = math.minimizebnd(optfcn, x0, args =(rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'F',0), use_bnd=False)
+        xf = res['x_final']
+        M = optfcn(xf, rgbcal, xyzcal, tr, xyz_black, cspace, p_grays, p_whites,'M',verbosity)
+    else:
+        p_pure_max =  [(rgbcal[:,0]==rgbcal[:,0].max()) & (rgbcal[:,1]==0) & (rgbcal[:,2]==0), 
+                       (rgbcal[:,0]==0) & (rgbcal[:,1]==rgbcal[:,1].max()) & (rgbcal[:,2]==0), 
+                       (rgbcal[:,0]==0) & (rgbcal[:,1]==0) & (rgbcal[:,2]==rgbcal[:,2].max())]
+        M = np.vstack((xyz_fc[p_pure_max[0]],
+                       xyz_fc[p_pure_max[1]],
+                       xyz_fc[p_pure_max[2]])).T
+        
     N = np.linalg.inv(M)
     return M, N, tr, xyz_black, xyz_white
 
@@ -262,6 +312,7 @@ def rgb_to_xyz(rgb, M, tr, xyz_black, tr_type = 'lut'):
             | options:
             |  - 'lut': Tone-Response as a look-up-table
             |  - 'gog': Tone-Response as a gain-offset-gamma function
+            |  - 'plcc': Derive/specify Tone-Response as a piecewise linear interpolation function
             
     Returns:
         :xyz:
@@ -288,12 +339,14 @@ def xyz_to_rgb(xyz,N,tr, xyz_black, tr_type = 'lut'):
             | options:
             |  - 'lut': Tone-Response as a look-up-table
             |  - 'gog': Tone-Response as a gain-offset-gamma function
+            |  - 'plcc': Derive/specify Tone-Response as a piecewise linear interpolation function
             
     Returns:
         :rgb:
             | ndarray [Nx3] of display RGB values
     """
     rgblin = _clamp0(np.dot(N,(xyz - xyz_black).T).T) # calculate rgblin and clamp to zero (on separate line for speed)
+    rgblin[rgblin>1] = 1 # clamp to max = 1
     return np.round(_rgb_delinearizer(rgblin,tr, tr_type = tr_type)) # delinearize rgblin
 
 def _plot_target_vs_predicted_lab(labtarget, labpredicted, cspace = 'lab', verbosity = 1):
@@ -414,6 +467,7 @@ def calibration_performance(rgb, xyztarget, M, N, tr, xyz_black, xyz_white, tr_t
             | options:
             |  - 'lut': Derive/specify Tone-Response as a look-up-table
             |  - 'gog': Derive/specify Tone-Response as a gain-offset-gamma function
+            |  - 'plcc': Derive/specify Tone-Response as a piecewise linear interpolation function
         :cspace:
             | color space or chromaticity diagram to calculate color differences in.
         :avg:
@@ -451,7 +505,7 @@ def calibration_performance(rgb, xyztarget, M, N, tr, xyz_black, xyz_white, tr_t
         :N:
             | xyz to linear rgb conversion matrix
         :tr:
-            | Tone Response function parameters or lut
+            | Tone Response function parameters or lut or piecewise linear interpolation functions (forward and backward)
         :xyz_black:
             | ndarray with XYZ tristimulus values of black
         :xyz_white:
@@ -475,6 +529,7 @@ def calibration_performance(rgb, xyztarget, M, N, tr, xyz_black, xyz_white, tr_t
         _plot_DEs_vs_digital_values(DElabi, DEli, DEabi, rgb, nbit = nbit, avg = avg, verbosity = verbosity)
     _plot_target_vs_predicted_lab(lab, labest, cspace = cspace, verbosity = verbosity)
     return DElabi,DEli, DEabi
+
 
 # Create class:
 class DisplayCalibration():
@@ -507,6 +562,7 @@ class DisplayCalibration():
             | options:
             |  - 'lut': Derive/specify Tone-Response as a look-up-table
             |  - 'gog': Derive/specify Tone-Response as a gain-offset-gamma function
+            |  - 'plcc': Derive/specify Tone-Response as a piecewise linear interpolation function
         :cieobs:
             | '1931_2', optional
             | CIE CMF set used to determine the XYZ tristimulus values
@@ -532,13 +588,18 @@ class DisplayCalibration():
             | None, optional
             | header specifier for files with rgbcal and xyzcal data 
             | (see pandas.read_csv)
+        :optimize_M:
+            | True, optional
+            | If True: optimize transfer matrix M
+            | Else: use column matrix of tristimulus values of R,G,B channels at max.
+
 
     Return:
         :calobject:
             | attributes are: 
             |  - M: linear rgb to xyz conversion matrix
             |  - N: xyz to linear rgb conversion matrix
-            |  - TR: Tone Response function parameters or lut
+            |  - TR: Tone Response function parameters or lut or piecewise linear interpolation functions (forward and backward)
             |  - xyz_black: ndarray with XYZ tristimulus values of black
             |  - xyz_white: ndarray with tristimlus values of white
             | as well as: 
@@ -558,7 +619,8 @@ class DisplayCalibration():
                  ensure_increasing_lut_at_low_rgb = 0.2,
                  verbosity = 1,
                  sep = ',',
-                 header = None):
+                 header = None,
+                 optimize_M = True):
         # process rgb, xyzcal inputs:
         rgbcal, xyzcal = _parse_rgbxyz_input(rgbcal, xyz = xyzcal, sep = sep, header=header)
 
@@ -568,8 +630,10 @@ class DisplayCalibration():
                                                    avg = avg, cspace = cspace,
                                                    ensure_increasing_lut_at_low_rgb = ensure_increasing_lut_at_low_rgb,
                                                    verbosity = verbosity,
-                                                   sep = sep, header = header) 
+                                                   sep = sep, header = header,
+                                                   optimize_M = optimize_M) 
         self.M = M
+        self.optimize_M = optimize_M
         self.N = N
         self.TR = tr
         self.xyz_black = xyz_black
@@ -671,7 +735,7 @@ if __name__ == '__main__':
     # Set up calibration parameters:
     #--------------------------------------------------------------------------
     cieobs = '1931_2' # CMF set corresponding to XYZ measurements
-    tr_type = 'lut' # or 'gog' ('gog': gain-offset-gamma approach, 'lut': look-up-table)
+    tr_type = 'gog' # or 'gog' ('gog': gain-offset-gamma approach, 'lut': look-up-table, 'plcc' : piecewise linear function)
     L_type = 'lms' # or 'Y' ('Y' : use RGB vs luminance for Tone-Response curve, 'lms', use R vs L, G vs M, B vs S)
     avg = np.mean # function to average DEs in matrix optimization in calibrate()
     cspace = 'lab' # colorspace in which color differences are calculated
