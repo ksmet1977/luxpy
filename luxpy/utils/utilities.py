@@ -82,6 +82,10 @@ Module with utility functions and parameters
  
  :load_pkl(): load object in pickle file
  
+ :imread(): read image file using imageio 
+ 
+ :imsave(): save image file using imageio
+ 
   
 ===============================================================================
 """
@@ -133,7 +137,7 @@ __all__ += ['np2d','np3d','np2dT','np3dT',
            'dictkv','OD','meshblock','asplit','ajoin',
            'broadcast_shape','todim','read_excel','write_excel','show_luxpy_tree',
            'is_importable','get_function_kwargs','profile_fcn','unique',
-           'save_pkl', 'load_pkl']
+           'save_pkl', 'load_pkl','imread','imsave']
 
 ##############################################################################
 # Start function definitions
@@ -1168,3 +1172,26 @@ def load_pkl(filename, gzipped = False):
     return obj
 
 #------------------------------------------------------------------------------
+def _try_imageio_import(use_freeimage=True): # lazy import
+    success = is_importable('imageio')
+    if success: 
+        import imageio 
+    try: 
+        if use_freeimage: imageio.plugins.freeimage.download() 
+    except:
+        if use_freeimage: 
+            print("!!!      imageio.plugins.freeimage.download() failed. !!!")
+            print("                                                          ")
+            print("  Try installing the freeimage plugin manually.") 
+            print("  or, try downgrading imageio")
+            print("  or, wait until the developers of imageio fix this.")
+            print("  or, try saving it using PIL or opencv or openexc or other.")
+    return imageio
+
+def imsave(file, img, use_freeimage = False):
+    imageio = _try_imageio_import(use_freeimage)
+    imageio.imsave(file, img)
+    
+def imread(file, use_freeimage = False):
+    imageio = _try_imageio_import(use_freeimage)
+    return imageio.imread(file)

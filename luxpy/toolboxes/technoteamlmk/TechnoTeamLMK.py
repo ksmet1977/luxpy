@@ -1088,7 +1088,36 @@ class lmkActiveX:
         
         # Set the frequency of modulated light.
         cls.set_mod_frequency(modfrequency = cls.modfrequency) 
+        
+        # Set units to cd/m² :
+        cls.set_converting_units()
        
+    @classmethod
+    def set_converting_units(cls, units_name = "L", units = "cd/m²", units_factor = 1):
+        """ Set the converting units (units_name, units, units_factor)"""
+        if units_name is not None: cls.units_name = units_name 
+        if units is not None: cls.units = units 
+        if units_factor is not None: cls.units_factor = units_factor
+        tempFlag = cls.lmk.iSetConvertingUnits(units_name, units, units_factor)
+        if tempFlag == 0:
+            if cls.verbosity > 1: print('iSetConvertingUnits: \tunits_name: {}; units: {}; units_factor: {}\n'.format(cls.units_name, cls.units, cls.units_factor))
+        else:
+            if cls.verbosity > 0: print('Error iSetConvertingUnits: \n')
+            cls.answer, errorInfo = cls.lmk.iGetErrorInformation('')
+            if cls.verbosity > 0: print('\tError: {} \t info: {:s}\n'.format(cls.answer,errorInfo))
+
+    @classmethod
+    def get_converting_units(cls):
+        """ Get the converting units (units_name, units, units_factor)"""
+        tempFlag, units_name, units, units_factor = cls.lmk.iGetConvertingUnits(cls.units_name, cls.units, cls.units_factor)
+        if tempFlag == 0:
+            if cls.verbosity > 1: print('iGetConvertingUnits: \tunits_name: {}; units: {}; units_factor: {}\n'.format(units_name, units, units_factor))
+        else:
+            if cls.verbosity > 0: print('Error iSetConvertingUnits: \n')
+            cls.answer, errorInfo = cls.lmk.iGetErrorInformation('')
+            if cls.verbosity > 0: print('\tError: {} \t info: {:s}\n'.format(cls.answer,errorInfo))
+        return units_name, units, units_factor
+     
        
     @classmethod
     def set_verbosity(cls, value):

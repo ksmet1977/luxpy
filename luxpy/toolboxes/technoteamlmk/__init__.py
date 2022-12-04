@@ -7,3 +7,6 @@ Created on Sat Nov 26 10:32:55 2022
 
 from .TechnoTeamLMK import *
 __all__ = TechnoTeamLMK.__all__
+
+from .defisheye import Defisheye
+__all__ += ['Defisheye']
