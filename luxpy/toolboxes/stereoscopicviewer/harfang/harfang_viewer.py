@@ -520,8 +520,8 @@ class Material:
                  uSelfMapTexture = None,
                  uSelfMapTextureListPreloaded = None,
                  uBaseOpacityColor = [1.0,1.0,1.0,1.0],
-                 uSelfColor = [1.0,1.0,1.0,1],
-                 uOcclusionRoughnessMetalnessColor = [0.5, 0.0, 0.0, 1.0],
+                 uSelfColor = [1.0,1.0,1.0,1.0],
+                 uOcclusionRoughnessMetalnessColor = [0.0, 0.0, 0.0, 1.0],
                  blend_mode = hg.BM_Opaque, 
                  faceculling = hg.FC_CounterClockwise):
         """ 
@@ -637,8 +637,8 @@ class Screen(Material):
                  uSelfMapTexture = None,
                  uSelfMapTextureListPreloaded = None,
                  uBaseOpacityColor = [1.0,1.0,1.0,1.0],
-                 uSelfColor = [1.0,1.0,1.0,0],
-                 uOcclusionRoughnessMetalnessColor = [0.5, 0.0, 0.0, 1.0],
+                 uSelfColor = [1.0,1.0,1.0,1.0],
+                 uOcclusionRoughnessMetalnessColor = [0.0, 0.0, 0.0, 1.0],
                  blend_mode = hg.BM_Opaque,
                  position = [0,0,0],
                  rotation = [0,0,0]
@@ -674,10 +674,10 @@ class Screen(Material):
                 | [1.0,1.0,1.0,1.0], optional
                 | uBaseOpacityColor
             :uOcclusionRoughnessMetalnessColor:
-                | [0.5, 0.0, 0.0, 1.0], optional
+                | [0.0, 0.0, 0.0, 1.0], optional
                 | uOcclusionRoughnessMetalnessColor
             :uSelfColor:
-                | [1.0,1.0,1.0,0], optional
+                | [1.0,1.0,1.0,1.0], optional
                 | uSelfColor
             :uSelfMapTexture:
                 | None, optional
@@ -987,8 +987,8 @@ class HmdStereoViewer:
                  screen_uSelfMapTexture = [None],
                  screen_uSelfMapTextureListPreloaded = [None],
                  screen_uBaseOpacityColor = [[1.0,1.0,1.0,1.0]],
-                 screen_uSelfColor = [[1.0,1.0,1.0,0]],
-                 screen_uOcclusionRoughnessMetalnessColor = [[0.5, 0.0, 0.0, 1.0]],
+                 screen_uSelfColor = [[1.0,1.0,1.0,1.0]],
+                 screen_uOcclusionRoughnessMetalnessColor = [[0.0, 0.0, 0.0, 1.0]],
                  screen_blend_mode = hg.BM_Opaque, 
                  screen_position = [0,0,0],
                  screen_rotation = [0,0,0],
@@ -1044,10 +1044,10 @@ class HmdStereoViewer:
                 | [1.0,1.0,1.0,1.0], optional
                 | uBaseOpacityColor
             :screen_uOcclusionRoughnessMetalnessColor:
-                | [0.5, 0.0, 0.0, 1.0], optional
+                | [0.0, 0.0, 0.0, 1.0], optional
                 | uOcclusionRoughnessMetalnessColor
             :screen_uSelfColor:
-                | [1.0,1.0,1.0,0], optional
+                | [1.0,1.0,1.0,1.0], optional
                 | uSelfColor
             :screen_uSelfMapTexture:
                 | None or str or list, optional
@@ -1322,6 +1322,12 @@ class HmdStereoViewer:
     def display(self):
         """ Display the texture (first one from list, use run() to loop through all of them) """
         self.resetFrameNumber()
+        
+        if (self.screen_uSelfMapTextureList[0][0] is not None) & (self.screen_uSelfMapTextureList[0][1] is not None):
+            texL, texR = self.screen_uSelfMapTextureList[0][0], self.screen_uSelfMapTextureList[0][1] # get texture fileNames
+            self.leftEyeScreen.updateScreenMaterialTexture( uSelfMapTexture = texL )
+            self.rightEyeScreen.updateScreenMaterialTexture( uSelfMapTexture = texR )
+
         while not hg.ReadKeyboard().Key(hg.K_Escape) and hg.IsWindowOpen(self.window):
             self.frame()
         self.shutdown()

@@ -1190,8 +1190,16 @@ def _try_imageio_import(use_freeimage=True): # lazy import
 
 def imsave(file, img, use_freeimage = False):
     imageio = _try_imageio_import(use_freeimage)
-    imageio.imsave(file, img)
+    try: 
+        from imageio.v3 import imsave as _imsave
+    except:
+        from imageio import imsave as _imsave
+    _imsave(file, img)
     
 def imread(file, use_freeimage = False):
     imageio = _try_imageio_import(use_freeimage)
-    return imageio.imread(file)
+    try: 
+        from imageio.v3 import imread as _imread
+    except:
+        from imageio import imread as _imread
+    return _imread(file)
