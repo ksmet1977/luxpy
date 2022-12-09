@@ -89,8 +89,8 @@ Module for display characterization
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .dispcal import *
-__all__ = dispcal.__all__
+from .displaycalibration import *
+__all__ = displaycalibration.__all__
 
 from .rgbtraining_xyztest_set_generation import (generate_training_data, generate_test_data, split_ramps_from_cube, is_random_sampling_of_pure_rgbs, plot_rgb_xyz_lab_of_set)
 __all__ += ['generate_training_data','generate_test_data','split_ramps_from_cube', 'is_random_sampling_of_pure_rgbs', 'plot_rgb_xyz_lab_of_set']
@@ -98,7 +98,5 @@ __all__ += ['generate_training_data','generate_test_data','split_ramps_from_cube
 from .display_characterization_models import (ramp_data_to_cube_data, GGO_GOG_GOGO_PLI, MLPR, POR, LUTNNLI, LUTQHLI)
 __all__ += ['ramp_data_to_cube_data', 'GGO_GOG_GOGO_PLI', 'MLPR', 'POR', 'LUTNNLI', 'LUTQHLI']
 
-from virtual_display import (VirtualDisplay, _VIRTUALDISPLAY_PARS,_VIRTUALDISPLAY_KWAK2000_PARS)
+from .virtualdisplay import (VirtualDisplay, _VIRTUALDISPLAY_PARS,_VIRTUALDISPLAY_KWAK2000_PARS)
 __all__ += ['VirtualDisplay','_VIRTUALDISPLAY_PARS','_VIRTUALDISPLAY_KWAK2000_PARS']
-
-

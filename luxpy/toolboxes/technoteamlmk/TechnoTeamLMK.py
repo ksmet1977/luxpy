@@ -583,7 +583,7 @@ class lmkActiveX:
 
         
     @classmethod
-    def measureCapture_X_map(cls, folder, fileName, X_type = 'XYZ', 
+    def capture_X_map(cls, folder, fileName, X_type = 'XYZ', 
                              startRatio = None, factor = None, 
                              countPic = None, defaultMaxTries = None,
                              autoscan = None, autoexposure = None,
@@ -653,28 +653,28 @@ class lmkActiveX:
             if cls.verbosity > 0: print('\tError: {} \t info: {:s}\n'.format(cls.answer,errorInfo))
             
     @classmethod 
-    def measureCaptureXYZmap(cls, folderXYZ, fileNameXYZ,
-                             startRatio = None, factor = None, 
-                             countPic = None, defaultMaxTries = None,
-                             autoscan = None, autoexposure = None,
-                             modfrequency = None, maxtime = None):
+    def captureXYZmap(cls, folderXYZ, fileNameXYZ,
+                    startRatio = None, factor = None, 
+                    countPic = None, defaultMaxTries = None,
+                    autoscan = None, autoexposure = None,
+                    modfrequency = None, maxtime = None):
         """ Measure XYZ image and save as .pcf image. (parameters as set in class attributes) """
         
-        cls.measureCapture_X_map(folderXYZ, fileNameXYZ, X_type = 'XYZ',
+        cls.capture_X_map(folderXYZ, fileNameXYZ, X_type = 'XYZ',
                                  startRatio = startRatio, factor = factor, 
                                  countPic = countPic, defaultMaxTries = defaultMaxTries,
                                  autoscan = autoscan, autoexposure = autoexposure,
                                  modfrequency = modfrequency, maxtime = maxtime)  
 
     @classmethod
-    def measureCaptureYmap(cls, folderY, fileNameY,
-                           startRatio = None, factor = None, 
-                           countPic = None, defaultMaxTries = None,
-                           autoscan = None, autoexposure = None,
-                           modfrequency = None, maxtime = None):
+    def captureYmap(cls, folderY, fileNameY,
+                    startRatio = None, factor = None, 
+                    countPic = None, defaultMaxTries = None,
+                    autoscan = None, autoexposure = None,
+                    modfrequency = None, maxtime = None):
         """ Measure Y image and save as .pf image. (parameters as set in class attributes) """
     
-        cls.measureCapture_X_map(folderY, fileNameY, X_type = 'Y',
+        cls.capture_X_map(folderY, fileNameY, X_type = 'Y',
                                  startRatio = startRatio, factor = factor, 
                                  countPic = countPic, defaultMaxTries = defaultMaxTries,
                                  autoscan = autoscan, autoexposure = autoexposure,
@@ -1223,10 +1223,10 @@ if __name__ == '__main__':
     print('\n--1-- Test measure multiple XYZ images')
     # Make multiple measurement and save:
     for i in range(2):
-        lmkX.measureCaptureXYZmap(folder_name, 'testXYZ_{:1.0f}'.format(i))
+        lmkX.captureXYZmap(folder_name, 'testXYZ_{:1.0f}'.format(i))
     
     print('\n--2-- Test measure Y image')
-    lmkX.measureCaptureYmap(folder_name, 'testY_{:1.0f}'.format(0))
+    lmkX.captureYmap(folder_name, 'testY_{:1.0f}'.format(0))
 
     print('\n--3-- Test measure of ColorMultipic')
     # Capture ColorMultipic image
@@ -1248,13 +1248,13 @@ if __name__ == '__main__':
     
     print('\n--6a-- Test measurement times for autoscan off')
     tb = time.time()
-    lmkX.measureCaptureXYZmap(folder_name, 'testXYZ2_{:1.0f}'.format(0), autoscan = False)
+    lmkX.captureXYZmap(folder_name, 'testXYZ2_{:1.0f}'.format(0), autoscan = False)
     te = time.time()
     print('Time autoscan == False', te - tb)
     
     print('\n--6b-- Test measurement times for autoscan off')
     tb = time.time()
-    lmkX.measureCaptureXYZmap(folder_name, 'testXYZ2_{:1.0f}'.format(1), autoscan = True)
+    lmkX.captureXYZmap(folder_name, 'testXYZ2_{:1.0f}'.format(1), autoscan = True)
     te = time.time()
     print('Time autoscan == True', te - tb)
 

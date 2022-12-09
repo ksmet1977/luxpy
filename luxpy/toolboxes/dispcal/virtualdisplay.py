@@ -12,7 +12,7 @@ from luxpy.utils import put_args_in_db
 
 import matplotlib.pyplot as plt
 
-from dispcal import TR_ggo, TRi_ggo, TR_gog, TRi_gog, TR_gogo, TRi_gogo, TR_sigmoid, TRi_sigmoid
+from luxpy.toolboxes.dispcal.displaycalibration import TR_ggo, TRi_ggo, TR_gog, TRi_gog, TR_gogo, TRi_gogo, TR_sigmoid, TRi_sigmoid
 
 __all__ = ['virtualdisplay', '_VIRTUALDISPLAY_PARS',
            'virtualdisplay_kwak2000','_VIRTUALDISPLAY_KWAK2000_PARS',

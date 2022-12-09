@@ -27,7 +27,7 @@ import matplotlib.pyplot as plt
 from luxpy import xyz_to_lab, lab_to_xyz, spd_to_xyz, _CIE_D65, _CIEOBS
 from luxpy import math
 
-import dispcal as dc
+from luxpy.toolboxes.dispcal import displaycalibration as dc
 
 np.seterr(divide = 'raise', invalid = 'raise')
 

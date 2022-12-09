@@ -1713,14 +1713,13 @@ if __name__ == '__main__':
     #===========================================================================
     # Tests of different options:
     #===========================================================================
-    script_path = os.path.dirname(os.path.realpath(__file__)) # LMK save requires absolute path !!!
     
     #=== Action definitions ===================================================
     use_LMK = False
     
     if use_LMK:
         ## Setup instance of LMK for measurements:
-        from luxpy.toolboxes.technoteam_lmk import lmkActiveX, kill_lmk4_process
+        from luxpy.toolboxes.technoteamlmk import lmkActiveX, kill_lmk4_process
         
         modfrequency = 72 # check what freq. the headset is running on: Quest2: 72 Hz, Rift CV2: 90 Hz
         lmkX = lmkActiveX('tts20035', 'xvr', focusfactor = None,
@@ -1734,7 +1733,7 @@ if __name__ == '__main__':
                 os.makedirs(folder_name, exist_ok = True)
             if lmkX is not None: 
                 file = os.path.join(folder_name, '{:s}_{:1.0f}'.format(file_name_base, self.texIdx))
-                lmkX.measureCaptureXYZmap(folder_name, '{:s}_{:1.0f}'.format(file_name_base, self.texIdx))
+                lmkX.captureXYZmap(folder_name, '{:s}_{:1.0f}'.format(file_name_base, self.texIdx))
                 
             return file + '.pcf'
     
@@ -1743,19 +1742,20 @@ if __name__ == '__main__':
                 return False
             else:
                 return bool(os.path.exists(out[1][1]))
+            
+        script_path = os.path.dirname(os.path.realpath(__file__)) # LMK save requires absolute path !!!
         
-        actionWrapperDict = {'action' : [a_action, {'lmkX':lmkX, 'folder_name' : script_path+'./lmk_xyzmaps/','file_name_base':'lmk-xyzmap'}],
+        actionWrapperDict = {'action' : [a_action, {'lmkX':lmkX, 'folder_name' : script_path+'./lmk_xyzmaps/','file_name_base':'lmk-ciergbmap'}],
                              'check'  : [a_check,  {}]}
     else:
         #--------------------------------------------------------------------------
         def a_action(self, frameNumber, out, **kwargs):
-            t_start = time.time() # e.g. get time or start measurement
-            return t_start # stored in out[3] so it is available for a later check
+            """ Start timer """
+            return time.time() # stored in out[1][1] so it is available for a later check
     
         def a_check(self, frameNumber, out, delay = 3):
-            t_now = time.time() 
-            dt = t_now - out[1][1] 
-            return dt >= delay
+            """ Check if delay seconds have passed since start of timer """
+            return ((time.time() - out[1][1]) >= delay) # out[1][1] contains start time
         
         actionWrapperDict =  {'action' : [a_action, {}],
                               'check'  : [a_check,  {'delay' : 0.1}]}
@@ -1774,7 +1774,7 @@ if __name__ == '__main__':
     # texFiles = [(texFile,texFile) for texFile in texFiles]
     
     # or load files from folder or list.iml file:
-    texFiles, _ = generate_stimulus_tex_list('./spheremaps/list.iml')
+    # texFiles, _ = generate_stimulus_tex_list('./spheremaps/list.iml')
     
     #==== Prepare hmdviewer ===================================================
     

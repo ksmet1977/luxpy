@@ -42,7 +42,7 @@ import numpy as np
 
 from luxpy import colortf
 from luxpy.utils import getdata
-import dispcal as dc
+from luxpy.toolboxes.dispcal import displaycalibration as dc
 
 np.seterr(divide = 'raise', invalid = 'raise')
 
