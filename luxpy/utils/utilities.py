@@ -455,7 +455,7 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
         # Set column headers:
         if header == 'infer':
             if verbosity == True:
-                warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(datafile))
+                print('getdata(): Infering HEADERS from data file: {:s}!'.format(datafile))
             columns = data.columns
         elif (columns is None):
             data.columns = ['{}{}'.format(datatype,x) for x in range(len(data.columns))] 
@@ -472,6 +472,7 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
     elif copy == True:
         data = data.copy()
     return data
+
 
 
 #--------------------------------------------------------------------------------------------------

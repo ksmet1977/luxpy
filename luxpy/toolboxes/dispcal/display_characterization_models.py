@@ -202,6 +202,10 @@ class ColCharModel:
             
             self.rgb_train = np.clip(np.round(self.training_data[1]), 0, 2**self.nbit - 1).astype(int) 
             self.xyz_train = self.training_data[0] 
+        else:
+            self.rgb_train = None
+            self.xyz_train = None
+            
         self.cspace = cspace
         self.xyzw = xyzw
         
@@ -321,7 +325,8 @@ class GGO_GOG_GOGO_PLI(ColCharModel):
                          )
         
         self.mode = ['bw','fw'] # both modes are automatically available               
-        self.train()
+        if self.training_data is not None: 
+            self.train()
         
         
     def train(self, training_data = None, single_channel_ramp_only_data = None, EPS = 1e-300):
@@ -570,7 +575,10 @@ class MLPR(ML):
         
         self.models = {'fw' : None, 
                        'bw' : None} # fw: rgb-to-xyz, bw: xyz-to-rgb
-        self.train() 
+        
+        if self.training_data is not None: 
+            self.train() 
+            
         self.to_rgb_kwargs = {}
         self.to_xyz_kwargs = {}
         
@@ -656,7 +664,8 @@ class POR(ML):
         self.pipe_bw = copy.deepcopy(self.pipe_fw)                         
         self.models = {'fw' : None, 
                        'bw' : None} # fw: rgb-to-xyz, bw: xyz-to-rgb
-        self.train() 
+        if self.training_data is not None: 
+            self.train()
         self.to_rgb_kwargs = {}
         self.to_xyz_kwargs = {}
 
@@ -783,7 +792,8 @@ class LUTQHLI(ML):
         self.pipe_bw = copy.deepcopy(self.pipe_fw)                         
         self.models = {'fw' : None, 
                        'bw' : None} # fw: rgb-to-xyz, bw: xyz-to-rgb
-        self.train() 
+        if self.training_data is not None: 
+            self.train()
         self.to_rgb_kwargs = {}
         self.to_xyz_kwargs = {}
 
@@ -821,6 +831,9 @@ class LUTNNLI(ML):
         For info on other additional arguments: 
             - do "print(ColCharModel.__init__.__doc__)"
             
+        Note:
+            * Training_data must be provided at initialization !
+            
         """
         
         super().__init__(training_data = training_data, 
@@ -842,10 +855,13 @@ class LUTNNLI(ML):
         self.pipe_bw = copy.deepcopy(self.pipe_fw)                         
         self.models = {'fw' : None, 
                        'bw' : None} # fw: rgb-to-xyz, bw: xyz-to-rgb
-        self.train()
-        self.to_rgb_kwargs = {'ckdtree' : self.models['bw'], 'x_train' : self.xyz_train_blackcorrected, 'y_train' : self.rgb_train_lin}
-        self.to_xyz_kwargs = {'ckdtree' : self.models['fw'], 'x_train' : self.rgb_train_lin, 'y_train': self.xyz_train_blackcorrected}
-        
+        if self.training_data is not None: 
+            self.train()
+            self.to_rgb_kwargs = {'ckdtree' : self.models['bw'], 'x_train' : self.xyz_train_blackcorrected, 'y_train' : self.rgb_train_lin}
+            self.to_xyz_kwargs = {'ckdtree' : self.models['fw'], 'x_train' : self.rgb_train_lin, 'y_train': self.xyz_train_blackcorrected}
+        else:
+            raise Exception('LUTNNLI: training_data must be provided at initialization')
+            
     def predict(self, x, mode, ckdtree=None, x_train=None, y_train=None):
         d, inds = ckdtree.query(x, k = self.number_of_nearest_neighbours)
         
