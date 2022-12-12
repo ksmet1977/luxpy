@@ -205,6 +205,7 @@ class ColCharModel:
         else:
             self.rgb_train = None
             self.xyz_train = None
+            self.training_data = None
             
         self.cspace = cspace
         self.xyzw = xyzw
