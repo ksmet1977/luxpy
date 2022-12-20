@@ -152,7 +152,9 @@ _CIE_GLASS_ID = {'T': getdata(_R_PATH + 'GlassSpecTrans_indoor_illuminants.csv',
 # CIE 13.3-1995 color rendering index:
 _CIE133_1995 = {'14': getdata(_R_PATH + 'CIE_13_3_1995_R14.dat',kind='np').T}
 _CIE133_1995['8'] = _CIE133_1995['14'][0:9].copy()
-   
+_JISZ8726_R15 = getdata(_R_PATH + 'JIS-Z-8726-R15.dat',kind='np').T # = R15 J-Z-8726 sample (asian skin)
+_CIE133_1995['15'] = np.vstack((_CIE133_1995['14'].copy(),_JISZ8726_R15[1:]))
+
 #------------------------------------------------------------------------------  
 # IES TM30-15 color fidelity and color gamut indices:
 _IESTM3015['R'] = {'4880' : {'1nm': np.load(_R_PATH + 'IESTM30_15_R4880.npz')['_IESTM30_R4880']}}

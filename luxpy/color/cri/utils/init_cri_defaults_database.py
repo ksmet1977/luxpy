@@ -35,7 +35,7 @@ __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
 # create default settings for different color rendition indices: (major dict has 9 keys (04-Jul-2017): sampleset [str/dict], ref_type [str], cieobs [str], avg [fcn handle], scale [dict], cspace [dict], catf [dict], rg_pars [dict], cri_specific_pars [dict])
 _CRI_TYPE_DEFAULT = 'ies-tm30'
 
-_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','cierf',
+_CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','ciera-15','cierf',
                                 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','ies-tm30',
                                 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210']}
 
@@ -55,6 +55,8 @@ _CRI_DEFAULTS['ciera'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
 _CRI_DEFAULTS['ciera-8'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
 _CRI_DEFAULTS['ciera-14'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995']) 
 _CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
+_CRI_DEFAULTS['ciera-15'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995']) # R15 is J-Z-8726 sample (asian skin)
+_CRI_DEFAULTS['ciera-15']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['15']"
 
 
 _CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 
