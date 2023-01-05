@@ -13,9 +13,13 @@ Module for TechnoTeam LMK camera basic control
  
  * read_pcf(): read TechnoTeam pcf file. (output = CIE-RGB)
  
+ * write_pcf(): write a basic TechnoTeam PCF file. (input = CIE-RGB)
+ 
  * plot_pcf(): make a plot of a pcf image. 
 
  * pcf_to_xyz(): convert pcf image to an XYZ image
+ 
+ * xyz_to_pcf(): convert an xyz image to a TechnoTeam PCF
 
  * ciergb_to_xyz(): convert CIE-RGB to XYZ 
  
@@ -53,7 +57,8 @@ if success:
 
 __all__ = ['_LABSOFT_PATH','_LABSOFT_CAMERA_PATH','_CAMERAS',
            'get_labsoft_path','define_lens', 'lmkActiveX', 'kill_lmk4_process',
-           'read_pcf', 'plot_pcf', 'pcf_to_xyz', 'ciergb_to_xyz','xyz_to_ciergb']
+           'read_pcf', 'write_pcf', 'plot_pcf', 'pcf_to_xyz', 'xyz_to_pcf',
+           'ciergb_to_xyz','xyz_to_ciergb']
 
 #------------------------------------------------------------------------------
 #_LABSOFT_PATH = r'C:/TechnoTeam/LabSoft/'
@@ -1164,6 +1169,20 @@ def read_pcf(fname):
     img_raw = np.frombuffer(pixeldata, dtype=np.float32, offset = 1).reshape((rows,cols,3))
     return img_raw[...,::-1].copy() # BGR to RGB
 
+def write_pcf(fname, data):
+    """ Write a basic TechnoTeam PCF image. (!!! output = float32 CIE-RGB !!!)"""
+    encoding = 'latin_1'
+    rows, cols, depth = data.shape
+    byteObj = data[...,::-1].reshape((rows,cols*3)).astype(np.float32).tobytes()
+    with open(fname,'wb') as f:
+        f.write("Typ=Pic98::TPlane<Pic98::TRGBFloatPixel>\n".encode(encoding))
+        f.write("Lines={:1.0f}\n".format(rows).encode(encoding))
+        f.write("Columns={:1.0f}\n".format(cols).encode(encoding))
+        f.write("\r\n".encode(encoding))
+        f.write("\n".encode(encoding))
+        f.write(byteObj)
+        f.close()
+
 
 def ciergb_to_xyz(rgb):
     """ Convert CIE-RGB to XYZ """
@@ -1186,6 +1205,10 @@ def xyz_to_ciergb(xyz):
 def pcf_to_xyz(pcf_image):
     """ Convert a TechnoTeam PCF image to XYZ """
     return ciergb_to_xyz(pcf_image)
+
+def xyz_to_pcf(xyz):
+    """ Convert an xyz image to a TechnoTeam PCF """
+    return xyz_to_ciergb(xyz)
 
 def img_to_01(img):
     """ Normalize image to 0 - 1 range """

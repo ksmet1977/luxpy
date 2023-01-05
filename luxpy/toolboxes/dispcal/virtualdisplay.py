@@ -325,10 +325,10 @@ class VirtualDisplay:
     def __init__(self, model = 'kwak2000_SII', seed = -1, nbit = None, 
                  channel_dependence = None, **model_pars):
         if isinstance(model, str):
-            if model == 'virtualdisplay_kwak2000_SII':
+            if (model == 'virtualdisplay_kwak2000_SII') | (model == 'kwak2000_SII'):
                 model = virtualdisplay_kwak2000
                 self.model_name = 'kwak2000_SII'
-            elif model == 'virtualdisplay':
+            elif (model == 'virtualdisplay') | (model == 'GGO_GOG_GOGO'):
                 model = virtualdisplay 
                 self.model_name = 'GGO_GOG_GOGO'
             else:
