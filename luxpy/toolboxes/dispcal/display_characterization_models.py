@@ -505,7 +505,7 @@ class MLPR(ML):
                  tr_smooth_window_factor = None,
                  mode = ['bw'],
                  use_StandardScaler = True, 
-                 number_of_hidden_layers = 500, activation = 'relu',
+                 hidden_layer_sizes = (500,), activation = 'relu',
                  max_iter = 100000, tol = 1e-4, learning_rate = 'adaptive',
                  **kwargs):
         
@@ -517,9 +517,10 @@ class MLPR(ML):
                 | True, optional
                 | If True: apply sklearn's StandardScaler() 
                 |   to "standardize features by removing the mean and scaling to unit variance".
-            :number_of_hidden_layers:
-                | 500, optional
-                | Number of hidden layers in a fully connected Neural Net.
+            :hidden_layer_sizes:
+                | (500,) optional
+                | Size of the hidden layer(s) in a fully connected Neural Net. 
+                | There are as many layers as there are elements in the tuple.
             :activation:
                 | 'relu', optional
                 | Activation function for the hidden layers in the neural network.
@@ -556,18 +557,21 @@ class MLPR(ML):
                          tr_rms_break_threshold = tr_rms_break_threshold,
                          tr_smooth_window_factor = tr_smooth_window_factor,
                          mode = mode)
-        
+        if isinstance(hidden_layer_sizes,(float, int)): 
+            hidden_layer_sizes = (hidden_layer_sizes,)
         self.use_StandardScaler = use_StandardScaler
-        self.number_of_hidden_layers = number_of_hidden_layers
+        self.hidden_layer_sizes = hidden_layer_sizes
         self.activation = activation
         self.max_iter = max_iter 
         self.tol = tol
         self.learning_rate = learning_rate
         self.kwargs = kwargs
         
-        mlpregressor = MLPRegressor(hidden_layer_sizes = [number_of_hidden_layers], 
+
+        mlpregressor = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes, 
                                     activation = activation, max_iter = max_iter, 
                                     tol = tol, learning_rate = learning_rate, **kwargs)
+
         
         pipeline = (StandardScaler(), mlpregressor) if self.use_StandardScaler else (mlpregressor,) 
         
@@ -948,8 +952,8 @@ if __name__ == '__main__':
     
     # Multi-Layer Perceptron Regression model, without/with 'pli' linearization and blacklevel correction::
     print('Training mlpr[_bl] ...')
-    mlpr800    = MLPR(training_data = (xyz_tr, rgb_tr), number_of_hidden_layers = 800, tr_type = 'pli', linearize_rgb = False, black_correct = False)
-    mlpr800_bl = MLPR(training_data = (xyz_tr, rgb_tr), number_of_hidden_layers = 800, tr_type = 'pli', linearize_rgb = True, black_correct = True)
+    mlpr800    = MLPR(training_data = (xyz_tr, rgb_tr), hidden_layer_sizes = (800,), tr_type = 'pli', linearize_rgb = False, black_correct = False)
+    mlpr800_bl = MLPR(training_data = (xyz_tr, rgb_tr), hidden_layer_sizes = (800,), tr_type = 'pli', linearize_rgb = True, black_correct = True)
         
     # -------------------------------------------------------------------------
     # Test model(s): 
@@ -966,6 +970,7 @@ if __name__ == '__main__':
                       'por6':por6, 'por6_bl':por6_bl, 
                       'lutqhli':lutqhli, 'lutqhli_bl':lutqhli_bl,
                       'mlpr800':mlpr800,'mlpr800_bl':mlpr800_bl}
+    
     
     for model_name, model in models_to_test.items():
         test_model(xyz_t, model, model_name, vd)
