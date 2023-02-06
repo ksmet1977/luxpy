@@ -2147,7 +2147,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
         
         # needed to get correct columns from updated lut_i:
         N = lut_i.shape[-1]//lut_n_cols
-        ns = lut_n_cols #np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
+        ns = lut_n_cols #np.arange(0,N*lut_n_cols,lut_n_cols,dtype=np.int32)
 
         # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
@@ -3935,7 +3935,7 @@ def _uv_to_Tx_fibonacci(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     
     tail = TBB.shape[0]-1
     
-    left, right = np.zeros((u.shape[0],), dtype = int), np.ones((u.shape[0],), dtype = int)*tail#fib[-1]
+    left, right = np.zeros((u.shape[0],), dtype = np.int32), np.ones((u.shape[0],), dtype = np.int32)*tail#fib[-1]
     dsql = dsq(left)
     dsqr = dsq(right)
     

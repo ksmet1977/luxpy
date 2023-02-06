@@ -439,7 +439,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
             if isinstance(savgol_window,int):
                 savgol_window = (savgol_window % 2==0) + savgol_window # ensure odd window length
             else:
-                savgol_window = np.int(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
+                savgol_window = np.int32(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
         
         # prepare graphic output:
         if verbosity > 1:
@@ -696,7 +696,7 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
                     if isinstance(savgol_window,int):
                         savgol_window = (savgol_window % 2==0) + savgol_window # ensure odd window length
                     else:
-                        savgol_window = np.int(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
+                        savgol_window = np.int32(2*np.round(dvc._wavelengths.shape[0]*savgol_window)+1) # if not int, 1/.. ratio
             
                 # Ask user response:
                 root = tkinter.Tk() #hide tkinter main window

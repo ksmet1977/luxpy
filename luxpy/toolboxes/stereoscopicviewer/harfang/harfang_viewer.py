@@ -731,8 +731,8 @@ class Screen(Material):
         elif geometry == "quad":
     
             scale_factor = self.radius/(0.5*(self.aspect_ratio[0]**2 + self.aspect_ratio[1]**2)**0.5) # scale width, height with radius, but take radius as half-diagonal
-            self.width = np.ceil(self.aspect_ratio[0] * scale_factor).astype(int)
-            self.height = np.ceil(self.aspect_ratio[1] * scale_factor).astype(int)
+            self.width = np.ceil(self.aspect_ratio[0] * scale_factor).astype(dtype = np.int32)
+            self.height = np.ceil(self.aspect_ratio[1] * scale_factor).astype(dtype = np.int32)
             
             self.mdl = CreatePlaneModel(None, self.width, self.height, self.subdiv_x, self.subdiv_y)
             self.ref = resources.AddModel('quad', self.mdl)
@@ -1657,7 +1657,7 @@ def getRoiImage(img, roi):
 def get_xyz_from_xyzmap_roi(xyzmap, roi):
     """ Get xyz values of Region-Of-Interest in XYZ-map """
     m, n = xyzmap.shape[:2]
-    M,N = np.arange(m).astype(int), np.arange(n).astype(int)
+    M,N = np.arange(m).astype(dtype = np.int32), np.arange(n).astype(dtype = np.int32)
     if roi is None:
         f = 2*10 # 1/10 of size of each image dimension
         roi = [[M//2-M//f,N//2-N//f],[M//2+M//f,N//2+N//f]] # (upper-left, lower-right) XY of rectangular Region-Of-Interest coordinates

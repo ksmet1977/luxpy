@@ -322,8 +322,8 @@ def start_meas(dvc, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 1
         
         # Convert measurement parameters to ctypes:
         fTint = FLOAT(Tint*1000) # integration time (seconds -> milliseconds)
-        wAver = WORD(np.int(Nscans)) # number of scans to average
-        dwStep = DWORD(np.int(wlstep)) # wavelength step in nm
+        wAver = WORD(np.int32(Nscans)) # number of scans to average
+        dwStep = DWORD(np.int32(wlstep)) # wavelength step in nm
                             
         # Start measurement:
         dwError = jtre.JETI_MeasureEx(dvc, fTint, wAver, dwStep)
@@ -479,7 +479,7 @@ def read_spectral_radiance(dvc, wlstart = 360, wlend = 830, wlstep = 1, out = "s
     out = out.replace(' ','')
     
     # Get wavelength range:
-    wls = np.arange(np.int(wlstart), np.int(wlend)+np.int(wlstep), np.int(wlstep), dtype=np.float32)
+    wls = np.arange(np.int32(wlstart), np.int32(wlend)+np.int32(wlstep), np.int32(wlstep), dtype=np.float32)
     
     # Initialize spd filled with nan's:
     spd = np.vstack((wls, np.zeros(wls.shape)))
@@ -489,8 +489,8 @@ def read_spectral_radiance(dvc, wlstart = 360, wlend = 830, wlstep = 1, out = "s
     Errors["SpecRadEx"] = None
     
     # Convert measurement parameters to ctypes:
-    dwBeg = DWORD(np.int(wlstart)) # wavelength start in nm
-    dwEnd = DWORD(np.int(wlend)) # wavelength end in nm
+    dwBeg = DWORD(np.int32(wlstart)) # wavelength start in nm
+    dwEnd = DWORD(np.int32(wlend)) # wavelength end in nm
     
     # create buffer for spectral radiance data:
     fSprad = (FLOAT * wls.shape[0])() 
@@ -826,16 +826,16 @@ def set_laser(dvc = 0, laser_on = True, laser_intensity = 1000, Errors = {}, ver
         # Set laser intensity and modulation:   
         if laser_intensity > 1000:
             laser_intensity = 1000
-        if np.int(laser_on) not in [0,1,2,3]:
+        if np.int32(laser_on) not in [0,1,2,3]:
             laser_on = 3
         if (bool(laser_on) == True) & (_check_dvc_open(dvc)):
-            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(laser_intensity), DWORD(np.int(laser_on)))
+            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(laser_intensity), DWORD(np.int32(laser_on)))
             if dwError != 0:    
                 if (verbosity == 1):
                     print("Could not set pilot laser intensity and/or modulation. Error code = {}".format(dwError))
             Errors["SetLaserIntensity"] = dwError
         elif (bool(laser_on) == False) & (_check_dvc_open(dvc)):
-            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(np.int(laser_intensity)), DWORD(0))
+            dwError = jtc.JETI_SetLaserIntensity(dvc, DWORD(np.int32(laser_intensity)), DWORD(0))
             if dwError != 0:    
                 if (verbosity == 1):
                     print("Could not turn OFF pilot laser. Error code = {}".format(dwError))
@@ -1252,7 +1252,7 @@ def get_spd(dvc = 0, Tint = 0.0, autoTint_max = _TINT_MAX, Nscans = 1, wlstep = 
     out = out.replace(' ','')
     
     # Get wavelength range:
-    wls = np.arange(np.int(wlstart), np.int(wlend)+np.int(wlstep), np.int(wlstep), dtype=np.float32)
+    wls = np.arange(np.int32(wlstart), np.int32(wlend)+np.int32(wlstep), np.int32(wlstep), dtype=np.float32)
     
     # Initialize spd filled with nan's:
     spd = np.vstack((wls, np.zeros(wls.shape)))

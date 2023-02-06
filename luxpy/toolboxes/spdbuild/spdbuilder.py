@@ -717,7 +717,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
     if target is not None: 
         # use component_spectra to build spds with target chromaticity
         # (ignores strength_ph values).
-        N = np.int(component_spds.shape[0]) # rgb components are grouped 
+        N = np.int32(component_spds.shape[0]) # rgb components are grouped 
 
         if component_spds.shape[-1] < 3:
             raise Exception('spd_builder(): Not enough component spectra for color3mixer(). Min. is 3')
@@ -936,8 +936,8 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
         mlut[:n,:] = np.hstack((np.arange(n)[:,None], Yxyi.copy(),\
                            np.arange(n)[:,None],tmp_nan,\
                            np.ones((n,1)),tmp_nan))
-        sn_k = -np.ones(np.int(n/2), dtype = int)
-        su_k = -np.ones((np.int(n/2),2),dtype = int)  
+        sn_k = -np.ones(np.int32(n/2), dtype = np.int32)
+        su_k = -np.ones((np.int32(n/2),2),dtype = np.int32)  
         
         k = 0   # current state counter: 
                 # (states are loops runnning over all (even,odd) source component pairs.
@@ -952,8 +952,8 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
                 
             # Combine two sources:
             pair_strength_AB = ps[kk]
-            pA = np.int(so[2*k])
-            pB = np.int(so[2*k+1])
+            pA = np.int32(so[2*k])
+            pB = np.int32(so[2*k+1])
             pAB = np.hstack((pA,pB))
             
 #            xyzAB = Yxy_to_xyz(mlut[pAB,1:4])
@@ -1003,10 +1003,10 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
             N_sources = rem_so.shape[0]
             
             # Reset source list 'so' when all pairs have been calculated for current state:
-            nn = np.int(so.shape[0]/2)
+            nn = np.int32(so.shape[0]/2)
             if (k == nn - 1): # update to new state
-                sn_k = -np.ones(nn, dtype = int)
-                su_k = -np.ones((nn,2),dtype = int)
+                sn_k = -np.ones(nn, dtype = np.int32)
+                su_k = -np.ones((nn,2),dtype = np.int32)
                 so = rem_so.copy()
                 k = 0
             else:
@@ -1023,19 +1023,19 @@ def colormixer(Yxyt = None, Yxyi = None, n = 4, pair_strengths = None, source_or
         k = 0
         if not np.isnan(M3).any():
             n_min = 3 - (mlut.shape[0] - n)
-            n_min = n - np.int((n_min + np.abs(n_min))/2)
+            n_min = n - np.int32((n_min + np.abs(n_min))/2)
             for i in np.arange(mlut.shape[0],n_min,-1)-1:
                 if k < 3:
                     m3 = M3[0,-1-k]
                 else:
                     m3 = 1
-                pA = np.int(mlut[i,4])
+                pA = np.int32(mlut[i,4])
                 pB = mlut[i,5]
                 mA = mlut[i,6]*m3
                 mB = mlut[i,7]*m3
                 mlut[pA,6:8] = mlut[pA,6:8]*mA
                 if not np.isnan(pB):
-                    pB = np.int(pB)
+                    pB = np.int32(pB)
                     mlut[pB,6:8] = mlut[pB,6:8]*mB
 
                 k += 1
@@ -1229,10 +1229,10 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True,
                     else:
                         f_normalize = 1
                         
-                    F[i] = (obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i],np.int(decimals[i])) - obj_tar_vals[i])/f_normalize)**2))
+                    F[i] = (obj_fcn_weights[i]*(np.abs((np.round(obj_vals[i],np.int32(decimals[i])) - obj_tar_vals[i])/f_normalize)**2))
                     
                     if (verbosity > 0):
-                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i])) + 'f},'
+                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int32(decimals[i])) + 'f},'
                         output_str = output_str.format(np.squeeze(obj_vals[i]))
                 else:
                     # Execute function (first tuple element) only once and output desired values to save time:
@@ -1246,10 +1246,10 @@ def fitnessfcn(x, spd_constructor, spd_constructor_pars = None, F_rss = True,
                     if (verbosity > 0):
                         output_str_sub = '('
                         for jj in range(len(obj_fcn[i])-1):
-                            output_str_sub = output_str_sub + obj_fcn[i][jj+1] + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i][jj])) + 'f},'
+                            output_str_sub = output_str_sub + obj_fcn[i][jj+1] + ' = {:1.' + '{:1.0f}'.format(np.int32(decimals[i][jj])) + 'f},'
                         output_str_sub = output_str_sub + ')'
                         output_str_sub = output_str_sub.format(*np.squeeze(obj_vals[i]))    
-                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int(decimals[i].mean())) + 'f} ' + output_str_sub + ','
+                        output_str = output_str + r' obj_#{:1.0f}'.format(i+1) + ' = {:1.' + '{:1.0f}'.format(np.int32(decimals[i].mean())) + 'f} ' + output_str_sub + ','
                         output_str = output_str.format(F[i])
             else:
                 obj_vals[i] = np.nan

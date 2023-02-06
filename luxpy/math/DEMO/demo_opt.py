@@ -485,7 +485,7 @@ def ndset(F):
     # dom will be a 3D matrix (1 x mu x mu) such that, for the ii-th slice, it
     # will contain +1 if fii dominates the current point, -1 if it is dominated 
     # by it, and 0 if they are incomparable
-    dom = np.zeros((1, mu, mu), dtype = int)
+    dom = np.zeros((1, mu, mu), dtype = np.int32)
 
     dom[auxf1] = 1
     dom[auxf2] = -1

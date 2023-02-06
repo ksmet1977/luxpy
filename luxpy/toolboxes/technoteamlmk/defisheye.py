@@ -24,7 +24,7 @@ From github:  https://github.com/duducosmos/defisheye/blob/master/src/defisheye/
      2. Image output of convert is ndarray (image writing is now optional)
      3. Correction can be determined once and then applied by calling convert() on other same-sized images..
 """
-
+import numpy as np
 from numpy import arange, sqrt, arctan, sin, tan, zeros, array, ndarray, meshgrid, pi
 from numpy import argwhere, hypot
 
@@ -127,8 +127,8 @@ class Defisheye:
         xs[~rdmask] = 0
         ys[~rdmask] = 0
 
-        xs = xs.astype(int)
-        ys = ys.astype(int)
+        xs = xs.astype(dtype = np.int32)
+        ys = ys.astype(dtype = np.int32)
         return xs, ys
 
     def convert(self, image = None, outfile = None):

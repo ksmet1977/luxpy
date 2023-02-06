@@ -46,9 +46,9 @@ def _rgb_linearizer(rgb, tr, tr_type = 'lut'):
     if tr_type == 'gog':
         return _clamp0(np.array([TR(rgb[:,i],*tr[i]) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'lut':
-        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=np.int32),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'plcc':
-        return _clamp0(np.array([tr['fw'][i](np.asarray(rgb[:,i],dtype=int)) for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr['fw'][i](np.asarray(rgb[:,i],dtype=np.int32)) for i in range(3)]).T) # linearize all rgb values and clamp to 0
 
 def _rgb_delinearizer(rgblin, tr, tr_type = 'lut'):
     """ De-linearize linear rgblin using tr tone response function or lut or PLCC (cfr. piecewise linear interpolator)"""

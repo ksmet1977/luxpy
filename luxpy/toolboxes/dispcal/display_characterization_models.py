@@ -200,7 +200,7 @@ class ColCharModel:
             if self.single_channel_ramp_only_data:
                 self.training_data = ramp_data_to_cube_data(self.training_data, nbit = self.nbit)
             
-            self.rgb_train = np.clip(np.round(self.training_data[1]), 0, 2**self.nbit - 1).astype(int) 
+            self.rgb_train = np.clip(np.round(self.training_data[1]), 0, 2**self.nbit - 1).astype(dtype = np.int32) 
             self.xyz_train = self.training_data[0] 
         else:
             self.rgb_train = None
@@ -244,12 +244,12 @@ class ColCharModel:
     def test(self, test_data, xyz_test_measured = None,  virtual_display = None, cspace = 'lab'):
         self.xyz_test = test_data[0]
         if test_data[1] is not None: 
-            self.rgb_test = np.clip(test_data[1], 0, 2**self.nbit - 1).astype(int)
+            self.rgb_test = np.clip(test_data[1], 0, 2**self.nbit - 1).astype(dtype = np.int32)
         else:
             self.rgb_test = None
         
         # estimate rgb_test data for xyz_test using color characterization model:
-        self.rgb_test_estimate = np.clip(np.round(self.to_rgb(self.xyz_test)),0,2**self.nbit-1).astype(int)
+        self.rgb_test_estimate = np.clip(np.round(self.to_rgb(self.xyz_test)),0,2**self.nbit-1).astype(dtype = np.int32)
         
         # simulate measured xyz using virtual display model:
         if (xyz_test_measured is None) & (virtual_display is not None):
@@ -339,7 +339,7 @@ class GGO_GOG_GOGO_PLI(ColCharModel):
             if self.single_channel_ramp_only_data:
                 self.training_data = ramp_data_to_cube_data(self.training_data, nbit = self.nbit)
             
-            self.rgb_train = np.clip(np.round(self.training_data[1]), 0, 2**self.nbit - 1).astype(int) 
+            self.rgb_train = np.clip(np.round(self.training_data[1]), 0, 2**self.nbit - 1).astype(dtype = np.int32) 
             self.xyz_train = self.training_data[0] 
             
             M_opt, N_opt, tr, xyzb, xyzw = dc.calibrate(self.rgb_train, self.xyz_train, 
@@ -366,10 +366,10 @@ class GGO_GOG_GOGO_PLI(ColCharModel):
         if self.tr is None: self.tr = tr
     
     def to_rgb(self, xyz):
-        return np.clip(np.round(dc.xyz_to_rgb(xyz, self.N, self.tr, self.xyzb, tr_type = self.tr_type, nbit = self.nbit)), 0, 2**self.nbit - 1).astype(int)
+        return np.clip(np.round(dc.xyz_to_rgb(xyz, self.N, self.tr, self.xyzb, tr_type = self.tr_type, nbit = self.nbit)), 0, 2**self.nbit - 1).astype(dtype = np.int32)
     
     def to_xyz(self, rgb):
-        rgb = np.clip(rgb, 0, 2**self.nbit - 1).astype(int)
+        rgb = np.clip(rgb, 0, 2**self.nbit - 1).astype(dtype = np.int32)
         return dc.rgb_to_xyz(rgb, self.M, self.tr, self.xyzb, tr_type = self.tr_type, nbit = self.nbit)
     
 #------------------------------------------------------------------------------
@@ -425,7 +425,7 @@ class ML(ColCharModel):
             if self.single_channel_ramp_only_data:
                 self.training_data = ramp_data_to_cube_data(self.training_data, nbit = self.nbit)
             
-            self.rgb_train = np.clip(np.round(self.training_data[1]),0,2**self.nbit-1).astype(int) 
+            self.rgb_train = np.clip(np.round(self.training_data[1]),0,2**self.nbit-1).astype(dtype = np.int32) 
             self.xyz_train = self.training_data[0] 
         
         # get measured white point from training data:
@@ -473,14 +473,14 @@ class ML(ColCharModel):
             if self.linearize_rgb: 
                 rgb = np.clip(rgb,0,1)
                 rgb = dc._rgb_delinearizer(rgb, self.tr, tr_type = self.tr_type, nbit = 8)
-            rgb = np.clip(np.round(rgb),0,2**self.nbit-1).astype(int)
+            rgb = np.clip(np.round(rgb),0,2**self.nbit-1).astype(dtype = np.int32)
             return rgb
         else:
             raise Exception('Backward xyz-to-rgb model not trained.')
         
     def to_xyz(self, rgb):
         if self.models['fw'] is not None: 
-            rgb = np.clip(rgb,0,2**self.nbit-1).astype(int)
+            rgb = np.clip(rgb,0,2**self.nbit-1).astype(dtype = np.int32)
             if self.linearize_rgb: rgb = dc._rgb_linearizer(rgb, self.tr, tr_type = self.tr_type, nbit = 8)
             xyz = self.predict(rgb, 'fw', **self.to_xyz_kwargs)
             if self.black_correct: xyz = xyz + self.xyzb 
@@ -705,7 +705,7 @@ def ramp_data_to_cube_data(training_data, black_correct = True, nbit = 8):
             | If False: the black level will be added 3 times as the XYZ of the R, G, B channels are summed)
     """
     if training_data is not None:
-        rgb_train = np.clip(np.round(training_data[1]),0,2**nbit-1).astype(int) 
+        rgb_train = np.clip(np.round(training_data[1]),0,2**nbit-1).astype(dtype = np.int32) 
         xyz_train = training_data[0] 
         
         p_black = dc.find_index_in_rgb(rgb_train, k = [0,0,0])
@@ -714,7 +714,7 @@ def ramp_data_to_cube_data(training_data, black_correct = True, nbit = 8):
         if black_correct:  xyz_train = xyz_train - xyz_black 
             
         #get rid of multiple blacks in array:
-        c = np.setxor1d(p_black,np.arange(rgb_train.shape[0]).astype(int))
+        c = np.setxor1d(p_black,np.arange(rgb_train.shape[0]).astype(dtype = np.int32))
         rgb_train = np.vstack((rgb_black,rgb_train[c]))
         xyz_train = np.vstack((xyz_black,xyz_train[c]))
         
@@ -733,7 +733,7 @@ def ramp_data_to_cube_data(training_data, black_correct = True, nbit = 8):
         rgb_train_cube = rgb_train[0,cube_idx[:,0],:] + rgb_train[1,cube_idx[:,1],:] + rgb_train[2,cube_idx[:,2],:]
         xyz_train_cube = xyz_train[0,cube_idx[:,0],:] + xyz_train[1,cube_idx[:,1],:] + xyz_train[2,cube_idx[:,2],:]
         
-        rgb_train_cube = np.clip(np.round(rgb_train_cube),0,2**nbit-1).astype(int)
+        rgb_train_cube = np.clip(np.round(rgb_train_cube),0,2**nbit-1).astype(dtype = np.int32)
                 
         # add xyz_black:
         if black_correct:  xyz_train_cube = xyz_train_cube + xyz_black 

@@ -44,6 +44,7 @@ import warnings
 from luxpy.utils import np, _PKG_PATH, _SEP
 from luxpy.utils import plt, Axes3D 
 
+import numpy as np
 from numpy import matlib
 import scipy.interpolate as interp
 import matplotlib

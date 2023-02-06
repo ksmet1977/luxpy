@@ -35,7 +35,7 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
     # Create a matrix where objects in the same group are marked with the group
     # index (e.g. 0, 1, 2, etc.). objects that are not in the same group are
     # marked with -1. If paired == True: Do similar for test subjects:
-    grouping_matrix = -1 * np.ones((sample_size, sample_size), dtype=int)
+    grouping_matrix = -1 * np.ones((sample_size, sample_size), dtype=np.int32)
     for group_idx in range(num_groups):
         within_indices = _index_combinations(np.where(grouping == group_idx)[0])
         grouping_matrix[within_indices] = group_idx 
@@ -56,7 +56,7 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
 
     if paired == True:
         num_subjects = sample_size//num_groups
-        subjects_matrix = -1 * np.ones((sample_size, sample_size), dtype=int)
+        subjects_matrix = -1 * np.ones((sample_size, sample_size), dtype=np.int32)
         for subject_idx in range(num_subjects):
             subject_indices = _index_combinations(np.where(subjects == subject_idx)[0])
             subjects_matrix[subject_indices] = subject_idx  
@@ -137,7 +137,7 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
 def _permutate_grouping(grouping, subjects, paired = False):
     """ permutate grouping and subjects indexing arrays"""
     if paired == False:
-        perm_idx = np.arange(grouping.shape[0],dtype=int)
+        perm_idx = np.arange(grouping.shape[0],dtype=np.int32)
         perm_idx = np.random.permutation(perm_idx)
         perm_grouping = grouping[perm_idx]
         perm_subjects = subjects[perm_idx]
@@ -147,7 +147,7 @@ def _permutate_grouping(grouping, subjects, paired = False):
         if subjects is not None:
             s = subjects.reshape(len(groups),len(grouping)//len(groups))
         for i in range(o.shape[-1]):
-            perm_idx = np.arange(o.shape[0],dtype=int)
+            perm_idx = np.arange(o.shape[0],dtype=np.int32)
             perm_idx = np.random.permutation(perm_idx)
             o[:,i] = o[perm_idx,i]
             s[:,i] = s[perm_idx,i]
@@ -584,7 +584,7 @@ def _build_results(method_name, paired, test_stat_name, sample_size, num_groups,
 def _get_distance_matrix_grouping(*X, metric = 'euclidean', Dscale = 1):
     """ Get distance matrix (skbio format) and grouping indexing array from raw data"""
     # Create long format data array and grouping indices:
-    ni = np.empty((len(X),), dtype=int)
+    ni = np.empty((len(X),), dtype=np.int32)
     for i,Xi in enumerate(X):
         ni[i] = Xi.shape[0]
         if i == 0:

@@ -228,7 +228,7 @@ def _rgb_linearizer(rgb, tr, tr_type = 'lut', nbit = 8):
     elif tr_type == 'gogo':
         return _clamp0(np.array([TR_gogo(rgb[:,i]/max_dac,*tr[i]) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'lut':
-        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=int),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=np.int32),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'pli':
         return _clamp0(np.array([tr['fw'][i](rgb[:,i]/max_dac) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'sigmoid':
@@ -1292,7 +1292,7 @@ if __name__ == '__main__':
     # (xyz_t, rgb_t) = data['test']
     # tr_par_lower_bounds = (0,-0.1,0,-0.1) 
     # tr_type = 'gog'
-    # tr, xyz_black, p_pure = estimate_tr(np.clip(rgb_tr,0,255).astype(int), xyz_tr,
+    # tr, xyz_black, p_pure = estimate_tr(np.clip(rgb_tr,0,255).astype(dtype = np.int32), xyz_tr,
     #             black_correct = True, xyz_black = None,
     #             tr_L_type = 'Y', tr_type = tr_type, 
     #             tr_par_lower_bounds = tr_par_lower_bounds,
@@ -1301,13 +1301,13 @@ if __name__ == '__main__':
     #             tr_force_increasing_lut_at_high_rgb = True,
     #             verbosity = 1)
     # raise Exception('')
-    # M, N, tr, xyz_black, xyz_white=calibrate(np.clip(rgb_tr,0,255).astype(int), xyz_tr, black_correct = True, 
+    # M, N, tr, xyz_black, xyz_white=calibrate(np.clip(rgb_tr,0,255).astype(dtype = np.int32), xyz_tr, black_correct = True, 
     #               tr_L_type = 'Y', tr_type = tr_type, 
     #               tr_par_lower_bounds = tr_par_lower_bounds,
     #               cieobs = '1931_2', nbit = 8, cspace = 'lab', avg = lambda x: ((x**2).mean()**0.5), 
     #               tr_ensure_increasing_lut_at_low_rgb = 0.2, tr_force_increasing_lut_at_high_rgb = True,
     #               verbosity = 1, sep = ',',header = None, optimize_M = True)
-    # DElabi,DEli, DEabi = calibration_performance(np.clip(rgb_tr,0,255).astype(int), xyz_tr, M, N, tr, xyz_black, xyz_white, 
+    # DElabi,DEli, DEabi = calibration_performance(np.clip(rgb_tr,0,255).astype(dtype = np.int32), xyz_tr, M, N, tr, xyz_black, xyz_white, 
     #                                               cspace='lab', tr_type = 'gogo', avg = lambda x: ((x**2).mean()**0.5), 
     #                                               verbosity = 1, is_verification_data = False) # calculate calibration performance in cspace='lab'
     # print(DElabi.mean(),DEabi.mean())    

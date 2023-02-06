@@ -137,7 +137,7 @@ def virtualdisplay(x, forward = True, nbit = 8, tr_type = 'ggo',
     rgb_lin_white = np.array([TR(np.array([1]),*p[i]) for i in range(3)]).T # linear rgb for white, cfr. rgb = [255,255,255]/255
 
     if forward: # rgb to xyz
-        x = np.clip(x,0,2**nbit-1).astype(int)
+        x = np.clip(x,0,2**nbit-1).astype(dtype = np.int32)
         rgb_lin = np.array([TR(x.T[i]/(2**nbit-1),*p[i]) for i in range(3)]).T
         rgb_lin = rgb_lin/rgb_lin_white
     
@@ -165,7 +165,7 @@ def virtualdisplay(x, forward = True, nbit = 8, tr_type = 'ggo',
         N = np.linalg.inv(M)
         rgb_lin = (N @ (x/100).T).T * rgb_lin_white 
         rgb = np.array([TRi(rgb_lin.T[i],*p[i])  for i in range(3)]).T * (2**nbit-1)
-        rgb = np.clip(np.round(rgb),0,2**nbit-1).astype(int)
+        rgb = np.clip(np.round(rgb),0,2**nbit-1).astype(dtype = np.int32)
         return rgb
 
 #==============================================================================

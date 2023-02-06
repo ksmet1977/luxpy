@@ -211,7 +211,7 @@ def generate_training_data(inc = [10], inc_offset = 0, nbit = 8,
             data = rgb_tr[pure_rgb_bool]
             plot_rgb_xyz_lab_of_set(data, data_contains = data_contains, subscript = '_train', nrows = 2, row = 1, marker = '+', fig = fig, axs = axs)
 
-    return rgb_tr.astype(int)
+    return rgb_tr.astype(dtype = np.int32)
 
 def generate_test_data(dlab = [10,10,10], nbit = 8, seed = 0, xyzw = None, cieobs = _CIEOBS,
                        xyzrgb_hull = None, randomize_order = True, verbosity = 0, fig = None):

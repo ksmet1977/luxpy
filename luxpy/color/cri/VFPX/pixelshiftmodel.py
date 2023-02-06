@@ -93,9 +93,9 @@ def get_pixel_coordinates(jab, jab_ranges = None, jab_deltas = None, limit_grid_
         if (sampleID[0].shape[0] > 0):
             samplesIDs.append(np.hstack((idx,np.array([jp,ap,bp]),sampleID[0])))
        
-    idxp = [np.int(samplesIDs[i][0]) for i in range(len(samplesIDs))]
+    idxp = [np.int32(samplesIDs[i][0]) for i in range(len(samplesIDs))]
     jabp = np.vstack([samplesIDs[i][1:4] for i in range(len(samplesIDs))])
-    samplenrs = [np.array(samplesIDs[i][4:],dtype = int).tolist() for i in range(len(samplesIDs))]
+    samplenrs = [np.array(samplesIDs[i][4:],dtype = np.int32).tolist() for i in range(len(samplesIDs))]
     
     return gridp, idxp,jabp,samplenrs, samplesIDs
 

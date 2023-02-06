@@ -1731,7 +1731,7 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_i
 
     while True:
         N = lut_i.shape[-1]//lut_n_cols
-        ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=int)
+        ns = np.arange(0,N*lut_n_cols,lut_n_cols,dtype=np.int32)
         
         # get uBB, vBB, mBB from lut:
         TBB = lut_i[:,ns]
