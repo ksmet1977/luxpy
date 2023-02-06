@@ -175,7 +175,7 @@ def _run_monte_carlo_stats(test_stat_function, grouping, subjects, permutations,
     
     p_value = np.nan
     if permutations > 0:
-        perm_stats = np.empty(permutations, dtype=np.float64)
+        perm_stats = np.empty(permutations, dtype=float)
 
         for i in range(permutations):
             perm_grouping, perm_subjects = _permutate_grouping(grouping, subjects, paired = paired)    
@@ -365,7 +365,7 @@ def permdisp(distance_matrix, grouping, column=None, test='centroid',
     Raises:
           :TypeError:
                | If, when using the spatial median test, the pcoa ordination is not of
-               | type np.float32 or np.float64, the spatial median function will fail
+               | type float, the spatial median function will fail
                | and the centroid test should be used instead
           :ValueError:
                | If the test is not centroid or median.

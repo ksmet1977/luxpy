@@ -220,8 +220,8 @@ def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
 
         ht_idx[cndt_hj] = j # store hue bin indices for all samples
         hr_idx[cndr_hj] = j
-        #wt = np.sum(cndt_hj,axis=0,keepdims=True).astype(np.float)
-        wr = np.nansum(cndr_hj,axis=0,keepdims=True).astype(np.float)
+        #wt = np.sum(cndt_hj,axis=0,keepdims=True).astype(float)
+        wr = np.nansum(cndr_hj,axis=0,keepdims=True).astype(float)
 
         #wt[wt==0] = np.nan
         wr[wr==0] = np.nan

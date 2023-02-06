@@ -783,7 +783,7 @@ def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fl
             |  and excitation purity
     """
     
-    xyz3 = np3d(xyz).copy().astype(np.float)
+    xyz3 = np3d(xyz).copy().astype(float)
 
     # flip axis so that shortest dim is on axis0 (save time in looping):
     if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
@@ -922,7 +922,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
             |  and excitation purity
     """
     
-    xyz3 = np3d(xyz).copy().astype(np.float)
+    xyz3 = np3d(xyz).copy().astype(float)
 
     # flip axis so that shortest dim is on axis0 (save time in looping):
     if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
@@ -1060,7 +1060,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
             | ndarray with tristimulus values
     """
 
-    Ydlep3 = np3d(Ydlep).copy().astype(np.float)
+    Ydlep3 = np3d(Ydlep).copy().astype(float)
 
     # flip axis so that longest dim is on first axis  (save time in looping):
     if (Ydlep3.shape[0] < Ydlep3.shape[1]) & (flip_axes == True):
