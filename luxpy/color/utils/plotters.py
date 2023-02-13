@@ -914,6 +914,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
     else:
         cmfs = cieobs
     cmfs = cmfs[:,cmfs[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
+    cmfs = cmfs[:,~np.isnan(cmfs.sum(axis=0))]
     
     wavs = cmfs[0] # changed from cmfs[0:1].T because this stopped working from around matplotlib version 3.4.1
     SL =  cmfs[1:4].T    
@@ -931,7 +932,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
                 spdmax = np.nanmax(spd[1:,:])
             y_min, y_max = 0.0, spdmax*(1.05)
             if xlim is None:
-                x_min, x_max = spd[0,:].min(), spd[0,:].max()
+                x_min, x_max = np.nanmin(spd[0,:]), np.nanmax(spd[0,:])
             else:
                 x_min, x_max = xlim
 
@@ -956,7 +957,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
 
                     
             if xlim is None:
-                x_min, x_max = wavs.min(), wavs.max()
+                x_min, x_max = np.nanmin(wavs), np.nanmax(wavs)
             else:
                 x_min, x_max = xlim
                 
@@ -1128,7 +1129,7 @@ def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensi
         axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs)    
     
     if wavelength_bar == True:
-        axh = plot_spectrum_colors(spd = None,spdmax = cmfs[1:].max(), axh = axh, wavelength_height = -0.05)
+        axh = plot_spectrum_colors(spd = None,spdmax = np.nanmax(cmfs[1:]), axh = axh, wavelength_height = -0.05)
     axh.set_xlabel('Wavelength (nm)')
     axh.set_ylabel(ylabel)    
     if legend == True:

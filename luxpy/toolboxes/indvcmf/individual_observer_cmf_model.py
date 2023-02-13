@@ -1355,7 +1355,7 @@ def _square_sum(a13, a21, a22, a33,
     ok = (wl_test_min == wl_ref_min)
     
     if not ok:
-        err = err + np.inf
+        err = err + 1e300
     
     if full_results:
         return (err, trans_mat, wl_test_min, ok)
