@@ -32,6 +32,12 @@ _WL = getwlr(_WL3)
 _POS_WL560 = np.where(np.abs(_WL - 560.0) == np.min(np.abs(_WL - 560.0)))[0]
 _TM30_SAMPLE_SET = _CRI_RFL['ies-tm30-18']['99']['{:1.0f}nm'.format(_DL)]
 
+# Ensure all elements in array are not-NaN:
+_CMF_ = copy.deepcopy(_CMF)
+for cmf_str in _CMF_['types']:
+    _CMF_[cmf_str]['bar'] = cie_interp(_CMF[cmf_str]['bar'],wl_new = _WL3, kind = 'cmf')
+
+
 
 def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
             cieobs = '1931_2', force_daylight_below4000K = False, n = None,
@@ -49,7 +55,7 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     else:
         SrBB = blackbody(cct, wl3, n = n)
         SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
-        cmf = _CMF[cieobs]['bar'] if isinstance(cieobs,str) else cieobs 
+        cmf = _CMF_[cieobs]['bar'] if isinstance(cieobs,str) else cieobs 
         wl = SrBB[0]
         ld = getwld(wl)
 
