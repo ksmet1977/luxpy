@@ -1566,7 +1566,7 @@ def generate_color_texs(rgba_list, folder = './'):
     os.makedirs(folder, exist_ok = True)
     texFiles = []
     for i,color in enumerate(rgba_list): 
-        texFiles.append('{:s}/tex_{:1.0f}_{:1.0f}_{:1.0f}.jpg'.format(folder,*color[:3]))
+        texFiles.append('{:s}/tex_{:1.0f}_{:1.0f}_{:1.0f}.png'.format(folder,*color[:3]))
         makeColorTex(color, texHeight = 100, texWidth = 100, save = texFiles[-1])
     texFiles = [(texFile,texFile) for texFile in texFiles]
     return texFiles
@@ -1769,7 +1769,7 @@ if __name__ == '__main__':
     # os.makedirs('./temp_color_stimulus_folder/', exist_ok = True)
     # texFiles = []
     # for i,color in enumerate(stimulus_list): 
-    #     texFiles.append('./temp_color_stimulus_folder/tex_{:1.0f}_{:1.0f}_{:1.0f}.jpg'.format(*color[:3]))
+    #     texFiles.append('./temp_color_stimulus_folder/tex_{:1.0f}_{:1.0f}_{:1.0f}.png'.format(*color[:3]))
     #     makeColorTex(color, texHeight = 100, texWidth = 100, save = texFiles[-1])
     # texFiles = [(texFile,texFile) for texFile in texFiles]
     
