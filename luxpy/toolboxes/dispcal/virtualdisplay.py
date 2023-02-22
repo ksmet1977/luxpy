@@ -201,7 +201,7 @@ _VIRTUALDISPLAY_KWAK2000_PARS = {'xyzb' : np.array([[0.38,0.47,0.55]]),
                                 }
     
 # function definitions:
-_get_T_3x8 = lambda rgb: np.vstack((np.ones((rgb.shape[0],)),
+_get_D_1x8 = lambda rgb: np.vstack((np.ones((rgb.shape[0],)),
                                      rgb.T,
                                      rgb.T[[0,1]].prod(0),
                                      rgb.T[[1,2]].prod(0),
@@ -267,32 +267,35 @@ def virtualdisplay_kwak2000(rgb, channel_dependence = True, forward = True, nbit
     # Normalize and linearize device rgb:
     if forward:
         rgb_lin = _TR_SII_kwak2000(rgb, kwak2000_pars['S_shapeII_A'], kwak2000_pars['S_shapeII_abC'], nbit = nbit)
+        
         if verbosity > 0: 
             plt.plot(rgb[:,0],rgb_lin[:,0],'r')
             plt.plot(rgb[:,1],rgb_lin[:,1],'g--')
-            plt.plot(rgb[:,2],rgb_lin[:,2],'b:');
+            plt.plot(rgb[:,2],rgb_lin[:,2],'b:')
     
         # Convert linear rgb to xyz:
         if (channel_dependence) & (kwak2000_pars['T'] is not None):
-            rgb_lin = (kwak2000_pars['T'] @ _get_T_3x8(rgb_lin)).T
-        xyz = (kwak2000_pars['S'] @ rgb_lin.T).T * kwak2000_pars['xyz_rgb_max'][:,1:2].T + kwak2000_pars['xyzb']
-    
+            rgb_lin = (kwak2000_pars['T'] @ _get_D_1x8(rgb_lin)).T
+        xyz = (kwak2000_pars['S'] @ rgb_lin.T).T * kwak2000_pars['xyz_rgb_max'][:,1:2].sum() + kwak2000_pars['xyzb']
+
         if normalize_Ywhite_to_100 | (sigma_noise is not None):
             
             rgb_lin_white = _TR_SII_kwak2000(np.array([[2**nbit-1,2**nbit-1,2**nbit-1]]), kwak2000_pars['S_shapeII_A'], kwak2000_pars['S_shapeII_abC'], nbit = nbit)
             if (channel_dependence) & (kwak2000_pars['T'] is not None):
-                rgb_lin_white = (kwak2000_pars['T'] @ _get_T_3x8(rgb_lin_white)).T
-            xyzw = (kwak2000_pars['S'] @ rgb_lin_white.T).T * kwak2000_pars['xyz_rgb_max'][:,1:2].T + kwak2000_pars['xyzb']
+                rgb_lin_white = (kwak2000_pars['T'] @ _get_D_1x8(rgb_lin_white)).T
+            xyzw = (kwak2000_pars['S'] @ rgb_lin_white.T).T * kwak2000_pars['xyz_rgb_max'][:,1:2].sum() + kwak2000_pars['xyzb']
+
             if normalize_Ywhite_to_100:
                 xyz = 100*xyz/xyzw[0,1]
                 xyzw = 100*xyzw/xyzw[0,1]
     
         # add noise:
+
         if sigma_noise is not None:
             
             if cspace_noise is None: cspace_noise = 'lab' # default 
             
-            lab = colortf(xyz, tf = 'xyz>' + cspace_noise, xyzw = xyzw)
+            lab = colortf(xyz, tf = 'xyz>' + cspace_noise, fwtf = {'xyzw' : xyzw})
             
             # add noise:
             np.random.seed(seed)
@@ -300,7 +303,7 @@ def virtualdisplay_kwak2000(rgb, channel_dependence = True, forward = True, nbit
 
             lab += noise
             lab[:,0] = np.clip(lab[:,0],0,100) # no negative L* values, no L* values > 100 
-            xyz = colortf(lab, tf = cspace_noise + '>xyz', xyzw = xyzw)
+            xyz = colortf(lab, tf = cspace_noise + '>xyz', bwtf = {'xyzw' : xyzw})
             xyz[xyz<0] = 0 
             
             # fig = plt.figure()
@@ -309,7 +312,7 @@ def virtualdisplay_kwak2000(rgb, channel_dependence = True, forward = True, nbit
             # ax.set_xlabel('a*')
             # ax.set_ylabel('b*')
             # ax.set_zlabel('L*')
-        return xyz
+            # return xyz
     
     
         xyz[xyz < 0] = 0
@@ -375,6 +378,7 @@ class VirtualDisplay:
         # print('VD3: to_xyz->model_pars:', model_pars)
         if ('force_no_noise' in kwargs) and kwargs['force_no_noise']: 
             model_pars['sigma_noise'] = None
+        # if 'sigma_noise' not in model_pars: model_pars['sigma'] = None 
         # print('VD4: to_xyz->model_pars:', model_pars)
         return self.model(rgb, forward = True, **model_pars)
         
@@ -428,8 +432,8 @@ if __name__ == '__main__':
     if (dv.min() > 0) & (include_min): dv = np.hstack((0, dv)) # ensure 0 values are present
     rgb =  np.array(list(itertools.product(*[dv]*3)))
 
-    #dv = np.arange(0,256,10)
-    #rgb = np.array(list(itertools.product(*[dv]*3)))
+    dv = np.arange(0,256,10)
+    rgb = np.array(list(itertools.product(*[dv]*3)))
     vd2 = VirtualDisplay(model = 'virtualdisplay_kwak2000_SII', seed = 1, nbit = 8, channel_dependence = True)
     vd3 = VirtualDisplay(model = 'virtualdisplay_kwak2000_SII', seed = 1, nbit = 8, channel_dependence = False)
     xyz2 = vd2.to_xyz(rgb,sigma_noise = 0.0358)
@@ -448,6 +452,7 @@ if __name__ == '__main__':
     import luxpy as lx
     lx.math.in_hull(xyzw2,xyz2)
     lx.math.in_hull(xyzw3,xyz3)
-    
+    # virtualdisplay_kwak2000(rgb,verbosity=1, normalize_Ywhite_to_100=False, channel_dependence=False)
+    # print(virtualdisplay_kwak2000(rgb[-1:],verbosity=0,channel_dependence=True,normalize_Ywhite_to_100=False))
     
     
