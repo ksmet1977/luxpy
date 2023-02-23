@@ -40,14 +40,15 @@ for cmf_str in _CMF_['types']:
 
 
 def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
-            cieobs = '1931_2', force_daylight_below4000K = False, n = None,
+            cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
             daylight_locus = None):
     """
     Calculates a reference illuminant spectrum based on cct 
     for color rendering index calculations.
     """   
     if mix_range is None:
-        mix_range =  _CRI_REF_TYPES[ref_type]
+        mix_range =  _CRI_REF_TYPES[ref_type]['mix_range']
+
     if (cct < mix_range[0]) | (ref_type == 'BB'):
         return blackbody(cct, wl3, n = n)
     elif (cct > mix_range[0]) | (ref_type == 'DL'):
@@ -55,7 +56,9 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     else:
         SrBB = blackbody(cct, wl3, n = n)
         SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
-        cmf = _CMF_[cieobs]['bar'] if isinstance(cieobs,str) else cieobs 
+        if cieobs_Y_normalization is None: cieobs_Y_normalization = cieobs 
+        if cieobs_Y_normalization is None: cieobs_Y_normalization = '1931_2'
+        cmf = _CMF_[cieobs_Y_normalization]['bar'] if isinstance(cieobs_Y_normalization,str) else cieobs_Y_normalization 
         wl = SrBB[0]
         ld = getwld(wl)
 
@@ -79,14 +82,14 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
         return  Sr
     
 def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
-             cieobs = '1931_2', force_daylight_below4000K = False, n = None,
+             cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
              daylight_locus = None, wl = [360,830,1]):
     """
     Calculates multiple reference illuminant spectra based on ccts 
     for color rendering index calculations.
     """  
     if mix_range is None:
-        mix_range =  _CRI_REF_TYPES[ref_type]
+        mix_range =  _CRI_REF_TYPES[ref_type]['mix_range']
     if isinstance(ccts,float): ccts = [ccts]
     wlr = getwlr(wl3)
     Srs = np.zeros((len(ccts)+1,len(wlr)))
@@ -94,6 +97,7 @@ def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     for i,cct in enumerate(ccts):
         Srs[i+1,:] = _cri_ref_i(cct, wl3 = wl3, ref_type = ref_type, 
                       mix_range = mix_range, cieobs = cieobs, 
+                      cieobs_Y_normalization = cieobs_Y_normalization,
                       force_daylight_below4000K = force_daylight_below4000K, n = n,
                       daylight_locus = daylight_locus)[1:]
     

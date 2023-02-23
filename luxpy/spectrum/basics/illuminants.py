@@ -86,11 +86,18 @@ _S012_DAYLIGHTPHASE=np.array([[360.000,361.000,362.000,363.000,364.000,365.000,3
 #_S012_DAYLIGHTPHASE = pd.read_csv(_S_PATH+'S0123_daylight_phase_5nm.csv',header=None).values.T
 
 #--------------------------------------------------------------------------------------------------
-# reference illuminant default and mixing range settings:
+# reference illuminant default and mixing range settings, and cieobs, cieobs_Y_normalization settings:
 _CRI_REF_TYPE = 'ciera'
-_CRI_REF_TYPES = {'ciera': [5000.0 , 5000.0], 'cierf': [4000.0, 5000.0], 'cierf-224-2017': [4000.0, 5000.0],\
-                  'iesrf':[4000.0, 5000.0],'iesrf-tm30-15':[4500.0, 5500.0],'iesrf-tm30-18':[4000.0, 5000.0],'iesrf-tm30-20':[4000.0, 5000.0],\
-                  'BB':[5000.0,5000.0],'DL':[5000.0,5000.0]} #mixing ranges for various cri_reference_illuminant types
+_CRI_REF_TYPES = {'ciera': {'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}, 
+                  'cierf': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}, 
+                  'cierf-224-2017': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None},
+                  'iesrf': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'iesrf-tm30-15': {'mix_range' : [4500.0 , 5500.0], 'cieobs' : None, 'cieobs_Y_normalization' : None},
+                  'iesrf-tm30-18': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'iesrf-tm30-20': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'BB':{'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None},
+                  'DL':{'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}
+                  } #mixing ranges, cieobs (for DL), cieobs_Y_normalization (for normalization of mixed illuminants) for various cri_reference_illuminant types
 
 
 _DAYLIGHT_LOCI_PARAMETERS = None # temporary initialization
@@ -540,7 +547,8 @@ _DAYLIGHT_M12_COEFFS = get_daylightphase_Mi_coeffs(cieobs = None, wl3 = wl3)
 
 #------------------------------------------------------------------------------
 def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, 
-            cieobs = None, norm_type = None, norm_f = None, 
+            cieobs = None, cieobs_Y_normalization = None, 
+            norm_type = None, norm_f = None, 
             force_daylight_below4000K = False, n = None,
             daylight_locus = None):
     """
@@ -576,10 +584,14 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             | ranges will be used for cct in :ccts:.
         :cieobs: 
             | None, optional
+            | Required when calculating daylightphase (adjust locus parameters to cieobs)
+            | If None: value in _CRI_REF_TYPES will be used (with None here corresponding to _CIEOBS).
+        :cieobs_Y_normalization:
+            | None, optional
             | Required for the normalization of the Planckian and Daylight SPDs 
             | when calculating a 'mixed' reference illuminant.
-            | Required when calculating daylightphase (adjust locus parameters to cieobs)
-            | If None: _CIEOBS will be used.
+            | If None: value in _CRI_REF_TYPES will be used, 
+            |   with None here resulting in the use of the value as specified in :cieobs:
         :norm_type: 
             | None, optional 
             |       - 'lambda': make lambda in norm_f equal to 1
@@ -628,6 +640,8 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
 
     else:
         if mix_range is not None: mix_range = np2d(mix_range)
+        if cieobs is not None: cieobs = np.atleast_1d(cieobs)
+        if cieobs_Y_normalization is not None: cieobs_Y_normalization = np.atleast_1d(cieobs_Y_normalization)
 
         if not (isinstance(ref_type,list) | isinstance(ref_type,dict)): ref_type = [ref_type]
    
@@ -642,21 +656,35 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
                 ref_type_ = ref_type[i] if (len(ref_type)>1) else ref_type[0]
 
                 if mix_range is None:
-                    mix_range_ =  _CRI_REF_TYPES[ref_type_]
-
+                    mix_range_ =  _CRI_REF_TYPES[ref_type_]['mix_range']
                 else:
                     mix_range_ = mix_range[i] if (mix_range.shape[0]>1) else mix_range[0]  #must be np2d !!!            
       
+                if cieobs is None:
+                    cieobs_ = _CRI_REF_TYPES[ref_type_]['cieobs']
+                else:
+                    cieobs_ = cieobs[i] if (cieobs.shape[0]>1) else cieobs[0]
+                    
+                if cieobs_Y_normalization is None:
+                    cieobs_Y_normalization_ = _CRI_REF_TYPES[ref_type_]['cieobs_Y_normalization']
+                else:
+                    cieobs_Y_normalization_ = cieobs_Y_normalization[i] if (cieobs_Y_normalization.shape[0]>1) else cieobs_Y_normalization[0]
+                    
+                if cieobs_Y_normalization_ is None: cieobs_Y_normalization_ = cieobs_
+                if cieobs_Y_normalization_ is None: cieobs_Y_normalization_ = _CIEOBS # cieobs_Y_normalization_ might still be None as cieobs_ == None results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.
+                
             if (mix_range_[0] == mix_range_[1]) | (ref_type_[0:2] == 'BB') | (ref_type_[0:2] == 'DL'):
                 if ((cct < mix_range_[0]) & (not (ref_type_[0:2] == 'DL'))) | (ref_type_[0:2] == 'BB'):
                     Sr = blackbody(cct, wl3, n = n)
                 elif ((cct >= mix_range_[0]) & (not (ref_type_[0:2] == 'BB'))) | (ref_type_[0:2] == 'DL') :
-                    Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
+                    Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus)
             else:
                 SrBB = blackbody(cct, wl3, n = n)
-                SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
-                cieobs_ = _CIEOBS if cieobs is None else cieobs
-                cmf = xyzbar(cieobs = cieobs_, scr = 'dict', wl_new = wl3)
+                SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus)
+                
+                #cieobs_ = _CIEOBS if cieobs_ is None else cieobs_ # cieobs_ might still be None as that results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.
+                
+                cmf = xyzbar(cieobs = cieobs_Y_normalization_, scr = 'dict', wl_new = wl3)
                 wl = SrBB[0]
                 ld = getwld(wl)
 
