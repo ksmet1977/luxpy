@@ -298,6 +298,8 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
         lamp_h_type = 'TYPE180_C90'
     elif (h_angs[0] == 0) & (abs(h_angs[0] - h_angs[-1]) == 90):
         lamp_h_type = 'TYPE90'
+    elif (h_angs[0] == 0) & ((h_angs[-1] > 180) | (h_angs[-1] <= 360)):
+        lamp_h_type = 'TYPE_NONE'
     else:
         displaymsg('INFO', "Lamps with horizontal angles (%d-%d) are not supported" %
                        (h_angs[0], h_angs[-1]), verbosity = verbosity)
@@ -459,9 +461,27 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
         make_map = True
         IES['Isym'] = 1
         
+    elif (IES['lamp_h_type'] == 'TYPE_NONE') & (complete == True):
+
+        phis[phis<0] = phis[phis<0] + 360
+        phis[phis>360] = phis[phis>360] - 360
+        
+        # complete phis:
+        if phis[-1] < 360: 
+            phis = np.hstack((phis, 360)) # complete with 360°
+            
+            a = candela_2d.T
+            candela_2d = np.hstack((a,a[:,:1])).T
+         
+        # complete thetas:
+        candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
+        
+        make_map = True
+        IES['Isym'] = 0
+        
     else:
         make_map = False
-        IES['Isym'] = 0
+        IES['Isym'] = -1
         
     if make_map:
         IES['map']['thetas'] =  thetas
@@ -689,7 +709,22 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         make_map = True
     
     elif (Isym == 0)  & (complete == True):
-        make_map = False
+        
+        phis[phis<0] = phis[phis<0] + 360
+        phis[phis>360] = phis[phis>360] - 360
+        
+        # complete phis:
+        if phis[-1] < 360: 
+            phis = np.hstack((phis, 360)) # complete with 360°
+            
+            a = candela_2d.T
+            candela_2d = np.hstack((a,a[:,:1])).T
+         
+        # complete thetas:
+        candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
+        
+        make_map = True
+
     else:
         print('\n######################\ncomplete_ldt_lid(): Other "Isym", not yet implemented. Creating map dictionary filled with original uncompleted values!\n######################\n')
         make_map = False
@@ -920,11 +955,10 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
     elif (input_types[0] == 'array') & (input_types[1] == 'array'):
         thetam_in, phim_in = theta, phi # work with array data
 
-    if close_phi:
-        if (phim_in[-1] != 360).all():
-            phim_in = np.vstack((phim_in,np.ones_like(phim_in[0])*360))
-            thetam_in = np.vstack((thetam_in,thetam_in[0]))
-            values = np.vstack((values,values[0]))
+    # if (phim_in[-1] != 360).all():
+    #     phim_in = np.vstack((phim_in,np.ones_like(phim_in[0])*360))
+    #     thetam_in = np.vstack((thetam_in,thetam_in[0]))
+    #     values = np.vstack((values,values[0]))
             
             
     # convert input angles to uv coordinates:
@@ -1707,7 +1741,7 @@ if __name__ == '__main__':
     # Read lamp data from IES file:
     LIDi = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
     LIDl = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
-    LID = LIDi
+    LID = LIDl
     # # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # # a point light source to attenuate the luminous intensity in different directions):
     # uv_map = get_uv_texture(theta = LID['map']['thetas'], 
@@ -1715,13 +1749,13 @@ if __name__ == '__main__':
     #                           values = LID['map']['values'], 
     #                           input_types = ('array','mesh'), 
     #                           method = 'linear', 
-    #                           close_phi = True,
     #                           theta_min = 0, angle_res = 1,
     #                           deg = True, r = 1, 
     #                           show = True)
-    # # save_texture('./xicato.png', uv_map,16,False)
+    # # save_texture('./uv_texture.png', uv_map,16,False)
     # plt.figure()
     # plt.imshow(uv_map)
+    # raise Exception('---')
     
     # draw 2D polar plot of C0-C180 and C90-C270 planes::
     draw_lid(LID)
