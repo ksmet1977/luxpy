@@ -139,7 +139,7 @@ def read_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0'
                    'values', 'map', 'Iv0', 'candela_values', 'candela_2d']
     
     if datasource == '?':
-        print(common_keys)
+        # print(common_keys)
         return dict(zip(common_keys,[np.nan]*len(common_keys))) 
     
 
@@ -687,11 +687,11 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         
         make_map = True
-        
+    
     elif (Isym == 0)  & (complete == True):
-        make_map = True
+        make_map = False
     else:
-        warnings.warn('\n######################\ncomplete_ldt_lid(): Other "Isym", not yet implemented. Creating map dictionary filled with original uncompleted values!\n######################\n')
+        print('\n######################\ncomplete_ldt_lid(): Other "Isym", not yet implemented. Creating map dictionary filled with original uncompleted values!\n######################\n')
         make_map = False
     
     if make_map:
@@ -912,19 +912,26 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
     if deg == False:
         theta = np.rad2deg(theta)
         phi = np.rad2deg(phi)
+
     
     if (input_types[0] == 'array') & (input_types[1] == 'mesh'):
         # create angle input mesh:
         thetam_in, phim_in = np.meshgrid(theta, phi)
     elif (input_types[0] == 'array') & (input_types[1] == 'array'):
         thetam_in, phim_in = theta, phi # work with array data
-    
+
+    if close_phi:
+        if (phim_in[-1] != 360).all():
+            phim_in = np.vstack((phim_in,np.ones_like(phim_in[0])*360))
+            thetam_in = np.vstack((thetam_in,thetam_in[0]))
+            values = np.vstack((values,values[0]))
+            
+            
     # convert input angles to uv coordinates:
     um_in, vm_in = 0.5*phim_in/180, thetam_in/180
     
     # Interpolate values for uv_in to values for uv_map:
     values_map = interp.griddata(np.array([um_in.ravel(),vm_in.ravel()]).T, values.ravel(), (um_map,vm_map), method = method)
-    
     if show == True:
         xm_map, ym_map, zm_map = _spher2cart(thetam_map,phim_map, r = 1, deg = True)
         xm_in, ym_in, zm_in = _spher2cart(thetam_in,phim_in, r = r, deg = True)
@@ -1700,20 +1707,21 @@ if __name__ == '__main__':
     # Read lamp data from IES file:
     LIDi = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
     LIDl = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
-    LID = LIDi 
+    LID = LIDi
     # # Generate uv-map for rendering / ray-tracing (eg by wrapping this around 
     # # a point light source to attenuate the luminous intensity in different directions):
-    # uv_map = get_uv_texture(theta = LID['map']['theta'], 
-    #                           phi = LID['map']['phi'], 
+    # uv_map = get_uv_texture(theta = LID['map']['thetas'], 
+    #                           phi = LID['map']['phis'], 
     #                           values = LID['map']['values'], 
     #                           input_types = ('array','mesh'), 
     #                           method = 'linear', 
+    #                           close_phi = True,
     #                           theta_min = 0, angle_res = 1,
     #                           deg = True, r = 1, 
     #                           show = True)
+    # # save_texture('./xicato.png', uv_map,16,False)
     # plt.figure()
     # plt.imshow(uv_map)
-    
     
     # draw 2D polar plot of C0-C180 and C90-C270 planes::
     draw_lid(LID)
