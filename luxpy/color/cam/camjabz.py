@@ -288,7 +288,7 @@ def run(data, xyzw = None, outin = 'J,aM,bM', cieobs = _CIEOBS,
     
     surround_parameters =  _SURROUND_PARAMETERS
     if isinstance(surround, str):
-        surround = surround_parameters[conditions['surround']]
+        surround = surround_parameters[surround]
     F, FLL, Nc, c = [surround[x] for x in sorted(surround.keys())]
  
     # Define cone/chromatic adaptation sensor space:  

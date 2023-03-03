@@ -163,7 +163,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
 
     surround_parameters =  _SURROUND_PARAMETERS
     if isinstance(surround, str):
-        surround = surround_parameters[conditions['surround']]
+        surround = surround_parameters[surround]
     F, FLL, Nc, c = [surround[x] for x in sorted(surround.keys())]
     if naka_rushton_parameters is None: naka_rushton_parameters = _NAKA_RUSHTON_PARAMETERS
     if unique_hue_data is None: unique_hue_data = _UNIQUE_HUE_DATA
@@ -581,7 +581,9 @@ if __name__ == '__main__':
     Ill2, Ill2M = normalize_to_Lw(Ill2, Lw, cieobs, rflM)
     
     n = 6
+
     xyz1, xyzw1 = lx.spd_to_xyz(Ill1, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
+    
     xyz1 = xyz1[:n,0,:]
     Ill1M = Ill1M[:(n+1),0,:]
     
