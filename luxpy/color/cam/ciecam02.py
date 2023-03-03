@@ -192,7 +192,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     #--------------------------------------------
     # Set Yw:
     if Yw is not None:
-        Yw = (Yw*np.ones_like(xyzw2[...,1:2]).T)
+        Yw = (Yw*np.ones_like(xyzw[...,1:2]).T)
     else:
         Yw = xyzw[...,1:2].T
     
