@@ -164,7 +164,7 @@ def get_pupil_diameter_watson2012(La, age = 32, adapArea = 10, adapDiam = None, 
     # simplified forms (with age<20 extension):
     f = F**0.41
     DU = (18.5172 + 0.122165*f - 0.105569*age + 0.000138645*f*age) / (2 + 0.0630635*f)
-    DU2 = (16.4674 + np.exp(-0.208269*age+(-3.96868 + 0.00521209 *f)) + 0.124857 * f) / (2 + 0.0630635*f)
+    DU2 = (16.4674 + (np.exp(-0.208269*age)*(-3.96868 - 0.00521209 *f)) + 0.124857 * f) / (2 + 0.0630635*f) # corrected from paper Eq.28 to match curves in Fig.A3
     DU[age[:,0]<20] = DU2[age[:,0]<20]
     return DU
     
