@@ -151,6 +151,7 @@ def get_pupil_diameter_watson2012(La, age = 32, adapArea = 10, adapDiam = None, 
     """
     Me = 0.1 if nEyes == 1 else 1
     age = np.atleast_1d(age)
+    La = np.atleast_2d(La)
     # get corneal flux density = product of luminance, area (° squared), and the monocular effect, F=LaM(e)
     a = adapArea if adapDiam is None else np.pi*(adapDiam/2)**2
     F = La*a*Me
