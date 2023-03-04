@@ -168,6 +168,11 @@ __all__ += ['math']
 from luxpy.spectrum import *
 __all__ += spectrum.__all__
 
+#----------------------------------------
+# From /phot:
+#----------------------------------------
+from luxpy.phot import *
+__all__ += phot.__all__
 
 #----------------------------------------
 # From /color:
