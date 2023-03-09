@@ -192,9 +192,9 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     #--------------------------------------------
     # Set Yw:
     if Yw is not None:
-        Yw = (Yw*np.ones_like(xyzw[...,1:2]).T)
+        Yw = (Yw*np.ones_like(xyzw[...,1:2]))
     else:
-        Yw = xyzw[...,1:2].T
+        Yw = xyzw[...,1:2]
     
     #--------------------------------------------
     # calculate condition dependent parameters:
@@ -204,32 +204,32 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     Nbb = 0.725*(1/n)**0.2   
     Ncb = Nbb
     z = 1.48 + FLL*n**0.5
-    yw = xyzw[...,1:2].T # original Y in xyzw (pre-transposed)
+    yw = xyzw[...,1:2] # original Y in xyzw 
     
     #--------------------------------------------
     # Calculate degree of chromatic adaptation:
     if D is None:
         D = F*(1.0-(1.0/3.6)*np.exp((-La-42.0)/92.0))
     D = np.atleast_2d(D)
-        
+    
     #===================================================================
     # WHITE POINT transformations (common to forward and inverse modes):
 
     #--------------------------------------------
     # Normalize white point (keep transpose for next step):
-    xyzw = Yw*xyzw.T/yw    
+    xyzw = (Yw*xyzw/yw).T     
 
     #--------------------------------------------
     # transform from xyzw to cat sensor space:
-    rgbw = math.dot23(mcat, xyzw)
-    
+    rgbw = math.dot23(mcat, xyzw).T
+
     #--------------------------------------------  
     # apply von Kries cat:
-    rgbwc = ((D.T*Yw/rgbw) + (1 - D.T))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam16 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
     #--------------------------------------------
     # convert from cat02 sensor space to cone sensors (hpe):
-    rgbwp = math.dot23(mhpe_x_invmcat, rgbwc).T
+    rgbwp = math.dot23(mhpe_x_invmcat, rgbwc.T).T
     
     #--------------------------------------------
     # apply Naka_rushton repsonse compression to white:
@@ -245,7 +245,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     
     #--------------------------------------------
     # Calculate achromatic signal of white:
-    Aw =  (2.0*rgbwpa[...,0] + rgbwpa[...,1] + (1.0/20.0)*rgbwpa[...,2] - 0.305)*Nbb
+    Aw =  (2.0*rgbwpa[...,0:1] + rgbwpa[...,1:2] + (1.0/20.0)*rgbwpa[...,2:3] - 0.305)*Nbb
     
     #--------------------------------------------
     # calculate brightness, Qw of white:
@@ -261,19 +261,19 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         
         #--------------------------------------------
         # Normalize xyz (keep transpose for matrix multiplication in next step):
-        xyz = (Yw/yw)[...,None]*data.T
+        xyz = (Yw/yw)[None,...]*data
         
         #--------------------------------------------
-        # transform from xyz to cat sensor space:
-        rgb = math.dot23(mcat, xyz)
+        # transform from xyz to cone/cat sensor space:
+        rgb = math.dot23(mcat, xyz.T).T
         
         #--------------------------------------------  
         # apply von Kries cat:
-        rgbc = ((D.T*Yw/rgbw)[...,None] + (1 - D.T))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
-        
+        rgbc = ((D*Yw/rgbw) + (1 - D))*rgb # factor 100 from ciecam16 is replaced with Yw[i] in cam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+
         #--------------------------------------------
         # convert from cat02 sensor space to cone sensors (hpe):
-        rgbp = math.dot23(mhpe_x_invmcat,rgbc).T
+        rgbp = math.dot23(mhpe_x_invmcat,rgbc.T).T
         
         #--------------------------------------------
         # apply Naka_rushton repsonse compression:        
@@ -285,12 +285,12 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         
         #--------------------------------------------
         # Calculate achromatic signal:
-        A  =  (2.0*rgbpa[...,0] + rgbpa[...,1] + (1.0/20.0)*rgbpa[...,2] - 0.305)*Nbb
-                
+        A  =  (2.0*rgbpa[...,0:1] + rgbpa[...,1:2] + (1.0/20.0)*rgbpa[...,2:3] - 0.305)*Nbb
+        
         #--------------------------------------------
         # calculate initial opponent channels:
-        a = rgbpa[...,0] - 12.0*rgbpa[...,1]/11.0 + rgbpa[...,2]/11.0
-        b = (1.0/9.0)*(rgbpa[...,0] + rgbpa[...,1] - 2.0*rgbpa[...,2])
+        a = rgbpa[...,0:1] - 12.0*rgbpa[...,1:2]/11.0 + rgbpa[...,2:3]/11.0
+        b = (1.0/9.0)*(rgbpa[...,0:1] + rgbpa[...,1:2] - 2.0*rgbpa[...,2:3])
 
         #--------------------------------------------
         # calculate hue h and eccentricity factor, et:
@@ -314,7 +314,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
           
         #-------------------------------------------- 
         # calculate chroma, C:
-        t = ((50000.0/13.0)*Nc*Ncb*et*((a**2.0 + b**2.0)**0.5)) / (rgbpa[...,0] + rgbpa[...,1] + (21.0/20.0*rgbpa[...,2]))
+        t = ((50000.0/13.0)*Nc*Ncb*et*((a**2.0 + b**2.0)**0.5)) / (rgbpa[...,0:1] + rgbpa[...,1:2] + (21.0/20.0*rgbpa[...,2:3]))
         C = (t**0.9)*((J/100.0)**0.5) * (1.64 - 0.29**n)**0.73
                
         #-------------------------------------------- 
@@ -358,9 +358,9 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #--------------------------------------------
         # Get Lightness J from data:
         if ('J' in outin[0]):
-            J = data[...,0].copy()
+            J = data[...,0:1].copy()
         elif ('Q' in outin[0]):
-            Q = data[...,0].copy()
+            Q = data[...,0:1].copy()
             J = 100.0*(Q / ((Aw + 4.0)*(FL**0.25)*(4.0/c)))**2.0
         else:
             raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
@@ -368,26 +368,25 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
         if 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = unique_hue_data, forward = False)
+            h = hue_quadrature(data[...,outin.index('H'):outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
 
             
         #--------------------------------------------    
         if 'a' in outin[1]: 
             # calculate hue h:
-            h = hue_angle(data[...,1],data[...,2], htype = 'deg')
+            h = hue_angle(data[...,1:2],data[...,2:3], htype = 'deg')
         
             #--------------------------------------------
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
-            MCs = (data[...,1]**2.0 + data[...,2]**2.0)**0.5   
+            MCs = (data[...,1:2]**2.0 + data[...,2:3]**2.0)**0.5    
         elif 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H')], unique_hue_data = unique_hue_data, forward = False)
-            MCs = data[...,1] 
+            h = hue_quadrature(data[...,outin.index('H')+outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
+            MCs = data[...,1:2] 
         elif 'h' in outin:
-            h = data[...,2]
-            MCs = data[...,1]  
+            h = data[...,2:3]
+            MCs = data[...,1:2]  
         else:
             raise Exception('No (a,b) or hue angle or Hue quadrature data in input!')
-        
         
         if ('S' in outin[1]):
             Q = (4.0/c)* ((J/100.0)**0.5) * (Aw + 4.0)*(FL**0.25)
@@ -453,19 +452,19 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
 
         #--------------------------------------------
         # convert from to cone sensors (hpe) cat02 sensor space:
-        rgbc = math.dot23(mcat_x_invmhpe,rgbp.T)
+        rgbc = math.dot23(mcat_x_invmhpe,rgbp.T).T
                         
         #--------------------------------------------
         # apply inverse von Kries cat:
-        rgb = rgbc / ((D*Yw/rgbw)[...,None] + (1.0 - D))
+        rgb = rgbc / ((D*Yw/rgbw) + (1.0 - D))[None]
         
         #--------------------------------------------
         # transform from cat sensor space to xyz:
-        xyz = math.dot23(invmcat,rgb)
+        xyz = math.dot23(invmcat,rgb.T).T
         
         #--------------------------------------------
         # unnormalize xyz:
-        xyz = ((yw/Yw)[...,None]*xyz).T 
+        xyz = ((yw/Yw)*xyz)
         
         return xyz
   
