@@ -210,6 +210,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     # Calculate degree of chromatic adaptation:
     if D is None:
         D = F*(1.0-(1.0/3.6)*np.exp((-La-42.0)/92.0))
+    D = np.atleast_2d(D)
         
     #===================================================================
     # WHITE POINT transformations (common to forward and inverse modes):
@@ -224,7 +225,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     
     #--------------------------------------------  
     # apply von Kries cat:
-    rgbwc = ((D*Yw/rgbw) + (1 - D))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+    rgbwc = ((D.T*Yw/rgbw) + (1 - D.T))*rgbw # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
 
     #--------------------------------------------
     # convert from cat02 sensor space to cone sensors (hpe):
@@ -268,7 +269,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         
         #--------------------------------------------  
         # apply von Kries cat:
-        rgbc = ((D*Yw/rgbw)[...,None] + (1 - D))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
+        rgbc = ((D.T*Yw/rgbw)[...,None] + (1 - D.T))*rgb # factor 100 from ciecam02 is replaced with Yw[i] in ciecam16, but see 'note' in Fairchild's "Color Appearance Models" (p291 ni 3ed.)
         
         #--------------------------------------------
         # convert from cat02 sensor space to cone sensors (hpe):
