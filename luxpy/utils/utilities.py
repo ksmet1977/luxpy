@@ -568,7 +568,7 @@ def ajoin(data):
     elif data[0].ndim == 1:
         return np.concatenate(data,axis=0).reshape((np.hstack((len(data),data[0].shape)))).T
     elif data[0].ndim == 3:
-        return np.dstack((data[0],data[1],data[2]))
+        return np.dstack(data)
     else:
         return np.hstack(data)[0]
     
