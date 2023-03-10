@@ -87,8 +87,9 @@ def find_pure_rgb(rgb, as_bool = True):
 def _clamp0(x): 
     """Clamp x to 0 to avoid negative values."""
     x[x<0] = 0 
-    return x    
+    return x   
 
+    
 # -- Tone response function ---------------------------------------------------
 def TR_ggo(x,*p):
     """ 
@@ -107,9 +108,9 @@ def TRi_ggo(x,*p):
     Notes:
         1. GGO model: y = gain*x**gamma + offset
     """
-    tmp = ((x.T-p[1])/p[0])
-    tmp[tmp<0] = 0
-    tmp = tmp**(1/p[2])
+    tmp = ((x.T-p[1])/p[0]).astype(complex)
+    # tmp[tmp<0] = 0
+    tmp = np.abs(tmp**(1/p[2]))
     return tmp
 
 def TR_gog(x,*p):
@@ -119,9 +120,8 @@ def TR_gog(x,*p):
     Notes:
         1. GOG model: y = (gain*x + offset)**gamma
     """
-    tmp = (p[1] + p[0]*x) 
-    tmp[tmp<0] = 0
-    return tmp**p[2]
+    tmp = (p[1] + p[0]*x).astype(complex)
+    return np.abs(tmp**p[2])
 
 def TRi_gog(x,*p):
     """ 
@@ -130,7 +130,7 @@ def TRi_gog(x,*p):
     Notes:
         1. GOG model: y = (gain*x + offset)**gamma
     """
-    tmp = (((x.T**(1/p[2]))-p[1])/p[0])
+    tmp = (((np.abs(x.T.astype(complex)**(1/p[2])))-p[1])/p[0])
     return tmp
 
 def TR_gogo(x,*p):
@@ -140,9 +140,9 @@ def TR_gogo(x,*p):
     Notes:
         1. GOGO model: y = (gain*x + offset)**gamma + offset_
     """
-    tmp = (p[1] + p[0]*x) 
-    tmp[tmp<0] = 0
-    return tmp**p[2] + p[3]
+    tmp = (p[1] + p[0]*x).astype(complex) 
+    # tmp[tmp<0] = 0
+    return np.abs(tmp**p[2]) + p[3]
 
 def TRi_gogo(x,*p):
     """ 
@@ -151,9 +151,9 @@ def TRi_gogo(x,*p):
     Notes:
         1. GOGO model: y = (gain*x + offset)**gamma + offset_
     """
-    tmp = (x.T - p[3])
-    tmp[tmp<0] = 0
-    tmp = (((tmp**(1/p[2]))-p[1])/p[0])
+    tmp = (x.T - p[3]).astype(complex)
+    # tmp[tmp<0] = 0
+    tmp = (((np.abs(tmp**(1/p[2])))-p[1])/p[0])
     return tmp
 
 def TR_sigmoid(x,*p):
