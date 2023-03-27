@@ -365,7 +365,7 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     
     # get rfl set:
     if rfl is None: # use IESTM30['4880'] set 
-        rfl = _CRI_RFL['ies-tm30']['4880']['5nm']
+        rfl = _CRI_RFL['ies-tm30']['4880']['1nm']
     wlr = rfl[0] # spectral reflectance set determines wavelength range for estimation (xyz_to_rfl())
         
     # get Ref spd:
