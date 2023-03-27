@@ -183,6 +183,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
 
             if k_neighbours  > 1:
                 d += _EPS
+                d = np.atleast_2d(d)
                 w = (1.0 / d**2)[:,:,None] # inverse distance weigthing
                 rfl_est_isnan = np.sum(w * rfl[inds+1,:], axis=1) / np.sum(w, axis=1)
             else:
@@ -737,7 +738,7 @@ if __name__ == '__main__':
     
     fig, axs = plt.subplots(1,4, figsize=(22,5))
     
-    axs[0].imshow(transform.rescale(lrci,dl,order=0,multichannel=True),aspect='auto')
+    axs[0].imshow(transform.rescale(lrci,dl,order=0,channel_axis = 2),aspect='auto')
     axs[0].set_title('Color image of LR-HSI\n(HR-to-LR scale factor = {:1.2f})'.format(1/dl))
     axs[0].axis('off')
     axs[1].imshow(hrci_est,aspect='auto')
