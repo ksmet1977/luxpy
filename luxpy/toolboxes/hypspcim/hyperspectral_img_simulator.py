@@ -117,7 +117,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
 
     # get rfl set:
     if rfl is None: # use IESTM30['4880'] set 
-        rfl = _CRI_RFL['ies-tm30']['4880']['5nm']
+        rfl = _CRI_RFL['ies-tm30']['4880']['1nm']
     
     wlr = rfl[0]
     
