@@ -718,7 +718,7 @@ def angle_v1v2(v1,v2,htype = 'deg'):
     return ang
     
 #------------------------------------------------------------------------------
-def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=None, density=None):
+def histogram(a, bins=10, bin_center = False, range=None, weights=None, density=False):
     """
     Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.
     
@@ -747,10 +747,10 @@ def histogram(a, bins=10, bin_center = False, range=None, normed=False, weights=
             d = np.diff(centers)/2
             edges = np.hstack((centers[0]-d[0], centers[:-1] + d, centers[-1] + d[-1]))
             edges[1:] = edges[1:] + np.finfo(float).eps
-        return np.histogram(a, bins=edges, range=range, normed=normed, weights=weights, density=density)
+        return np.histogram(a, bins=edges, range=range, weights=weights, density=density)
 
     else:
-        return np.histogram(a, bins=bins, range=range, normed=normed, weights=weights, density=density)
+        return np.histogram(a, bins=bins, range=range, weights=weights, density=density)
 
 #------------------------------------------------------------------------------
 def v_to_cik(v, inverse = False):
