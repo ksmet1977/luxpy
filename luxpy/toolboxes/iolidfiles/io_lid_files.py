@@ -1165,7 +1165,11 @@ def _make_3D_lid_plot(xm_map, ym_map, zm_map, values_map, plot_luminaire_positio
         m = cm.ScalarMappable(cmap=plt.cm.jet, norm=norm)
         m.set_array([])
         plt.sca(ax)
-        cbar = plt.colorbar(m)
+        #from mpl_toolkits.axes_grid1 import make_axes_locatable
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes("right", size="5%", pad=0.05)
+        #cbar = plt.colorbar(m,cax)
+        cbar = plt.colorbar(m,None,ax) #used to be: cbar = plt.colorbar(m)
         cbar.set_label('Normalized luminous intensity ($I_0 = 1$)')
     
     if plot_luminaire_position:
