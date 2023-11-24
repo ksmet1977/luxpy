@@ -1521,7 +1521,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
         :minimize_opts: 
             | None, optional
             | Dict with minimization options. 
-            | None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            | None defaults to: {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
             |                     'maxfev' : 1000*Nc,'fatol': 0.01}
         :verbosity:
             | 0, optional
@@ -1578,7 +1578,7 @@ def spd_optimizer_2_3(optimizer_type = '2mixer', \
     optcounter = 1     
 
     if minimize_opts is None:
-        minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
+        minimize_opts = {'xatol': 1e-5, 'disp': True, 'maxiter' : 1000*len(x0), 'maxfev' : 1000*len(x0),'fatol': 0.01}
     input_par = ('F', spd_constructor, spd_model_pars, obj_fcn, obj_fcn_pars, obj_fcn_weights, obj_tar_vals, F_rss, decimals, verbosity)
       
     # Create positional argument only function for scipy.minimize():
@@ -2140,7 +2140,7 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         :minimize_opts:
             | None, optional
             | Dict with minimization options. 
-            |  None defaults to: {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |  None defaults to: {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
             |                     'maxfev' : 1000*Nc,'fatol': 0.01}
         :verbosity:
             | 0, optional
