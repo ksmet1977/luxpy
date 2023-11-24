@@ -429,7 +429,7 @@ class ML(ColCharModel):
             self.xyz_train = self.training_data[0] 
         
         # get measured white point from training data:
-        self.xyzw = self.rgb_train[dc.find_index_in_rgb(self.rgb_train, k = [2**self.nbit-1]*3)].mean(axis = 0, keepdims = True)
+        self.xyzw = self.xyz_train[dc.find_index_in_rgb(self.rgb_train, k = [2**self.nbit-1]*3)].mean(axis = 0, keepdims = True)
         
         # black_correct xyz:
         if self.black_correct:
@@ -491,9 +491,6 @@ class ML(ColCharModel):
     
     
 #------------------------------------------------------------------------------   
-from sklearn.preprocessing import StandardScaler 
-from sklearn.neural_network import MLPRegressor 
-from sklearn.pipeline import make_pipeline  
 class MLPR(ML):
     def __init__(self, training_data = None, single_channel_ramp_only_data = False, cspace = 'lab', nbit = 8,
                  xyzw = None, xyzb = None,  black_correct = False, 
@@ -566,7 +563,12 @@ class MLPR(ML):
         self.tol = tol
         self.learning_rate = learning_rate
         self.kwargs = kwargs
-        
+
+        # lazy imports:
+        success = is_importable('sklearn', pip_string = 'scikit-learn', try_pip_install = True)
+        from sklearn.preprocessing import StandardScaler 
+        from sklearn.neural_network import MLPRegressor 
+        from sklearn.pipeline import make_pipeline 
 
         mlpregressor = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes, 
                                     activation = activation, max_iter = max_iter, 
@@ -588,9 +590,6 @@ class MLPR(ML):
         self.to_xyz_kwargs = {}
         
 #------------------------------------------------------------------------------
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import PolynomialFeatures
-from sklearn.linear_model import LinearRegression  
 class POR(ML):
     def __init__(self, training_data = None, single_channel_ramp_only_data = False, cspace = 'lab', nbit = 8,
                  xyzw = None, xyzb = None,  black_correct = True, 
@@ -658,7 +657,13 @@ class POR(ML):
         self.polyfeat_interaction_only = polyfeat_interaction_only
         self.linreg_fit_intercept = linreg_fit_intercept
         self.linreg_positive = linreg_positive
-            
+
+        # lazy imports:
+        success = is_importable('sklearn', pip_string = 'scikit-learn', try_pip_install = True)
+        from sklearn.pipeline import Pipeline
+        from sklearn.preprocessing import PolynomialFeatures
+        from sklearn.linear_model import LinearRegression 
+                  
         self.pipe_fw = Pipeline([('poly', PolynomialFeatures(degree = self.polyfeat_degree, 
                                                              include_bias = self.polyfeat_include_bias,
                                                              interaction_only = self.polyfeat_interaction_only)), 
@@ -743,7 +748,6 @@ def ramp_data_to_cube_data(training_data, black_correct = True, nbit = 8):
     else:
         return training_data
 
-from scipy import interpolate
 class LUTQHLI(ML): 
     # Remarks:
     # 1) when training data cube is obtained from all combinations of channel ramps -> analogous to PLVC model (X = linear combination of X(dr),X(dg),X(db), same for Y,Z ... ); if not it is more general
@@ -792,6 +796,9 @@ class LUTQHLI(ML):
                          tr_smooth_window_factor = tr_smooth_window_factor,
                          mode = mode)
         self.rescale = rescale
+
+        from scipy import interpolate # lazy import
+                  
         self.pipe_fw = LUT_Pipe(interpolate.LinearNDInterpolator, {'rescale':self.rescale})
         
         self.pipe_bw = copy.deepcopy(self.pipe_fw)                         
@@ -804,8 +811,6 @@ class LUTQHLI(ML):
 
             
 #------------------------------------------------------------------------------
-from scipy.spatial import cKDTree 
-
 class LUTNNLI(ML):
     def __init__(self, training_data = None, single_channel_ramp_only_data = False, cspace = 'lab', nbit = 8, 
                  xyzw = None, xyzb = None,  black_correct = True, 
@@ -855,6 +860,9 @@ class LUTNNLI(ML):
         
         self.number_of_nearest_neighbours = number_of_nearest_neighbours
         self.kwargs = kwargs
+
+        from scipy.spatial import cKDTree # lazy import
+                  
         self.pipe_fw = LUT_Pipe(cKDTree, self.kwargs)
         
         self.pipe_bw = copy.deepcopy(self.pipe_fw)                         
