@@ -89,8 +89,23 @@ Module for display characterization
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from .displaycalibration import *
-__all__ = displaycalibration.__all__
+from luxpy.toolboxes.dispcal.displaycalibration import (_PATH_DATA, _parse_rgbxyz_input, find_index_in_rgb,
+                                                        _plot_target_vs_predicted_lab,_plot_DEs_vs_digital_values,
+                                                        calibrate, calibration_performance, 
+                                                        rgb_to_xyz, xyz_to_rgb, DisplayCalibration,_RGB, _XYZ,
+                                                        TR_ggo,TRi_ggo,TR_gog,TRi_gog,TR_gogo,TRi_gogo,
+                                                        TR_sigmoid,TRi_sigmoid, correct_for_black,
+                                                        _rgb_linearizer,_rgb_delinearizer, estimate_tr,
+                                                        optimize_3x3_transfer_matrix,get_3x3_transfer_matrix_from_max_rgb)
+__all__ = ['_PATH_DATA', '_parse_rgbxyz_input', 'find_index_in_rgb',
+           '_plot_target_vs_predicted_lab','_plot_DEs_vs_digital_values',
+           'calibrate', 'calibration_performance', 
+           'rgb_to_xyz', 'xyz_to_rgb', 'DisplayCalibration','_RGB', '_XYZ',
+           'TR_ggo','TRi_ggo','TR_gog','TRi_gog','TR_gogo','TRi_gogo',
+           'TR_sigmoid','TRi_sigmoid', 'correct_for_black',
+           '_rgb_linearizer','_rgb_delinearizer', 'estimate_tr',
+           'optimize_3x3_transfer_matrix','get_3x3_transfer_matrix_from_max_rgb'
+           ]
 
 from .rgbtraining_xyztest_set_generation import (generate_training_data, generate_test_data, split_ramps_from_cube, is_random_sampling_of_pure_rgbs, plot_rgb_xyz_lab_of_set)
 __all__ += ['generate_training_data','generate_test_data','split_ramps_from_cube', 'is_random_sampling_of_pure_rgbs', 'plot_rgb_xyz_lab_of_set']
