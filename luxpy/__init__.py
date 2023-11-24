@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.10.0
-    * Date: Dec 1, 2022
+    * Version: 1.10.1
+    * Date: Nov 24, 2023
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -82,11 +82,11 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.10.0'; """Current version"""
+__VERSION__ = 'v1.10.1'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = 'Dec-01-2022'; """release date"""
+__DATE__ = 'Nov-24-2023'; """release date"""
 
-__COPYRIGHT__ = 'Copyright (C) 2017-2022 - Kevin A.G. Smet'; """copyright info"""
+__COPYRIGHT__ = 'Copyright (C) 2017-2023 - Kevin A.G. Smet'; """copyright info"""
 
 __AUTHOR__ = 'Kevin A.G. Smet'; """Package author"""
 __EMAIL__ = 'ksmet1977 at gmail.com'; """contact info"""
@@ -112,7 +112,7 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'platform','subprocess',
                       'cProfile', 'pstats', 'io','requests','pickle'],
               'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
-              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang']}
+              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang','scikit-learn']}
 # (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
 __all__ += ['__REQUIRED__']
