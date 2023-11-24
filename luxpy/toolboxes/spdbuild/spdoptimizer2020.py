@@ -531,7 +531,7 @@ class Minimizer():
                 | None, optional
                 | Dict with minimization options. 
                 | None defaults to the options depending on choice of method
-                |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+                |  - 'Nelder-Mead'   : {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
                 |                       'maxfev' : 1000*Nc,'fatol': 0.01}
                 |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
                 |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
@@ -602,7 +602,7 @@ class Minimizer():
         # create dictionary with defaults options
         if (self.method == 'Nelder-Mead'):
             npar = 10 if x0 is None else x0[0].size
-            tmp_opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
+            tmp_opts = {'xatol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
 
         elif (self.method == 'demo'):
             tmp_opts = math.DEMO.init_options(display = display)
@@ -1366,7 +1366,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             | None, optional
             | Dict with minimization options. 
             | None defaults to the options depending on choice of minimize_method
-            |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |  - 'Nelder-Mead'   : {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
             |                       'maxfev' : 1000*Nc,'fatol': 0.01}
             |  - 'demo' :          {'F': 0.5, 'CR': 0.3, 'kmax': 300, 'mu': 100, 'display': True}
             |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
