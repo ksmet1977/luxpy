@@ -51,7 +51,7 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
 
     if (cct < mix_range[0]) | (ref_type == 'BB'):
         return blackbody(cct, wl3, n = n)
-    elif (cct > mix_range[0]) | (ref_type == 'DL'):
+    elif (cct > mix_range[1]) | (ref_type == 'DL'):
         return daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
     else:
         SrBB = blackbody(cct, wl3, n = n)
