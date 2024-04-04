@@ -10,7 +10,6 @@ import numpy as np
 from luxpy import colortf
 from luxpy.utils import put_args_in_db
 
-import matplotlib.pyplot as plt
 
 from luxpy.toolboxes.dispcal.displaycalibration import TR_ggo, TRi_ggo, TR_gog, TRi_gog, TR_gogo, TRi_gogo, TR_sigmoid, TRi_sigmoid
 
