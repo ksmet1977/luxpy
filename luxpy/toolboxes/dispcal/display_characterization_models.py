@@ -566,9 +566,9 @@ class MLPR(ML):
 
         # lazy imports:
         success = is_importable('sklearn', pip_string = 'scikit-learn', try_pip_install = True)
-        from sklearn.preprocessing import StandardScaler 
-        from sklearn.neural_network import MLPRegressor 
-        from sklearn.pipeline import make_pipeline 
+        from sklearn.preprocessing import StandardScaler # lazy import
+        from sklearn.neural_network import MLPRegressor # lazy import
+        from sklearn.pipeline import make_pipeline # lazy import
 
         mlpregressor = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes, 
                                     activation = activation, max_iter = max_iter, 
@@ -660,9 +660,9 @@ class POR(ML):
 
         # lazy imports:
         success = is_importable('sklearn', pip_string = 'scikit-learn', try_pip_install = True)
-        from sklearn.pipeline import Pipeline
-        from sklearn.preprocessing import PolynomialFeatures
-        from sklearn.linear_model import LinearRegression 
+        from sklearn.pipeline import Pipeline # lazy import
+        from sklearn.preprocessing import PolynomialFeatures # lazy import
+        from sklearn.linear_model import LinearRegression # lazy import
                   
         self.pipe_fw = Pipeline([('poly', PolynomialFeatures(degree = self.polyfeat_degree, 
                                                              include_bias = self.polyfeat_include_bias,
