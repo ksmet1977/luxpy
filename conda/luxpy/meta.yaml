@@ -1,5 +1,5 @@
 {% set name = "luxpy" %}
-{% set version = "1.9.8" %}
+{% set version = "1.11.0" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,26 +7,20 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: bcd504fc8c9dad7b217eb4a1bd566bee30210d7855dcd1355326afe052afc7ee
+  sha256: 779e421c4e736d3d66fe8ccf56e7ec12203c55264f420cae42d8109ff2df0d4e
 
 build:
   number: 0
-  script: "{{ PYTHON }} -m pip install . -vv"
+  script: "{{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation"
 
 requirements:
   host:
-    - imageio
-    - matplotlib
     - numpy
-    - pandas
     - pip
     - python
     - scipy
   run:
-    - imageio
-    - matplotlib
     - numpy
-    - pandas
     - python
     - scipy
 
@@ -50,6 +44,7 @@ test:
     - luxpy.math
     - luxpy.math.DEMO
     - luxpy.math.vec3
+    - luxpy.phot
     - luxpy.spectrum
     - luxpy.spectrum.basics
     - luxpy.utils

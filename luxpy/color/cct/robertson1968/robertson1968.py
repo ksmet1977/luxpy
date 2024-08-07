@@ -32,7 +32,7 @@ Created on Thu June 8 15:36:29 2022
 import os
 import pickle
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 # get path to module:
 _PATH = os.path.dirname(__file__);""" Absolute path to module """ 
@@ -1263,7 +1263,7 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CCT_CIEOBS):
 
 if __name__ == '__main__':
     import luxpy as lx 
-    
+    import matplotlib.pyplot as plt
     cieobs = '1931_2'
     
     # cieobs = '2015_10'
