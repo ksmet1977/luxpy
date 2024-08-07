@@ -11,11 +11,11 @@ make latexpdf
 
 # Make source distribution and wheel:
 python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.9.8*
+twine upload dist/luxpy-1.11.0*
 
 
 # Build conda version:
 cd conda
 conda skeleton pypi luxpy
 conda-build luxpy
-anaconda upload C:\Miniconda3\envs\py37\conda-bld\win-64\luxpy-1.9.8-py37hb572761_0.tar.bz2
+anaconda upload C:\Miniconda3\envs\np2\conda-bld\win-64\luxpy-1.11.0-py37hb572761_0.tar.bz2
