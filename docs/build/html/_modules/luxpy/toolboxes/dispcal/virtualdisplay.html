@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.toolboxes.dispcal.virtualdisplay &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.toolboxes.dispcal.virtualdisplay</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.toolboxes.dispcal.virtualdisplay</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Wed May 18 14:10:13 2022</span>
+
+<span class="sd">@author: u0032318</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">colortf</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">put_args_in_db</span>
+
+
+<span class="kn">from</span> <span class="nn">luxpy.toolboxes.dispcal.displaycalibration</span> <span class="kn">import</span> <span class="n">TR_ggo</span><span class="p">,</span> <span class="n">TRi_ggo</span><span class="p">,</span> <span class="n">TR_gog</span><span class="p">,</span> <span class="n">TRi_gog</span><span class="p">,</span> <span class="n">TR_gogo</span><span class="p">,</span> <span class="n">TRi_gogo</span><span class="p">,</span> <span class="n">TR_sigmoid</span><span class="p">,</span> <span class="n">TRi_sigmoid</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;virtualdisplay&#39;</span><span class="p">,</span> <span class="s1">&#39;_VIRTUALDISPLAY_PARS&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;virtualdisplay_kwak2000&#39;</span><span class="p">,</span><span class="s1">&#39;_VIRTUALDISPLAY_KWAK2000_PARS&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;VirtualDisplay&#39;</span><span class="p">]</span>
+
+<span class="c1">#==============================================================================</span>
+<span class="c1"># General model for GGO, GOG, GOGO, SIGMOID with RGB-to-XYZ transfer matrix M</span>
+<span class="c1">#==============================================================================</span>
+<span class="n">_VIRTUALDISPLAY_PARS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;nbit&#39;</span> <span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+                       <span class="s1">&#39;tr_type&#39;</span> <span class="p">:</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span> 
+                       <span class="s1">&#39;gain&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+                       <span class="s1">&#39;offset&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="s1">&#39;gamma&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">2.3</span><span class="p">,</span> <span class="mf">2.4</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">],</span>
+                       <span class="s1">&#39;offset_gogo&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+                       <span class="s1">&#39;sigmoid_m&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">,</span><span class="mf">0.7</span><span class="p">],</span>
+                       <span class="s1">&#39;sigmoid_q&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="s1">&#39;sigmoid_a&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span>
+                       
+                       <span class="c1"># srgb matrix for D65</span>
+                       <span class="s1">&#39;M&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4124564</span><span class="p">,</span>  <span class="mf">0.3575761</span><span class="p">,</span>  <span class="mf">0.1804375</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.2126729</span><span class="p">,</span>  <span class="mf">0.7151522</span><span class="p">,</span>  <span class="mf">0.0721750</span><span class="p">],</span>
+                                       <span class="p">[</span><span class="mf">0.0193339</span><span class="p">,</span>  <span class="mf">0.1191920</span><span class="p">,</span>  <span class="mf">0.9503041</span><span class="p">]]),</span>
+                       
+                       <span class="s1">&#39;cspace_noise&#39;</span> <span class="p">:</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> 
+                       <span class="s1">&#39;sigma_noise&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;seed&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="s1">&#39;channel_dependence&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">virtualdisplay</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span>
+                   <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset_gogo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">sigmoid_m</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmoid_a</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmoid_q</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                   <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">sigma_noise</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Simulate a virtual display using a GGO, GOG, GOGO or SIGMOID model. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :x:</span>
+<span class="sd">            | ndarray with RGB (forward mode) or XYZ (backward mode) values.</span>
+<span class="sd">        :forward:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: convert x input (=rgb) to xyz</span>
+<span class="sd">            | If False: convert x input (=xyz) to rgb</span>
+<span class="sd">        :nbit:</span>
+<span class="sd">            | 8, optional</span>
+<span class="sd">            | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">        :tr_type:</span>
+<span class="sd">            | &#39;ggo&#39;, optional</span>
+<span class="sd">            | Type of Tone Response curve.</span>
+<span class="sd">            | options: &#39;ggo&#39;,&#39;gog&#39;,&#39;gogo&#39;,&#39;sigmoid&#39;</span>
+<span class="sd">        :gain:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Gain in virtual display model. (None uses defaults of model)</span>
+<span class="sd">        :offset:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Offset in virtual display model. (None uses defaults of model)</span>
+<span class="sd">        :gamma:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Gammma in virtual display model. (None uses defaults of model)</span>
+<span class="sd">        :offset_gogo:</span>
+<span class="sd">            | None, optional </span>
+<span class="sd">            | Second offset in GOGO model. (None uses defaults of model)</span>
+<span class="sd">        :sigmoid_m,sigmoid_a,sigmoid_q:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Additional parameters for the SIGMOID model.</span>
+<span class="sd">            | - sigmoid_m (&gt;0): controls position of half-max (exact location depends on other a and q !)</span>
+<span class="sd">            | - sigmoid_a (&gt;0): growth rate (steepness) of sigmoid </span>
+<span class="sd">            | - sigmoid_q (&gt;0): controls position of half-max (exact location depends on other a and m !)</span>
+<span class="sd">        :M:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | RGB-to-XYZ transfer matrix in virtual display model. (None uses defaults of model)</span>
+<span class="sd">        :cspace_noise:</span>
+<span class="sd">            | &#39;lab&#39;, optional</span>
+<span class="sd">            | Color space to add Gaussian multivariate noise in.</span>
+<span class="sd">        :sigma_noise:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Sigma of multivariate random noise that is added in cspace (same sigma for all axes).</span>
+<span class="sd">            | If None: no noise is added.</span>
+<span class="sd">        :seed:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Seed for setting the state of numpy&#39;s random number generator.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyz or rgb:</span>
+<span class="sd">            | ndarray with XYZ values (forward mode) or RGB (backward mode) values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Make a copy of the defaults and replace with not-None kwargs:</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_VIRTUALDISPLAY_PARS</span><span class="p">)</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="n">put_args_in_db</span><span class="p">(</span><span class="n">pars</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># extract variables from dict:</span>
+    <span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">channel_dependence</span><span class="p">,</span> <span class="n">cspace_noise</span><span class="p">,</span> <span class="n">gain</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">nbit</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">offset_gogo</span><span class="p">,</span>
+     <span class="n">seed</span><span class="p">,</span> <span class="n">sigma_noise</span><span class="p">,</span> <span class="n">sigmoid_a</span><span class="p">,</span> <span class="n">sigmoid_m</span><span class="p">,</span> <span class="n">sigmoid_q</span><span class="p">,</span> <span class="n">tr_type</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">pars</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">pars</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+    
+    <span class="k">if</span> <span class="n">tr_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span>
+    <span class="n">gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gain</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">offset_gogo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">offset_gogo</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">sigmoid_m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmoid_m</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">sigmoid_q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmoid_q</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+    <span class="n">sigmoid_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmoid_a</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">3</span><span class="p">,))</span>
+        
+    <span class="c1"># select tone response curve model:</span>
+    <span class="k">if</span> <span class="n">tr_type</span> <span class="o">==</span> <span class="s1">&#39;ggo&#39;</span><span class="p">:</span>
+        <span class="n">TR</span><span class="p">,</span><span class="n">TRi</span> <span class="o">=</span> <span class="n">TR_ggo</span><span class="p">,</span> <span class="n">TRi_ggo</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">gain</span><span class="p">,</span><span class="n">offset</span><span class="p">,</span><span class="n">gamma</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">tr_type</span> <span class="o">==</span> <span class="s1">&#39;gog&#39;</span><span class="p">:</span>
+        <span class="n">TR</span><span class="p">,</span><span class="n">TRi</span> <span class="o">=</span> <span class="n">TR_gog</span><span class="p">,</span> <span class="n">TRi_gog</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">gain</span><span class="p">,</span><span class="n">offset</span><span class="p">,</span><span class="n">gamma</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">tr_type</span> <span class="o">==</span> <span class="s1">&#39;gogo&#39;</span><span class="p">:</span>
+        <span class="n">TR</span><span class="p">,</span><span class="n">TRi</span> <span class="o">=</span> <span class="n">TR_gogo</span><span class="p">,</span> <span class="n">TRi_gogo</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">gain</span><span class="p">,</span><span class="n">offset</span><span class="p">,</span><span class="n">gamma</span><span class="p">,</span><span class="n">offset_gogo</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">tr_type</span> <span class="o">==</span> <span class="s1">&#39;sigmoid&#39;</span><span class="p">:</span>
+        <span class="n">TR</span><span class="p">,</span><span class="n">TRi</span> <span class="o">=</span> <span class="n">TR_sigmoid</span><span class="p">,</span> <span class="n">TRi_sigmoid</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="n">gain</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">sigmoid_m</span><span class="p">,</span> <span class="n">sigmoid_a</span><span class="p">,</span> <span class="n">sigmoid_q</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unknown tr_type: </span><span class="si">{:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tr_type</span><span class="p">))</span>    
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="n">rgb_lin_white</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">TR</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]),</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> <span class="c1"># linear rgb for white, cfr. rgb = [255,255,255]/255</span>
+
+    <span class="k">if</span> <span class="n">forward</span><span class="p">:</span> <span class="c1"># rgb to xyz</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">rgb_lin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">TR</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgb_lin</span> <span class="o">=</span> <span class="n">rgb_lin</span><span class="o">/</span><span class="n">rgb_lin_white</span>
+    
+        <span class="n">xyz</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">M</span> <span class="o">@</span> <span class="n">rgb_lin</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">if</span> <span class="n">sigma_noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cspace_noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span> <span class="c1"># default </span>
+            
+            <span class="n">xyzw</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">M</span> <span class="o">@</span> <span class="p">(</span><span class="n">rgb_lin_white</span><span class="o">/</span><span class="n">rgb_lin_white</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;xyz&gt;&#39;</span> <span class="o">+</span> <span class="n">cspace_noise</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+            
+            <span class="c1"># add noise:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">sigma_noise</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">lab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+            <span class="n">lab</span> <span class="o">+=</span> <span class="n">noise</span>
+            <span class="n">lab</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lab</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># no negative L* values, no L* values &gt; 100 </span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace_noise</span> <span class="o">+</span> <span class="s1">&#39;&gt;xyz&#39;</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+            
+            <span class="n">xyz</span><span class="p">[</span><span class="n">xyz</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> 
+            
+        <span class="k">return</span> <span class="n">xyz</span>
+    
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># xyz to rgb</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">rgb_lin</span> <span class="o">=</span> <span class="p">(</span><span class="n">N</span> <span class="o">@</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">rgb_lin_white</span> 
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">TRi</span><span class="p">(</span><span class="n">rgb_lin</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="o">*</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rgb</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rgb</span>
+
+<span class="c1">#==============================================================================</span>
+<span class="c1"># Virtual display based on data and model presented in literature (Kwak et al. 2001)</span>
+<span class="c1">#==============================================================================</span>
+
+<span class="c1"># Kwak 2000 :</span>
+<span class="n">_VIRTUALDISPLAY_KWAK2000_PARS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xyzb&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.38</span><span class="p">,</span><span class="mf">0.47</span><span class="p">,</span><span class="mf">0.55</span><span class="p">]]),</span>
+                                <span class="s1">&#39;xyzw&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">114.6</span><span class="p">,</span><span class="mf">137.5</span><span class="p">,</span><span class="mf">134.1</span><span class="p">]]),</span>
+                                <span class="s1">&#39;xyz_rgb_max&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">33.45</span><span class="p">,</span><span class="mf">18.10</span><span class="p">,</span><span class="mf">0.66</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="mf">57.47</span><span class="p">,</span><span class="mf">112.0</span><span class="p">,</span><span class="mf">5.47</span><span class="p">],</span>
+                                                          <span class="p">[</span><span class="mf">23.99</span><span class="p">,</span><span class="mf">8.15</span><span class="p">,</span><span class="mf">130.1</span><span class="p">]]),</span>
+    
+                                <span class="c1"># Channel interdependency matrix:</span>
+                                <span class="s1">&#39;T&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.0023</span><span class="p">,</span><span class="mf">1.0033</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0011</span><span class="p">,</span><span class="mf">0.0032</span><span class="p">,</span><span class="mf">0.0004</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0019</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0043</span><span class="p">,</span><span class="mf">0.0030</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="o">-</span><span class="mf">0.0008</span><span class="p">,</span><span class="mf">0.0008</span><span class="p">,</span><span class="mf">1.0011</span><span class="p">,</span><span class="mf">0.0005</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0012</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0007</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0006</span><span class="p">,</span><span class="mf">0.0009</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="mf">0.0000</span><span class="p">,</span><span class="mf">0.0002</span><span class="p">,</span><span class="mf">0.002</span><span class="p">,</span><span class="mf">1.000</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0021</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0002</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0002</span><span class="p">,</span><span class="mf">0.0023</span><span class="p">]]),</span>
+                    
+                                <span class="c1"># S matrix: 3 x 3 matrix which defines the dominant linear relationship </span>
+                                <span class="c1"># between monitor luminance levels and output CIE tristimulus values:</span>
+                                <span class="s1">&#39;S&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.241</span><span class="p">,</span><span class="mf">0.417</span><span class="p">,</span><span class="mf">0.172</span><span class="p">],[</span><span class="mf">0.129</span><span class="p">,</span><span class="mf">0.814</span><span class="p">,</span><span class="mf">0.056</span><span class="p">],[</span><span class="mf">0.001</span><span class="p">,</span><span class="mf">0.036</span><span class="p">,</span><span class="mf">0.945</span><span class="p">]]),</span>
+                    
+                                <span class="c1"># S-shapeII model parameters (for TR):</span>
+                                <span class="s1">&#39;S_shapeII_A&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.394</span><span class="p">,</span><span class="o">-</span><span class="mf">0.030</span><span class="p">,</span><span class="mf">0.016</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mf">2.550</span><span class="p">,</span><span class="o">-</span><span class="mf">0.007</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.002</span><span class="p">,</span><span class="mf">2.203</span><span class="p">]]),</span>
+                                <span class="s1">&#39;S_shapeII_abC&#39;</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.308</span><span class="p">,</span><span class="mf">3.157</span><span class="p">,</span><span class="mf">3.118</span><span class="p">],[</span><span class="mf">10.783</span><span class="p">,</span><span class="mf">7.166</span><span class="p">,</span><span class="mf">7.956</span><span class="p">],[</span><span class="mf">2.394</span><span class="p">,</span><span class="mf">1.551</span><span class="p">,</span><span class="mf">1.204</span><span class="p">]]),</span>
+                                
+                                <span class="s1">&#39;channel_dependence&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                <span class="s1">&#39;normalize_Ywhite_to_100&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+                                
+                                <span class="s1">&#39;cspace_noise&#39;</span> <span class="p">:</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> 
+                                <span class="s1">&#39;sigma_noise&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                                <span class="s1">&#39;seed&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="p">}</span>
+    
+<span class="c1"># function definitions:</span>
+<span class="n">_get_D_1x8</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">rgb</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">rgb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],)),</span>
+                                     <span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                     <span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                     <span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                     <span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]]</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>
+                                     <span class="n">rgb</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+
+<span class="c1"># Tone response curves: convert rgb to linear rgb</span>
+<span class="n">_f_kwak2000</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">abC</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># S-shaped function</span>
+<span class="n">_fp_kwak2000</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">abC</span><span class="p">:</span> <span class="p">((</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>  <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># first deriv. of S-Shaped function</span>
+   
+<span class="k">def</span> <span class="nf">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span>  <span class="n">A</span><span class="p">,</span> <span class="n">abC</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
+    <span class="n">dac</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">f_RGB</span> <span class="o">=</span> <span class="n">_f_kwak2000</span><span class="p">(</span><span class="n">dac</span><span class="p">,</span><span class="n">abC</span><span class="p">)</span>
+    <span class="n">fp_RGB</span> <span class="o">=</span> <span class="n">_fp_kwak2000</span><span class="p">(</span><span class="n">dac</span><span class="p">,</span><span class="n">abC</span><span class="p">)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">f_RGB</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">f_RGB</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>  <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">fp_RGB</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">f_RGB</span><span class="p">[:,</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">RGB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">return</span> <span class="n">RGB</span>
+
+<span class="k">def</span> <span class="nf">virtualdisplay_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
+                            <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">sigma_noise</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                            <span class="n">normalize_Ywhite_to_100</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Virtual display based on the data and model published in Kwak et al. (2000)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :rgb:</span>
+<span class="sd">            | ndarray with device RGB.</span>
+<span class="sd">        :channel_dependence:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: assume channel dependence.</span>
+<span class="sd">        :forward:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: convert rgb to xyz</span>
+<span class="sd">            | If False: error is raised as the Shape-II TR model is not analytically invertible.</span>
+<span class="sd">        :nbit:</span>
+<span class="sd">            | 8, optional</span>
+<span class="sd">            | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">        :cspace_noise:</span>
+<span class="sd">            | &#39;lab&#39;, optional</span>
+<span class="sd">            | Color space to add Gaussian multivariate noise in.</span>
+<span class="sd">        :sigma_noise:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Sigma of multivariate random noise that is added in cspace (same sigma for all axes).</span>
+<span class="sd">            | If None: no noise is added.</span>
+<span class="sd">        :seed:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Seed for setting the state of numpy&#39;s random number generator.</span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Level of output.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyz:</span>
+<span class="sd">            | ndarray with XYZ tristimulus values.</span>
+<span class="sd">    </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. Y. Kwak &amp; L. MacDonald. (2000). Characterisation of a desktop LCD projector, Displays 21, 179-194</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">kwak2000_pars</span> <span class="o">=</span> <span class="n">_VIRTUALDISPLAY_KWAK2000_PARS</span>
+    <span class="c1"># Normalize and linearize device rgb:</span>
+    <span class="k">if</span> <span class="n">forward</span><span class="p">:</span>
+        <span class="n">rgb_lin</span> <span class="o">=</span> <span class="n">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_A&#39;</span><span class="p">],</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_abC&#39;</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;g--&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;b:&#39;</span><span class="p">)</span>
+    
+        <span class="c1"># Convert linear rgb to xyz:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">channel_dependence</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">rgb_lin</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">@</span> <span class="n">_get_D_1x8</span><span class="p">(</span><span class="n">rgb_lin</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">@</span> <span class="n">rgb_lin</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;xyz_rgb_max&#39;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;xyzb&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">normalize_Ywhite_to_100</span> <span class="o">|</span> <span class="p">(</span><span class="n">sigma_noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            
+            <span class="n">rgb_lin_white</span> <span class="o">=</span> <span class="n">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">]]),</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_A&#39;</span><span class="p">],</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_abC&#39;</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">channel_dependence</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">rgb_lin_white</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span> <span class="o">@</span> <span class="n">_get_D_1x8</span><span class="p">(</span><span class="n">rgb_lin_white</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">xyzw</span> <span class="o">=</span> <span class="p">(</span><span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S&#39;</span><span class="p">]</span> <span class="o">@</span> <span class="n">rgb_lin_white</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;xyz_rgb_max&#39;</span><span class="p">][:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;xyzb&#39;</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">normalize_Ywhite_to_100</span><span class="p">:</span>
+                <span class="n">xyz</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">xyz</span><span class="o">/</span><span class="n">xyzw</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">xyzw</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="n">xyzw</span><span class="o">/</span><span class="n">xyzw</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    
+        <span class="c1"># add noise:</span>
+
+        <span class="k">if</span> <span class="n">sigma_noise</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="n">cspace_noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span> <span class="c1"># default </span>
+            
+            <span class="n">lab</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;xyz&gt;&#39;</span> <span class="o">+</span> <span class="n">cspace_noise</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xyzw&#39;</span> <span class="p">:</span> <span class="n">xyzw</span><span class="p">})</span>
+            
+            <span class="c1"># add noise:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">sigma_noise</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">lab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">lab</span> <span class="o">+=</span> <span class="n">noise</span>
+            <span class="n">lab</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lab</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># no negative L* values, no L* values &gt; 100 </span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">cspace_noise</span> <span class="o">+</span> <span class="s1">&#39;&gt;xyz&#39;</span><span class="p">,</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;xyzw&#39;</span> <span class="p">:</span> <span class="n">xyzw</span><span class="p">})</span>
+            <span class="n">xyz</span><span class="p">[</span><span class="n">xyz</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> 
+            
+            <span class="c1"># fig = plt.figure()</span>
+            <span class="c1"># ax = fig.add_subplot(projection=&#39;3d&#39;)</span>
+            <span class="c1"># ax.plot(lab[:,1],lab[:,2],lab[:,0],&#39;x&#39;)</span>
+            <span class="c1"># ax.set_xlabel(&#39;a*&#39;)</span>
+            <span class="c1"># ax.set_ylabel(&#39;b*&#39;)</span>
+            <span class="c1"># ax.set_zlabel(&#39;L*&#39;)</span>
+            <span class="c1"># return xyz</span>
+    
+    
+        <span class="n">xyz</span><span class="p">[</span><span class="n">xyz</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">return</span> <span class="n">xyz</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Inverse model not implemented: S-shape II is not analytically invertible !&#39;</span><span class="p">)</span>
+
+<span class="c1">#==============================================================================</span>
+<span class="c1"># VirtualDisplay class definition</span>
+<span class="c1">#==============================================================================</span>
+<div class="viewcode-block" id="VirtualDisplay">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay">[docs]</a>
+<span class="k">class</span> <span class="nc">VirtualDisplay</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">model_pars</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;kwak2000_SII&#39;</span><span class="p">):</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">virtualdisplay_kwak2000</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;kwak2000_SII&#39;</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;virtualdisplay&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;GGO_GOG_GOGO&#39;</span><span class="p">):</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">virtualdisplay</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;GGO_GOG_GOGO&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Virtual display model </span><span class="si">{:s}</span><span class="s1"> not implemented.&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_name</span> <span class="o">=</span> <span class="s1">&#39;function&#39;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">model_pars</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channel_dependence</span> <span class="o">=</span> <span class="n">channel_dependence</span> 
+    
+        <span class="c1"># replace in model_pars:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;seed&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span> <span class="k">else</span> <span class="mi">0</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seed</span>
+        <span class="k">if</span> <span class="n">nbit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;nbit&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;nbit&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;nbit&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span> <span class="k">else</span> <span class="mi">8</span>   
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_dependence</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;channel_dependence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_dependence</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">channel_dependence</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;channel_dependence&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s1">&#39;channel_dependence&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span> <span class="k">else</span> <span class="kc">False</span> 
+        
+
+<div class="viewcode-block" id="VirtualDisplay.to_rgb">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay.to_rgb">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1">#print(&#39;VD: to_rgb-&gt;model_pars&#39;,self.model_pars)</span>
+        <span class="n">model_pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">)</span>
+        <span class="n">model_pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># print(&#39;VD: to_rgb-&gt;model_pars:&#39;, model_pars)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">model_pars</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="VirtualDisplay.to_xyz">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay.to_xyz">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># print(&#39;VD1: to_xyz-&gt;model_pars:&#39;, self.model_pars)</span>
+        <span class="n">model_pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">)</span>
+        <span class="n">model_pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># print(&#39;VD2: to_xyz-&gt;kwargs:&#39;, kwargs)</span>
+        <span class="c1"># print(&#39;VD3: to_xyz-&gt;model_pars:&#39;, model_pars)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;force_no_noise&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;force_no_noise&#39;</span><span class="p">]:</span> 
+            <span class="n">model_pars</span><span class="p">[</span><span class="s1">&#39;sigma_noise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># if &#39;sigma_noise&#39; not in model_pars: model_pars[&#39;sigma&#39;] = None </span>
+        <span class="c1"># print(&#39;VD4: to_xyz-&gt;model_pars:&#39;, model_pars)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">model_pars</span><span class="p">)</span></div>
+</div>
+
+        
+        
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+    
+    <span class="c1"># # === Test virtual diplay functions =======================================</span>
+    <span class="c1"># rgb = np.array([[255,255,255],[200,150,60]])</span>
+    <span class="c1"># xyz = virtualdisplay(rgb, forward = True, gain = 2, gamma = 2.4, tr_type = &#39;ggo&#39;, seed = 0)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz)</span>
+    <span class="c1"># rgb2 = virtualdisplay(xyz, forward = False, gain = 2, gamma = 2.4, tr_type = &#39;ggo&#39;, seed = 0)</span>
+    <span class="c1"># print(&#39;\nrgb2&#39;,rgb2)</span>
+    <span class="c1"># xyz2 = virtualdisplay(rgb2, forward = True, gain = 2, gamma = 2.4, tr_type = &#39;ggo&#39;,sigma_noise=0.0358, seed = 0)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz2) </span>
+    <span class="c1"># lab, lab2 = colortf(xyz,tf=&#39;lab&#39;,xyzw=xyz[:1]), colortf(xyz2,tf=&#39;lab&#39;,xyzw=xyz2[:1])</span>
+    <span class="c1"># print(&#39;\nDE: &#39;,((lab-lab2)**2).sum(-1)**0.5)</span>
+    
+    <span class="c1"># # Kwak 2001 S-shapeII model:</span>
+    <span class="c1"># </span>
+    <span class="c1"># rgb_ramps = np.array([np.arange(256)]*3).T</span>
+    <span class="c1"># xyz = virtualdisplay_kwak2000(rgb_ramps, channel_dependence = True, </span>
+    <span class="c1">#                               normalize_Ywhite_to_100 = True,nbit = 8, verbosity = 1)</span>
+    
+    <span class="c1"># # === Test VirtualDisplay class ===========================================</span>
+    <span class="n">vd1</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay&#39;</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># xyz = vd1.to_xyz(rgb)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz)</span>
+    <span class="c1"># rgb2 = vd1.to_rgb(xyz)</span>
+    <span class="c1"># print(&#39;\nrgb2&#39;,rgb2)</span>
+    <span class="c1"># xyz2 = vd1.to_xyz(rgb, sigma_noise = 0.0358, seed = 0)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz2) </span>
+    <span class="c1"># lab, lab2 = colortf(xyz,tf=&#39;lab&#39;,xyzw=xyz[:1]), colortf(xyz2,tf=&#39;lab&#39;,xyzw=xyz2[:1])</span>
+    <span class="c1"># print(&#39;\nDE: &#39;,((lab-lab2)**2).sum(-1)**0.5)</span>
+
+    <span class="c1"># vd1 = VirtualDisplay(model = &#39;virtualdisplay_kwak2000_SII&#39;, gain = 2, gamma = 2.4, tr_type = &#39;ggo&#39;, seed = 0, nbit = 8, channel_dependence = False)</span>
+    <span class="c1"># xyz = vd1.to_xyz(rgb)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz)</span>
+    <span class="c1"># # rgb2 = vd1.to_rgb(xyz)</span>
+    <span class="c1"># # print(&#39;\nrgb2&#39;,rgb2)</span>
+    <span class="c1"># xyz2 = vd1.to_xyz(rgb, sigma_noise = 0.0358, seed = 0)</span>
+    <span class="c1"># print(&#39;\nxyz&#39;, xyz2) </span>
+    <span class="c1"># lab, lab2 = colortf(xyz,tf=&#39;lab&#39;,xyzw=xyz[:1]), colortf(xyz2,tf=&#39;lab&#39;,xyzw=xyz2[:1])</span>
+    <span class="c1"># print(&#39;\nDE: &#39;,((lab-lab2)**2).sum(-1)**0.5)</span>
+    
+    <span class="c1"># Plot Virtual Display Gamut:</span>
+    <span class="kn">import</span> <span class="nn">itertools</span>
+    <span class="n">include_max</span><span class="p">,</span> <span class="n">include_min</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="n">inc</span><span class="p">,</span> <span class="n">inc_offset</span><span class="p">,</span><span class="n">nbit</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span>
+    <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">inc_offset</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dv</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">include_max</span><span class="p">):</span> <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">dv</span><span class="p">,[</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># ensure max values are present</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dv</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">include_min</span><span class="p">):</span> <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">dv</span><span class="p">))</span> <span class="c1"># ensure 0 values are present</span>
+    <span class="n">rgb</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">dv</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)))</span>
+
+    <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">256</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">dv</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)))</span>
+    <span class="n">vd2</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">vd3</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">xyz2</span> <span class="o">=</span> <span class="n">vd2</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span><span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.0358</span><span class="p">)</span>
+    <span class="n">xyz3</span> <span class="o">=</span> <span class="n">vd3</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span><span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.0358</span><span class="p">)</span>
+    <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">vd2</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">]]),</span><span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.0358</span><span class="p">)</span>
+    <span class="n">xyzw3</span> <span class="o">=</span> <span class="n">vd3</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">,</span><span class="mi">255</span><span class="p">]]),</span><span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.0358</span><span class="p">)</span>
+    <span class="n">lab2</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span><span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">)</span>
+    <span class="n">lab3</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="n">xyz3</span><span class="p">,</span><span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw3</span><span class="p">)</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lab2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">lab2</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">lab2</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lab3</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">lab3</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">lab3</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;a*&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;b*&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;L*&#39;</span><span class="p">)</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="n">lx</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">in_hull</span><span class="p">(</span><span class="n">xyzw2</span><span class="p">,</span><span class="n">xyz2</span><span class="p">)</span>
+    <span class="n">lx</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">in_hull</span><span class="p">(</span><span class="n">xyzw3</span><span class="p">,</span><span class="n">xyz3</span><span class="p">)</span>
+    <span class="c1"># virtualdisplay_kwak2000(rgb,verbosity=1, normalize_Ywhite_to_100=False, channel_dependence=False)</span>
+    <span class="c1"># print(virtualdisplay_kwak2000(rgb[-1:],verbosity=0,channel_dependence=True,normalize_Ywhite_to_100=False))</span>
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

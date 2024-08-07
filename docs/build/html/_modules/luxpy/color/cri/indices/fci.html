@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cri.indices.fci &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cri.indices.fci</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cri.indices.fci</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Feeling of Contrast Index</span>
+<span class="sd">=========================</span>
+
+<span class="sd"> :spd_to_fci(): Calculate Feeling of Contrast Index (FCI).</span>
+
+
+<span class="sd">Created on Fri Oct  2 16:37:13 2020</span>
+
+<span class="sd">@author: ksmet1977 at gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_RFL</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">xyz_to_lab</span> 
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">asplit</span>
+
+<span class="c1"># Get RFLs and calculate fixed reference D65 XYZs for speed:</span>
+<span class="n">_RFL_FCI</span> <span class="o">=</span> <span class="n">_RFL</span><span class="p">[</span><span class="s1">&#39;cri&#39;</span><span class="p">][</span><span class="s1">&#39;fci&#39;</span><span class="p">]</span>
+<span class="n">_XYZ_D65_REF</span><span class="p">,</span> <span class="n">_XYZW_D65_REF</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">_RFL_FCI</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_fci&#39;</span><span class="p">]</span>
+
+    
+<span class="k">def</span> <span class="nf">_polyarea3D</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+    
+    <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span>
+    
+    <span class="n">RY</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">YG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">GR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">RB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">BG</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">z</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">S1</span> <span class="o">=</span> <span class="p">(</span><span class="n">RY</span><span class="o">+</span><span class="n">YG</span><span class="o">+</span><span class="n">GR</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">S2</span> <span class="o">=</span> <span class="p">(</span><span class="n">RB</span><span class="o">+</span><span class="n">BG</span><span class="o">+</span><span class="n">GR</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="n">GA1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">S1</span><span class="o">*</span><span class="p">(</span><span class="n">S1</span><span class="o">-</span><span class="n">RY</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S1</span><span class="o">-</span><span class="n">YG</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S1</span><span class="o">-</span><span class="n">GR</span><span class="p">))</span>
+    <span class="n">GA2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">S2</span><span class="o">*</span><span class="p">(</span><span class="n">S2</span><span class="o">-</span><span class="n">RB</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S2</span><span class="o">-</span><span class="n">BG</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">S2</span><span class="o">-</span><span class="n">GR</span><span class="p">))</span>
+    <span class="n">GA</span> <span class="o">=</span> <span class="n">GA1</span> <span class="o">+</span> <span class="n">GA2</span>
+    <span class="k">return</span> <span class="n">GA</span>
+    
+    
+<div class="viewcode-block" id="spd_to_fci">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_fci">[docs]</a>
+<span class="k">def</span> <span class="nf">spd_to_fci</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">use_cielab</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Feeling of Contrast Index (FCI).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | ndarray with spectral power distribution(s) of the test light source(s).</span>
+<span class="sd">        :use_cielab:</span>
+<span class="sd">            |  True, optional</span>
+<span class="sd">            | True: use original formulation of FCI, which adopts a CIECAT94 </span>
+<span class="sd">            | chromatic adaptation transform followed by a conversion to </span>
+<span class="sd">            | CIELAB coordinates before calculating the gamuts.</span>
+<span class="sd">            | False: use CIECAM02 coordinates and embedded CAT02 transform.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :fci:</span>
+<span class="sd">            | ndarray with FCI values.</span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `Hashimoto, K., Yano, T., Shimizu, M., &amp; Nayatani, Y. (2007). </span>
+<span class="sd">        New method for specifying color-rendering properties of light sources </span>
+<span class="sd">        based on feeling of contrast. </span>
+<span class="sd">        Color Research and Application, 32(5), 361–371. </span>
+<span class="sd">        &lt;http://dx.doi.org/10.1002/col.20338&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># get xyz:</span>
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> 
+                           <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                           <span class="n">rfl</span> <span class="o">=</span> <span class="n">_RFL_FCI</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># set condition parameters:</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">Yb</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">La</span> <span class="o">=</span> <span class="n">Yb</span><span class="o">*</span><span class="mi">1000</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">100</span>
+    
+    <span class="k">if</span> <span class="n">use_cielab</span><span class="p">:</span>
+        <span class="c1"># apply ciecat94 chromatic adaptation transform:</span>
+        <span class="n">xyzc</span> <span class="o">=</span> <span class="n">cat</span><span class="o">.</span><span class="n">apply_ciecat94</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> 
+                                  <span class="n">E</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">D</span><span class="p">,</span>
+                                  <span class="n">cat94_old</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># there is apparently an updated version with an alpha incomplete adaptation factor and noise = 0.1; However, FCI doesn&#39;t use that version. </span>
+        
+        <span class="c1"># convert to cielab:</span>
+        <span class="n">lab</span> <span class="o">=</span> <span class="n">xyz_to_lab</span><span class="p">(</span><span class="n">xyzc</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_XYZW_D65_REF</span><span class="p">)</span>
+        <span class="n">labd65</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">xyz_to_lab</span><span class="p">(</span><span class="n">_XYZ_D65_REF</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_XYZW_D65_REF</span><span class="p">),</span><span class="n">lab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">:</span> <span class="n">cam</span><span class="o">.</span><span class="n">xyz_to_jabC_ciecam02</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="mi">20</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">100</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">surround</span> <span class="o">=</span> <span class="s1">&#39;avg&#39;</span><span class="p">)</span>
+        <span class="n">lab</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">)</span>
+        <span class="n">labd65</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">_XYZ_D65_REF</span><span class="p">,</span> <span class="n">_XYZW_D65_REF</span><span class="p">),</span><span class="n">lab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">fci</span> <span class="o">=</span> <span class="mi">100</span><span class="o">*</span><span class="p">(</span><span class="n">_polyarea3D</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span> <span class="o">/</span> <span class="n">_polyarea3D</span><span class="p">(</span><span class="n">labd65</span><span class="p">))</span><span class="o">**</span><span class="mf">1.5</span>
+    
+    <span class="k">return</span> <span class="n">fci</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="n">F6</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F6&#39;</span><span class="p">],</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">F4</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">F6</span><span class="p">,</span><span class="n">F4</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:],</span> <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]))</span>
+    
+    <span class="n">fci1a</span> <span class="o">=</span> <span class="n">spd_to_fci</span><span class="p">(</span><span class="n">F6</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fci1a</span><span class="p">)</span>
+    <span class="n">fci1b</span> <span class="o">=</span> <span class="n">spd_to_fci</span><span class="p">(</span><span class="n">F6</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fci1b</span><span class="p">)</span>
+    <span class="n">fci2</span> <span class="o">=</span> <span class="n">spd_to_fci</span><span class="p">(</span><span class="n">spds</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">fci2</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

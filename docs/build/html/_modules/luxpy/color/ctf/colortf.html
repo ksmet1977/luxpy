@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.ctf.colortf &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.ctf.colortf</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.ctf.colortf</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">###################################################</span>
+<span class="sd"> Extension of basic colorimetry module</span>
+<span class="sd">###################################################</span>
+<span class="sd"> </span>
+<span class="sd">Global internal variables:</span>
+<span class="sd">    </span>
+<span class="sd"> :_COLORTF_DEFAULT_WHITE_POINT: ndarray with XYZ values of default white point </span>
+<span class="sd">                                (equi-energy white) for color transformation </span>
+<span class="sd">                                if none is supplied.</span>
+
+<span class="sd">Functions:</span>
+
+<span class="sd"> :colortf(): Calculates conversion between any two color spaces (&#39;cspace&#39;)</span>
+<span class="sd">              for which functions xyz_to_cspace() and cspace_to_xyz() are defined.</span>
+
+<span class="sd">===============================================================================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_COLORTF_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;colortf&#39;</span><span class="p">]</span>
+
+
+<span class="n">_COLORTF_DEFAULT_WHITE_POINT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">])</span> <span class="c1"># ill. E white point</span>
+
+<span class="c1">#------------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="colortf">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.ctf.colortf.colortf">[docs]</a>
+<span class="k">def</span> <span class="nf">colortf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">fwtf</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">bwtf</span> <span class="o">=</span> <span class="p">{},</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function to perform various color transformations.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray</span>
+<span class="sd">        :tf: </span>
+<span class="sd">            | _CSPACE or str specifying transform type, optional</span>
+<span class="sd">            |     E.g. tf = &#39;spd&gt;xyz&#39; or &#39;spd&gt;Yuv&#39; or &#39;Yuv&gt;cct&#39; </span>
+<span class="sd">            |      or &#39;Yuv&#39; or &#39;Yxy&#39; or ...</span>
+<span class="sd">            |  If tf is for example &#39;Yuv&#39;, it is assumed to be a transformation </span>
+<span class="sd">            |  of type: &#39;xyz&gt;Yuv&#39;</span>
+<span class="sd">        :fwtf: </span>
+<span class="sd">            | dict with parameters (keys) and values required </span>
+<span class="sd">            | by some color transformations for the forward transform: </span>
+<span class="sd">            |  i.e. &#39;xyz&gt;...&#39;</span>
+<span class="sd">        :bwtf:</span>
+<span class="sd">            | dict with parameters (keys) and values required </span>
+<span class="sd">            | by some color transformations for the backward transform: </span>
+<span class="sd">            |  i.e. &#39;...&gt;xyz&#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with data transformed to new color space</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        For the forward transform (&#39;xyz&gt;...&#39;), one can input the keyword </span>
+<span class="sd">        arguments specifying the transform parameters directly without having </span>
+<span class="sd">        to use the dict :fwtf: (should be empty!) </span>
+<span class="sd">        [i.e. kwargs overwrites empty fwtf dict]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;&gt;&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">fwtf</span><span class="p">):</span>
+            <span class="n">fwtf</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="k">return</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_to_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">tf</span><span class="p">[</span><span class="mi">0</span><span class="p">])](</span><span class="n">data</span><span class="p">,</span><span class="o">**</span><span class="n">fwtf</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="n">fwtf</span><span class="p">):</span>
+            <span class="n">fwtf</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="n">bwfcn</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_to_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)]</span>
+        <span class="n">fwfcn</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1">_to_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">tf</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">fwfcn</span><span class="p">(</span><span class="n">bwfcn</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="o">**</span><span class="n">bwtf</span><span class="p">),</span><span class="o">**</span><span class="n">fwtf</span><span class="p">)</span>   </div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

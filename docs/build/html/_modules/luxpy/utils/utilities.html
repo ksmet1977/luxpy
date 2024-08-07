@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.utils.utilities &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.utils.utilities</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.utils.utilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with utility functions and parameters</span>
+<span class="sd">============================================</span>
+
+<span class="sd"> :_PKG_PATH: absolute path to luxpy package</span>
+<span class="sd"> </span>
+<span class="sd"> :_SEP: operating system operator</span>
+<span class="sd"> </span>
+<span class="sd"> :_EPS: = 7./3 - 4./3 -1 (machine epsilon)</span>
+<span class="sd"> </span>
+<span class="sd"> :np2d(): Make a tuple, list or array at least a 2D numpy array.</span>
+
+<span class="sd"> :np2dT(): Make a tuple, list or array at least a 2D numpy array and tranpose.</span>
+
+<span class="sd"> :np3d(): Make a tuple, list or array at least a 3D numpy array.</span>
+
+<span class="sd"> :np3dT(): Make a tuple, list or array at least a 3D numpy array </span>
+<span class="sd">           and tranpose (swap) first two axes.</span>
+
+<span class="sd"> :put_args_in_db():  | Takes the args with not-None input values of a function </span>
+<span class="sd">                       and overwrites the values of the corresponding keys </span>
+<span class="sd">                       in dict db.</span>
+<span class="sd">                     | See put_args_in_db? for more info.</span>
+
+<span class="sd"> :vec_to_dict(): Convert dict to vec and vice versa.</span>
+
+<span class="sd"> :getdata(): Get data from csv-file.</span>
+
+<span class="sd"> :dictkv(): Easy input of of keys and values into dict </span>
+<span class="sd">            (both should be iterable lists).</span>
+
+<span class="sd"> :OD(): Provides a nice way to create OrderedDict &quot;literals&quot;.</span>
+
+<span class="sd"> :meshblock(): | Create a meshed block.</span>
+<span class="sd">               | (Similar to meshgrid, but axis = 0 is retained) </span>
+<span class="sd">               | To enable fast blockwise calculation.</span>
+
+<span class="sd"> :aplit(): Split ndarray data on (default = last) axis.</span>
+
+<span class="sd"> :ajoin(): Join tuple of ndarray data on (default = last) axis.</span>
+
+<span class="sd"> :broadcast_shape(): | Broadcasts shapes of data to a target_shape. </span>
+<span class="sd">                     | Useful for block/vector calculations when numpy fails </span>
+<span class="sd">                       to broadcast correctly.</span>
+
+<span class="sd"> :todim(): Expand x to dimensions that are broadcast-compatable </span>
+<span class="sd">           with shape of another array.</span>
+<span class="sd">           </span>
+<span class="sd"> :read_excel(): Read data from a specific Sheet and Cell_Range of an existing an Excel file.</span>
+<span class="sd">           </span>
+<span class="sd"> :write_excel(): Write an ndarray into specific Sheet and Cell_Range of an (existing) Excel file.</span>
+<span class="sd"> </span>
+<span class="sd"> :show_luxpy_tree(): Show luxpy folder structure</span>
+<span class="sd"> </span>
+<span class="sd"> :is_importable(): Check if a module is importable / loaded and if it doesn&#39;t exist installing it using subprocess</span>
+<span class="sd"> </span>
+<span class="sd"> :get_function_kwargs(): Get dictionary of a function&#39;s keyword arguments and their default values. </span>
+
+<span class="sd"> :profile_fcn(): Profile or time a function fcn.</span>
+
+<span class="sd"> :unique(): Get unique elements from array.</span>
+<span class="sd"> </span>
+<span class="sd"> :save_pkl(): save object in pickle file</span>
+<span class="sd"> </span>
+<span class="sd"> :load_pkl(): load object in pickle file</span>
+<span class="sd"> </span>
+<span class="sd"> :imread(): read image file using imageio </span>
+<span class="sd"> </span>
+<span class="sd"> :imsave(): save image file using imageio</span>
+<span class="sd"> </span>
+<span class="sd"> :lazy_import(): for lazy importing of a module</span>
+<span class="sd"> </span>
+<span class="sd">===============================================================================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># Package imports:</span>
+<span class="c1"># Core:</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">importlib.util</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">cProfile</span>
+<span class="kn">import</span> <span class="nn">pstats</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">import</span> <span class="nn">gzip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">odict</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;odict&#39;</span><span class="p">]</span>
+
+<span class="c1"># other:</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1"># import matplotlib.pyplot as plt # have become lazy imports </span>
+<span class="c1"># import scipy as sp # have become lazy imports </span>
+
+<span class="c1"># import lazy_loader as lazy</span>
+<span class="c1"># __all__ += [&#39;lazy&#39;]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># os related utility parameters:</span>
+<span class="n">_PKG_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">);</span><span class="s2">&quot;&quot;&quot; Absolute path to package &quot;&quot;&quot;</span> 
+<span class="n">_PKG_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span><span class="p">[:</span><span class="n">_PKG_PATH</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;utils&quot;</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">_SEP</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">sep</span><span class="p">;</span> <span class="s2">&quot;&quot;&quot; Operating system separator &quot;&quot;&quot;</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_PKG_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_SEP&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># set some general utility parameters:</span>
+<span class="n">_EPS</span> <span class="o">=</span> <span class="mf">7.</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span> <span class="mf">4.</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span> <span class="s2">&quot;&quot;&quot; Machine epsilon &quot;&quot;&quot;</span>
+<span class="n">__all__</span><span class="o">+=</span><span class="p">[</span><span class="s1">&#39;_EPS&#39;</span><span class="p">]</span>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.folder_tree</span> <span class="kn">import</span> <span class="n">tree</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;get_Axes3D_module&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;np2d&#39;</span><span class="p">,</span><span class="s1">&#39;np3d&#39;</span><span class="p">,</span><span class="s1">&#39;np2dT&#39;</span><span class="p">,</span><span class="s1">&#39;np3dT&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;put_args_in_db&#39;</span><span class="p">,</span><span class="s1">&#39;vec_to_dict&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;loadtxt&#39;</span><span class="p">,</span> <span class="s1">&#39;savetxt&#39;</span><span class="p">,</span><span class="s1">&#39;getdata&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;dictkv&#39;</span><span class="p">,</span><span class="s1">&#39;OD&#39;</span><span class="p">,</span><span class="s1">&#39;meshblock&#39;</span><span class="p">,</span><span class="s1">&#39;asplit&#39;</span><span class="p">,</span><span class="s1">&#39;ajoin&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;broadcast_shape&#39;</span><span class="p">,</span><span class="s1">&#39;todim&#39;</span><span class="p">,</span><span class="s1">&#39;read_excel&#39;</span><span class="p">,</span> <span class="s1">&#39;write_excel&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;show_luxpy_tree&#39;</span><span class="p">,</span> <span class="s1">&#39;is_importable&#39;</span><span class="p">,</span><span class="s1">&#39;get_function_kwargs&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;profile_fcn&#39;</span><span class="p">,</span><span class="s1">&#39;unique&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;save_pkl&#39;</span><span class="p">,</span> <span class="s1">&#39;load_pkl&#39;</span><span class="p">,</span><span class="s1">&#39;imread&#39;</span><span class="p">,</span><span class="s1">&#39;imsave&#39;</span><span class="p">,</span> <span class="s1">&#39;lazy_import&#39;</span><span class="p">]</span>
+
+<span class="c1">##############################################################################</span>
+<span class="c1"># Start function definitions</span>
+<span class="c1">##############################################################################</span>
+<div class="viewcode-block" id="get_Axes3D_module">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.get_Axes3D_module">[docs]</a>
+<span class="k">def</span> <span class="nf">get_Axes3D_module</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Get Axes3D module from mpl_toolkits.mplot3d &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span> <span class="c1"># lazy import</span>
+    <span class="k">return</span> <span class="n">Axes3D</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="np2d">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2d">[docs]</a>
+<span class="k">def</span> <span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | tuple, list, ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray with .ndim &gt;= 2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span><span class="c1"># assume already atleast_2d when nd.array (user has to ensure input is an array)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="np2dT">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2dT">[docs]</a>
+<span class="k">def</span> <span class="nf">np2dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array and transpose.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | tuple, list, ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with .ndim &gt;= 2 and with transposed axes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span><span class="c1"># assume already atleast_2d when nd.array (user has to ensure input is an array)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+
+
+<div class="viewcode-block" id="np3d">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3d">[docs]</a>
+<span class="k">def</span> <span class="nf">np3d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | tuple, list, ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with .ndim &gt;= 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span><span class="c1"># assume already atleast_3d when nd.array (user has to ensure input is an array)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span>   
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="np3dT">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3dT">[docs]</a>
+<span class="k">def</span> <span class="nf">np3dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="c1"># keep last axis the same</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | tuple, list, ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with .ndim &gt;= 3 and with first two axes </span>
+<span class="sd">            | transposed (axis=3 is kept the same).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span><span class="c1"># assume already atleast_3d when nd.array (user has to ensure input is an array)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">3</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">data</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">aray</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span></div>
+
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="put_args_in_db">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.put_args_in_db">[docs]</a>
+<span class="k">def</span> <span class="nf">put_args_in_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Takes the args with not-None input values of a function and overwrites </span>
+<span class="sd">    the values of the corresponding keys in dict db.</span>
+<span class="sd">    | (args are collected with the built-in function locals(), </span>
+<span class="sd">    | See example usage below)</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :db: </span>
+<span class="sd">            | dict</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | dict with the values of specific keys overwritten by the </span>
+<span class="sd">            |      not-None values of corresponding args of a function fcn.</span>
+<span class="sd">    </span>
+<span class="sd">    Example usage:</span>
+<span class="sd">        | _db = {&#39;c&#39; : &#39;c1&#39;, &#39;d&#39; : 10, &#39;e&#39; : {&#39;e1&#39;:&#39;hello&#39;, &#39;e2&#39;:1000}}</span>
+<span class="sd">        |</span>
+<span class="sd">        | def test_put_args_in_db(a, b, db = None, c = None,d = None,e = None):</span>
+<span class="sd">        | </span>
+<span class="sd">        |    args = locals().copy()  # get dict with keyword input arguments to </span>
+<span class="sd">        |                             # function &#39;test_put_args_in_db&#39;</span>
+<span class="sd">        |     </span>
+<span class="sd">        |     db = put_args_in_db(db,args) # overwrite non-None args in db copy.</span>
+<span class="sd">        |     </span>
+<span class="sd">        |    if db is not None: # unpack db for further use</span>
+<span class="sd">        |        c,d,e = [db[x] for x in sorted(db.keys())]</span>
+<span class="sd">        |     </span>
+<span class="sd">        |     print(&#39; a : {}&#39;.format(a))</span>
+<span class="sd">        |     print(&#39; b : {}&#39;.format(b))</span>
+<span class="sd">        |     print(&#39; db: {}&#39;.format(db))</span>
+<span class="sd">        |     print(&#39; c : {}&#39;.format(c))</span>
+<span class="sd">        |     print(&#39; d : {}&#39;.format(d))</span>
+<span class="sd">        |     print(&#39; e : {}&#39;.format(e))</span>
+<span class="sd">        |     print(&#39;_db: {}&#39;.format(_db))</span>
+<span class="sd"> </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># overwrite not-&#39;None&#39; input arguments in db:</span>
+    <span class="k">if</span> <span class="n">db</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dbc</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">dbc_keys</span> <span class="o">=</span> <span class="n">dbc</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">argkey</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">args</span><span class="p">[</span><span class="n">argkey</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">argkey</span> <span class="ow">in</span> <span class="n">dbc_keys</span><span class="p">:</span>
+                    <span class="n">dbc</span><span class="p">[</span><span class="n">argkey</span><span class="p">]</span> <span class="o">=</span>  <span class="n">args</span><span class="p">[</span><span class="n">argkey</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">dbc</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">db</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------   </span>
+<div class="viewcode-block" id="vec_to_dict">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.vec_to_dict">[docs]</a>
+<span class="k">def</span> <span class="nf">vec_to_dict</span><span class="p">(</span><span class="n">vec</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dic</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert dict to vec and vice versa.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :vec: </span>
+<span class="sd">            | list or vector array, optional</span>
+<span class="sd">        :dic: </span>
+<span class="sd">            | dict, optional</span>
+<span class="sd">        :vsize:</span>
+<span class="sd">            | list or vector array with size of values of dict, optional</span>
+<span class="sd">        :keys:</span>
+<span class="sd">            | list or vector array with keys in dict (must be provided).</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | x, vsize</span>
+<span class="sd">            |   x is an array, if vec is None</span>
+<span class="sd">            |   x is a dict, if vec is not None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">vec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Put values in vec in dic:</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># keeps track of length already read from x</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">vec</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">vsize</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
+            <span class="n">n</span> <span class="o">+=</span> <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+        <span class="k">return</span> <span class="n">dic</span><span class="p">,</span> <span class="n">vsize</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Put values of keys in dic in vec:</span>
+        <span class="n">vec</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">vsize</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
+            <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">vec</span><span class="p">,</span> <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]))</span>
+            <span class="n">vsize</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">vsize</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="loadtxt">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.loadtxt">[docs]</a>
+<span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Load data from text file. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | String with filename [+path]</span>
+<span class="sd">        :header:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | None: no header present, &#39;infer&#39; get from file.</span>
+<span class="sd">        :sep:</span>
+<span class="sd">            | &#39;,&#39;, optional</span>
+<span class="sd">            | Delimiter (&#39;,&#39; -&gt; csv file)</span>
+<span class="sd">        :dtype:</span>
+<span class="sd">            | float, optional</span>
+<span class="sd">            | Try casting output array to this datatype.</span>
+<span class="sd">        :missing_values:</span>
+<span class="sd">            | np.nan, optional</span>
+<span class="sd">            | Replace missing values with this.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :ndarray:</span>
+<span class="sd">            | loaded data in ndarray of type dtype or object (in case of mixed types)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">object</span><span class="p">)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">header</span> <span class="o">==</span> <span class="s1">&#39;infer&#39;</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">if</span> <span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">out</span><span class="p">[</span><span class="n">out</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">missing_values</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">object</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">header</span></div>
+
+
+<div class="viewcode-block" id="savetxt">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.savetxt">[docs]</a>
+<span class="k">def</span> <span class="nf">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;:1.18f&#39;</span><span class="p">,</span> <span class="n">aw</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Save data to text file. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | String with filename [+path]</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | ndarray with data</span>
+<span class="sd">        :header:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | None: no header present, &#39;infer&#39; get from file.</span>
+<span class="sd">        :sep:</span>
+<span class="sd">            | &#39;,&#39;, optional</span>
+<span class="sd">            | Delimiter (&#39;,&#39; -&gt; csv file)</span>
+<span class="sd">        :fmt:</span>
+<span class="sd">            | &#39;:1.18f&#39;, optional</span>
+<span class="sd">            | Format string for numerical data output.</span>
+<span class="sd">            | Can be tuple/list for different output formats per column.</span>
+<span class="sd">        :aw:</span>
+<span class="sd">            | &#39;w&#39;, optional</span>
+<span class="sd">            | options: &#39;w&#39; -&gt; write or &#39;a&#39; -&gt; append to file</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">header</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>    
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;:g&#39;</span>
+        <span class="n">lines</span>  <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="n">header</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span> 
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">{:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fmtj</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fmt</span><span class="p">,(</span><span class="nb">list</span><span class="p">,</span><span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="n">fmt</span> 
+                    <span class="k">if</span> <span class="n">fmtj</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">:</span> <span class="n">fmtj</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="n">fmtj</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+                    <span class="n">fmtj</span> <span class="o">=</span> <span class="s1">&#39;{&#39;</span> <span class="o">+</span> <span class="n">fmtj</span> <span class="o">+</span> <span class="s1">&#39;}&#39;</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span> <span class="o">+</span> <span class="n">sep</span> <span class="o">+</span> <span class="n">fmtj</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="n">aw</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">fmt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;:&#39;</span><span class="p">:</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;%&#39;</span> <span class="o">+</span> <span class="n">fmt</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> 
+        <span class="k">if</span> <span class="n">header</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">comments</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="n">sep</span><span class="p">)</span></div>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="getdata">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.getdata">[docs]</a>
+<span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> 
+            <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get data from csv-file. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | - str with path to file containing data</span>
+<span class="sd">            | - ndarray with data</span>
+<span class="sd">        :dtype:</span>
+<span class="sd">            | float, optional</span>
+<span class="sd">            | dtype of elements in ndarray data array</span>
+<span class="sd">            | If None: mixture of datatypes is expected-&gt;dtype of output will be object</span>
+<span class="sd">        :header:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            |   - None: no header in file</span>
+<span class="sd">            |   - &#39;infer&#39;: infer headers from file</span>
+<span class="sd">        :sep:</span>
+<span class="sd">            | &#39;,&#39; or &#39;\t&#39; or other char, optional</span>
+<span class="sd">            | Column separator in data file</span>
+<span class="sd">        :datatype&#39;:</span>
+<span class="sd">            | &#39;S&#39;,optional </span>
+<span class="sd">            | Specifies a type of data. </span>
+<span class="sd">            | Is used when creating column headers (:column: is None).</span>
+<span class="sd">            |   -&#39;S&#39;: light source spectrum</span>
+<span class="sd">            |   -&#39;R&#39;: reflectance spectrum</span>
+<span class="sd">            |   or other.   </span>
+<span class="sd">        :copy:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Return a copy of ndarray </span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | True, False, optional</span>
+<span class="sd">            | Print warning when inferring headers from file.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | data as ndarray </span>
+<span class="sd">      </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">datafile</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">input_is_string</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="o">==</span> <span class="s1">&#39;infer&#39;</span><span class="p">:</span>
+            <span class="c1">#data = (np.array((np.genfromtxt(datafile, delimiter = sep, dtype = None,skip_header = 1, encoding = None)).tolist(),dtype=object))</span>
+            <span class="c1">#header = np.genfromtxt(datafile, delimiter = sep, dtype = str, max_rows = 1)</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">loadtxt</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">missing_values</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s1">&#39;getdata(): Infering HEADERS from data file: </span><span class="si">{}</span><span class="s1">!&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">datafile</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#data = (np.array((np.genfromtxt(datafile, delimiter = sep, dtype = None, encoding = None)).tolist(),dtype=object))</span>
+            <span class="n">data</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">loadtxt</span><span class="p">(</span><span class="n">datafile</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="n">sep</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">missing_values</span><span class="p">)</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">input_is_string</span> <span class="o">=</span> <span class="kc">False</span>
+        
+    <span class="k">if</span> <span class="n">copy</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">input_is_string</span><span class="p">):</span> 
+        <span class="k">try</span><span class="p">:</span> 
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span> 
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<span class="c1">#--------------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="dictkv">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.dictkv">[docs]</a>
+<span class="k">def</span> <span class="nf">dictkv</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Easy input of of keys and values into dict.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :keys: </span>
+<span class="sd">            | iterable list[str,...] of keys</span>
+<span class="sd">        :values:</span>
+<span class="sd">            | iterable list[...,..., ] of values</span>
+<span class="sd">        :ordered:</span>
+<span class="sd">            | True, False, optional</span>
+<span class="sd">            | True: creates an ordered dict using &#39;collections.OrderedDict()&#39;</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | (ordered) dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ordered</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">odict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span><span class="n">values</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span><span class="n">values</span><span class="p">))</span></div>
+
+    
+<span class="k">class</span> <span class="nc">OD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class provides a nice way to create OrderedDict &quot;literals&quot;.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slices</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="n">slices</span> <span class="o">=</span> <span class="n">slices</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">odict</span><span class="p">((</span><span class="nb">slice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">)</span>
+<span class="c1"># Create a single instance; we don&#39;t ever need to refer to the class.</span>
+<span class="n">OD</span> <span class="o">=</span> <span class="n">OD</span><span class="p">()</span>
+
+<span class="c1">#--------------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="meshblock">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.meshblock">[docs]</a>
+<span class="k">def</span> <span class="nf">meshblock</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a meshed block from x and y.</span>
+<span class="sd">    </span>
+<span class="sd">    | (Similar to meshgrid, but axis = 0 is retained).</span>
+<span class="sd">    | To enable fast blockwise calculation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        :x: </span>
+<span class="sd">            | ndarray with ndim == 2</span>
+<span class="sd">        :y: </span>
+<span class="sd">            | ndarray with ndim == 2</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :X,Y: </span>
+<span class="sd">            | 2 ndarrays with ndim == 3 </span>
+<span class="sd">            |   X.shape = (x.shape[0],y.shape[0],x.shape[1])</span>
+<span class="sd">            |   Y.shape = (x.shape[0],y.shape[0],y.shape[1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])),</span><span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span></div>
+
+
+<span class="c1">#---------------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="asplit">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.asplit">[docs]</a>
+<span class="k">def</span> <span class="nf">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Split data on last axis</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray, ndarray, ... </span>
+<span class="sd">            |   (number of returns is equal data.shape[-1])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#return np.array([data.take([x],axis = len(data.shape)-1) for x in range(data.shape[-1])])</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span></div>
+
+
+
+<div class="viewcode-block" id="ajoin">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.ajoin">[docs]</a>
+<span class="k">def</span> <span class="nf">ajoin</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Join data on last axis.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data:</span>
+<span class="sd">            | tuple (ndarray, ndarray, ...)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray (shape[-1] is equal to tuple length)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="c1">#faster implementation</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)))),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">))))</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    
+
+<span class="c1">#---------------------------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="broadcast_shape">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.broadcast_shape">[docs]</a>
+<span class="k">def</span> <span class="nf">broadcast_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">target_shape</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Broadcasts shapes of data to a target_shape.</span>
+<span class="sd">    </span>
+<span class="sd">    | Useful for block/vector calc. when numpy fails to broadcast correctly.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray </span>
+<span class="sd">        :target_shape: </span>
+<span class="sd">            | None or tuple with requested shape, optional</span>
+<span class="sd">            |   - None: returns unchanged :data:</span>
+<span class="sd">        :expand_2d_to_3d:</span>
+<span class="sd">            | None (do nothing) or ..., optional </span>
+<span class="sd">            | If ndim == 2, expand from 2 to 3 dimensions</span>
+<span class="sd">        :axis0_repeats:</span>
+<span class="sd">            | None or number of times to repeat axis=0, optional</span>
+<span class="sd">            |   - None: keep axis=0 same size</span>
+<span class="sd">        :axis1_repeats:</span>
+<span class="sd">            | None or number of times to repeat axis=1, optional</span>
+<span class="sd">            |   - None: keep axis=1 same size</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | reshaped ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    
+    <span class="c1"># expand shape along axis (useful for some functions that allow block-calculations when the data is only 2d )</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">expand_2d_to_3d</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">expand_2d_to_3d</span><span class="p">)</span>
+     
+    <span class="k">if</span> <span class="n">target_shape</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dshape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="n">dshape</span> <span class="o">!=</span> <span class="n">target_shape</span><span class="p">:</span>
+            <span class="n">axis_of_v3</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">dshape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c1"># repeat along axis 0</span>
+                <span class="k">if</span> <span class="n">axis0_repeats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="p">(</span><span class="n">target_shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">dshape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis0_repeats</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">target_shape</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">):</span> <span class="c1"># repeat along axis 1, create axis if necessary</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="n">axis_of_v3</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># axis creation</span>
+                <span class="n">dshape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">dshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">axis1_repeats</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="p">(</span><span class="n">target_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">dshape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># repititon</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis1_repeats</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">target_shape</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;broadcast_shape(): Cannot match dim of data with target: data.shape[i]&gt;1  &amp; ...  != target.shape[i]&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="todim">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.todim">[docs]</a>
+<span class="k">def</span> <span class="nf">todim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tshape</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Expand x to dims that are broadcast-compatable with shape of another array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :x: </span>
+<span class="sd">            | ndarray</span>
+<span class="sd">        :tshape: </span>
+<span class="sd">            | tuple with target shape</span>
+<span class="sd">        :add_axis:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Determines where in x.shape an axis should be added</span>
+<span class="sd">        :equal_shape:</span>
+<span class="sd">            | False or True, optional</span>
+<span class="sd">            | True: expand :x: to identical dimensions (speficied by :tshape:)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | ndarray broadcast-compatable with tshape.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tshape</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">sx</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">lsx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sx</span><span class="p">)</span>
+        <span class="n">ltshape</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tshape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">sx</span> <span class="o">==</span> <span class="n">tshape</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            
+            <span class="k">if</span> <span class="p">((</span><span class="n">lsx</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">sx</span> <span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">tshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="o">|</span> <span class="p">(</span><span class="n">sx</span> <span class="o">==</span> <span class="p">(</span><span class="n">tshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">))):</span> 
+                <span class="k">if</span> <span class="p">(</span><span class="n">sx</span> <span class="o">==</span> <span class="p">(</span><span class="n">tshape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">1</span><span class="p">)):</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span>
+                <span class="k">if</span> <span class="n">lsx</span> <span class="o">!=</span> <span class="n">ltshape</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">lsx</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">ltshape</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
+                    <span class="n">sd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">tshape</span><span class="p">,</span> <span class="n">sx</span><span class="p">,</span><span class="n">assume_unique</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sd</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">ax</span> <span class="o">=</span> <span class="n">add_axis</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tshape</span><span class="o">==</span><span class="n">sd</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ax</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;todim(x,tshape): dimensions do not match for 2d arrays.&quot;</span><span class="p">)</span>  
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;todim(x,tshape): no matching dimensions between 3d x and tshape.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">equal_shape</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">tshape</span><span class="p">)</span><span class="o">*</span><span class="n">x</span> <span class="c1">#make dims of x equal to those of a (tshape)</span></div>
+
+        
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="read_excel">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.read_excel">[docs]</a>
+<span class="k">def</span> <span class="nf">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> 
+               <span class="n">force_dictoutput</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read excel file using openpyxl.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | string with [path/]filename of Excel file.</span>
+<span class="sd">        :sheet_name:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: read all sheets</span>
+<span class="sd">            | If string or tuple/list of strings: read these sheets.</span>
+<span class="sd">        :cell_range:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Read all data on sheet(s).</span>
+<span class="sd">            | If string range (e.g. &#39;B2:C4&#39;) or tuple/list of cell_ranges: read this range.</span>
+<span class="sd">            | If tuple/list: then length must match that of the list of sheet_names!</span>
+<span class="sd">        :dtype:</span>
+<span class="sd">            | float, optional</span>
+<span class="sd">            | Try to cast the output data array(s) to this type. In case of failure, </span>
+<span class="sd">            | data type will be &#39;object&#39;.</span>
+<span class="sd">        :force_dictoutput:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: output will always be a dictionary (sheet_names are keys) </span>
+<span class="sd">            |          with the requested data arrays.</span>
+<span class="sd">            |If False: in case only a single sheet_name is supplied or only a single</span>
+<span class="sd">            |          sheet is present, then the output will be an ndarray!</span>
+<span class="sd">        :out:</span>
+<span class="sd">            | &#39;X&#39;, optional</span>
+<span class="sd">            | String specifying requested output (eg. &#39;X&#39; or &#39;X,wb&#39; with wb the loaded workbook)</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | dict or ndarray (single sheet and force_dictoutput==False) </span>
+<span class="sd">            | with data in requested ranges. </span>
+<span class="sd">        :wb:</span>
+<span class="sd">            | If in :out: the loaded workbook is also output.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;openpyxl&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not import (nor pip install openpyxl)! Please try a manual install. And retry.&quot;</span><span class="p">)</span>
+            
+    <span class="n">wb</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">load_workbook</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">,</span> <span class="n">data_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># process sheet_names:</span>
+    <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sheet_names</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span>
+        <span class="n">single_sheet</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">False</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+            <span class="n">single_sheet</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="n">sheet_name</span>
+            <span class="n">single_sheet</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">False</span> 
+    <span class="k">if</span> <span class="n">force_dictoutput</span><span class="p">:</span> <span class="n">single_sheet</span> <span class="o">=</span> <span class="kc">False</span>
+            
+    <span class="c1"># process cell_ranges:</span>
+    <span class="k">if</span> <span class="n">cell_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_range</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+            <span class="n">cell_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_range</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cell_ranges</span> <span class="o">=</span> <span class="n">cell_range</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ranges</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Number of cell_ranges doesn&#39;t match number of sheet_names&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cell_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span>
+    
+    
+    <span class="c1"># loop of sheet_names and cell_ranges:</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">sheet_name</span><span class="p">,</span> <span class="n">cell_range</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">,</span><span class="n">cell_ranges</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">in</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span>
+            <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+            
+            <span class="k">if</span> <span class="n">cell_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">cell_range</span><span class="p">:</span>
+                    <span class="n">left</span> <span class="o">=</span> <span class="n">cell_range</span><span class="p">[:</span><span class="n">cell_range</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)]</span>
+                    <span class="n">right</span> <span class="o">=</span> <span class="n">cell_range</span><span class="p">[(</span><span class="n">cell_range</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">left</span> <span class="o">=</span> <span class="n">cell_range</span>
+                    <span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">coordinate_to_tuple</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">coordinate_to_tuple</span><span class="p">(</span><span class="n">right</span><span class="p">)</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+                
+                <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">left</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">ncols</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">left</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
+                    <span class="n">nrows</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                        <span class="n">ncols</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                
+            <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">nrows</span><span class="p">,</span><span class="n">ncols</span><span class="p">),</span><span class="n">dtype</span> <span class="o">=</span> <span class="nb">object</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">left</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">):</span>
+                    <span class="n">col</span> <span class="o">=</span> <span class="n">left</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">j</span>
+                    <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">][</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">sheet</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+                    
+            <span class="c1"># get rid of extra None cols:</span>
+            <span class="k">if</span> <span class="n">cell_range</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+                <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+                <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,:</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">((((</span><span class="n">x</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">)</span><span class="o">*</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span>
+                
+            <span class="k">try</span><span class="p">:</span> 
+                <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">pass</span>
+            
+    <span class="k">if</span> <span class="n">single_sheet</span><span class="p">:</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;X&#39;</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">X</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;X,wb&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">X</span><span class="p">,</span><span class="n">wb</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="write_excel">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.write_excel">[docs]</a>
+<span class="k">def</span> <span class="nf">write_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write data to an excel file using openpyxl.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | string with [path/]filename of Excel file.</span>
+<span class="sd">        :sheet_name:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: use first one (or the keys in :X: when it is a dictionary)</span>
+<span class="sd">            | If string: use this sheet.</span>
+<span class="sd">            | If tuple/list of strings: use these to write the data in :X: (if :X: is a list/tuple of ndarrays)</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | ndarray, list/tuple or dict</span>
+<span class="sd">            | If ndarray/list/tuple: sheet_names must be supplied explicitely in :sheet_names:</span>
+<span class="sd">            | If dict: keys must be sheet_names        </span>
+<span class="sd">        :cell_range:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Read all data on sheet(s).</span>
+<span class="sd">            | If string range (e.g. &#39;B2:C4&#39;) or tuple/list of cell_ranges: read this range.</span>
+<span class="sd">            | If tuple/list: then length must match that of the list of sheet_names!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;openpyxl&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not import (nor pip install openpyxl)! Please try a manual install. And retry.&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="c1">#wb = openpyxl.load_workbook(filename = filename, data_only = True)</span>
+
+        <span class="c1"># Get pre-existing data from workbook</span>
+        <span class="n">X0</span><span class="p">,</span> <span class="n">wb</span> <span class="o">=</span> <span class="n">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">force_dictoutput</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;X,wb&#39;</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">head_tail</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">head_tail</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">head_tail</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">wb</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">Workbook</span><span class="p">()</span>
+        
+    <span class="c1"># Get number of data arrays to write: </span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="n">X</span><span class="p">]</span> 
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> 
+
+    <span class="c1"># process sheet_names:</span>
+    <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span>
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">sheet_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="c1"># use first sheet</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="nb">dict</span><span class="p">):</span>
+                <span class="n">sheet_names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;List/tuple of ndarrays as input, but no sheet_names provided!&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sheet_names</span> <span class="o">=</span> <span class="n">sheet_name</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">N</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Number of sheet_names doesn&#39;t match number of supplied data arrays.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># process cell_ranges:</span>
+    <span class="k">if</span> <span class="n">cell_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cell_range</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+            <span class="n">cell_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="n">cell_range</span><span class="p">]</span><span class="o">*</span><span class="n">N</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cell_ranges</span> <span class="o">=</span> <span class="n">cell_range</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cell_ranges</span><span class="p">)</span> <span class="o">!=</span> <span class="n">N</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Number of cell_ranges doesn&#39;t match number of supplied data arrays&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cell_ranges</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">N</span>
+    
+    <span class="c1"># prepare X -&gt; convert to dict:</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">,</span><span class="n">X</span><span class="p">))</span>
+
+    <span class="c1"># loop of sheet_names and cell_ranges:</span>
+    <span class="k">for</span> <span class="n">sheet_name</span><span class="p">,</span> <span class="n">cell_range</span>  <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sheet_names</span><span class="p">,</span><span class="n">cell_ranges</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span> <span class="c1"># get data to write</span>
+        
+        <span class="k">if</span> <span class="n">sheet_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">wb</span><span class="o">.</span><span class="n">sheetnames</span><span class="p">:</span> <span class="n">wb</span><span class="o">.</span><span class="n">create_sheet</span><span class="p">(</span><span class="n">sheet_name</span><span class="p">)</span>
+        <span class="n">sheet</span> <span class="o">=</span> <span class="n">wb</span><span class="p">[</span><span class="n">sheet_name</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="n">cell_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">cell_range</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">cell_range</span><span class="p">[:</span><span class="n">cell_range</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)]</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="n">cell_range</span><span class="p">[(</span><span class="n">cell_range</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">left</span> <span class="o">=</span> <span class="n">cell_range</span>
+                <span class="n">right</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">coordinate_to_tuple</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">cell</span><span class="o">.</span><span class="n">coordinate_to_tuple</span><span class="p">(</span><span class="n">right</span><span class="p">)</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+            
+            <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">left</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">ncols</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">(</span><span class="n">right</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">left</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">sheet</span><span class="o">.</span><span class="n">rows</span><span class="p">:</span>
+                <span class="n">nrows</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+                    <span class="n">ncols</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrows</span><span class="p">):</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">left</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">i</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ncols</span><span class="p">):</span>
+                <span class="n">col</span> <span class="o">=</span> <span class="n">left</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">j</span>
+                <span class="n">sheet</span><span class="o">.</span><span class="n">cell</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">])</span>
+                
+    <span class="n">wb</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    
+<div class="viewcode-block" id="show_luxpy_tree">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.show_luxpy_tree">[docs]</a>
+<span class="k">def</span> <span class="nf">show_luxpy_tree</span><span class="p">(</span><span class="n">omit</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span><span class="s1">&#39;__pycache__&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;.txt&#39;</span><span class="p">,</span><span class="s1">&#39;.dat&#39;</span><span class="p">,</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.npz&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;.png&#39;</span><span class="p">,</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span><span class="s1">&#39;.md&#39;</span><span class="p">,</span><span class="s1">&#39;.pdf&#39;</span><span class="p">,</span><span class="s1">&#39;.ini&#39;</span><span class="p">,</span><span class="s1">&#39;.log&#39;</span><span class="p">,</span> <span class="s1">&#39;.rar&#39;</span><span class="p">,</span>
+                            <span class="s1">&#39;drivers&#39;</span><span class="p">,</span><span class="s1">&#39;SDK_&#39;</span><span class="p">,</span><span class="s1">&#39;dll&#39;</span><span class="p">,</span><span class="s1">&#39;bak&#39;</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Show luxpy foler tree.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :omit:</span>
+<span class="sd">            | List of folders and file-extensions to omit.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tree</span><span class="p">(</span><span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">omit</span> <span class="o">=</span> <span class="n">omit</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="is_importable">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.is_importable">[docs]</a>
+<span class="k">def</span> <span class="nf">is_importable</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if string is importable/loadable. If it doesn&#39;t then try to &#39;pip install&#39; it using subprocess.</span>
+<span class="sd">    Returns None if succesful, otherwise throws and error or outputs False.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :string:</span>
+<span class="sd">            | string with package or module name</span>
+<span class="sd">        :pip_string:</span>
+<span class="sd">            | string with package or module name as known by pip</span>
+<span class="sd">            | If None: use the import string</span>
+<span class="sd">        :try_pip_install:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | True: try pip installing it using subprocess</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :success:</span>
+<span class="sd">            | True if importable, False if not.</span>
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="n">success</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">success</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">try_pip_install</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">pip_string</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Trying to &#39;pip install </span><span class="si">{:s}</span><span class="s2">&#39; using subprocess.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pip_string</span><span class="p">))</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">call</span><span class="p">([</span><span class="s2">&quot;pip&quot;</span><span class="p">,</span> <span class="s2">&quot;install&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pip_string</span><span class="p">)])</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;subprocess output: &quot;</span><span class="p">,</span> <span class="n">success</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">success</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Tried importing &#39;</span><span class="si">{:s}</span><span class="s2">&#39;, then tried pip installing it. Please install it manually: pip install </span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="n">pip_string</span><span class="p">))</span>  
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&#39;pip install </span><span class="si">{:s}</span><span class="s2">&#39; succesful&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pip_string</span><span class="p">))</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">string</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Tried importing &#39;</span><span class="si">{:s}</span><span class="s2">&#39;, then tried pip installing it. Please install it manually: pip install </span><span class="si">{:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="p">,</span><span class="n">pip_string</span><span class="p">))</span>   
+    <span class="k">return</span> <span class="n">success</span>    </div>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="get_function_kwargs">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.get_function_kwargs">[docs]</a>
+<span class="k">def</span> <span class="nf">get_function_kwargs</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get dictionary of a function&#39;s keyword arguments and their default values. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :f:</span>
+<span class="sd">            | function name</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :dict:</span>
+<span class="sd">            | Dict with the function&#39;s keyword arguments and their default values</span>
+<span class="sd">            | Is empty if there are no defaults (i.e. f.__defaults__ or f.__kwdefaults__ are None).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kwdefs</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__kwdefaults__</span>
+    <span class="k">if</span> <span class="n">kwdefs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">kwdefs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[:</span><span class="n">f</span><span class="o">.</span><span class="vm">__code__</span><span class="o">.</span><span class="n">co_argcount</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">names</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="nb">len</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">)][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">f</span><span class="o">.</span><span class="vm">__defaults__</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwdefs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">d</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="profile_fcn">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.profile_fcn">[docs]</a>
+<span class="k">def</span> <span class="nf">profile_fcn</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort_stats</span> <span class="o">=</span> <span class="s1">&#39;tottime&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Profile or time a function fcn.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :fcn:</span>
+<span class="sd">            | function to be profiled or timed (using time.time() difference)</span>
+<span class="sd">        :profile:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Profile the function, otherwise only time it.</span>
+<span class="sd">        :sort_stats:</span>
+<span class="sd">            | &#39;tottime&#39;, optional</span>
+<span class="sd">            | Sort profile results according to sort_stats (&#39;tottime&#39;, &#39;cumtime&#39;,...)</span>
+<span class="sd">        :output_file:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If not None: output result to output_file.</span>
+<span class="sd">            </span>
+<span class="sd">    Return:</span>
+<span class="sd">        :ps:</span>
+<span class="sd">            | Profiler output</span>
+<span class="sd">            </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+   
+    <span class="k">if</span> <span class="n">profile</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">fcn</span><span class="p">()</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span><span class="o">-</span><span class="n">start</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;Time elapsed: &#39;</span><span class="p">,</span> <span class="n">dt</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">dt</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pr</span> <span class="o">=</span> <span class="n">cProfile</span><span class="o">.</span><span class="n">Profile</span><span class="p">()</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+        <span class="n">fcn</span><span class="p">()</span>
+        <span class="n">pr</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">ps</span> <span class="o">=</span> <span class="n">pstats</span><span class="o">.</span><span class="n">Stats</span><span class="p">(</span><span class="n">pr</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">sort_stats</span><span class="p">(</span><span class="n">sort_stats</span><span class="p">)</span>
+        <span class="n">ps</span><span class="o">.</span><span class="n">print_stats</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_file</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">ps</span></div>
+
+    
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="unique">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.unique">[docs]</a>
+<span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">sort</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Get unique elements from array.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :array:</span>
+<span class="sd">            | array to get unique elements from.</span>
+<span class="sd">        :sort:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: get sorted unique elements.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :unique_array:</span>
+<span class="sd">            | ndarray with (sorted) unique elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">sort</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">array</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uniq</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">uniq</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">argsort</span><span class="p">()]</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="save_pkl">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.save_pkl">[docs]</a>
+<span class="k">def</span> <span class="nf">save_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Save an object in a (gzipped) pickle file.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | str with filename of pickle file.</span>
+<span class="sd">        :obj:</span>
+<span class="sd">            | python object to save</span>
+<span class="sd">        :compresslevel:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | If &gt; 0: use gzip to compress pkl file.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :None:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_open</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span><span class="n">w</span><span class="p">:</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="o">+</span><span class="s1">&#39;.gz&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="n">compresslevel</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">compresslevel</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
+    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span></div>
+
+        
+<div class="viewcode-block" id="load_pkl">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.load_pkl">[docs]</a>
+<span class="k">def</span> <span class="nf">load_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">gzipped</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Load the object in a (gzipped) pickle file.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :filename:</span>
+<span class="sd">            | str with filename of pickle file.</span>
+<span class="sd">        :gzipped:</span>
+<span class="sd">            | False, optional </span>
+<span class="sd">            | If True: &#39;.gz&#39; will be added to filename before opening. </span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :obj:</span>
+<span class="sd">            | loaded python object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">gzipped</span> <span class="ow">and</span> <span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">!=</span> <span class="s1">&#39;.gz&#39;</span><span class="p">):</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.gz&#39;</span>
+    <span class="n">_open</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.gz&#39;</span> <span class="k">else</span> <span class="nb">open</span>
+    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">obj</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
+    <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;imageio&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">success</span><span class="p">:</span> 
+        <span class="kn">import</span> <span class="nn">imageio</span> <span class="c1"># lazy import</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">imageio</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">use_freeimage</span><span class="p">:</span> <span class="n">imageio</span><span class="o">.</span><span class="n">plugins</span><span class="o">.</span><span class="n">freeimage</span><span class="o">.</span><span class="n">download</span><span class="p">()</span> 
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_freeimage</span><span class="p">:</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!!      imageio.plugins.freeimage.download() failed. !!!&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;                                                          &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Try installing the freeimage plugin manually.&quot;</span><span class="p">)</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  or, try downgrading imageio&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  or, wait until the developers of imageio fix this.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  or, try saving it using PIL or opencv or openexc or other.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">imageio</span>
+
+<div class="viewcode-block" id="imsave">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.imsave">[docs]</a>
+<span class="k">def</span> <span class="nf">imsave</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Save image using imageio&quot;&quot;&quot;</span>
+    <span class="n">imageio</span> <span class="o">=</span> <span class="n">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="p">)</span> <span class="c1"># lazy-import</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="n">imageio</span><span class="o">.</span><span class="n">v3</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="imread">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.imread">[docs]</a>
+<span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Read image using imageio&quot;&quot;&quot;</span>
+    <span class="n">imageio</span> <span class="o">=</span> <span class="n">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="p">)</span> <span class="c1"># lazy-import</span>
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">v3</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="lazy_import">
+<a class="viewcode-back" href="../../../utils.html#luxpy.utils.lazy_import">[docs]</a>
+<span class="k">def</span> <span class="nf">lazy_import</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Lazy import of module &quot;&quot;&quot;</span>
+    <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="n">loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">LazyLoader</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
+    <span class="n">spec</span><span class="o">.</span><span class="n">loader</span> <span class="o">=</span> <span class="n">loader</span> 
+    <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">module</span>
+    <span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">module</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

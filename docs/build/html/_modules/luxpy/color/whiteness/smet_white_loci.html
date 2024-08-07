@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.whiteness.smet_white_loci &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.whiteness.smet_white_loci</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.whiteness.smet_white_loci</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with Smet et al. (2018) neutral white loci</span>
+<span class="sd">=================================================</span>
+<span class="sd"> </span>
+<span class="sd"> :_UW_NEUTRALITY_PARAMETERS_SMET2014: dict with parameters of the unique white models in Smet et al. (2014)</span>
+
+<span class="sd"> :xyz_to_neutrality_smet2018(): Calculate degree of neutrality using the unique white model in Smet et al. (2014) or the normalized (max = 1) degree of chromatic adaptation model from Smet et al. (2017).</span>
+
+<span class="sd"> :cct_to_neutral_loci_smet2018():  Calculate the most neutral appearing Duv10 in and the degree of neutrality for a specified CCT using the models in Smet et al. (2018).</span>
+<span class="sd"> </span>
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">    1. `Smet, K. A. G. (2018).Two Neutral White Illumination Loci Based on </span>
+<span class="sd">    Unique White Rating and Degree of Chromatic Adaptation. </span>
+<span class="sd">    LEUKOS, 14(2), 55–67. </span>
+<span class="sd">    &lt;https://doi.org/10.1080/15502724.2017.1385400&gt;`_</span>
+<span class="sd">    </span>
+<span class="sd">    2. `Smet, K., Deconinck, G., &amp; Hanselaer, P., (2014), </span>
+<span class="sd">    Chromaticity of unique white in object mode. </span>
+<span class="sd">    Optics Express, 22(21), 25830–25841. </span>
+<span class="sd">    &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-22-21-25830&gt;`_</span>
+<span class="sd">    </span>
+<span class="sd">    3. `Smet, K.A.G., Zhai, Q., Luo, M.R., Hanselaer, P., (2017), </span>
+<span class="sd">    Study of chromatic adaptation using memory color matches, </span>
+<span class="sd">    Part II: colored illuminants, </span>
+<span class="sd">    Opt. Express, 25(7), pp. 8350-8365. </span>
+<span class="sd">    &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&amp;origin=search)&gt;`_</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_cct</span>  
+
+<span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L200&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1900.1</span><span class="p">,</span> <span class="mf">1408.4</span><span class="p">,</span> <span class="mf">0.2069</span><span class="p">,</span> <span class="mf">0.4571</span><span class="p">,</span> <span class="o">-</span><span class="mf">934.1</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mi">6568</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0088</span> <span class="p">])}</span> 
+<span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span><span class="p">[</span><span class="s1">&#39;L1000&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1418.3</span><span class="p">,</span> <span class="mf">842.9</span><span class="p">,</span> <span class="mf">0.2088</span><span class="p">,</span> <span class="mf">0.4632</span><span class="p">,</span> <span class="o">-</span><span class="mf">659.8</span><span class="p">,</span> <span class="mf">8.2</span><span class="p">,</span> <span class="mi">6076</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0076</span><span class="p">])</span>   
+<span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span><span class="p">[</span><span class="s1">&#39;L2000&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1055.3</span><span class="p">,</span> <span class="mf">782.4</span><span class="p">,</span> <span class="mf">0.2104</span><span class="p">,</span> <span class="mf">0.4665</span><span class="p">,</span> <span class="o">-</span><span class="mf">461.4</span><span class="p">,</span> <span class="mf">7.7</span><span class="p">,</span> <span class="mi">5798</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0073</span><span class="p">])</span>   
+<span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span><span class="p">[</span><span class="s1">&#39;Linvar&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1494.9</span><span class="p">,</span> <span class="mf">981.9</span><span class="p">,</span> <span class="mf">0.2081</span><span class="p">,</span> <span class="mf">0.4596</span><span class="p">,</span> <span class="o">-</span><span class="mf">722.2</span><span class="p">,</span> <span class="mf">8.1</span><span class="p">,</span> <span class="mi">6324</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0087</span><span class="p">])</span> 
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_UW_NEUTRALITY_PARAMETERS_SMET2014&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_neutrality_smet2018&#39;</span><span class="p">,</span><span class="s1">&#39;cct_to_neutral_loci_smet2018&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="xyz_to_neutrality_smet2018">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.whiteness.xyz_to_neutrality_smet2018">[docs]</a>
+<span class="k">def</span> <span class="nf">xyz_to_neutrality_smet2018</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">uw_model</span> <span class="o">=</span> <span class="s1">&#39;Linvar&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate degree of neutrality using the unique white model in Smet et al. (2014) or the normalized (max = 1) degree of chromatic adaptation model from Smet et al. (2017).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :xyz10:</span>
+<span class="sd">            | ndarray with CIE 1964 10° xyz tristimulus values.</span>
+<span class="sd">        :nlocitype:</span>
+<span class="sd">            | &#39;uw&#39;, optional</span>
+<span class="sd">            | &#39;uw&#39;: use unique white models published in Smet et al. (2014).</span>
+<span class="sd">            | &#39;ca&#39;: use degree of chromatic adaptation model from Smet et al. (2017).</span>
+<span class="sd">        :uw_model:</span>
+<span class="sd">            | &#39;Linvar&#39;, optional</span>
+<span class="sd">            | Use Luminance invariant unique white model from Smet et al. (2014).</span>
+<span class="sd">            | Other options: &#39;L200&#39; (200 cd/m²), &#39;L1000&#39; (1000 cd/m²) and &#39;L2000&#39; (2000 cd/m²).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :N: </span>
+<span class="sd">            | ndarray with calculated neutrality</span>
+<span class="sd">            </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `Smet, K., Deconinck, G., &amp; Hanselaer, P., (2014), </span>
+<span class="sd">        Chromaticity of unique white in object mode. </span>
+<span class="sd">        Optics Express, 22(21), 25830–25841. </span>
+<span class="sd">        &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-22-21-25830&gt;`_</span>
+<span class="sd">        </span>
+<span class="sd">        2. `Smet, K.A.G., Zhai, Q., Luo, M.R., Hanselaer, P., (2017), </span>
+<span class="sd">        Study of chromatic adaptation using memory color matches, </span>
+<span class="sd">        Part II: colored illuminants, </span>
+<span class="sd">        Opt. Express, 25(7), pp. 8350-8365. </span>
+<span class="sd">        &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&amp;origin=search)&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">nlocitype</span> <span class="o">==</span><span class="s1">&#39;uw&#39;</span><span class="p">:</span>
+        <span class="n">uv</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">xyz10</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">G0</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">up</span><span class="p">,</span><span class="n">vp</span><span class="p">,</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">up</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">vp</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">a</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">up</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">vp</span><span class="o">-</span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">])))</span>
+        <span class="k">return</span> <span class="n">G0</span><span class="p">(</span><span class="n">uv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">uv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span><span class="p">[</span><span class="n">uw_model</span><span class="p">])</span>
+    <span class="k">elif</span> <span class="n">nlocitype</span> <span class="o">==</span> <span class="s1">&#39;ca&#39;</span><span class="p">:</span>
+         <span class="k">return</span> <span class="n">cat</span><span class="o">.</span><span class="n">smet2017_D</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">Dmax</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unrecognized nlocitype&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="cct_to_neutral_loci_smet2018">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.whiteness.cct_to_neutral_loci_smet2018">[docs]</a>
+<span class="k">def</span> <span class="nf">cct_to_neutral_loci_smet2018</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv,D&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the most neutral appearing Duv10 in and the degree of neutrality for a specified CCT using the models in Smet et al. (2018).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :cct10:</span>
+<span class="sd">            | ndarray CCT </span>
+<span class="sd">        :nlocitype:</span>
+<span class="sd">            | &#39;uw&#39;, optional</span>
+<span class="sd">            | &#39;uw&#39;: use unique white models published in Smet et al. (2014).</span>
+<span class="sd">            | &#39;ca&#39;: use degree of chromatic adaptation model from Smet et al. (2017).</span>
+<span class="sd">        :out:</span>
+<span class="sd">            | &#39;duv,D&#39;, optional</span>
+<span class="sd">            | Specifies requested output (other options: &#39;duv&#39;, &#39;D&#39;).</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :duv: </span>
+<span class="sd">            | ndarray with most neutral Duv10 value corresponding to the cct input.</span>
+<span class="sd">        :D: </span>
+<span class="sd">            | ndarray with the degree of neutrality at (cct, duv).</span>
+<span class="sd">        </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `Smet, K.A.G., (2018), </span>
+<span class="sd">        Two Neutral White Illumination Loci Based on Unique White Rating and Degree of Chromatic Adaptation. </span>
+<span class="sd">        LEUKOS, 14(2), 55–67. &lt;https://doi.org/10.1080/15502724.2017.1385400&gt;`_</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">        1. Duv is specified in the CIE 1960 u10v10 chromatity diagram as the models were developed using CIE 1964 10° tristimulus, chromaticity and CCT values.</span>
+<span class="sd">        2. The parameter +0.0172 in Eq. 4b should be -0.0172.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">nlocitype</span> <span class="o">==</span><span class="s1">&#39;uw&#39;</span><span class="p">:</span>
+        <span class="n">duv</span> <span class="o">=</span> <span class="mf">0.0202</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cct</span><span class="o">/</span><span class="mi">3325</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">1.445</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cct</span><span class="o">/</span><span class="mi">3325</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.0137</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">6368</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6410</span><span class="p">)))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># degree of neutrality</span>
+    <span class="k">elif</span> <span class="n">nlocitype</span> <span class="o">==</span><span class="s1">&#39;ca&#39;</span><span class="p">:</span>
+        <span class="n">duv</span> <span class="o">=</span> <span class="mf">0.0382</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cct</span><span class="o">/</span><span class="mi">2194</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.679</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cct</span><span class="o">/</span><span class="mi">2194</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.0172</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="mi">3912</span><span class="o">*</span><span class="p">((</span><span class="mi">1</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">6795</span><span class="p">)))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="c1"># degree of adaptation</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Unrecognized nlocitype&#39;</span><span class="p">)</span>
+        
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;duv,D&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">duv</span><span class="p">,</span> <span class="n">D</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;duv&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">duv</span>
+    <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;D&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">D</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;smet_white_loci(): Requested output unrecognized.&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">ccts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">6605</span><span class="p">,</span><span class="mi">6410</span><span class="p">,</span><span class="mi">6800</span><span class="p">])</span>
+    <span class="n">BBs</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;BB&#39;</span><span class="p">,</span><span class="s1">&#39;BB&#39;</span><span class="p">,</span><span class="s1">&#39;BB&#39;</span><span class="p">])</span>
+    <span class="n">xyz10</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">BBs</span><span class="p">,</span> <span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;1964_10&#39;</span><span class="p">)</span>
+    <span class="n">ccts_calc</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;1964_10&#39;</span><span class="p">)</span>
+    
+    <span class="n">Dn_uw</span> <span class="o">=</span> <span class="n">xyz_to_neutrality_smet2018</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">nlocitype</span><span class="o">=</span><span class="s1">&#39;uw&#39;</span><span class="p">)</span>
+    <span class="n">Dn_ca</span> <span class="o">=</span> <span class="n">xyz_to_neutrality_smet2018</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">nlocitype</span><span class="o">=</span><span class="s1">&#39;ca&#39;</span><span class="p">)</span>
+    <span class="n">Duv10_uw</span><span class="p">,</span> <span class="n">Dn_uw2</span> <span class="o">=</span> <span class="n">cct_to_neutral_loci_smet2018</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">nlocitype</span><span class="o">=</span><span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="s1">&#39;duv,D&#39;</span><span class="p">)</span>
+    <span class="n">Duv10_ca</span><span class="p">,</span> <span class="n">Dn_ca2</span> <span class="o">=</span> <span class="n">cct_to_neutral_loci_smet2018</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">nlocitype</span><span class="o">=</span><span class="s1">&#39;ca&#39;</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="s1">&#39;duv,D&#39;</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

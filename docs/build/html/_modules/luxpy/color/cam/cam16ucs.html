@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cam.cam16ucs &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cam.cam16ucs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cam.cam16ucs</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">CAM16UCS color appearance difference space</span>
+<span class="sd">==========================================</span>
+
+<span class="sd"> :_CAM_UCS_PARAMETERS: | dictionary with parameters specifying the conversion </span>
+<span class="sd">                       | from ciecam16 to:</span>
+<span class="sd">                       |    - cam16ucs (uniform color space), </span>
+<span class="sd">                       |    - cam16lcd (large color diff.), </span>
+<span class="sd">                       |    - cam16scd (small color diff).</span>
+
+<span class="sd"> :_DEFAULT_WHITE_POINT: Default internal reference white point (xyz)</span>
+
+<span class="sd"> :_DEFAULT_CONDITIONS: Default CAM model parameters </span>
+
+<span class="sd"> :_AXES: dict with list[str,str,str] containing axis labels of defined cspaces.</span>
+
+<span class="sd"> :run(): Run the CAM16-UCS[,-LCD,-SDC] color appearance difference model in forward or backward modes.</span>
+<span class="sd"> </span>
+<span class="sd"> :cam16ucs(): Run the CAM16-UCS[,-LCD,-SDC] color appearance difference model in forward or backward modes.</span>
+<span class="sd">     </span>
+<span class="sd"> :specific_wrappers_in_the_&#39;xyz_to_cspace()&#39; and &#39;cpsace_to_xyz()&#39; format:</span>
+<span class="sd">      | &#39;xyz_to_jab_cam16ucs&#39;, &#39;jab_cam16ucs_to_xyz&#39;, </span>
+<span class="sd">      | &#39;xyz_to_jab_cam16lcd&#39;, &#39;jab_cam16lcd_to_xyz&#39;,</span>
+<span class="sd">      | &#39;xyz_to_jab_cam16scd&#39;, &#39;jab_cam16scd_to_xyz&#39;, </span>
+
+<span class="sd">Created on Wed Sep 30 22:15:57 2020</span>
+
+<span class="sd">@author: ksmet1977 at gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cam.ciecam16</span> <span class="kn">import</span> <span class="n">run</span> <span class="k">as</span> <span class="n">ciecam16</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;run&#39;</span><span class="p">,</span><span class="s1">&#39;cam16ucs&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_UCS_PARAMETERS&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_DEFAULT_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_AXES&#39;</span><span class="p">]</span>
+
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;xyz_to_jab_cam16ucs&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16ucs_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;xyz_to_jab_cam16lcd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16lcd_to_xyz&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;xyz_to_jab_cam16scd&#39;</span><span class="p">,</span> <span class="s1">&#39;jab_cam16scd_to_xyz&#39;</span><span class="p">,</span> 
+            <span class="p">]</span>
+
+<span class="n">_CAM_UCS_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;none&#39;</span><span class="p">:{</span><span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s1">&#39;c2&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">},</span>
+                   <span class="s1">&#39;ucs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span><span class="mf">0.007</span><span class="p">,</span><span class="s1">&#39;c2&#39;</span><span class="p">:</span><span class="mf">0.0228</span><span class="p">},</span>
+                   <span class="s1">&#39;lcd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mf">0.77</span><span class="p">,</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span><span class="mf">0.007</span><span class="p">,</span><span class="s1">&#39;c2&#39;</span><span class="p">:</span><span class="mf">0.0053</span><span class="p">},</span>
+                   <span class="s1">&#39;scd&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;KL&#39;</span><span class="p">:</span> <span class="mf">1.24</span><span class="p">,</span> <span class="s1">&#39;c1&#39;</span><span class="p">:</span><span class="mf">0.007</span><span class="p">,</span><span class="s1">&#39;c2&#39;</span><span class="p">:</span><span class="mf">0.0363</span><span class="p">}}</span>
+
+<span class="n">_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;jab_cam16ucs&#39;</span> <span class="p">:</span>  <span class="p">[</span><span class="s2">&quot;J&#39; (cam16ucs)&quot;</span><span class="p">,</span> <span class="s2">&quot;a&#39; (cam16ucs)&quot;</span><span class="p">,</span> <span class="s2">&quot;b&#39; (cam16ucs)&quot;</span><span class="p">]}</span> 
+<span class="n">_AXES</span><span class="p">[</span><span class="s1">&#39;jab_cam16lcd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;J&#39; (cam16lcd)&quot;</span><span class="p">,</span> <span class="s2">&quot;a&#39; (cam16lcd)&quot;</span><span class="p">,</span> <span class="s2">&quot;b&#39; (cam16lcd)&quot;</span><span class="p">]</span> 
+<span class="n">_AXES</span><span class="p">[</span><span class="s1">&#39;jab_cam16scd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;J&#39; (cam16scd)&quot;</span><span class="p">,</span> <span class="s2">&quot;a&#39; (cam16scd)&quot;</span><span class="p">,</span> <span class="s2">&quot;b&#39; (cam16scd)&quot;</span><span class="p">]</span> 
+
+<span class="n">_DEFAULT_CONDITIONS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;La&#39;</span><span class="p">:</span> <span class="mf">100.0</span><span class="p">,</span> <span class="s1">&#39;Yb&#39;</span><span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span> <span class="s1">&#39;surround&#39;</span><span class="p">:</span> <span class="s1">&#39;avg&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;Dtype&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+
+<span class="n">_DEFAULT_WHITE_POINT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">100.0</span><span class="p">,</span><span class="mf">100.0</span><span class="p">,</span><span class="mf">100.0</span><span class="p">]])</span>
+
+<span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+        <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Run the CAM16-UCS[,-LCD,-SDC] color appearance difference model in forward or backward modes.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data:</span>
+<span class="sd">            | ndarray with sample xyz values (forward mode) or J&#39;a&#39;b&#39; coordinates (inverse mode)</span>
+<span class="sd">        :xyzw:</span>
+<span class="sd">            | ndarray with white point tristimulus values  </span>
+<span class="sd">        :conditions:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Dictionary with viewing conditions.</span>
+<span class="sd">            | None results in:</span>
+<span class="sd">            |   {&#39;La&#39;:100, &#39;Yb&#39;:20, &#39;D&#39;:1, &#39;surround&#39;:&#39;avg&#39;}</span>
+<span class="sd">            | For more info see luxpy.cam.ciecam16()?</span>
+<span class="sd">        :naka_rushton_parameters:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: use _NAKA_RUSHTON_PARAMETERS</span>
+<span class="sd">        :unique_hue_data:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | If None: use _UNIQUE_HUE_DATA</span>
+<span class="sd">        :ucstype:</span>
+<span class="sd">            | &#39;ucs&#39;, optional</span>
+<span class="sd">            | String with type of color difference appearance space</span>
+<span class="sd">            | options: &#39;ucs&#39;, &#39;scd&#39;, &#39;lcd&#39;</span>
+<span class="sd">        :forward:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: run in CAM in forward mode, else: inverse mode.</span>
+<span class="sd">        :mcat:</span>
+<span class="sd">            | &#39;cat16&#39;, optional</span>
+<span class="sd">            | Specifies CAT sensor space.</span>
+<span class="sd">            | - options:</span>
+<span class="sd">            |    - None defaults to &#39;cat16&#39; </span>
+<span class="sd">            |    - str: see see luxpy.cat._MCATS.keys() for options </span>
+<span class="sd">            |         (details on type, ?luxpy.cat)</span>
+<span class="sd">            |    - ndarray: matrix with sensor primaries</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :camout:</span>
+<span class="sd">            | ndarray with J&#39;a&#39;b&#39; coordinates (forward mode) </span>
+<span class="sd">            |  or </span>
+<span class="sd">            | XYZ tristimulus values (inverse mode)</span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `M.R. Luo, G. Cui, and C. Li, </span>
+<span class="sd">        &#39;Uniform colour spaces based on CIECAM02 colour appearance model,&#39; </span>
+<span class="sd">        Color Res. Appl., vol. 31, no. 4, pp. 320–330, 2006.</span>
+<span class="sd">        &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20227/abstract)&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get ucs parameters:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ucstype</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">ucs_pars</span> <span class="o">=</span> <span class="n">_CAM_UCS_PARAMETERS</span>
+        <span class="n">ucs</span> <span class="o">=</span> <span class="n">ucs_pars</span><span class="p">[</span><span class="n">ucstype</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ucs</span> <span class="o">=</span> <span class="n">ucstype</span>
+    <span class="n">KL</span><span class="p">,</span> <span class="n">c1</span><span class="p">,</span> <span class="n">c2</span> <span class="o">=</span>  <span class="n">ucs</span><span class="p">[</span><span class="s1">&#39;KL&#39;</span><span class="p">],</span> <span class="n">ucs</span><span class="p">[</span><span class="s1">&#39;c1&#39;</span><span class="p">],</span> <span class="n">ucs</span><span class="p">[</span><span class="s1">&#39;c2&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># set conditions to use in CIECAM16 (overrides None-default in ciecam16() !!!)</span>
+    <span class="k">if</span> <span class="n">conditions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">conditions</span> <span class="o">=</span> <span class="n">_DEFAULT_CONDITIONS</span>
+    
+    <span class="k">if</span> <span class="n">forward</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        
+        <span class="c1"># run ciecam16 to get JMh:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">ciecam16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,M,h&#39;</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span>
+                        <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                        <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span> 
+        
+        <span class="n">camout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="c1"># for output</span>
+
+        <span class="c1">#--------------------------------------------</span>
+        <span class="c1"># convert to cam16ucs J&#39;, aM&#39;, bM&#39;:</span>
+        <span class="n">camout</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">c1</span><span class="p">)</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">c1</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">Mp</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">c2</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span> <span class="k">if</span> <span class="p">(</span><span class="n">c2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">camout</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        <span class="n">camout</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mp</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">camout</span>
+    
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#--------------------------------------------</span>
+        <span class="c1"># convert cam16ucs J&#39;, aM&#39;, bM&#39; to xyz:</span>
+            
+        <span class="c1"># calc ciecam16 hue angle</span>
+        <span class="c1">#Jp, aMp, bMp = asplit(data)</span>
+        <span class="n">h</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># calc cam16ycs and ciecam16 colourfulness</span>
+        <span class="n">Mp</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">c2</span><span class="o">*</span><span class="n">Mp</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">c2</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">c2</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="n">Mp</span>
+        
+        <span class="c1"># calculate ciecam16 aM, bM:</span>
+        <span class="n">aM</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+        <span class="n">bM</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="c1"># calc ciecam16 lightness</span>
+        <span class="n">J</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">100.0</span> <span class="o">-</span> <span class="n">data</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">c1</span><span class="p">)</span>
+
+        
+         <span class="c1"># run ciecam16 in inverse mode to get xyz:</span>
+        <span class="k">return</span> <span class="n">ciecam16</span><span class="p">(</span><span class="n">ajoin</span><span class="p">((</span><span class="n">J</span><span class="p">,</span><span class="n">aM</span><span class="p">,</span><span class="n">bM</span><span class="p">)),</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">outin</span> <span class="o">=</span> <span class="s1">&#39;J,aM,bM&#39;</span><span class="p">,</span> 
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                        <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                        <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span> 
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># wrapper functions for use with colortf():</span>
+<span class="n">cam16ucs</span> <span class="o">=</span> <span class="n">run</span>
+<div class="viewcode-block" id="xyz_to_jab_cam16ucs">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16ucs">[docs]</a>
+<span class="k">def</span> <span class="nf">xyz_to_jab_cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs forward mode with J,aM,bM output.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+                
+<div class="viewcode-block" id="jab_cam16ucs_to_xyz">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16ucs_to_xyz">[docs]</a>
+<span class="k">def</span> <span class="nf">jab_cam16ucs_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs inverse mode with J,aM,bM input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="xyz_to_jab_cam16lcd">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16lcd">[docs]</a>
+<span class="k">def</span> <span class="nf">xyz_to_jab_cam16lcd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs forward mode with J,aMp,bMp output and ucstype = lcd.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;lcd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+                
+<div class="viewcode-block" id="jab_cam16lcd_to_xyz">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16lcd_to_xyz">[docs]</a>
+<span class="k">def</span> <span class="nf">jab_cam16lcd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs inverse mode with J,aMp,bMp input and ucstype = lcd.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;lcd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="xyz_to_jab_cam16scd">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_jab_cam16scd">[docs]</a>
+<span class="k">def</span> <span class="nf">xyz_to_jab_cam16scd</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs forward mode with J,aMp,bMp output and ucstype = scd.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;scd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+                
+<div class="viewcode-block" id="jab_cam16scd_to_xyz">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.jab_cam16scd_to_xyz">[docs]</a>
+<span class="k">def</span> <span class="nf">jab_cam16scd_to_xyz</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                        <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam16ucs inverse mode with J,aMp,bMp input and ucstype = scd.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam16ucs </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam16ucs</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="n">Yw</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">conditions</span><span class="p">,</span> 
+                    <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="n">naka_rushton_parameters</span><span class="p">,</span>
+                    <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">,</span>
+                    <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;scd&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="n">mcat</span><span class="p">)</span></div>
+
+        
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Code test</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">_cam</span> <span class="o">=</span> <span class="n">run</span>
+    
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+    
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    
+    <span class="c1"># Prepare some illuminant data:</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">Ill1</span> <span class="o">=</span> <span class="n">C</span>
+    <span class="n">Ill2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
+    
+    <span class="c1"># Prepare some sample data:</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">rflM</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># Setup some model parameters:</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    <span class="n">Lw</span> <span class="o">=</span> <span class="mi">400</span>
+    
+    <span class="c1"># Create Lw normalized data:</span>
+    <span class="c1"># Normalize to Lw:</span>
+    <span class="k">def</span> <span class="nf">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">):</span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ill</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">IllM</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Ill</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">IllM</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Ill1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Ill</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">rflM</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])))</span>
+        <span class="n">IllM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">IllM</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">Ill</span><span class="p">,</span> <span class="n">IllM</span>
+    <span class="n">Ill1</span><span class="p">,</span> <span class="n">Ill1M</span> <span class="o">=</span> <span class="n">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">)</span>
+    <span class="n">Ill2</span><span class="p">,</span> <span class="n">Ill2M</span> <span class="o">=</span> <span class="n">normalize_to_Lw</span><span class="p">(</span><span class="n">Ill2</span><span class="p">,</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">rflM</span><span class="p">)</span>
+    
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">xyz1</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyz1</span> <span class="o">=</span> <span class="n">xyz1</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">Ill1M</span> <span class="o">=</span> <span class="n">Ill1M</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="mi">0</span><span class="p">,:]</span>
+    
+    <span class="n">xyz2</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill2</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyz2</span> <span class="o">=</span> <span class="n">xyz2</span><span class="p">[:</span><span class="n">n</span><span class="p">,:,:]</span>
+    <span class="n">Ill2M</span> <span class="o">=</span> <span class="n">Ill2M</span><span class="p">[:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">),:,:]</span>
+    
+    <span class="c1"># Module output plot:</span>
+    <span class="n">_cam_o</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">forward</span><span class="p">:</span> <span class="n">lx</span><span class="o">.</span><span class="n">xyz_to_jab_cam16ucs</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">xyzw</span><span class="p">)</span>
+
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">Ill1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">jabch</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">out_</span> <span class="o">=</span> <span class="n">_cam_o</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">jabch</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">jabch</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;c.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">out_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">out_</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+
+
+
+    <span class="c1"># Single data for sample and illuminant:</span>
+    <span class="c1"># test input to _simple_cam():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">1: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">out_1</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_1</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">out_1</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">xyz1</span> <span class="o">-</span> <span class="n">xyz_1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    
+    
+    <span class="c1"># Multiple data for sample and illuminants:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">2: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">out_2</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_2</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">out_2</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">xyz2</span> <span class="o">-</span> <span class="n">xyz_2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        
+    
+    <span class="c1"># Single data for sample, multiple illuminants:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">3: xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">out_3</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">xyz1</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_3</span> <span class="o">=</span> <span class="n">_cam</span><span class="p">(</span><span class="n">out_3</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">3</span><span class="p">],</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">xyz1</span> <span class="o">-</span> <span class="n">xyz_3</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:])</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cri.utils.DE_scalers &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cri.utils.DE_scalers</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cri.utils.DE_scalers</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with scaling functions from DE to CRI-scale.</span>
+<span class="sd">===================================================</span>
+
+<span class="sd"> :linear_scale():  | Linear color rendering index scale </span>
+<span class="sd">                   | from CIE13.3-1974/1995:   </span>
+<span class="sd">                   |     Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)</span>
+
+<span class="sd"> :log_scale(): | Log-based color rendering index scale </span>
+<span class="sd">               | from Davis &amp; Ohno (2009):  </span>
+<span class="sd">               |     Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1)</span>
+
+<span class="sd"> :psy_scale():  | Psychometric based color rendering index scale </span>
+<span class="sd">                | from CRI2012 (Smet et al. 2013, LRT):  </span>
+<span class="sd">                |     Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3</span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear_scale&#39;</span><span class="p">,</span> <span class="s1">&#39;log_scale&#39;</span><span class="p">,</span> <span class="s1">&#39;psy_scale&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># define cri scale functions:</span>
+<div class="viewcode-block" id="linear_scale">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.linear_scale">[docs]</a>
+<span class="k">def</span> <span class="nf">linear_scale</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.6</span><span class="p">],</span> <span class="n">scale_max</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">):</span> <span class="c1"># defaults from cie-13.3-1995 cri</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear color rendering index scale from CIE13.3-1974/1995: </span>
+<span class="sd">    </span>
+<span class="sd">    | Rfi,a = 100 - c1*DEi,a. (c1 = 4.6)</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | float or list[floats] or ndarray </span>
+<span class="sd">        :scale_factor: </span>
+<span class="sd">            | [4.6] or list[float] or ndarray, optional</span>
+<span class="sd">            | Rescales color differences before subtracting them from :scale_max:</span>
+<span class="sd">        :scale_max:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Maximum value of linear scale</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | float or list[floats] or ndarray </span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `CIE13.3-1995, </span>
+<span class="sd">        “Method of Measuring and Specifying Colour Rendering Properties of Light Sources,” </span>
+<span class="sd">        CIE, Vienna, Austria, 1995.,ISBN 978 3 900734 57 2</span>
+<span class="sd">        &lt;http://www.cie.co.at/index.php/index.php?i_ca_id=303&gt;`_</span>
+
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scale_max</span> <span class="o">-</span> <span class="n">scale_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="log_scale">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.log_scale">[docs]</a>
+<span class="k">def</span> <span class="nf">log_scale</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">[</span><span class="mf">6.73</span><span class="p">],</span> <span class="n">scale_max</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">):</span> <span class="c1"># defaults from cie-224-2017 cri</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Log-based color rendering index scale from Davis &amp; Ohno (2009): </span>
+<span class="sd">    </span>
+<span class="sd">    | Rfi,a = 10 * ln(exp((100 - c1*DEi,a)/10) + 1).</span>
+<span class="sd">                    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | float or list[floats] or ndarray </span>
+<span class="sd">        :scale_factor:</span>
+<span class="sd">            | [6.73] or list[float] or ndarray, optional</span>
+<span class="sd">            | Rescales color differences before subtracting them from :scale_max:</span>
+<span class="sd">            | Note that the default value is the one from cie-224-2017.</span>
+<span class="sd">        :scale_max:</span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Maximum value of linear scale</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | float or list[floats] or ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `W. Davis and Y. Ohno, </span>
+<span class="sd">        “Color quality scale,” (2010), </span>
+<span class="sd">        Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</span>
+<span class="sd">        &lt;http://spie.org/Publications/Journal/10.1117/1.3360335&gt;`_</span>
+<span class="sd">        2. `CIE224:2017. CIE 2017 Colour Fidelity Index for accurate scientific use. </span>
+<span class="sd">        Vienna, Austria: CIE. (2017).</span>
+<span class="sd">        &lt;http://www.cie.co.at/index.php?i_ca_id=1027&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">10.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">((</span><span class="n">scale_max</span> <span class="o">-</span> <span class="n">scale_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">data</span><span class="p">)</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="psy_scale">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.psy_scale">[docs]</a>
+<span class="k">def</span> <span class="nf">psy_scale</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">scale_factor</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="o">/</span><span class="mf">55.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span> <span class="n">scale_max</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">):</span> <span class="c1"># defaults for cri2012</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Psychometric based color rendering index scale from CRI2012: </span>
+<span class="sd">    </span>
+<span class="sd">    | Rfi,a = 100 * (2 / (exp(c1*abs(DEi,a)**(c2) + 1))) ** c3.</span>
+<span class="sd">        </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | float or list[floats] or ndarray </span>
+<span class="sd">        :scale_factor:</span>
+<span class="sd">            | [1/55, 3/2, 2.0] or list[float] or ndarray, optional</span>
+<span class="sd">            | Rescales color differences before subtracting them from :scale_max:</span>
+<span class="sd">            | Note that the default value is the one from (Smet et al. 2013, LRT).</span>
+<span class="sd">        :scale_max: </span>
+<span class="sd">            | 100.0, optional</span>
+<span class="sd">            | Maximum value of linear scale</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | float or list[floats] or ndarray</span>
+<span class="sd">        </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `Smet, K., Schanda, J., Whitehead, L., &amp; Luo, R. (2013). </span>
+<span class="sd">        CRI2012: A proposal for updating the CIE colour rendering index. </span>
+<span class="sd">        Lighting Research and Technology, 45, 689–709. </span>
+<span class="sd">        &lt;http://lrt.sagepub.com/content/45/6/689&gt;`_  </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">scale_max</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">),</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">),</span> <span class="n">scale_factor</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

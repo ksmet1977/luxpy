@@ -123,12 +123,85 @@ __all__ += ['box_m','pitman_morgan', 'stress','stress_F_test','mean_distance_wei
 
 #------------------------------------------------------------------------------
 def erf(*args,**kwargs):
-    "erf(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])\n\nerf(z)\n\nReturns the error function of complex argument.\n\nIt is defined as ``2/sqrt(pi)*integral(exp(-t**2), t=0..z)``.\n\nParameters\n----------\nx : ndarray\n    Input array.\n\nReturns\n-------\nres : ndarray\n    The values of the error function at the given points `x`.\n\nSee Also\n--------\nerfc, erfinv, erfcinv, wofz, erfcx, erfi\n\nNotes\n-----\nThe cumulative of the unit normal distribution is given by\n``Phi(z) = 1/2[1 + erf(z/sqrt(2))]``.\n\nReferences\n----------\n.. [1] https://en.wikipedia.org/wiki/Error_function\n.. [2] Milton Abramowitz and Irene A. Stegun, eds.\n    Handbook of Mathematical Functions with Formulas,\n    Graphs, and Mathematical Tables. New York: Dover,\n    1972. http://www.math.sfu.ca/~cbm/aands/page_297.htm\n.. [3] Steven G. Johnson, Faddeeva W function implementation.\n   http://ab-initio.mit.edu/Faddeeva\n\nExamples\n--------\n>>> from scipy import special\n>>> import matplotlib.pyplot as plt\n>>> x = np.linspace(-3, 3)\n>>> plt.plot(x, special.erf(x))\n>>> plt.xlabel('$x$')\n>>> plt.ylabel('$erf(x)$')\n>>> plt.show()"
+    """
+    erf(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])
+    erf(z) Returns the error function of complex argument.
+    
+    It is defined as ``2/sqrt(pi)*integral(exp(-t**2), t=0..z)``.
+    Args: 
+        :x: 
+            | ndarray
+            | Input array.
+            
+    Returns:
+        :res:
+            | ndarray
+            | The values of the error function at the given points `x`.
+    See Also:
+        | nerfc, erfinv, erfcinv, wofz, erfcx, erfi
+        
+    Notes:
+        1. The cumulative of the unit normal distribution is given by
+        ``Phi(z) = 1/2[1 + erf(z/sqrt(2))]``.
+        
+    References:
+        1. https://en.wikipedia.org/wiki/Error_function
+        2. Milton Abramowitz and Irene A. Stegun, eds.
+        Handbook of Mathematical Functions with Formulas, Graphs, and Mathematical Tables. µ
+        New York: Dover, 1972. http://www.math.sfu.ca/~cbm/aands/page_297.htm 
+        3. Steven G. Johnson, Faddeeva W function implementation.
+        http://ab-initio.mit.edu/Faddeeva 
+        
+    Examples:
+        >>> from scipy import special
+        >>> import matplotlib.pyplot as plt
+        >>> x = np.linspace(-3, 3)
+        >>> plt.plot(x, special.erf(x))
+        >>> plt.xlabel('$x$')
+        >>> plt.ylabel('$erf(x)$')
+        >>> plt.show()
+    """
     from scipy.special import erf # lazy import
     return erf(*args,**kwargs)
 
 def erfinv(*args,**kwargs):
-    "erfinv(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])\n\nInverse of the error function.\n\n    Computes the inverse of the error function.\n\n    In the complex domain, there is no unique complex number w satisfying\n    erf(w)=z. This indicates a true inverse function would have multi-value.\n    When the domain restricts to the real, -1 < x < 1, there is a unique real\n    number satisfying erf(erfinv(x)) = x.\n\n    Parameters\n    ----------\n    y : ndarray\n        Argument at which to evaluate. Domain: [-1, 1]\n\n    Returns\n    -------\n    erfinv : ndarray\n        The inverse of erf of y, element-wise)\n\n    See Also\n    --------\n    erf : Error function of a complex argument\n    erfc : Complementary error function, ``1 - erf(x)``\n    erfcinv : Inverse of the complementary error function\n\n    Examples\n    --------\n    1) evaluating a float number\n\n    >>> from scipy import special\n    >>> special.erfinv(0.5)\n    0.4769362762044698\n\n    2) evaluating an ndarray\n\n    >>> from scipy import special\n    >>> y = np.linspace(-1.0, 1.0, num=10)\n    >>> special.erfinv(y)\n    array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,\n            0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])"
+    """
+    erfinv(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])
+    Inverse of the error function.
+    Computes the inverse of the error function.
+    
+    In the complex domain, there is no unique complex number w satisfying erf(w)=z. 
+    This indicates a true inverse function would have multi-value.
+    When the domain restricts to the real, -1 < x < 1, there is a unique real number
+    satisfying erf(erfinv(x)) = x.
+    
+    Args:
+        :y:
+            | ndarray
+            | Argument at which to evaluate. Domain: [-1, 1]
+            
+    Returns:
+        :erfinv: 
+            | ndarray
+            | The inverse of erf of y, element-wise)
+    
+    See Also:
+        - erf : Error function of a complex argument
+        - erfc : Complementary error function, ``1 - erf(x)``
+        - erfcinv : Inverse of the complementary error function
+        
+    Examples:
+        1) evaluating a float number
+            >>> from scipy import special
+            >>> special.erfinv(0.5)
+            0.4769362762044698
+        2) evaluating an ndarray
+            >>> from scipy import special
+            >>> y = np.linspace(-1.0, 1.0, num=10)
+            >>> special.erfinv(y)
+            array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,
+                   0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])
+    """
     from scipy.special import erfinv # lazy import
     return erfinv(*args,**kwargs)
 
