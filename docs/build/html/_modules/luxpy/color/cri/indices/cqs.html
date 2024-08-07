@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cri.indices.cqs &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cri.indices.cqs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cri.indices.cqs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for color quality scale, CQS</span>
+<span class="sd">===================================</span>
+
+<span class="sd"> :_CQS_DEFAULTS: default settings for CQS </span>
+<span class="sd">                 (major dict has 10 keys (26-Aug-2022): </span>
+<span class="sd">                 sampleset [str/dict], </span>
+<span class="sd">                 ref_type [str], </span>
+<span class="sd">                 cieobs [str], </span>
+<span class="sd">                 avg [fcn handle], </span>
+<span class="sd">                 rf_from_avg_rounded_rfi [bool],</span>
+<span class="sd">                 scale [dict], </span>
+<span class="sd">                 cspace [dict], </span>
+<span class="sd">                 catf [dict], </span>
+<span class="sd">                 rg_pars [dict], </span>
+<span class="sd">                 cri_specific_pars [dict])</span>
+<span class="sd">            </span>
+<span class="sd"> :spd_to_cqs(): | Color Quality Scale</span>
+<span class="sd">                | versions 7.5 and 9.0 are supported. </span>
+
+<span class="sd">Reference</span>
+<span class="sd">    1. `W. Davis and Y. Ohno, </span>
+<span class="sd">    “Color quality scale,” (2010), </span>
+<span class="sd">    Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</span>
+<span class="sd">    &lt;http://spie.org/Publications/Journal/10.1117/1.3360335&gt;`_</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span>
+<span class="kn">from</span> <span class="nn">..utils.DE_scalers</span> <span class="kn">import</span> <span class="n">log_scale</span>
+<span class="kn">from</span> <span class="nn">..utils.helpers</span> <span class="kn">import</span> <span class="n">spd_to_DEi</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_cqs&#39;</span><span class="p">,</span> <span class="s1">&#39;_CQS_DEFAULTS&#39;</span><span class="p">]</span>
+
+<span class="n">_CQS_DEFAULTS</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_CQS_DEFAULTS</span><span class="p">[</span><span class="s1">&#39;cqs-v7.5&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sampleset&#39;</span> <span class="p">:</span> <span class="s2">&quot;_CRI_RFL[&#39;cqs&#39;][&#39;v7.5&#39;]&quot;</span><span class="p">,</span>
+                             <span class="s1">&#39;ref_type&#39;</span> <span class="p">:</span> <span class="s1">&#39;ciera&#39;</span><span class="p">,</span> 
+                             <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyz&#39;</span><span class="p">:</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span> <span class="p">:</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">},</span> 
+                             <span class="s1">&#39;avg&#39;</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">,</span> 
+                             <span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                             <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;fcn&#39;</span> <span class="p">:</span> <span class="n">log_scale</span><span class="p">,</span> <span class="s1">&#39;cfactor&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">2.93</span><span class="p">,</span> <span class="mf">3.10</span><span class="p">,</span> <span class="mf">3.78</span><span class="p">]},</span> 
+                             <span class="s1">&#39;cspace&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="s1">&#39;xyzw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span> 
+                             <span class="s1">&#39;catf&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span><span class="s1">&#39;mcat&#39;</span><span class="p">:</span><span class="s1">&#39;cmc&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;La&#39;</span><span class="p">:[</span><span class="mf">1000.0</span><span class="p">,</span><span class="mf">1000.0</span><span class="p">],</span><span class="s1">&#39;cattype&#39;</span><span class="p">:</span><span class="s1">&#39;vonkries&#39;</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="s1">&#39;cmc&#39;</span><span class="p">,</span> <span class="s1">&#39;catmode&#39;</span> <span class="p">:</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">},</span> 
+                             <span class="s1">&#39;rg_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;nhbins&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;start_hue&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;normalize_gamut&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;normalized_chroma_ref&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">},</span> 
+                             <span class="s1">&#39;cri_specific_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;maxC&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
+                             <span class="p">}</span>
+<span class="n">_CQS_DEFAULTS</span><span class="p">[</span><span class="s1">&#39;cqs-v9.0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;sampleset&#39;</span> <span class="p">:</span> <span class="s2">&quot;_CRI_RFL[&#39;cqs&#39;][&#39;v9.0&#39;]&quot;</span><span class="p">,</span> 
+                             <span class="s1">&#39;ref_type&#39;</span> <span class="p">:</span> <span class="s1">&#39;ciera&#39;</span><span class="p">,</span><span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyz&#39;</span><span class="p">:</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="s1">&#39;cct&#39;</span> <span class="p">:</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">},</span> 
+                             <span class="s1">&#39;avg&#39;</span> <span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">rms</span><span class="p">,</span> 
+                             <span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                             <span class="s1">&#39;scale&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;fcn&#39;</span> <span class="p">:</span> <span class="n">log_scale</span><span class="p">,</span> <span class="s1">&#39;cfactor&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">3.03</span><span class="p">,</span> <span class="mf">3.20</span><span class="p">,</span> <span class="mf">3.88</span><span class="p">]},</span> 
+                             <span class="s1">&#39;cspace&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="s1">&#39;xyzw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span> 
+                             <span class="s1">&#39;catf&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span><span class="s1">&#39;mcat&#39;</span><span class="p">:</span><span class="s1">&#39;cmc&#39;</span><span class="p">,</span><span class="s1">&#39;D&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">,</span><span class="s1">&#39;La&#39;</span><span class="p">:[</span><span class="mf">1000.0</span><span class="p">,</span><span class="mf">1000.0</span><span class="p">],</span><span class="s1">&#39;cattype&#39;</span><span class="p">:</span><span class="s1">&#39;vonkries&#39;</span><span class="p">,</span><span class="s1">&#39;Dtype&#39;</span><span class="p">:</span><span class="s1">&#39;cmc&#39;</span><span class="p">,</span> <span class="s1">&#39;catmode&#39;</span> <span class="p">:</span> <span class="s1">&#39;1&gt;2&#39;</span><span class="p">},</span> 
+                             <span class="s1">&#39;rg_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;nhbins&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;start_hue&#39;</span><span class="p">:</span><span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;normalize_gamut&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;normalized_chroma_ref&#39;</span> <span class="p">:</span> <span class="mi">100</span><span class="p">},</span> 
+                             <span class="s1">&#39;cri_specific_pars&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;maxC&#39;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">}</span>
+                             <span class="p">}</span>
+
+<span class="c1">#-----------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="spd_to_cqs">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_cqs">[docs]</a>
+<span class="k">def</span>  <span class="nf">spd_to_cqs</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="s1">&#39;v9.0&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Qa&#39;</span><span class="p">,</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 or v7.5.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :SPD: </span>
+<span class="sd">            | ndarray with spectral data (can be multiple SPDs, </span>
+<span class="sd">            | first axis are the wavelengths)</span>
+<span class="sd">        :version: </span>
+<span class="sd">            | &#39;v9.0&#39; or &#39;v7.5&#39;, optional</span>
+<span class="sd">        :out: </span>
+<span class="sd">            | &#39;Qa&#39; or str, optional</span>
+<span class="sd">            | Specifies requested output (e.g. &#39;Qa,Qai,Qf,cct,duv&#39;) </span>
+<span class="sd">        :wl: </span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Wavelengths (or [start, end, spacing]) to interpolate the SPDs to. </span>
+<span class="sd">            | None: default to no interpolation   </span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            | float or ndarray with CQS Qa for :out: &#39;Qa&#39;</span>
+<span class="sd">            | Other output is also possible by changing the :out: str value. </span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `W. Davis and Y. Ohno, </span>
+<span class="sd">        “Color quality scale,” (2010), </span>
+<span class="sd">        Opt. Eng., vol. 49, no. 3, pp. 33602–33616.</span>
+<span class="sd">        &lt;http://spie.org/Publications/Journal/10.1117/1.3360335&gt;`_</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    <span class="n">outlist</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>    
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">version</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;cqs-&#39;</span> <span class="o">+</span> <span class="n">version</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">cri_type</span> <span class="o">=</span> <span class="n">version</span>
+     
+    <span class="c1"># calculate DEI, labti, labri and get cspace_pars and rg_pars:</span>
+    <span class="n">DEi</span><span class="p">,</span> <span class="n">labti</span><span class="p">,</span> <span class="n">labri</span><span class="p">,</span> <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">SPD</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi,jabt,jabr,cct,duv,cri_type&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+    
+    <span class="c1"># further unpack cri_type:</span>
+    <span class="n">scale_fcn</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;fcn&#39;</span><span class="p">]</span>     
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;scale&#39;</span><span class="p">][</span><span class="s1">&#39;cfactor&#39;</span><span class="p">]</span>    
+    <span class="n">avg</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;avg&#39;</span><span class="p">]</span>
+    <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;cri_specific_pars&#39;</span><span class="p">]</span> 
+    <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span> 
+    
+    <span class="c1"># get maxC: to limit chroma-enhancement:</span>
+    <span class="n">maxC</span> <span class="o">=</span> <span class="n">cri_specific_pars</span><span class="p">[</span><span class="s1">&#39;maxC&#39;</span><span class="p">]</span>
+    
+    <span class="c1"># make 3d:</span>
+    <span class="n">test_original_shape</span> <span class="o">=</span> <span class="n">labti</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_original_shape</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">:</span>
+        <span class="n">labti</span> <span class="o">=</span> <span class="n">labti</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> 
+        <span class="n">labri</span> <span class="o">=</span> <span class="n">labri</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> 
+        <span class="n">DEi</span> <span class="o">=</span> <span class="n">DEi</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> 
+        <span class="n">cct</span> <span class="o">=</span> <span class="n">cct</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> 
+
+    <span class="c1"># calculate Rg for each spd:</span>
+    <span class="n">Qf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">Qfi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+    
+    <span class="k">if</span> <span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;v7.5&#39;</span><span class="p">:</span>
+        <span class="n">GA</span> <span class="o">=</span> <span class="p">(</span><span class="mf">9.2672</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0e-11</span><span class="p">))</span><span class="o">*</span><span class="n">cct</span><span class="o">**</span><span class="mf">3.0</span>  <span class="o">-</span> <span class="p">(</span><span class="mf">8.3959</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0e-7</span><span class="p">))</span><span class="o">*</span><span class="n">cct</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">+</span> <span class="mf">0.00255</span><span class="o">*</span><span class="n">cct</span> <span class="o">-</span> <span class="mf">1.612</span> 
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="s1">&#39;v9.0&#39;</span><span class="p">:</span>
+        <span class="n">GA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">cct</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span> <span class="p">(</span><span class="s1">&#39;.cri.spd_to_cqs(): Unrecognized CQS version.&#39;</span><span class="p">)</span>
+      
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Qf&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qfi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+
+        <span class="c1"># loop of light source spds</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">Qfi</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi</span><span class="p">[:,</span><span class="n">ii</span><span class="p">],[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">Qf</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">DEi</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="kc">None</span><span class="p">],</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Qa&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qai&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qp&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qpi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+        
+        <span class="n">Qa</span> <span class="o">=</span> <span class="n">Qf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Qai</span> <span class="o">=</span> <span class="n">Qfi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Qp</span> <span class="o">=</span> <span class="n">Qf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">Qpi</span> <span class="o">=</span> <span class="n">Qfi</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+         <span class="c1"># loop of light source spds</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            
+            <span class="c1"># calculate deltaC:</span>
+            <span class="n">deltaC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">labti</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">labri</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">],</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span> 
+            <span class="c1"># limit chroma increase:</span>
+            <span class="n">DEi_Climited</span> <span class="o">=</span> <span class="n">DEi</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">deltaC_Climited</span> <span class="o">=</span> <span class="n">deltaC</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">maxC</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">maxC</span> <span class="o">=</span> <span class="mf">10000.0</span>
+            <span class="n">limitC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">deltaC</span> <span class="o">&gt;=</span> <span class="n">maxC</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">deltaC_Climited</span><span class="p">[</span><span class="n">limitC</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxC</span>
+            <span class="n">p_deltaC_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">deltaC</span><span class="o">&gt;</span><span class="mf">0.0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">DEi_Climited</span><span class="p">[</span><span class="n">p_deltaC_pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">DEi_Climited</span><span class="p">[</span><span class="n">p_deltaC_pos</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">deltaC_Climited</span><span class="p">[</span><span class="n">p_deltaC_pos</span><span class="p">]</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span> <span class="c1"># increase in chroma is not penalized!</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Qa&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qai&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+                <span class="n">Qai</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">DEi_Climited</span><span class="p">,[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+                <span class="n">Qa</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">(</span><span class="n">avg</span><span class="p">(</span><span class="n">DEi_Climited</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+                
+            <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Qp&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="s1">&#39;Qpi&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+                <span class="n">deltaC_pos</span> <span class="o">=</span> <span class="n">deltaC_Climited</span> <span class="o">*</span> <span class="p">(</span><span class="n">deltaC_Climited</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span>
+                <span class="n">deltaCmu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">deltaC_Climited</span> <span class="o">*</span> <span class="p">(</span><span class="n">deltaC_Climited</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">))</span>
+                <span class="n">Qpi</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">((</span><span class="n">DEi_Climited</span> <span class="o">-</span> <span class="n">deltaC_pos</span><span class="p">),[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span> <span class="c1"># or ?? np.sqrt(DEi_Climited**2 - deltaC_pos**2) ??</span>
+                <span class="n">Qp</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">GA</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">*</span><span class="n">scale_fcn</span><span class="p">((</span><span class="n">avg</span><span class="p">(</span><span class="n">DEi_Climited</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">deltaCmu</span><span class="p">),[</span><span class="n">scale_factor</span><span class="p">[</span><span class="mi">2</span><span class="p">]])</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Qg&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">):</span>
+        <span class="n">Qg</span> <span class="o">=</span> <span class="n">Qf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">labti</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">Qg</span><span class="p">[:,</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="mf">100.0</span><span class="o">*</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">labti</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">labti</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">polyarea</span><span class="p">(</span><span class="n">labri</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span><span class="n">labri</span><span class="p">[:,</span><span class="n">ii</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># calculate Rg =  gamut area ratio of test and ref</span>
+
+     
+    <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Qa&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Qa</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

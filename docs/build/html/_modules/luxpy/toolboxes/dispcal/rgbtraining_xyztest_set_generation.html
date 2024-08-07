@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.toolboxes.dispcal.rgbtraining_xyztest_set_generation &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.toolboxes.dispcal.rgbtraining_xyztest_set_generation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.toolboxes.dispcal.rgbtraining_xyztest_set_generation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for generation of RGB training and XYZ test sets for display colorimetric characterization</span>
+<span class="sd">-------------------------------------------------------------------------------------------------</span>
+
+<span class="sd">:generate_training_data(): Generate RGB training pairs by creating a cube of RGB values. </span>
+
+<span class="sd">:generate_test_data(): Generate XYZ test values by creating a cube of CIELAB L*a*b* values, then converting these to XYZ values. </span>
+
+<span class="sd">:plot_rgb_xyz_lab_of_set(): Make 3d-plots of the RGB, XYZ and L*a*b* cubes of the data in rgb_xyz_lab. </span>
+
+<span class="sd">:split_ramps_from_cube(): Split a cube data set in pure RGB (ramps) and non-pure (remainder of cube). </span>
+
+<span class="sd">:is_random_sampling_of_pure_rgbs(): Return boolean indicating if the RGB cube axes (=single channel ramps) are sampled (different increment) independently from the remainder of the cube.</span>
+
+<span class="sd">Created on Fri Oct 28 13:16:50 2022</span>
+
+<span class="sd">@author: u0032318</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">_CIEOBS</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span>
+
+<span class="kn">from</span> <span class="nn">luxpy.toolboxes.dispcal</span> <span class="kn">import</span> <span class="n">displaycalibration</span> <span class="k">as</span> <span class="n">dc</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="n">invalid</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_generate_training_data&#39;</span><span class="p">,</span><span class="s1">&#39;generate_training_data&#39;</span><span class="p">,</span><span class="s1">&#39;generate_test_data&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;split_ramps_from_cube&#39;</span><span class="p">,</span> <span class="s1">&#39;is_random_sampling_of_pure_rgbs&#39;</span><span class="p">,</span> <span class="s1">&#39;plot_rgb_xyz_lab_of_set&#39;</span><span class="p">]</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># training and test data generation </span>
+<span class="c1">#------------------------------------------------------------------------------    </span>
+<span class="k">def</span> <span class="nf">_generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">include_max</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_min</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                            <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate RGB training data by creating a cube of RGB values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :inc:</span>
+<span class="sd">            | 10, optional</span>
+<span class="sd">            | Increment along each channel (=R,G,B) axes in the RGB cube.</span>
+<span class="sd">        :inc_offset:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | The offset along each channel axes from which to start incrementing.</span>
+<span class="sd">        :nbit:</span>
+<span class="sd">            | 8, optional</span>
+<span class="sd">            | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">        :include_max:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: ensure all combinations of max value (e.g. 255 for nbit = 8) are included in RGB cube. </span>
+<span class="sd">        :include_min:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: ensure all combinations of min value 0 are included in RGB cube. </span>
+<span class="sd">        :seed:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Seed for setting the state of numpy&#39;s random number generator.</span>
+<span class="sd">        :randomize_order:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Randomize the order of the (xyz,rgb) pairs before output.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :rgb:</span>
+<span class="sd">            | ndarray with RGB values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">inc_offset</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inc</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dv</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">include_max</span><span class="p">):</span> <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">dv</span><span class="p">,[</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span> <span class="c1"># ensure max values are present</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dv</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">include_min</span><span class="p">):</span> <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">dv</span><span class="p">))</span> <span class="c1"># ensure 0 values are present</span>
+    <span class="n">rgb</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">dv</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)))</span>
+        
+    <span class="c1"># Randomize order of training pairs:</span>
+    <span class="k">if</span> <span class="n">randomize_order</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rgb</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># get indices</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="c1"># random order for indices</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">rgb</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="c1"># re-arrange rgb in random order</span>
+                     
+    <span class="k">return</span> <span class="n">rgb</span> 
+
+<div class="viewcode-block" id="split_ramps_from_cube">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.split_ramps_from_cube">[docs]</a>
+<span class="k">def</span> <span class="nf">split_ramps_from_cube</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">xyz</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rgb_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Split a cube data set in pure RGB (ramps) and non-pure (remainder of cube). </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># select pures from full re-sampled RGB cube:</span>
+    <span class="n">pure_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_pure_rgb</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">rgb_only</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+        <span class="n">xyz_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xyz</span><span class="p">[</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="n">i</span><span class="p">],:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">rgb_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rgb</span><span class="p">[</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="n">i</span><span class="p">],:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># ensure monotonically increasing rgbs for pures (delete extra blacks):</span>
+    <span class="n">black_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_index_in_rgb</span><span class="p">(</span><span class="n">rgb_pure</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">as_bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">rgb_black</span> <span class="o">=</span> <span class="n">rgb_pure</span><span class="p">[</span><span class="n">black_rgb_bool</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># find blacks and get average value</span>
+    <span class="n">rgb_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgb_black</span><span class="p">,</span> <span class="n">rgb_pure</span><span class="p">[</span><span class="o">~</span><span class="n">black_rgb_bool</span><span class="p">]))</span> <span class="c1"># only keep non-blacks, except one.</span>
+    <span class="k">if</span> <span class="n">rgb_only</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">xyz_black</span> <span class="o">=</span> <span class="n">xyz_pure</span><span class="p">[</span><span class="n">black_rgb_bool</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> 
+        <span class="n">xyz_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">xyz_black</span><span class="p">,</span> <span class="n">xyz_pure</span><span class="p">[</span><span class="o">~</span><span class="n">black_rgb_bool</span><span class="p">]))</span>
+
+    <span class="c1"># select non-pure rgb:</span>
+    <span class="n">nonpure_rgb_bool</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">rgb_nonpure</span> <span class="o">=</span> <span class="n">rgb</span><span class="p">[</span><span class="n">nonpure_rgb_bool</span><span class="p">,:]</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgb_pure</span><span class="p">,</span><span class="n">rgb_nonpure</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">rgb_only</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+        <span class="n">xyz_nonpure</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">nonpure_rgb_bool</span><span class="p">,:]</span>
+    <span class="k">if</span> <span class="n">rgb_only</span><span class="p">:</span> <span class="n">xyz_pure</span><span class="p">,</span> <span class="n">xyz_nonpure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">xyz_pure</span><span class="p">,</span> <span class="n">rgb_pure</span><span class="p">),</span> <span class="p">(</span><span class="n">xyz_nonpure</span><span class="p">,</span> <span class="n">rgb_nonpure</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_random_sampling_of_pure_rgbs">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.is_random_sampling_of_pure_rgbs">[docs]</a>
+<span class="k">def</span> <span class="nf">is_random_sampling_of_pure_rgbs</span><span class="p">(</span><span class="n">inc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Return boolean indicating if the RGB cube axes (=single channel ramps) </span>
+<span class="sd">    are sampled (different increment) independently from the remainder of the cube.</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. Independent sampling is indicated when :inc: is a list with 2 different values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">inc</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+        <span class="n">pure_rgb_sampled_separately</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">inc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">inc</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">pure_rgb_sampled_separately</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pure_rgb_sampled_separately</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">pure_rgb_sampled_separately</span></div>
+
+
+<div class="viewcode-block" id="generate_training_data">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.generate_training_data">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                           <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                           <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate RGB training pairs by creating a cube of RGB values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :inc:</span>
+<span class="sd">            | [10], optional</span>
+<span class="sd">            | Increment along each channel (=R,G,B) axes in the RGB cube.</span>
+<span class="sd">            | If inc is a list with 2 different values the RGB cube axes </span>
+<span class="sd">            | are sampled independently from the remainder of the cube.</span>
+<span class="sd">            | --&gt; inc = [inc_remainder, inc_axes]</span>
+<span class="sd">        :inc_offset:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | The offset along each channel axes from which to start incrementing.</span>
+<span class="sd">        :nbit:</span>
+<span class="sd">            | 8, optional</span>
+<span class="sd">            | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">        :include_max:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: ensure all combinations of max value (e.g. 255 for nbit = 8) are included in RGB cube. </span>
+<span class="sd">        :include_min:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: ensure all combinations of min value 0 are included in RGB cube. </span>
+<span class="sd">        :seed:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Seed for setting the state of numpy&#39;s random number generator.</span>
+<span class="sd">        :randomize_order:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Randomize the order of the (xyz,rgb) pairs before output.</span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Level of output.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :rgb:</span>
+<span class="sd">            | ndarray with RGB values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+        
+    <span class="n">rgb_tr</span> <span class="o">=</span> <span class="n">_generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="n">inc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="n">inc_offset</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span><span class="p">)</span>
+    
+    <span class="n">pure_rgb_sampled_separately</span> <span class="o">=</span> <span class="n">is_random_sampling_of_pure_rgbs</span><span class="p">(</span><span class="n">inc</span><span class="p">)</span>
+            
+    <span class="k">if</span> <span class="n">pure_rgb_sampled_separately</span><span class="p">:</span>
+        <span class="c1"># create extra training set to extract pure R,G,B data from:</span>
+        <span class="n">rgb_tr_pure</span> <span class="o">=</span> <span class="n">_generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="n">inc</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="n">inc_offset</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span><span class="p">)</span>
+        
+        <span class="c1"># select pures from full re-sampled RGB cube:</span>
+        <span class="n">pure_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_pure_rgb</span><span class="p">(</span><span class="n">rgb_tr_pure</span><span class="p">)</span>
+        <span class="n">rgb_tr_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rgb_tr_pure</span><span class="p">[</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="n">i</span><span class="p">],:]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        
+        <span class="c1"># ensure monotonically increasing rgbs for pures (delete extra blacks):</span>
+        <span class="n">black_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_index_in_rgb</span><span class="p">(</span><span class="n">rgb_tr_pure</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">as_bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">rgb_tr_black</span> <span class="o">=</span> <span class="n">rgb_tr_pure</span><span class="p">[</span><span class="n">black_rgb_bool</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="c1"># find blacks and get average value</span>
+        <span class="n">rgb_tr_pure</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgb_tr_black</span><span class="p">,</span> <span class="n">rgb_tr_pure</span><span class="p">[</span><span class="o">~</span><span class="n">black_rgb_bool</span><span class="p">]))</span> <span class="c1"># only keep non-blacks, except one.</span>
+       
+        <span class="c1"># keep non-pure from original training data and add new pure rgb data:</span>
+        <span class="n">pure_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_pure_rgb</span><span class="p">(</span><span class="n">rgb_tr</span><span class="p">)</span>
+        <span class="n">nonpure_rgb_bool</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">rgb_tr_nonpure</span> <span class="o">=</span> <span class="n">rgb_tr</span><span class="p">[</span><span class="n">nonpure_rgb_bool</span><span class="p">,:]</span>
+        <span class="n">rgb_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgb_tr_pure</span><span class="p">,</span><span class="n">rgb_tr_nonpure</span><span class="p">))</span>
+    
+        <span class="c1"># Randomize order of training pairs:</span>
+        <span class="k">if</span> <span class="n">randomize_order</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rgb_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># get indices</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="c1"># random order for indices</span>
+            <span class="n">rgb_tr</span> <span class="o">=</span> <span class="n">rgb_tr</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="c1"># re-arrange rgb in random order                </span>
+                
+    
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of training points for inc = </span><span class="si">{}</span><span class="s1"> and inc_offset = </span><span class="si">{:1.0f}</span><span class="s1">: </span><span class="si">{:1.0f}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inc</span><span class="p">,</span> <span class="n">inc_offset</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
+        <span class="n">data</span> <span class="o">=</span> <span class="n">rgb_tr</span> 
+        <span class="n">data_contains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">]</span> 
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="n">data_contains</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;_train&#39;</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pure_rgb_sampled_separately</span><span class="p">:</span>
+            <span class="n">pure_rgb_bool</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_pure_rgb</span><span class="p">(</span><span class="n">rgb_tr</span><span class="p">)</span>
+            <span class="n">pure_rgb_bool</span> <span class="o">=</span> <span class="p">(</span><span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">|</span> <span class="n">pure_rgb_bool</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">rgb_tr</span><span class="p">[</span><span class="n">pure_rgb_bool</span><span class="p">]</span>
+            <span class="n">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="n">data_contains</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;_train&#39;</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">axs</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rgb_tr</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="generate_test_data">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.generate_test_data">[docs]</a>
+<span class="k">def</span> <span class="nf">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
+                       <span class="n">xyzrgb_hull</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate XYZ test values by creating a cube of CIELAB L*a*b* values, then converting these to XYZ values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :dlab:</span>
+<span class="sd">            | [10,10,10], optional</span>
+<span class="sd">            | Increment along each CIELAB (=L*,a*,b*) axes in the Lab cube.</span>
+<span class="sd">        :nbit:</span>
+<span class="sd">            | 8, optional</span>
+<span class="sd">            | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">        :seed:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Seed for setting the state of numpy&#39;s random number generator.</span>
+<span class="sd">        :xyzw:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | White point xyz to convert from lab to xyz</span>
+<span class="sd">            | If None: use the white in xyzrgb_hull. If this is also None: use _CIE_D65 white.</span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | _CIEOBS, optional</span>
+<span class="sd">            | CIE standard observer used to convert _CIE_D65 to XYZ when xyzw </span>
+<span class="sd">            |   needs to be determined from the illuminant spectrum.</span>
+<span class="sd">        :xyzrgb_hull:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | ndarray with (XYZ,RGB) pairs from which the hull (= display gamut) can be determined.</span>
+<span class="sd">            | If None: test XYZ might fall outside of display gamut !</span>
+<span class="sd">        :randomize_order:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Randomize the order of the test xyz before output.</span>
+<span class="sd">        :verbosity:</span>
+<span class="sd">            | 0, optional</span>
+<span class="sd">            | Level of output.</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :xyz:</span>
+<span class="sd">            | ndarray with XYZ values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">xyzrgb_hull</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xyz_hull</span><span class="p">,</span> <span class="n">rgb_hull</span> <span class="o">=</span> <span class="n">xyzrgb_hull</span> <span class="c1"># if pre-calculated or measured: must be normalized to white Yw = 100 !</span>
+    
+        <span class="c1"># find white xyz:</span>
+        <span class="k">if</span> <span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyz_hull</span><span class="p">[</span><span class="n">dc</span><span class="o">.</span><span class="n">find_index_in_rgb</span><span class="p">(</span><span class="n">rgb_hull</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">),:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+    <span class="c1"># generate grid of points in lab space and convert to xyz:</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="o">+</span><span class="n">dlab</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dlab</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dlab</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">200</span><span class="o">+</span><span class="n">dlab</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">dlab</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">200</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">dlab</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">200</span><span class="o">+</span><span class="n">dlab</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">dlab</span><span class="p">[</span><span class="mi">2</span><span class="p">])))</span>
+    <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)))</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">lab_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+    
+    <span class="c1"># get rid of those that result in negative xyz values:</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="o">~</span><span class="p">((</span><span class="n">xyz</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">),:]</span>
+    
+    <span class="k">if</span> <span class="n">xyzrgb_hull</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># lab_hull = xyz_to_lab(xyz_hull, xyzw = xyzw)</span>
+        <span class="c1"># fig = plt.figure()</span>
+        <span class="c1"># ax = fig.add_subplot(projection =&#39;3d&#39;)</span>
+        <span class="c1"># ax.plot(lab_hull[:,1],lab_hull[:,2],lab_hull[:,0],&#39;.&#39;)</span>
+        <span class="c1"># lab_hull = xyz_to_lab(xyz_hull, xyzw = xyzw)</span>
+        <span class="c1"># print(xyz_hull.shape, xyz_hull.max(),xyz_hull.min(),xyzw)</span>
+        <span class="c1"># raise Exception(&#39;&#39;)</span>
+        <span class="c1"># in_gamut = math.in_hull(lab, lab_hull)</span>
+        
+        <span class="c1"># Only keep those that are within the XYZ-gamut of the display (use XYZ gamut as lab-gamut has concave surfaces !):</span>
+        <span class="n">in_gamut</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">in_hull</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_hull</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">in_gamut</span><span class="p">,:]</span>
+        
+    <span class="c1"># Randomize order of training pairs:</span>
+    <span class="k">if</span> <span class="n">randomize_order</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># get indices</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="c1"># random order for indices</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="c1"># re-arrange xyz in random order</span>
+
+    <span class="c1"># Make plots:</span>
+    <span class="c1">#convert xyz to lab for plots:</span>
+    <span class="n">lab</span> <span class="o">=</span> <span class="n">xyz_to_lab</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of in-gamut test points for dlab = [</span><span class="si">{:1.0f}</span><span class="s1">,</span><span class="si">{:1.0f}</span><span class="s1">,</span><span class="si">{:1.0f}</span><span class="s1">]:  </span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">dlab</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">xyz</span><span class="p">,</span><span class="n">lab</span><span class="p">))</span> 
+    <span class="n">data_contains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;lab&#39;</span><span class="p">]</span> 
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="n">data_contains</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;_test&#39;</span><span class="p">,</span> <span class="n">nrows</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="n">fig</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">xyz</span></div>
+
+    
+<div class="viewcode-block" id="plot_rgb_xyz_lab_of_set">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.plot_rgb_xyz_lab_of_set">[docs]</a>
+<span class="k">def</span> <span class="nf">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">rgb_xyz_lab</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;lab&#39;</span><span class="p">],</span>
+                            <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
+                            <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make 3d-plots of the RGB, XYZ and L*a*b* cubes of the data in rgb_xyz_lab.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :rgb_xyz_lab:</span>
+<span class="sd">            | ndarray with RGB, XYZ, Lab data.</span>
+<span class="sd">        :subscript:</span>
+<span class="sd">            | &#39;&#39;, optional</span>
+<span class="sd">            |subscript to add to the axis labels.</span>
+<span class="sd">        :data_contains:</span>
+<span class="sd">            | [&#39;rgb&#39;,&#39;xyz&#39;,&#39;lab&#39;], optional</span>
+<span class="sd">            | specifies what is in rgb_xyz_lab</span>
+<span class="sd">        :nrows:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Number of rows in (nx3) figure.</span>
+<span class="sd">        :row:</span>
+<span class="sd">            | 1, optional</span>
+<span class="sd">            | Current row number to plot to (when using the function to plot nx3 figures)</span>
+<span class="sd">        :fig:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Figure handle.</span>
+<span class="sd">            | If None: generate new figure.</span>
+<span class="sd">        :axs:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Axes handles: (3,) or None</span>
+<span class="sd">            | If None: add new axes for each of the RGB, XYZ, Lab subplots.</span>
+<span class="sd">        :figsize:</span>
+<span class="sd">            | (14,7), optional</span>
+<span class="sd">            | Figure size.</span>
+<span class="sd">        :marker:</span>
+<span class="sd">            | &#39;.&#39;, optional</span>
+<span class="sd">            | Marker symbol used for plotting.</span>
+<span class="sd">            </span>
+<span class="sd">    Return:</span>
+<span class="sd">        :fig, axs:</span>
+<span class="sd">            | Handles to the figure and the three axes in that figure.</span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">fig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>
+    
+        
+    <span class="n">axis_labels</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;rgb&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;G&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;R&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;xyz&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">,</span><span class="s1">&#39;Z&#39;</span><span class="p">,</span><span class="s1">&#39;X&#39;</span><span class="p">],</span>
+                  <span class="s1">&#39;lab&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a*&#39;</span><span class="p">,</span><span class="s1">&#39;b*&#39;</span><span class="p">,</span><span class="s1">&#39;L*&#39;</span><span class="p">]}</span>
+    <span class="n">axs_</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">rgb_xyz_lab</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">rgb_xyz_lab</span> <span class="o">=</span> <span class="n">rgb_xyz_lab</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">rgb_xyz_lab</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">ax_i</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">axs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_contains</span><span class="p">),</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="p">(</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">data_contains</span><span class="p">),</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+        <span class="n">ax_i</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb_xyz_lab</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">rgb_xyz_lab</span><span class="p">[:,</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">rgb_xyz_lab</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">],</span> <span class="n">marker</span> <span class="o">=</span> <span class="n">marker</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span>
+        <span class="n">ax_i</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">axis_labels</span><span class="p">[</span><span class="n">data_contains</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">subscript</span><span class="p">)</span>
+        <span class="n">ax_i</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">axis_labels</span><span class="p">[</span><span class="n">data_contains</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">subscript</span><span class="p">)</span>
+        <span class="n">ax_i</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="n">axis_labels</span><span class="p">[</span><span class="n">data_contains</span><span class="p">[</span><span class="n">i</span><span class="p">]][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">subscript</span><span class="p">)</span>
+        <span class="n">axs_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ax_i</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axs_</span></div>
+
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1"># generate some training RGB with axes spacing of 10, inner cube spacing 30:</span>
+    <span class="n">rgb_tr</span> <span class="o">=</span> <span class="n">generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rgb_tr.shape: &#39;</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># generate some XYZ test data:</span>
+    <span class="n">xyz_t</span> <span class="o">=</span> <span class="n">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">xyzrgb_hull</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xyz_t.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># To ensure XYZ test data is within hull of display, provide xyzrgb_hull data:</span>
+    <span class="c1"># simulate some measurements of the training data using a virtual display:</span>
+    <span class="kn">from</span> <span class="nn">virtualdisplay</span> <span class="kn">import</span> <span class="n">VirtualDisplay</span>
+    <span class="n">vd</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_tr</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb_tr</span><span class="p">)</span> <span class="c1"># &#39;measure xyz for each of the displayed rgb_tr</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;simulated xyz_tr.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># generate some XYZ test data within the display gamut </span>
+    <span class="c1"># (make sure black and white are present in xyzrgb_hull!):</span>
+    <span class="n">xyz_t_ingamut</span> <span class="o">=</span> <span class="n">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">xyzrgb_hull</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span><span class="n">rgb_tr</span><span class="p">),</span> 
+                                       <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xyz_t_ingamut.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_t_ingamut</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

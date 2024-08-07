@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.toolboxes.dispcal.display_characterization_models &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.toolboxes.dispcal.display_characterization_models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.toolboxes.dispcal.display_characterization_models</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for display calibration models</span>
+<span class="sd">=====================================</span>
+
+<span class="sd"> :get_DE_stats(): Get statistics [&#39;mean&#39;,&#39;median&#39;,&#39;rms&#39;,&#39;75p&#39;,&#39;90p&#39;,&#39;95p&#39;,&#39;max&#39;]. </span>
+<span class="sd"> </span>
+<span class="sd"> :ramp_data_to_cube_data(): Create a RGB and XYZ cube from the single channel ramps in the training data.</span>
+<span class="sd"> </span>
+<span class="sd"> :ColCharModel: Super class for colorimetric display characterization models </span>
+<span class="sd"> </span>
+<span class="sd"> :GGO_GOG_GOGO_PLI: Class for characterization models that combine a 3x3 transfer matrix and a GGO, GOG, GOGO, SIGMOID, PLI and 1-D LUT Tone response curve  </span>
+<span class="sd">                     |  - Tone Response curve models:</span>
+<span class="sd">                     |    * GGO: gain-gamma-offset model: y = gain*x**gamma + offset</span>
+<span class="sd">                     |    * GOG: gain-offset-gamma model: y = (gain*x + offset)**gamma</span>
+<span class="sd">                     |    * GOG: gain-offset-gamma-offset model: y = (gain*x + offset)**gamma + offset</span>
+<span class="sd">                     |    * SIGMOID: sigmoid (S-shaped) model: y = offset + gain* [1 / (1 + q*exp(-a/gamma*(x - m)))]**(gamma)</span>
+<span class="sd">                     |    * PLI: Piece-wise Linear Interpolation</span>
+<span class="sd">                     |    * LUT: 1-D Look-Up-Tables for the TR</span>
+<span class="sd">                     |  - RGB-to-XYZ / XYZ-to-RGB transfer matrices:</span>
+<span class="sd">                     |     * M fixed: derived from tristimulus values of maximum single channel output</span>
+<span class="sd">                     |     * M optimized: by minimizing the RMSE between measured and predicted XYZ values</span>
+<span class="sd">                     </span>
+<span class="sd"> :ML: Super class for characterization models that are based on sklearn&#39;s machine learning algorithms (MLPRegression, POlynomialRegression)</span>
+<span class="sd"> </span>
+<span class="sd"> :MLPR: Class for Multi-Layer Perceptron Regressor based model.</span>
+<span class="sd">     </span>
+<span class="sd"> :POR: Class for POlynomial Regression based model.</span>
+<span class="sd"> </span>
+<span class="sd"> :LUTNNLI: Class for LUT-Nearest-Neighbour-distance-weighted-Linear-Interpolation based models.</span>
+<span class="sd">     </span>
+<span class="sd"> :LUTQHLI: Class for LUT-QHul-Linear-Interpolation based models (cfr. scipt.interpolate.LinearNDInterpolator)</span>
+<span class="sd">     </span>
+<span class="sd">     </span>
+<span class="sd">Created on Sun Nov  6 14:32:07 2022</span>
+
+<span class="sd">@author: u0032318</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">colortf</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">is_importable</span>
+<span class="kn">from</span> <span class="nn">luxpy.toolboxes.dispcal</span> <span class="kn">import</span> <span class="n">displaycalibration</span> <span class="k">as</span> <span class="n">dc</span>
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="n">invalid</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_DE_stats&#39;</span><span class="p">,</span> <span class="s1">&#39;ramp_data_to_cube_data&#39;</span><span class="p">,</span> <span class="s1">&#39;ColCharModel&#39;</span><span class="p">,</span> 
+           <span class="s1">&#39;GGO_GOG_GOGO_PLI&#39;</span><span class="p">,</span><span class="s1">&#39;ML&#39;</span><span class="p">,</span><span class="s1">&#39;MLPR&#39;</span><span class="p">,</span><span class="s1">&#39;POR&#39;</span><span class="p">,</span><span class="s1">&#39;LUTNNLI&#39;</span><span class="p">,</span> <span class="s1">&#39;LUTQHLI&#39;</span><span class="p">]</span>
+
+<span class="c1">#--- helper functions ---------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">get_DE_stats</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Get statistics [&#39;mean&#39;,&#39;median&#39;,&#39;rms&#39;,&#39;75p&#39;,&#39;90p&#39;,&#39;95p&#39;,&#39;max&#39;] </span>
+<span class="sd">    from the DEi ndarray along given axis and returns a dict with those values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DE</span> <span class="o">=</span> <span class="p">{}</span> 
+    <span class="n">DEi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">DEi</span><span class="p">)</span>
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;mean&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span> 
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span> 
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;rms&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">DEi</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span> 
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;75p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="mi">75</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;90p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="mi">90</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;95p&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">percentile</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span><span class="mi">95</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span>
+    <span class="n">DE</span><span class="p">[</span><span class="s1">&#39;max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">DE</span>
+
+
+<span class="c1">#--- models -------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">ColCharModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Super class for the colorimetric characterization models.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :training_data:</span>
+<span class="sd">                | None</span>
+<span class="sd">                | (xyz,rgb) pairs with xyz and rgb ndarrays.</span>
+<span class="sd">            :single_channel_ramp_only_data:</span>
+<span class="sd">                | False,</span>
+<span class="sd">                | If True: select from the training pair data the single channel ramps</span>
+<span class="sd">                |  and construct a full new training cube. The remainder of the original</span>
+<span class="sd">                | training cube&#39;s points are ignored.</span>
+<span class="sd">            :cspace:</span>
+<span class="sd">                | &#39;lab&#39;, optional</span>
+<span class="sd">                | Color space to train some models (-&gt; optimized transfer matrix for GGO,GOG,GOGO,SIGMOID) in,</span>
+<span class="sd">                |  and to calculate the DE errors in when testing.</span>
+<span class="sd">            :nbit:</span>
+<span class="sd">                | 8, optional</span>
+<span class="sd">                | RGB values in nbit format (e.g. 8, 16, ...)</span>
+<span class="sd">            :xyzw:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | White point xyz corresponding to RGB = [2**nbit-1,2**nbit-1,2**nbit-1]</span>
+<span class="sd">                | Used when converting to a cspace that requires a white point.</span>
+<span class="sd">                | If None: use the one from the training set.</span>
+<span class="sd">            :xyzb:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | Black point xyz corresponding to RGB = [0,0,0]</span>
+<span class="sd">                | Used when doing a black-correction.</span>
+<span class="sd">                | If None: use the one from the training set.</span>
+<span class="sd">            :black_correct:</span>
+<span class="sd">                | True, optional</span>
+<span class="sd">                | If True: apply black-correction.</span>
+<span class="sd">            :linearize_rgb:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | Apply a linearization (using tone response curves) to the device RGB before running the actual model.</span>
+<span class="sd">            :tr:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | User supplied Tone Response curves (estimated using displcal.estimate_tr)</span>
+<span class="sd">                | If None: the TR will be estimated using the model specified in :tr_type:.</span>
+<span class="sd">            :tr_type:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | If None: default to &#39;pli&#39;</span>
+<span class="sd">                | options:</span>
+<span class="sd">                |  - &#39;lut&#39;: Derive/specify Tone-Response as a look-up-table</span>
+<span class="sd">                |  - &#39;ggo&#39;: Derive/specify Tone-Response as a gain-gamma-offset function: y = gain*x**gamma + offset</span>
+<span class="sd">                |  - &#39;gog&#39;: Derive/specify Tone-Response as a gain-offset-gamma function:  y = (gain*x + offset)**gamma</span>
+<span class="sd">                |  - &#39;gogo&#39;: Derive/specify Tone-Response as a gain-offset-gamma-offset function: y = (gain*x + offset)**gamma + offset</span>
+<span class="sd">                |  - &#39;sigmoid&#39;: Derive/specify Tone-Response as a sigmoid function: y = offset + gain* [1 / (1 + q*exp(-a/gamma*(x - m)))]**(gamma)</span>
+<span class="sd">                |  - &#39;pli&#39;: Derive/specify Tone-Response as a piecewise linear interpolation function</span>
+<span class="sd">            :tr_L_type:</span>
+<span class="sd">                | &#39;lms&#39;, optional</span>
+<span class="sd">                | Type of response to use in the derivation of the Tone-Response curves.</span>
+<span class="sd">                | options:</span>
+<span class="sd">                |  - &#39;lms&#39;: use cone fundamental responses: L vs R, M vs G and S vs B </span>
+<span class="sd">                |           (reduces noise and generally leads to more accurate characterization) </span>
+<span class="sd">                |  - &#39;Y&#39;: use the luminance signal: Y vs R, Y vs G, Y vs B</span>
+<span class="sd">            :tr_par_lower_bounds:</span>
+<span class="sd">                | (0,-0.1,0,-0.1), optional</span>
+<span class="sd">                | Lower bounds used when optimizing the parameters of the GGO, GOG, GOGO tone</span>
+<span class="sd">                | response functions. Try different set of fit fails. </span>
+<span class="sd">                | Tip for GOG &amp; GOGO: try changing -0.1 to 0 (0 is not default,</span>
+<span class="sd">                |          because in most cases this leads to a less goog fit)</span>
+<span class="sd">            :tr_ensure_increasing_lut_at_low_rgb:</span>
+<span class="sd">                | 0.2 or float (max = 1.0) or None, optional</span>
+<span class="sd">                | Used in dispcal.estimate_tr()</span>
+<span class="sd">                | Ensure an increasing lut by setting all values below the RGB with the maximum</span>
+<span class="sd">                | zero-crossing of np.diff(lut) and RGB/RGB.max() values of :tr_ensure_increasing_lut_at_low_rgb:</span>
+<span class="sd">                | (values of 0.2 are a good rule of thumb value)</span>
+<span class="sd">                | Non-strictly increasing lut values can be caused at low RGB values due</span>
+<span class="sd">                | to noise and low measurement signal. </span>
+<span class="sd">                | If None: don&#39;t force lut, but keep as is.</span>
+<span class="sd">            :tr_force_increasing_lut_at_high_rgb:</span>
+<span class="sd">                | True, optional</span>
+<span class="sd">                | Used in dispcal.estimate_tr()</span>
+<span class="sd">                | If True: ensure the tone response curves in the lut are monotonically increasing.</span>
+<span class="sd">                |          by finding the first 1.0 value and setting all values after that also to 1.0.</span>
+<span class="sd">            :tr_rms_break_threshold:</span>
+<span class="sd">                | 0.01, optional</span>
+<span class="sd">                | Used in dispcal.estimate_tr()</span>
+<span class="sd">                | Threshold for breaking a loop that tries different bounds </span>
+<span class="sd">                | for the gain in the TR optimization for the GGO, GOG, GOGO models.</span>
+<span class="sd">                | (for some input the curve_fit fails, but succeeds on using different bounds)</span>
+<span class="sd">            :tr_smooth_window_factor:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | Determines window size for smoothing of data using scipy&#39;s svagol_filter prior to determining the TR curves.</span>
+<span class="sd">                | window_size = x.shape[0]//tr_smooth_window_factor </span>
+<span class="sd">                | If None: don&#39;t apply any smoothing</span>
+<span class="sd">             :M:</span>
+<span class="sd">                 | None, optional</span>
+<span class="sd">                 | RGB-to-XYZ transfer matrix. (only used by some models)</span>
+<span class="sd">                 | If None: it is derived automatically by the model.</span>
+<span class="sd">             :optimize_M:</span>
+<span class="sd">                 | True, optional</span>
+<span class="sd">                 | If True: optimize the transfer matrix, else: use the XYZ tristimulus values of the single channel max outputs.</span>
+<span class="sd">             :N:</span>
+<span class="sd">                 | None, optional</span>
+<span class="sd">                 | XYZ-to-RGB transfer matrix. (only used by some models)</span>
+<span class="sd">                 | If None: it is derived automatically by the model.</span>
+<span class="sd">             :cieobs:</span>
+<span class="sd">                 | &#39;1931_2&#39;, optional</span>
+<span class="sd">                 | CIE CMF set used to determine the XYZ tristimulus values in dispcal.estimate_tr()</span>
+<span class="sd">                 |   when linearizing the RGB values for tr_L_type == &#39;lms&#39; (-&gt; determines the conversion matrix to</span>
+<span class="sd">                 |   convert xyz to lms values)</span>
+<span class="sd">             :avg:</span>
+<span class="sd">                 | lambda x: ((x**2).mean()**0.5), optional</span>
+<span class="sd">                 | Used in dispcal.optimize_3x3_transfer_matrix()</span>
+<span class="sd">                 | Function used to average the color differences of the individual RGB settings</span>
+<span class="sd">                 | in the optimization of the xyz_to_rgb and rgb_to_xyz conversion matrices.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+              
+        <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># construct full training data cube from single channel ramp data:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">ramp_data_to_cube_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr</span> <span class="o">=</span> <span class="n">tr</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span> <span class="k">if</span> <span class="n">tr_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;pli&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimize_M</span> <span class="o">=</span> <span class="n">optimize_M</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span> 
+
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">pass</span> 
+    
+    <span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">test_data</span><span class="p">,</span> <span class="n">xyz_test_measured</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">virtual_display</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyz_test</span> <span class="o">=</span> <span class="n">test_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">test_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_test</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_test</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="c1"># estimate rgb_test data for xyz_test using color characterization model:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rgb_test_estimate</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xyz_test</span><span class="p">)),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        
+        <span class="c1"># simulate measured xyz using virtual display model:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">xyz_test_measured</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">virtual_display</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_test_measured</span> <span class="o">=</span> <span class="n">virtual_display</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_test_estimate</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">xyz_test_measured</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_test_measured</span> <span class="o">=</span> <span class="n">xyz_test_measured</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;When no xyz_test_measured is provided, the virtual_diplay_pars must be !&#39;</span><span class="p">)</span>
+            
+        <span class="c1"># convert to cspace:</span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzw</span> 
+        <span class="k">if</span> <span class="p">(</span><span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cspace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Model doesn&#39;t initiate xyzw.&quot;</span><span class="p">)</span> <span class="c1"># force xyzw to exist and not be None if cspace == &#39;lab&#39; or &#39;luv&#39;!</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lab_test</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xyz_test</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;xyz&gt;&#39;</span><span class="o">+</span><span class="n">cspace</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lab_test_measured</span> <span class="o">=</span> <span class="n">colortf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xyz_test_measured</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="s1">&#39;xyz&gt;&#39;</span><span class="o">+</span><span class="n">cspace</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate color differences:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">cspace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;l&#39;</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">DEi</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">lab_test</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lab_test_measured</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">cspace</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DYi</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">lab_test</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lab_test_measured</span><span class="p">)[:,:</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DExyi</span> <span class="o">=</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">lab_test</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lab_test_measured</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">:]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">DEi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">DYi</span><span class="o">/</span><span class="mi">100</span><span class="o">*</span><span class="mf">0.6</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">DExyi</span> <span class="c1"># DY: 1/100 to from Y=[0-100] range to [0-1] and further divide by 3 to go to approximately [0-0.6] (should be further verified)</span>
+        
+        <span class="c1"># calculate mean, median, 95-percentile, max:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DE</span> <span class="o">=</span> <span class="n">get_DE_stats</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DEi</span><span class="p">)</span>
+
+<span class="c1">#------------------------------------------------------------------------------ </span>
+<div class="viewcode-block" id="GGO_GOG_GOGO_PLI">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.GGO_GOG_GOGO_PLI">[docs]</a>
+<span class="k">class</span> <span class="nc">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">ColCharModel</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">tr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span>
+                 <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span>  
+                 <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        class for characterization models that combine a 3x3 transfer matrix </span>
+<span class="sd">        and a GGO, GOG, GOGO, SIGMOID, PLI and 1-D LUT Tone response curve  </span>
+<span class="sd">        </span>
+<span class="sd">        |  - Tone Response curve models:</span>
+<span class="sd">        |    * GGO: gain-gamma-offset model: y = gain*x**gamma + offset</span>
+<span class="sd">        |    * GOG: gain-offset-gamma model: y = (gain*x + offset)**gamma</span>
+<span class="sd">        |    * GOG: gain-offset-gamma-offset model: y = (gain*x + offset)**gamma + offset</span>
+<span class="sd">        |    * SIGMOID: sigmoid (S-shaped) model: y = offset + gain* [1 / (1 + q*exp(-a/gamma*(x - m)))]**(gamma)</span>
+<span class="sd">        |    * PLI: Piece-wise Linear Interpolation</span>
+<span class="sd">        |    * LUT: 1-D Look-Up-Tables for the TR</span>
+<span class="sd">        |  - RGB-to-XYZ / XYZ-to-RGB transfer matrices:</span>
+<span class="sd">        |     * M fixed: derived from tristimulus values of maximum single channel output</span>
+<span class="sd">        |     * M optimized: by minimizing the RMSE between measured and predicted XYZ values</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :tr_type:</span>
+<span class="sd">                | None -&gt; needs to be set by user as it specifies the type of model.</span>
+<span class="sd">                | If kept at None it will default to the &#39;pli&#39; model (= default of super class).</span>
+<span class="sd">        </span>
+<span class="sd">        For info on additional arguments: do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr</span> <span class="o">=</span> <span class="n">tr</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> 
+                         <span class="n">M</span> <span class="o">=</span> <span class="n">M</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="n">optimize_M</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="n">N</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span><span class="p">,</span>
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span>
+                         <span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">,</span><span class="s1">&#39;fw&#39;</span><span class="p">]</span> <span class="c1"># both modes are automatically available               </span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        
+        
+<div class="viewcode-block" id="GGO_GOG_GOGO_PLI.train">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.GGO_GOG_GOGO_PLI.train">[docs]</a>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">EPS</span> <span class="o">=</span> <span class="mf">1e-300</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span> 
+        <span class="k">if</span> <span class="n">single_channel_ramp_only_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="c1"># construct full training data cube from single channel ramp data:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">ramp_data_to_cube_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+            
+            <span class="n">M_opt</span><span class="p">,</span> <span class="n">N_opt</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">xyzb</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">calibrate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span><span class="p">,</span> 
+                                                            <span class="n">black_correct</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_correct</span><span class="p">,</span> 
+                                                            <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_L_type</span><span class="p">,</span> 
+                                                            <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_par_lower_bounds</span><span class="p">,</span> 
+                                                            <span class="n">avg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">avg</span><span class="p">,</span> 
+                                                            <span class="n">cspace</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cspace</span><span class="p">,</span>
+                                                            <span class="n">optimize_M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimize_M</span><span class="p">,</span>
+                                                            <span class="n">cieobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span>
+                                                            <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">,</span>
+                                                            <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                                                            <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                                                            <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                                                            <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                                                            <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;To train the model training_data = (XYZ_train, RGB_train) must be provided!&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M_opt</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N_opt</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span> <span class="o">=</span> <span class="n">tr</span></div>
+
+    
+<div class="viewcode-block" id="GGO_GOG_GOGO_PLI.to_rgb">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.GGO_GOG_GOGO_PLI.to_rgb">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">dc</span><span class="o">.</span><span class="n">xyz_to_rgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GGO_GOG_GOGO_PLI.to_xyz">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.GGO_GOG_GOGO_PLI.to_xyz">[docs]</a>
+    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">):</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dc</span><span class="o">.</span><span class="n">rgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)</span></div>
+</div>
+
+    
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">ML</span><span class="p">(</span><span class="n">ColCharModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> 
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">]):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Super class for Machine Learning (sklearn) based methods.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :mode:</span>
+<span class="sd">                | [&#39;bw&#39;], optional</span>
+<span class="sd">                | Model(s) to train: &#39;bw&#39; -&gt; XYZ-to-RGB; &#39;fw&#39; -&gt; RGB-to-XYZ.</span>
+<span class="sd">        </span>
+<span class="sd">        For info on additional arguments: do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> 
+                         <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span>
+                         <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span> 
+        <span class="k">if</span> <span class="n">single_channel_ramp_only_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">+</span> <span class="n">mode</span><span class="p">))</span> <span class="c1"># add mode to available modes</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            
+            <span class="c1"># construct full training data cube from single channel ramp data:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">single_channel_ramp_only_data</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">ramp_data_to_cube_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)</span>
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+        
+        <span class="c1"># get measured white point from training data:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xyzw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span><span class="p">[</span><span class="n">dc</span><span class="o">.</span><span class="n">find_index_in_rgb</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">)]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+        <span class="c1"># black_correct xyz:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_correct</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">correct_for_black</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span><span class="p">,</span> <span class="n">xyz_black</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]])</span>
+        
+        <span class="c1"># linearize rgb (or not):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linearize_rgb</span><span class="p">:</span>
+            <span class="c1"># Estimate tone response curves:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">estimate_tr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">,</span> 
+                                           <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># already done above</span>
+                                           <span class="n">xyz_black</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                           <span class="n">tr_L_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_L_type</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> 
+                                           <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                                           <span class="n">cieobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">,</span> 
+                                           <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span> 
+                                           <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                                           <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                                           <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="c1"># determine linear rgb:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">_rgb_linearizer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train</span>
+        
+        <span class="c1"># train aall requested modes:</span>
+        <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span><span class="p">:</span> 
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;bw&#39;</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_bw</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;fw&#39;</span><span class="p">:</span> 
+                <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;fw&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_correct</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> 
+            <span class="n">rgb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="s1">&#39;bw&#39;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linearize_rgb</span><span class="p">:</span> 
+                <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">rgb</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">_rgb_delinearizer</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rgb</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">rgb</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Backward xyz-to-rgb model not trained.&#39;</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;fw&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="n">rgb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">linearize_rgb</span><span class="p">:</span> <span class="n">rgb</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">_rgb_linearizer</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tr_type</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">)</span>
+            <span class="n">xyz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;fw&#39;</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">black_correct</span><span class="p">:</span> <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyzb</span> 
+            <span class="n">xyz</span><span class="p">[</span><span class="n">xyz</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">return</span> <span class="n">xyz</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Forward rgb-to-xyz model not trained.&#39;</span><span class="p">)</span>
+    
+    
+<span class="c1">#------------------------------------------------------------------------------   </span>
+<div class="viewcode-block" id="MLPR">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.MLPR">[docs]</a>
+<span class="k">class</span> <span class="nc">MLPR</span><span class="p">(</span><span class="n">ML</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> 
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">],</span>
+                 <span class="n">use_StandardScaler</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">500</span><span class="p">,),</span> <span class="n">activation</span> <span class="o">=</span> <span class="s1">&#39;relu&#39;</span><span class="p">,</span>
+                 <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">100000</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">learning_rate</span> <span class="o">=</span> <span class="s1">&#39;adaptive&#39;</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Class for Multi-Layer Perceptron Regressor based model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :use_StandardScaler:</span>
+<span class="sd">                | True, optional</span>
+<span class="sd">                | If True: apply sklearn&#39;s StandardScaler() </span>
+<span class="sd">                |   to &quot;standardize features by removing the mean and scaling to unit variance&quot;.</span>
+<span class="sd">            :hidden_layer_sizes:</span>
+<span class="sd">                | (500,) optional</span>
+<span class="sd">                | Size of the hidden layer(s) in a fully connected Neural Net. </span>
+<span class="sd">                | There are as many layers as there are elements in the tuple.</span>
+<span class="sd">            :activation:</span>
+<span class="sd">                | &#39;relu&#39;, optional</span>
+<span class="sd">                | Activation function for the hidden layers in the neural network.</span>
+<span class="sd">            :max_iter:</span>
+<span class="sd">                | 100000, optional</span>
+<span class="sd">                | maximum number of iterations</span>
+<span class="sd">            :tol:</span>
+<span class="sd">                | 1e-4, optional</span>
+<span class="sd">                | Tolerance for the optimization.</span>
+<span class="sd">            :learning_rate:</span>
+<span class="sd">                | &#39;adaptive&#39;, optional</span>
+<span class="sd">                | Learning rate schedule for weight updates.</span>
+<span class="sd">            :kwargs:</span>
+<span class="sd">                | other keyword arguments in sklearns MLPRegressor.  </span>
+<span class="sd">            :mode:</span>
+<span class="sd">                | [&#39;bw&#39;], optional</span>
+<span class="sd">                | Model(s) to train: &#39;bw&#39; -&gt; XYZ-to-RGB; &#39;fw&#39; -&gt; RGB-to-XYZ.</span>
+<span class="sd">        </span>
+<span class="sd">        For info on MLPRegressor arguments, see its __doc__</span>
+<span class="sd">        </span>
+<span class="sd">        For info on other additional arguments: </span>
+<span class="sd">            - do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                         <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="p">,(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span> 
+            <span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="p">(</span><span class="n">hidden_layer_sizes</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_StandardScaler</span> <span class="o">=</span> <span class="n">use_StandardScaler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="n">hidden_layer_sizes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="c1"># lazy imports:</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;sklearn&#39;</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="s1">&#39;scikit-learn&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">StandardScaler</span> <span class="c1"># lazy import</span>
+        <span class="kn">from</span> <span class="nn">sklearn.neural_network</span> <span class="kn">import</span> <span class="n">MLPRegressor</span> <span class="c1"># lazy import</span>
+        <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">make_pipeline</span> <span class="c1"># lazy import</span>
+
+        <span class="n">mlpregressor</span> <span class="o">=</span> <span class="n">MLPRegressor</span><span class="p">(</span><span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="n">hidden_layer_sizes</span><span class="p">,</span> 
+                                    <span class="n">activation</span> <span class="o">=</span> <span class="n">activation</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span><span class="p">,</span> 
+                                    <span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span><span class="p">,</span> <span class="n">learning_rate</span> <span class="o">=</span> <span class="n">learning_rate</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        
+        <span class="n">pipeline</span> <span class="o">=</span> <span class="p">(</span><span class="n">StandardScaler</span><span class="p">(),</span> <span class="n">mlpregressor</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_StandardScaler</span> <span class="k">else</span> <span class="p">(</span><span class="n">mlpregressor</span><span class="p">,)</span> 
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="o">*</span><span class="n">pipeline</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_bw</span> <span class="o">=</span> <span class="n">make_pipeline</span><span class="p">(</span><span class="o">*</span><span class="n">pipeline</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span> 
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+        
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="POR">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.POR">[docs]</a>
+<span class="k">class</span> <span class="nc">POR</span><span class="p">(</span><span class="n">ML</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> 
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">],</span>
+                 <span class="n">polyfeat_degree</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">polyfeat_include_bias</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">polyfeat_interaction_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">linreg_fit_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">linreg_positive</span> <span class="o">=</span> <span class="kc">False</span>
+                 <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Class for POlynomial Regression based model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :polyfeat_degree:</span>
+<span class="sd">                | 5, optional</span>
+<span class="sd">                | Maximum degree of all polynomial feature combinations</span>
+<span class="sd">                | If tuple: (min_degree, max_degree). </span>
+<span class="sd">                | See sklearn&#39;s PolynomialFeatures.__doc__</span>
+<span class="sd">            :polyfeat_include_bias:</span>
+<span class="sd">                | True, optional</span>
+<span class="sd">                | If True: then include a bias column </span>
+<span class="sd">                |    (i.e. a column of ones; cfr. intercept term in a linear model).</span>
+<span class="sd">                | See sklearn&#39;s PolynomialFeatures.__doc__</span>
+<span class="sd">            :polyfeat_interaction_only:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | If True: only interaction features are produced:</span>
+<span class="sd">                |    - included: `x[0]`, `x[1]`, `x[0] * x[1]`, etc.</span>
+<span class="sd">                |    - excluded: `x[0] ** 2`, `x[0] ** 2 * x[1]`, etc.</span>
+<span class="sd">                | See sklearn&#39;s PolynomialFeatures.__doc__</span>
+<span class="sd">            :linreg_fit_intercept:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | If True: include an intercept in the linear regression.</span>
+<span class="sd">                | See sklearn&#39;s LinearRegression.__doc__</span>
+<span class="sd">            :linreg_positive:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | If True: forces the coefficients to be positive.</span>
+<span class="sd">                | See sklearn&#39;s LinearRegression.__doc__</span>
+<span class="sd">            :mode:</span>
+<span class="sd">                | [&#39;bw&#39;], optional</span>
+<span class="sd">                | Model(s) to train: &#39;bw&#39; -&gt; XYZ-to-RGB; &#39;fw&#39; -&gt; RGB-to-XYZ.</span>
+<span class="sd">                </span>
+<span class="sd">        For info on other additional arguments: </span>
+<span class="sd">            - do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                         <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_degree</span> <span class="o">=</span> <span class="n">polyfeat_degree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_include_bias</span> <span class="o">=</span> <span class="n">polyfeat_include_bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_interaction_only</span> <span class="o">=</span> <span class="n">polyfeat_interaction_only</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linreg_fit_intercept</span> <span class="o">=</span> <span class="n">linreg_fit_intercept</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">linreg_positive</span> <span class="o">=</span> <span class="n">linreg_positive</span>
+
+        <span class="c1"># lazy imports:</span>
+        <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;sklearn&#39;</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="s1">&#39;scikit-learn&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span> <span class="c1"># lazy import</span>
+        <span class="kn">from</span> <span class="nn">sklearn.preprocessing</span> <span class="kn">import</span> <span class="n">PolynomialFeatures</span> <span class="c1"># lazy import</span>
+        <span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LinearRegression</span> <span class="c1"># lazy import</span>
+                  
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span> <span class="n">PolynomialFeatures</span><span class="p">(</span><span class="n">degree</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_degree</span><span class="p">,</span> 
+                                                             <span class="n">include_bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_include_bias</span><span class="p">,</span>
+                                                             <span class="n">interaction_only</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyfeat_interaction_only</span><span class="p">)),</span> 
+                                 <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">LinearRegression</span><span class="p">(</span><span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linreg_fit_intercept</span><span class="p">,</span>
+                                                             <span class="n">positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linreg_positive</span><span class="p">))</span>
+                                 <span class="p">]</span>
+                                <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_bw</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span><span class="p">)</span>                         
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">LUT_Pipe</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Pipe class for LUT based models to also have fit() method </span>
+<span class="sd">    and one that outputs an instance with a predict() method.</span>
+<span class="sd">    This way the ML class can be used as super class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fcn</span><span class="p">,</span> <span class="n">init_kwargs</span> <span class="o">=</span> <span class="p">{}):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fcn</span> <span class="o">=</span> <span class="n">fcn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span> <span class="o">=</span> <span class="n">init_kwargs</span>
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s1">&#39;interpnd&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fcn</span><span class="o">.</span><span class="vm">__module__</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">)</span>
+            <span class="n">tmp</span><span class="o">.</span><span class="n">predict</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="fm">__call__</span>
+        <span class="k">elif</span> <span class="s1">&#39;ckdtree&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fcn</span><span class="o">.</span><span class="vm">__module__</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fcn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">init_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">tmp</span>
+        
+<div class="viewcode-block" id="ramp_data_to_cube_data">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.ramp_data_to_cube_data">[docs]</a>
+<span class="k">def</span> <span class="nf">ramp_data_to_cube_data</span><span class="p">(</span><span class="n">training_data</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Create a RGB and XYZ cube from the single channel ramps in the training data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :training_data:</span>
+<span class="sd">            | tuple (xyz_train, rgb_train) of ndarrays</span>
+<span class="sd">        :black_correct:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: apply black correction before creating the cubes</span>
+<span class="sd">            | If False: the black level will be added 3 times as the XYZ of the R, G, B channels are summed)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">training_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> 
+        <span class="n">xyz_train</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+        
+        <span class="n">p_black</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_index_in_rgb</span><span class="p">(</span><span class="n">rgb_train</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">xyz_black</span> <span class="o">=</span> <span class="n">xyz_train</span><span class="p">[</span><span class="n">p_black</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">rgb_black</span> <span class="o">=</span> <span class="n">rgb_train</span><span class="p">[</span><span class="n">p_black</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">black_correct</span><span class="p">:</span>  <span class="n">xyz_train</span> <span class="o">=</span> <span class="n">xyz_train</span> <span class="o">-</span> <span class="n">xyz_black</span> 
+            
+        <span class="c1">#get rid of multiple blacks in array:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setxor1d</span><span class="p">(</span><span class="n">p_black</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rgb_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">))</span>
+        <span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">rgb_black</span><span class="p">,</span><span class="n">rgb_train</span><span class="p">[</span><span class="n">c</span><span class="p">]))</span>
+        <span class="n">xyz_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">xyz_black</span><span class="p">,</span><span class="n">xyz_train</span><span class="p">[</span><span class="n">c</span><span class="p">]))</span>
+        
+        <span class="c1"># get positions of pure r, g, b values:</span>
+        <span class="n">p_pure</span> <span class="o">=</span> <span class="n">dc</span><span class="o">.</span><span class="n">find_pure_rgb</span><span class="p">(</span><span class="n">rgb_train</span><span class="p">)</span>
+        <span class="n">idxs</span> <span class="o">=</span> <span class="p">[</span><span class="n">rgb_train</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+        
+        <span class="c1"># Get rgb and xyz of red, green and blue ordered channel ramps:</span>
+        <span class="n">xyz_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xyz_train</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],:][</span><span class="n">idxs</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+        <span class="n">rgb_train</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">rgb_train</span><span class="p">[</span><span class="n">p_pure</span><span class="p">[</span><span class="n">i</span><span class="p">],:][</span><span class="n">idxs</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)])</span>
+        
+        <span class="c1"># create all possible combo&#39;s:</span>
+        <span class="n">cube_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">rgb_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span><span class="o">*</span><span class="mi">3</span><span class="p">))))</span>
+        
+        <span class="c1"># create additive light mixtures of R,G,B channels:</span>
+        <span class="n">rgb_train_cube</span> <span class="o">=</span> <span class="n">rgb_train</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">rgb_train</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">rgb_train</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],:]</span>
+        <span class="n">xyz_train_cube</span> <span class="o">=</span> <span class="n">xyz_train</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">xyz_train</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],:]</span> <span class="o">+</span> <span class="n">xyz_train</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">cube_idx</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],:]</span>
+        
+        <span class="n">rgb_train_cube</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rgb_train_cube</span><span class="p">),</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+                
+        <span class="c1"># add xyz_black:</span>
+        <span class="k">if</span> <span class="n">black_correct</span><span class="p">:</span>  <span class="n">xyz_train_cube</span> <span class="o">=</span> <span class="n">xyz_train_cube</span> <span class="o">+</span> <span class="n">xyz_black</span> 
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">xyz_train_cube</span><span class="p">,</span> <span class="n">rgb_train_cube</span><span class="p">)</span>
+        
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">training_data</span></div>
+
+
+<div class="viewcode-block" id="LUTQHLI">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.LUTQHLI">[docs]</a>
+<span class="k">class</span> <span class="nc">LUTQHLI</span><span class="p">(</span><span class="n">ML</span><span class="p">):</span> 
+    <span class="c1"># Remarks:</span>
+    <span class="c1"># 1) when training data cube is obtained from all combinations of channel ramps -&gt; analogous to PLVC model (X = linear combination of X(dr),X(dg),X(db), same for Y,Z ... ); if not it is more general</span>
+    <span class="c1"># 2) LinearNDInterpolator performs linear barycentric interpolation on triangles from triangulation</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span>  <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> 
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">rescale</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                 <span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">]):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Class for LUT-Linear-INTERPolation based models.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :rescale:</span>
+<span class="sd">                | False, optional</span>
+<span class="sd">                | Rescale points to unit cube before performing interpolation.</span>
+<span class="sd">                | see scipy.interpolate.LinearNDInterpolator.__doc__</span>
+<span class="sd">            :mode:</span>
+<span class="sd">                | [&#39;bw&#39;], optional</span>
+<span class="sd">                | Model(s) to train: &#39;bw&#39; -&gt; XYZ-to-RGB; &#39;fw&#39; -&gt; RGB-to-XYZ.</span>
+<span class="sd">                </span>
+<span class="sd">        For info on other additional arguments: </span>
+<span class="sd">            - do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">            </span>
+<span class="sd">        Notes:</span>
+<span class="sd">            | The interpolant is constructed by triangulating the input data</span>
+<span class="sd">            | with Qhull, and on each triangle performing linear</span>
+<span class="sd">            | barycentric interpolation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+                
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                         <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span> <span class="o">=</span> <span class="n">rescale</span>
+
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+                  
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span> <span class="o">=</span> <span class="n">LUT_Pipe</span><span class="p">(</span><span class="n">interpolate</span><span class="o">.</span><span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;rescale&#39;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">})</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_bw</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span><span class="p">)</span>                         
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+
+            
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="LUTNNLI">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.LUTNNLI">[docs]</a>
+<span class="k">class</span> <span class="nc">LUTNNLI</span><span class="p">(</span><span class="n">ML</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
+                 <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
+                 <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1</span><span class="p">),</span> 
+                 <span class="n">tr_L_type</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span>
+                 <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> 
+                 <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                 <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">mode</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">],</span>
+                 <span class="n">number_of_nearest_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Class for LUT-Nearest-Neighbour-distance-weighted-Linear-Interpolation based models.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            :number_of_nearest_neighbours:</span>
+<span class="sd">                | 4, optional</span>
+<span class="sd">                | Number of nearest neighbours in a LUT to use to do a</span>
+<span class="sd">                | distance weighted linear interpolation.</span>
+<span class="sd">            :kwargs:</span>
+<span class="sd">                | optional keyword arguments for cKDTree initialization.</span>
+<span class="sd">            :mode:</span>
+<span class="sd">                | [&#39;bw&#39;], optional</span>
+<span class="sd">                | Model(s) to train: &#39;bw&#39; -&gt; XYZ-to-RGB; &#39;fw&#39; -&gt; RGB-to-XYZ.</span>
+<span class="sd">                </span>
+<span class="sd">        For info on other additional arguments: </span>
+<span class="sd">            - do &quot;print(ColCharModel.__init__.__doc__)&quot;</span>
+<span class="sd">            </span>
+<span class="sd">        Note:</span>
+<span class="sd">            * Training_data must be provided at initialization !</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="n">training_data</span><span class="p">,</span> 
+                         <span class="n">single_channel_ramp_only_data</span> <span class="o">=</span> <span class="n">single_channel_ramp_only_data</span><span class="p">,</span>
+                         <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">,</span>
+                         <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="n">xyzb</span><span class="p">,</span>  <span class="n">black_correct</span> <span class="o">=</span> <span class="n">black_correct</span><span class="p">,</span> 
+                         <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="n">linearize_rgb</span><span class="p">,</span> <span class="n">tr_par_lower_bounds</span> <span class="o">=</span> <span class="n">tr_par_lower_bounds</span><span class="p">,</span>
+                         <span class="n">tr_type</span> <span class="o">=</span> <span class="n">tr_type</span><span class="p">,</span> <span class="n">tr_L_type</span> <span class="o">=</span> <span class="n">tr_L_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                         <span class="n">tr_ensure_increasing_lut_at_low_rgb</span> <span class="o">=</span> <span class="n">tr_ensure_increasing_lut_at_low_rgb</span><span class="p">,</span>
+                         <span class="n">tr_force_increasing_lut_at_high_rgb</span> <span class="o">=</span> <span class="n">tr_force_increasing_lut_at_high_rgb</span><span class="p">,</span>
+                         <span class="n">tr_rms_break_threshold</span> <span class="o">=</span> <span class="n">tr_rms_break_threshold</span><span class="p">,</span>
+                         <span class="n">tr_smooth_window_factor</span> <span class="o">=</span> <span class="n">tr_smooth_window_factor</span><span class="p">,</span>
+                         <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">number_of_nearest_neighbours</span> <span class="o">=</span> <span class="n">number_of_nearest_neighbours</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+
+        <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">cKDTree</span> <span class="c1"># lazy import</span>
+                  
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span> <span class="o">=</span> <span class="n">LUT_Pipe</span><span class="p">(</span><span class="n">cKDTree</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_bw</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_fw</span><span class="p">)</span>                         
+        <span class="bp">self</span><span class="o">.</span><span class="n">models</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;fw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;bw&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span> <span class="c1"># fw: rgb-to-xyz, bw: xyz-to-rgb</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
+            <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">to_rgb_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ckdtree&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;bw&#39;</span><span class="p">],</span> <span class="s1">&#39;x_train&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">,</span> <span class="s1">&#39;y_train&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span><span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">to_xyz_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ckdtree&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">models</span><span class="p">[</span><span class="s1">&#39;fw&#39;</span><span class="p">],</span> <span class="s1">&#39;x_train&#39;</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">rgb_train_lin</span><span class="p">,</span> <span class="s1">&#39;y_train&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">xyz_train_blackcorrected</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;LUTNNLI: training_data must be provided at initialization&#39;</span><span class="p">)</span>
+            
+<div class="viewcode-block" id="LUTNNLI.predict">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.LUTNNLI.predict">[docs]</a>
+    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">ckdtree</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">x_train</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_train</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">ckdtree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_nearest_neighbours</span><span class="p">)</span>
+        
+        <span class="n">inds</span><span class="p">[</span><span class="n">inds</span> <span class="o">==</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">inds</span> <span class="o">==</span> <span class="n">x_train</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">d</span> <span class="o">+=</span> <span class="mf">1e-100</span> <span class="c1"># avoid div by zero</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">d</span><span class="o">**</span><span class="mi">2</span><span class="p">)[:,:,</span><span class="kc">None</span><span class="p">]</span> <span class="c1"># inverse distance weigthing</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="n">y_train</span><span class="p">[</span><span class="n">inds</span><span class="p">,:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">y</span></div>
+</div>
+
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Generate some RGB, XYZ training pairs for the model </span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="kn">from</span> <span class="nn">rgbtraining_xyztest_set_generation</span> <span class="kn">import</span> <span class="n">generate_training_data</span>
+    <span class="c1"># generate some training RGB with axes spacing of 10, inner cube spacing 30:</span>
+    <span class="n">rgb_tr</span> <span class="o">=</span> <span class="n">generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rgb_tr.shape: &#39;</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+     <span class="c1"># simulate some XYZ measurements of the training data using a virtual display:</span>
+    <span class="kn">from</span> <span class="nn">virtualdisplay</span> <span class="kn">import</span> <span class="n">VirtualDisplay</span>
+    <span class="n">vd</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">xyz_tr</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb_tr</span><span class="p">)</span> <span class="c1"># &#39;measure xyz for each of the displayed rgb_tr</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;simulated xyz_tr.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        
+    
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Generate some XYZ test data (all within the display gamut) for the model </span>
+    <span class="c1">#  (make sure black and white are present in xyzrgb_hull!)</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="kn">from</span> <span class="nn">rgbtraining_xyztest_set_generation</span> <span class="kn">import</span> <span class="n">generate_test_data</span>
+    <span class="n">xyz_t</span> <span class="o">=</span> <span class="n">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">xyzrgb_hull</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span><span class="n">rgb_tr</span><span class="p">),</span> 
+                               <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xyz_t.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Initiate and train model(s): </span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Gain-Gamma-Offset model for Tone Response curves, with RGB-to-XYZ transfer matrix M obtained from XYZ of max. individual channel outputs: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training ggo_Mf ...&#39;</span><span class="p">)</span>
+    <span class="n">ggo_Mf</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Gain-Gamma-Offset model for Tone Response curves, with RGB-to-XYZ transfer matrix M optimized: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training ggo_Mo ...&#39;</span><span class="p">)</span>
+    <span class="n">ggo_Mo</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Gain-offset-Gamma model for Tone Response curves, with RGB-to-XYZ transfer matrix M obtained from XYZ of max. individual channel outputs: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training gog_Mf ...&#39;</span><span class="p">)</span>
+    <span class="n">gog_Mf</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;gog&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Gain-Offset-Gamma model for Tone Response curves, with RGB-to-XYZ transfer matrix M optimized: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training gog_Mo ...&#39;</span><span class="p">)</span>
+    <span class="n">gog_Mo</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;gog&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Gain-offset-Gamma model for Tone Response curves, with RGB-to-XYZ transfer matrix M obtained from XYZ of max. individual channel outputs: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training gogo_Mf ...&#39;</span><span class="p">)</span>
+    <span class="n">gogo_Mf</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;gogo&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Gain-Offset-Gamma model for Tone Response curves, with RGB-to-XYZ transfer matrix M optimized: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training gogo_Mo ...&#39;</span><span class="p">)</span>
+    <span class="n">gogo_Mo</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;gogo&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Piecewise-Linear-Interpolator model for Tone Response curves, with RGB-to-XYZ transfer matrix M obtained from XYZ of max. individual channel outputs: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training pli_Mf ...&#39;</span><span class="p">)</span>
+    <span class="n">pli_Mf</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    <span class="c1"># Gain-Offset-Gamma model for Tone Response curves, with RGB-to-XYZ transfer matrix M optimized: </span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training pli_Mo ...&#39;</span><span class="p">)</span>
+    <span class="n">pli_Mo</span> <span class="o">=</span> <span class="n">GGO_GOG_GOGO_PLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">optimize_M</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Piecewise Linear Regression model of order 6, without/with &#39;pli&#39; linearization and blacklevel correction:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training por6[_bl] ...&#39;</span><span class="p">)</span>
+    <span class="n">por6</span>    <span class="o">=</span> <span class="n">POR</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">polyfeat_degree</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">por6_bl</span> <span class="o">=</span> <span class="n">POR</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">polyfeat_degree</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Look-Up-Table with barycentric linear interpolation using QHull, without/with &#39;pli&#39; linearization and blacklevel correction:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training lutqhli[_bl] ...&#39;</span><span class="p">)</span>
+    <span class="n">lutqhli</span>    <span class="o">=</span> <span class="n">LUTQHLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">lutqhli_bl</span> <span class="o">=</span> <span class="n">LUTQHLI</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="c1"># Multi-Layer Perceptron Regression model, without/with &#39;pli&#39; linearization and blacklevel correction::</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Training mlpr[_bl] ...&#39;</span><span class="p">)</span>
+    <span class="n">mlpr800</span>    <span class="o">=</span> <span class="n">MLPR</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">mlpr800_bl</span> <span class="o">=</span> <span class="n">MLPR</span><span class="p">(</span><span class="n">training_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">xyz_tr</span><span class="p">,</span> <span class="n">rgb_tr</span><span class="p">),</span> <span class="n">hidden_layer_sizes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">800</span><span class="p">,),</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;pli&#39;</span><span class="p">,</span> <span class="n">linearize_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">black_correct</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+    <span class="c1"># -------------------------------------------------------------------------</span>
+    <span class="c1"># Test model(s): </span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">test_model</span><span class="p">(</span><span class="n">xyz_t</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">vd</span><span class="p">):</span>
+        <span class="n">rgb_t_predicted</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to_rgb</span><span class="p">(</span><span class="n">xyz_t</span><span class="p">)</span> <span class="c1"># get model prediction of RGB values that would generate the requested xyz_t</span>
+        <span class="n">xyz_t_meas</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb_t_predicted</span><span class="p">)</span> <span class="c1"># &#39;measure&#39; the predicted RGB using a virtual display (replace these simulated xyz with real measured ones for a real display)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">test</span><span class="p">((</span><span class="n">xyz_t</span><span class="p">,</span> <span class="n">rgb_t_predicted</span><span class="p">),</span> <span class="n">xyz_test_measured</span> <span class="o">=</span> <span class="n">xyz_t_meas</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="si">{:s}</span><span class="s1">: DE summary dict = &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">model_name</span><span class="p">),</span> <span class="n">model</span><span class="o">.</span><span class="n">DE</span><span class="p">)</span>
+        
+    <span class="n">models_to_test</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ggo_Mf&#39;</span><span class="p">:</span><span class="n">ggo_Mf</span><span class="p">,</span> <span class="s1">&#39;ggo_Mo&#39;</span><span class="p">:</span><span class="n">ggo_Mo</span><span class="p">,</span>
+                      <span class="s1">&#39;gog_Mf&#39;</span><span class="p">:</span><span class="n">gog_Mf</span><span class="p">,</span> <span class="s1">&#39;gog_Mo&#39;</span><span class="p">:</span><span class="n">gog_Mo</span><span class="p">,</span>
+                      <span class="s1">&#39;gogo_Mf&#39;</span><span class="p">:</span><span class="n">gogo_Mf</span><span class="p">,</span> <span class="s1">&#39;gogo_Mo&#39;</span><span class="p">:</span><span class="n">gogo_Mo</span><span class="p">,</span>
+                      <span class="s1">&#39;por6&#39;</span><span class="p">:</span><span class="n">por6</span><span class="p">,</span> <span class="s1">&#39;por6_bl&#39;</span><span class="p">:</span><span class="n">por6_bl</span><span class="p">,</span> 
+                      <span class="s1">&#39;lutqhli&#39;</span><span class="p">:</span><span class="n">lutqhli</span><span class="p">,</span> <span class="s1">&#39;lutqhli_bl&#39;</span><span class="p">:</span><span class="n">lutqhli_bl</span><span class="p">,</span>
+                      <span class="s1">&#39;mlpr800&#39;</span><span class="p">:</span><span class="n">mlpr800</span><span class="p">,</span><span class="s1">&#39;mlpr800_bl&#39;</span><span class="p">:</span><span class="n">mlpr800_bl</span><span class="p">}</span>
+    
+    
+    <span class="k">for</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models_to_test</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">test_model</span><span class="p">(</span><span class="n">xyz_t</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">vd</span><span class="p">)</span>
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

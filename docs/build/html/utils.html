@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utils sub-package &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Math sub-package" href="math.html" />
+    <link rel="prev" title="Luxpy package structure" href="luxpy_structure.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="luxpy_structure.html">Luxpy package structure</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utils sub-package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.get_Axes3D_module"><code class="docutils literal notranslate"><span class="pre">get_Axes3D_module()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.np2d"><code class="docutils literal notranslate"><span class="pre">np2d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.np3d"><code class="docutils literal notranslate"><span class="pre">np3d()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.np2dT"><code class="docutils literal notranslate"><span class="pre">np2dT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.np3dT"><code class="docutils literal notranslate"><span class="pre">np3dT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.put_args_in_db"><code class="docutils literal notranslate"><span class="pre">put_args_in_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.vec_to_dict"><code class="docutils literal notranslate"><span class="pre">vec_to_dict()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.loadtxt"><code class="docutils literal notranslate"><span class="pre">loadtxt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.savetxt"><code class="docutils literal notranslate"><span class="pre">savetxt()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.getdata"><code class="docutils literal notranslate"><span class="pre">getdata()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.dictkv"><code class="docutils literal notranslate"><span class="pre">dictkv()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.meshblock"><code class="docutils literal notranslate"><span class="pre">meshblock()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.asplit"><code class="docutils literal notranslate"><span class="pre">asplit()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.ajoin"><code class="docutils literal notranslate"><span class="pre">ajoin()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.broadcast_shape"><code class="docutils literal notranslate"><span class="pre">broadcast_shape()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.todim"><code class="docutils literal notranslate"><span class="pre">todim()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.read_excel"><code class="docutils literal notranslate"><span class="pre">read_excel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.write_excel"><code class="docutils literal notranslate"><span class="pre">write_excel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.show_luxpy_tree"><code class="docutils literal notranslate"><span class="pre">show_luxpy_tree()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.is_importable"><code class="docutils literal notranslate"><span class="pre">is_importable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.get_function_kwargs"><code class="docutils literal notranslate"><span class="pre">get_function_kwargs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.profile_fcn"><code class="docutils literal notranslate"><span class="pre">profile_fcn()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.unique"><code class="docutils literal notranslate"><span class="pre">unique()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.save_pkl"><code class="docutils literal notranslate"><span class="pre">save_pkl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.load_pkl"><code class="docutils literal notranslate"><span class="pre">load_pkl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.imread"><code class="docutils literal notranslate"><span class="pre">imread()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.imsave"><code class="docutils literal notranslate"><span class="pre">imsave()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.lazy_import"><code class="docutils literal notranslate"><span class="pre">lazy_import()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.utils.tree"><code class="docutils literal notranslate"><span class="pre">tree()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="math.html">Math sub-package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum.html">Spectrum sub-package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="color.html">Color sub-package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="toolboxes.html">Toolboxes</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="luxpy_structure.html">Luxpy package structure</a></li>
+      <li class="breadcrumb-item active">Utils sub-package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="utils-sub-package">
+<h1>Utils sub-package<a class="headerlink" href="#utils-sub-package" title="Link to this heading"></a></h1>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">py<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p>__init__.py</p></li>
+<li><p>utilities.py</p></li>
+<li><p>folder_tree.py</p></li>
+</ul>
+</dd>
+<dt class="field-even">namespace<span class="colon">:</span></dt>
+<dd class="field-even"><p>luxpy.utils</p>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="py function" id="module-luxpy.utils">
+<dt class="sig sig-object py" id="luxpy.utils.get_Axes3D_module">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">get_Axes3D_module</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#get_Axes3D_module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.get_Axes3D_module" title="Link to this definition"></a></dt>
+<dd><p>Get Axes3D module from mpl_toolkits.mplot3d</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.np2d">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">np2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.np2d" title="Link to this definition"></a></dt>
+<dd><p>Make a tuple, list or numpy array at least a 2D numpy array.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">tuple, list, ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with .ndim &gt;= 2</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.np3d">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">np3d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.np3d" title="Link to this definition"></a></dt>
+<dd><p>Make a tuple, list or numpy array at least a 3d numpy array.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">tuple, list, ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with .ndim &gt;= 3</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.np2dT">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">np2dT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np2dT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.np2dT" title="Link to this definition"></a></dt>
+<dd><p>Make a tuple, list or numpy array at least a 2D numpy array and transpose.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">tuple, list, ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with .ndim &gt;= 2 and with transposed axes.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.np3dT">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">np3dT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#np3dT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.np3dT" title="Link to this definition"></a></dt>
+<dd><p>Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">tuple, list, ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with .ndim &gt;= 3 and with first two axes </div>
+<div class="line">transposed (axis=3 is kept the same).</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.put_args_in_db">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">put_args_in_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#put_args_in_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.put_args_in_db" title="Link to this definition"></a></dt>
+<dd><p>Takes the args with not-None input values of a function and overwrites 
+the values of the corresponding keys in dict db.
+| (args are collected with the built-in function locals(), 
+| See example usage below)</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">db<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict with the values of specific keys overwritten by the </div>
+<div class="line-block">
+<div class="line">not-None values of corresponding args of a function fcn.</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Example usage:</dt><dd><div class="line-block">
+<div class="line">_db = {‘c’ : ‘c1’, ‘d’ : 10, ‘e’ : {‘e1’:’hello’, ‘e2’:1000}}</div>
+<div class="line"><br /></div>
+<div class="line">def test_put_args_in_db(a, b, db = None, c = None,d = None,e = None):</div>
+<div class="line"><br /></div>
+<div class="line-block">
+<div class="line">args = locals().copy()  # get dict with keyword input arguments to </div>
+<div class="line-block">
+<div class="line-block">
+<div class="line"># function ‘test_put_args_in_db’</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">db = put_args_in_db(db,args) # overwrite non-None args in db copy.</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">if db is not None: # unpack db for further use</div>
+<div class="line-block">
+<div class="line-block">
+<div class="line">c,d,e = [db[x] for x in sorted(db.keys())]</div>
+<div class="line"><br /></div>
+</div>
+<div class="line">print(’ a : {}’.format(a))</div>
+<div class="line">print(’ b : {}’.format(b))</div>
+<div class="line">print(’ db: {}’.format(db))</div>
+<div class="line">print(’ c : {}’.format(c))</div>
+<div class="line">print(’ d : {}’.format(d))</div>
+<div class="line">print(’ e : {}’.format(e))</div>
+<div class="line">print(‘_db: {}’.format(_db))</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.vec_to_dict">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">vec_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#vec_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.vec_to_dict" title="Link to this definition"></a></dt>
+<dd><p>Convert dict to vec and vice versa.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">vec<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">list or vector array, optional</div>
+</div>
+</dd>
+<dt class="field-even">dic<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">dict, optional</div>
+</div>
+</dd>
+<dt class="field-odd">vsize<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">list or vector array with size of values of dict, optional</div>
+</div>
+</dd>
+<dt class="field-even">keys<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">list or vector array with keys in dict (must be provided).</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">x, vsize</div>
+<div class="line-block">
+<div class="line">x is an array, if vec is None</div>
+<div class="line">x is a dict, if vec is not None</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.loadtxt">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">loadtxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_values=nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#loadtxt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.loadtxt" title="Link to this definition"></a></dt>
+<dd><p>Load data from text file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">String with filename [+path]</div>
+</div>
+</dd>
+<dt class="field-even">header<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">None: no header present, ‘infer’ get from file.</div>
+</div>
+</dd>
+<dt class="field-odd">sep<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">Delimiter (‘,’ -&gt; csv file)</div>
+</div>
+</dd>
+<dt class="field-even">dtype<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">float, optional</div>
+<div class="line">Try casting output array to this datatype.</div>
+</div>
+</dd>
+<dt class="field-odd">missing_values<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">np.nan, optional</div>
+<div class="line">Replace missing values with this.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">ndarray<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">loaded data in ndarray of type dtype or object (in case of mixed types)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.savetxt">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">savetxt</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">','</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fmt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">':1.18f'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'w'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#savetxt"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.savetxt" title="Link to this definition"></a></dt>
+<dd><p>Save data to text file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">String with filename [+path]</div>
+</div>
+</dd>
+<dt class="field-even">X<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with data</div>
+</div>
+</dd>
+<dt class="field-odd">header<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">None: no header present, ‘infer’ get from file.</div>
+</div>
+</dd>
+<dt class="field-even">sep<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘,’, optional</div>
+<div class="line">Delimiter (‘,’ -&gt; csv file)</div>
+</div>
+</dd>
+<dt class="field-odd">fmt<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘:1.18f’, optional</div>
+<div class="line">Format string for numerical data output.</div>
+<div class="line">Can be tuple/list for different output formats per column.</div>
+</div>
+</dd>
+<dt class="field-even">aw<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘w’, optional</div>
+<div class="line">options: ‘w’ -&gt; write or ‘a’ -&gt; append to file</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.getdata">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">getdata</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep='</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datatype='S'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy=True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_values=nan</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#getdata"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.getdata" title="Link to this definition"></a></dt>
+<dd><p>Get data from csv-file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">- str with path to file containing data</div>
+<div class="line">- ndarray with data</div>
+</div>
+</dd>
+<dt class="field-even">dtype<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">float, optional</div>
+<div class="line">dtype of elements in ndarray data array</div>
+<div class="line">If None: mixture of datatypes is expected-&gt;dtype of output will be object</div>
+</div>
+</dd>
+<dt class="field-odd">header<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line-block">
+<div class="line">- None: no header in file</div>
+<div class="line">- ‘infer’: infer headers from file</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">sep<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘,’ or ‘  ‘ or other char, optional</div>
+<div class="line">Column separator in data file</div>
+</div>
+</dd>
+<dt class="field-odd">datatype’<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘S’,optional </div>
+<div class="line">Specifies a type of data. </div>
+<div class="line">Is used when creating column headers (:column: is None).</div>
+<div class="line-block">
+<div class="line">-‘S’: light source spectrum</div>
+<div class="line">-‘R’: reflectance spectrum</div>
+<div class="line">or other.   </div>
+</div>
+</div>
+</dd>
+<dt class="field-even">copy<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Return a copy of ndarray </div>
+</div>
+</dd>
+<dt class="field-odd">verbosity<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, False, optional</div>
+<div class="line">Print warning when inferring headers from file.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">data as ndarray </div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.dictkv">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">dictkv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#dictkv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.dictkv" title="Link to this definition"></a></dt>
+<dd><p>Easy input of of keys and values into dict.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">keys<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">iterable list[str,…] of keys</div>
+</div>
+</dd>
+<dt class="field-even">values<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">iterable list[…,…, ] of values</div>
+</div>
+</dd>
+<dt class="field-odd">ordered<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, False, optional</div>
+<div class="line">True: creates an ordered dict using ‘collections.OrderedDict()’</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">(ordered) dict</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.meshblock">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">meshblock</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#meshblock"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.meshblock" title="Link to this definition"></a></dt>
+<dd><p>Create a meshed block from x and y.</p>
+<div class="line-block">
+<div class="line">(Similar to meshgrid, but axis = 0 is retained).</div>
+<div class="line">To enable fast blockwise calculation.</div>
+</div>
+<dl>
+<dt>Args: </dt><dd><dl class="field-list">
+<dt class="field-odd">x<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with ndim == 2</div>
+</div>
+</dd>
+<dt class="field-even">y<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with ndim == 2</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">X,Y<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">2 ndarrays with ndim == 3 </div>
+<div class="line-block">
+<div class="line">X.shape = (x.shape[0],y.shape[0],x.shape[1])</div>
+<div class="line">Y.shape = (x.shape[0],y.shape[0],y.shape[1])</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.asplit">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">asplit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#asplit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.asplit" title="Link to this definition"></a></dt>
+<dd><p>Split data on last axis</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray, ndarray, … </div>
+<div class="line-block">
+<div class="line">(number of returns is equal data.shape[-1])</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.ajoin">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">ajoin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#ajoin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.ajoin" title="Link to this definition"></a></dt>
+<dd><p>Join data on last axis.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">tuple (ndarray, ndarray, …)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray (shape[-1] is equal to tuple length)</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.broadcast_shape">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">broadcast_shape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expand_2d_to_3d</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis0_repeats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis1_repeats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#broadcast_shape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.broadcast_shape" title="Link to this definition"></a></dt>
+<dd><p>Broadcasts shapes of data to a target_shape.</p>
+<div class="line-block">
+<div class="line">Useful for block/vector calc. when numpy fails to broadcast correctly.</div>
+</div>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">data<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray </div>
+</div>
+</dd>
+<dt class="field-even">target_shape<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or tuple with requested shape, optional</div>
+<div class="line-block">
+<div class="line">- None: returns unchanged :data:</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">expand_2d_to_3d<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None (do nothing) or …, optional </div>
+<div class="line">If ndim == 2, expand from 2 to 3 dimensions</div>
+</div>
+</dd>
+<dt class="field-even">axis0_repeats<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or number of times to repeat axis=0, optional</div>
+<div class="line-block">
+<div class="line">- None: keep axis=0 same size</div>
+</div>
+</div>
+</dd>
+<dt class="field-odd">axis1_repeats<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None or number of times to repeat axis=1, optional</div>
+<div class="line-block">
+<div class="line">- None: keep axis=1 same size</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">reshaped ndarray</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.todim">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">todim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tshape</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">add_axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">equal_shape</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#todim"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.todim" title="Link to this definition"></a></dt>
+<dd><p>Expand x to dims that are broadcast-compatable with shape of another array.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">x<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray</div>
+</div>
+</dd>
+<dt class="field-even">tshape<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">tuple with target shape</div>
+</div>
+</dd>
+<dt class="field-odd">add_axis<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">1, optional</div>
+<div class="line">Determines where in x.shape an axis should be added</div>
+</div>
+</dd>
+<dt class="field-even">equal_shape<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False or True, optional</div>
+<div class="line">True: expand :x: to identical dimensions (speficied by :tshape:)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray broadcast-compatable with tshape.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.read_excel">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">read_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_range=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype=&lt;class</span> <span class="pre">'float'&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_dictoutput=False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out='X'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#read_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.read_excel" title="Link to this definition"></a></dt>
+<dd><p>Read excel file using openpyxl.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with [path/]filename of Excel file.</div>
+</div>
+</dd>
+<dt class="field-even">sheet_name<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: read all sheets</div>
+<div class="line">If string or tuple/list of strings: read these sheets.</div>
+</div>
+</dd>
+<dt class="field-odd">cell_range<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Read all data on sheet(s).</div>
+<div class="line">If string range (e.g. ‘B2:C4’) or tuple/list of cell_ranges: read this range.</div>
+<div class="line">If tuple/list: then length must match that of the list of sheet_names!</div>
+</div>
+</dd>
+<dt class="field-even">dtype<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">float, optional</div>
+<div class="line">Try to cast the output data array(s) to this type. In case of failure, </div>
+<div class="line">data type will be ‘object’.</div>
+</div>
+</dd>
+<dt class="field-odd">force_dictoutput<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True: output will always be a dictionary (sheet_names are keys) </div>
+<div class="line-block">
+<div class="line">with the requested data arrays.</div>
+</div>
+</div>
+<p><a href="#id1"><span class="problematic" id="id2">|</span></a>If False: in case only a single sheet_name is supplied or only a single
+|          sheet is present, then the output will be an ndarray!</p>
+</dd>
+<dt class="field-even">out<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘X’, optional</div>
+<div class="line">String specifying requested output (eg. ‘X’ or ‘X,wb’ with wb the loaded workbook)</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">dict or ndarray (single sheet and force_dictoutput==False) </div>
+<div class="line">with data in requested ranges. </div>
+</div>
+</dd>
+<dt class="field-even">wb<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">If in :out: the loaded workbook is also output.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.write_excel">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">write_excel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#write_excel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.write_excel" title="Link to this definition"></a></dt>
+<dd><p>Write data to an excel file using openpyxl.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with [path/]filename of Excel file.</div>
+</div>
+</dd>
+<dt class="field-even">sheet_name<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If None: use first one (or the keys in :X: when it is a dictionary)</div>
+<div class="line">If string: use this sheet.</div>
+<div class="line">If tuple/list of strings: use these to write the data in :X: (if :X: is a list/tuple of ndarrays)</div>
+</div>
+</dd>
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray, list/tuple or dict</div>
+<div class="line">If ndarray/list/tuple: sheet_names must be supplied explicitely in :sheet_names:</div>
+<div class="line">If dict: keys must be sheet_names        </div>
+</div>
+</dd>
+<dt class="field-even">cell_range<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">Read all data on sheet(s).</div>
+<div class="line">If string range (e.g. ‘B2:C4’) or tuple/list of cell_ranges: read this range.</div>
+<div class="line">If tuple/list: then length must match that of the list of sheet_names!</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.show_luxpy_tree">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">show_luxpy_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">omit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">['.pyc',</span> <span class="pre">'__pycache__',</span> <span class="pre">'.txt',</span> <span class="pre">'.dat',</span> <span class="pre">'.csv',</span> <span class="pre">'.npz',</span> <span class="pre">'.png',</span> <span class="pre">'.jpg',</span> <span class="pre">'.md',</span> <span class="pre">'.pdf',</span> <span class="pre">'.ini',</span> <span class="pre">'.log',</span> <span class="pre">'.rar',</span> <span class="pre">'drivers',</span> <span class="pre">'SDK_',</span> <span class="pre">'dll',</span> <span class="pre">'bak']</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#show_luxpy_tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.show_luxpy_tree" title="Link to this definition"></a></dt>
+<dd><p>Show luxpy foler tree.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">omit<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">List of folders and file-extensions to omit.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.is_importable">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">is_importable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pip_string</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">try_pip_install</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#is_importable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.is_importable" title="Link to this definition"></a></dt>
+<dd><p>Check if string is importable/loadable. If it doesn’t then try to ‘pip install’ it using subprocess.
+Returns None if succesful, otherwise throws and error or outputs False.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">string<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">string with package or module name</div>
+</div>
+</dd>
+<dt class="field-even">pip_string<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">string with package or module name as known by pip</div>
+<div class="line">If None: use the import string</div>
+</div>
+</dd>
+<dt class="field-odd">try_pip_install<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">True: try pip installing it using subprocess</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">success<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True if importable, False if not.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.get_function_kwargs">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">get_function_kwargs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#get_function_kwargs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.get_function_kwargs" title="Link to this definition"></a></dt>
+<dd><p>Get dictionary of a function’s keyword arguments and their default values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">f<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">function name</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">dict<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Dict with the function’s keyword arguments and their default values</div>
+<div class="line">Is empty if there are no defaults (i.e. f.__defaults__ or f.__kwdefaults__ are None).</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.profile_fcn">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">profile_fcn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fcn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">profile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort_stats</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'tottime'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#profile_fcn"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.profile_fcn" title="Link to this definition"></a></dt>
+<dd><p>Profile or time a function fcn.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">fcn<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">function to be profiled or timed (using time.time() difference)</div>
+</div>
+</dd>
+<dt class="field-even">profile<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">Profile the function, otherwise only time it.</div>
+</div>
+</dd>
+<dt class="field-odd">sort_stats<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘tottime’, optional</div>
+<div class="line">Sort profile results according to sort_stats (‘tottime’, ‘cumtime’,…)</div>
+</div>
+</dd>
+<dt class="field-even">output_file<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None, optional</div>
+<div class="line">If not None: output result to output_file.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Return:</dt><dd><dl class="field-list">
+<dt class="field-odd">ps<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Profiler output</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.unique">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">unique</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sort</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#unique"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.unique" title="Link to this definition"></a></dt>
+<dd><p>Get unique elements from array.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">array<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">array to get unique elements from.</div>
+</div>
+</dd>
+<dt class="field-even">sort<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If True: get sorted unique elements.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">unique_array<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with (sorted) unique elements.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.save_pkl">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">save_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#save_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.save_pkl" title="Link to this definition"></a></dt>
+<dd><p>Save an object in a (gzipped) pickle file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">str with filename of pickle file.</div>
+</div>
+</dd>
+<dt class="field-even">obj<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">python object to save</div>
+</div>
+</dd>
+<dt class="field-odd">compresslevel<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">0, optional</div>
+<div class="line">If &gt; 0: use gzip to compress pkl file.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">None<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.load_pkl">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">load_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gzipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#load_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.load_pkl" title="Link to this definition"></a></dt>
+<dd><p>Load the object in a (gzipped) pickle file.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">filename<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">str with filename of pickle file.</div>
+</div>
+</dd>
+<dt class="field-even">gzipped<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional </div>
+<div class="line">If True: ‘.gz’ will be added to filename before opening. </div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">obj<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">loaded python object</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.imread">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">imread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_freeimage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#imread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.imread" title="Link to this definition"></a></dt>
+<dd><p>Read image using imageio</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.imsave">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">imsave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">img</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_freeimage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#imsave"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.imsave" title="Link to this definition"></a></dt>
+<dd><p>Save image using imageio</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.lazy_import">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">lazy_import</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#lazy_import"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.lazy_import" title="Link to this definition"></a></dt>
+<dd><p>Lazy import of module</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.utils.tree">
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit_to_directories</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">omit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/folder_tree.html#tree"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.tree" title="Link to this definition"></a></dt>
+<dd><p>Given a directory Path object print a visual tree structure</p>
+<dl class="simple">
+<dt>References:</dt><dd><ol class="arabic simple">
+<li><p><a class="reference external" href="https://stackoverflow.com/questions/9727673/list-directory-tree-structure-in-python">https://stackoverflow.com/questions/9727673/list-directory-tree-structure-in-python</a></p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="luxpy_structure.html" class="btn btn-neutral float-left" title="Luxpy package structure" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="math.html" class="btn btn-neutral float-right" title="Math sub-package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.deltaE.discriminationellipses &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.deltaE.discriminationellipses</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.deltaE.discriminationellipses</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">########################################################################</span>
+<span class="c1"># &lt;LUXPY: a Python package for lighting and color science.&gt;</span>
+<span class="c1"># Copyright (C) &lt;2017&gt;  &lt;Kevin A.G. Smet&gt; (ksmet1977 at gmail.com)</span>
+<span class="c1">#</span>
+<span class="c1"># This program is free software: you can redistribute it and/or modify</span>
+<span class="c1"># it under the terms of the GNU General Public License as published by</span>
+<span class="c1"># the Free Software Foundation, either version 3 of the License.</span>
+<span class="c1">#</span>
+<span class="c1"># This program is distributed in the hope that it will be useful,</span>
+<span class="c1"># but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="c1"># MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="c1"># GNU General Public License for more details.</span>
+<span class="c1">#</span>
+<span class="c1"># You should have received a copy of the GNU General Public License</span>
+<span class="c1"># along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+<span class="c1">#########################################################################</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for discrimination ellipses</span>
+<span class="sd">==================================================</span>
+<span class="sd"> :get_macadam_ellipse(): Estimate n-step MacAdam ellipse at CIE x,y coordinates  </span>
+<span class="sd"> </span>
+<span class="sd"> :get_brown1957_ellipse(): Estimate n-step Brown (1957) ellipse at CIE x,y coordinates.  </span>
+<span class="sd"> </span>
+<span class="sd"> :get_gij_fmc(): Get gij matrices describing the discrimination ellipses for Yxy using FMC-1 or FMC-2.</span>
+
+<span class="sd"> :get_fmc_discrimination_ellipse(): Get n-step discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.</span>
+
+<span class="sd"> :discrimination_hotelling_t2(): Check significance of difference using Hotelling&#39;s T2 test on the centers Yxy1 and Yxy2 and their associate FMC-1/2 discrimination ellipses.</span>
+
+<span class="sd"> </span>
+<span class="sd">References:</span>
+<span class="sd">    1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
+<span class="sd">    2. Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</span>
+<span class="sd">    3. Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</span>
+<span class="sd">    4. Brown, W. R. J. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. </span>
+
+<span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">plotSL</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.macadamellipses</span> <span class="kn">import</span> <span class="n">get_macadam_ellipse</span>
+<span class="kn">from</span> <span class="nn">.brown1957ellipses</span> <span class="kn">import</span> <span class="n">get_brown1957_ellipse</span>
+<span class="kn">from</span> <span class="nn">.frieleellipses</span> <span class="kn">import</span> <span class="p">(</span><span class="n">get_gij_fmc</span><span class="p">,</span> <span class="n">get_fmc_discrimination_ellipse</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_macadam_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_brown1957_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;get_gij_fmc&#39;</span><span class="p">,</span><span class="s1">&#39;get_fmc_discrimination_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;discrimination_hotelling_t2&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_discrimination_ellipse">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_discrimination_ellipse">[docs]</a>
+<span class="k">def</span> <span class="nf">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]]),</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> 
+                               <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">brown1957_weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using an interpolation of the MacAdam ellipses or using FMC-1 or FMC-2.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :Yxy:</span>
+<span class="sd">            | 2D ndarray with [Y,]x,y coordinate centers. </span>
+<span class="sd">            | If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</span>
+<span class="sd">        :etype:</span>
+<span class="sd">            | &#39;fmc2&#39;, optional</span>
+<span class="sd">            | Type color discrimination ellipse estimation to use.</span>
+<span class="sd">            | options: &#39;macadam&#39;, &#39;fmc1&#39;, &#39;fmc2&#39; </span>
+<span class="sd">            |  - &#39;macadam&#39;: interpolate covariance matrices of closest MacAdam ellipses (see: get_macadam_ellipse?).</span>
+<span class="sd">            |  - &#39;fmc1&#39;: use FMC-1 from ref 2 (see get_fmc_discrimination_ellipse?).</span>
+<span class="sd">            |  - &#39;fmc2&#39;: use FMC-1 from ref 3 (see get_fmc_discrimination_ellipse?).</span>
+<span class="sd">            |  - &#39;brown1957&#39;: interpolate covariance matrices of closest Brown1957 ellipses (see: get_brown1957_ellipse?).</span>
+<span class="sd">        :nsteps:</span>
+<span class="sd">            | 10, optional</span>
+<span class="sd">            | Set multiplication factor for ellipses </span>
+<span class="sd">            | (nsteps=1 corresponds to approximately 1 MacAdam step, </span>
+<span class="sd">            | for FMC-2, Y also has to be 10.69, see note below).</span>
+<span class="sd">        :brown1957_weighted:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: use weighted averages from Table III in Brown 1957 paper, else use the straight averages.</span>
+<span class="sd">        :k_neighbours:</span>
+<span class="sd">            | 3, optional</span>
+<span class="sd">            | Only for option &#39;macadam&#39;.</span>
+<span class="sd">            | Number of nearest ellipses to use to calculate ellipse at xy </span>
+<span class="sd">        :average_cik:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Only for option &#39;macadam&#39;.</span>
+<span class="sd">            | If True: take distance weighted average of inverse </span>
+<span class="sd">            |   &#39;covariance ellipse&#39; elements cik. </span>
+<span class="sd">            | If False: average major &amp; minor axis lengths and </span>
+<span class="sd">            |   ellipse orientation angles directly.</span>
+<span class="sd">        :Y:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Only for option &#39;fmc2&#39;(see note below).</span>
+<span class="sd">            | If not None: Y = 10.69 and overrides values in Yxy. </span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. FMC-2 is almost identical to FMC-1 is Y = 10.69!; see [3]</span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">       1. MacAdam DL. Visual Sensitivities to Color Differences in Daylight*. J Opt Soc Am. 1942;32(5):247-274.</span>
+<span class="sd">       2. Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</span>
+<span class="sd">       3. Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</span>
+<span class="sd">       4. Brown, WRJ. (1957). Color Discrimination of Twelve Observers*. Journal of the Optical Society of America, 47(2), 137–143. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">Yxy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Yxy</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span><span class="n">Yxy</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">Y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span>
+    <span class="k">if</span> <span class="n">etype</span> <span class="o">==</span> <span class="s1">&#39;macadam&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_macadam_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="n">average_cik</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">etype</span> <span class="o">==</span> <span class="s1">&#39;brown1957&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">brown1957_weighted</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="n">average_cik</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_fmc_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">Yxy</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="n">etype</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="n">nsteps</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="discrimination_hotelling_t2">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.discrimination_hotelling_t2">[docs]</a>
+<span class="k">def</span> <span class="nf">discrimination_hotelling_t2</span><span class="p">(</span><span class="n">Yxy1</span><span class="p">,</span> <span class="n">Yxy2</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Y2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check &#39;significance&#39; of difference using Hotelling&#39;s T2 test on the centers Yxy1 and Yxy2 and their associate FMC-1/2 discrimination ellipses.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :Yxy1, Yxy2:</span>
+<span class="sd">            | 2D ndarrays with [Y,]x,y coordinate centers. </span>
+<span class="sd">            | If Yxy.shape[-1]==2: Y is added using the value from the Y-input argument.</span>
+<span class="sd">        :etype:</span>
+<span class="sd">            | &#39;fmc2&#39;, optional</span>
+<span class="sd">            | Type of FMC color discrimination equations to use (see references below).</span>
+<span class="sd">            | options: &#39;fmc1&#39;, fmc2&#39;</span>
+<span class="sd">        :Y1, Y2:</span>
+<span class="sd">            | None, optional</span>
+<span class="sd">            | Only affects FMC-2 (see note below).</span>
+<span class="sd">            | If not None: Yi = 10.69 and overrides values in Yxyi. </span>
+<span class="sd">        :ellipsoid:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If True: return ellipsoids, else return ellipses (only if cspace == &#39;Yxy&#39;)!</span>
+<span class="sd">        :cspace:</span>
+<span class="sd">            | &#39;Yxy&#39;, optional</span>
+<span class="sd">            | Return coefficients for Yxy-ellipses/ellipsoids (&#39;Yxy&#39;) or XYZ ellipsoids (&#39;xyz&#39;)</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :p:</span>
+<span class="sd">            | Chi-square based p-value</span>
+<span class="sd">        :T2:</span>
+<span class="sd">            | T2 test statistic (= mahalanobis distance on summed standard error cov. matrices)</span>
+<span class="sd">    </span>
+<span class="sd">    Steps:</span>
+<span class="sd">        1. For each center coordinate, the standard error covariance matrix gij^-1 = Si/ni</span>
+<span class="sd">        is determined using the FMC-1 or FMC-2 equations (see refs. 1 &amp; 2).</span>
+<span class="sd">        2. Calculate sum of covariance matrices: SIG = S1/n1 + S2/n2 = gij1^-1 + gij2^-1</span>
+<span class="sd">        3. These are then used in Hotelling&#39;s T2 test: T2 = (xy1 - xy2).T*(SIG^-1)*(xy1_xy2)</span>
+<span class="sd">        4. The T2 statistic is then tested against a Chi-square distribution with 2 or 3 degrees of freedom.</span>
+<span class="sd">    </span>
+<span class="sd">    References:</span>
+<span class="sd">       1. Chickering, K.D. (1967), Optimization of the MacAdam-Modified 1965 Friele Color-Difference Formula, 57(4):537-541</span>
+<span class="sd">       2. Chickering, K.D. (1971), FMC Color-Difference Formulas: Clarification Concerning Usage, 61(1):118-122</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="k">if</span> <span class="n">Yxy1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">Yxy1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Yxy1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span><span class="n">Yxy1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">Y1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Yxy1</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y1</span>
+    <span class="k">if</span> <span class="n">Yxy2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">Yxy2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="mi">100</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">Yxy2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)),</span><span class="n">Yxy2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">Y2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Yxy2</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y2</span>
+    
+    <span class="c1"># Get gij matrices (i.e. inverse covariance matrices):</span>
+    <span class="n">gij1</span> <span class="o">=</span> <span class="n">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy1</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="n">etype</span><span class="p">,</span> <span class="n">ellipsoid</span><span class="o">=</span><span class="n">ellipsoid</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">Y1</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">)</span>
+    <span class="n">gij2</span> <span class="o">=</span> <span class="n">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy2</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="n">etype</span><span class="p">,</span> <span class="n">ellipsoid</span><span class="o">=</span><span class="n">ellipsoid</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">Y2</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">gij1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># get degrees of freedom for Chi2</span>
+    
+    <span class="c1"># Calculate T2 statistic:</span>
+    <span class="n">D12</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yxy1</span><span class="p">[</span><span class="o">...</span><span class="p">,(</span><span class="mi">3</span><span class="o">-</span><span class="n">df</span><span class="p">):]</span> <span class="o">-</span> <span class="n">Yxy2</span><span class="p">[</span><span class="o">...</span><span class="p">,(</span><span class="mi">3</span><span class="o">-</span><span class="n">df</span><span class="p">):])</span>
+    <span class="n">SIG12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">gij1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">gij2</span><span class="p">))</span>
+    <span class="n">T2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ki,ki-&gt;k&#39;</span><span class="p">,</span><span class="n">D12</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;kij,kj-&gt;ki&#39;</span><span class="p">,</span><span class="n">SIG12</span><span class="p">,</span><span class="n">D12</span><span class="p">))</span>
+    <span class="c1">#T2 = np.atleast_2d(T2).T</span>
+    
+    <span class="c1"># Get p-value:</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">T2</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">p</span><span class="p">,</span> <span class="n">T2</span></div>
+
+    
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+    
+    <span class="n">Yxy1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="n">Yxy2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">],[</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="n">gij_11</span> <span class="o">=</span> <span class="n">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy1</span><span class="p">,</span><span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc1&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">gij_12</span> <span class="o">=</span> <span class="n">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy2</span><span class="p">,</span><span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc1&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="n">Yxy1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>
+    <span class="n">Yxy2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">],[</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="o">+</span><span class="mf">0.0073</span><span class="p">]])</span>
+    <span class="n">p</span><span class="p">,</span><span class="n">T2</span> <span class="o">=</span> <span class="n">discrimination_hotelling_t2</span><span class="p">(</span><span class="n">Yxy1</span><span class="p">,</span><span class="n">Yxy2</span><span class="p">,</span> <span class="n">Y1</span> <span class="o">=</span> <span class="mf">10.69</span><span class="p">,</span> <span class="n">Y2</span><span class="o">=</span><span class="mf">10.69</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;p-value, Chi2:&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">T2</span><span class="p">)</span>
+    
+    <span class="c1"># Get MacAdam ellipses:</span>
+    <span class="n">v_mac</span> <span class="o">=</span> <span class="n">get_macadam_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">xys</span> <span class="o">=</span> <span class="n">v_mac</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    
+    <span class="c1"># Get Brown1957 ellipses:</span>
+    <span class="n">v_brown1957</span> <span class="o">=</span> <span class="n">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">xys_brown1957</span> <span class="o">=</span> <span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    
+    <span class="c1"># Get discrimination ellipses for MacAdam centers using FMC-1 &amp; FMC-2 &amp; Brown1957:</span>
+    <span class="n">v_mac_0</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;macadam&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">v_mac_1</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc1&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="n">v_mac_2</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="mf">10.69</span><span class="p">)</span>
+    <span class="n">v_mac_brown1957</span> <span class="o">=</span> <span class="n">get_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">xys</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;brown1957&#39;</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+    
+    <span class="c1"># Plot results:</span>
+    <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span>
+    <span class="c1">#axh = plot_chromaticity_diagram_colors(cspace = cspace)</span>
+    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotSL</span><span class="p">(</span><span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">diagram_colors</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">axh</span> <span class="o">=</span> <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_0</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">plot_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;axh&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">line_color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="n">line_width</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">)</span>
+    <span class="c1">#plotellipse(v_mac, show = True, axh = axh, cspace_in = None, cspace_out = cspace,line_color = &#39;m&#39;, line_style = &#39;:&#39;, plot_center = True, center_color = &#39;k&#39;)</span>
+    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_1</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_2</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">plotellipse</span><span class="p">(</span><span class="n">v_mac_brown1957</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">,</span> <span class="n">cspace_in</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace_out</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span><span class="n">line_color</span> <span class="o">=</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">line_style</span> <span class="o">=</span> <span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">plot_center</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">center_color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cspace</span> <span class="o">==</span> <span class="s1">&#39;Yuv&#39;</span><span class="p">:</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+        <span class="n">axh</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.6</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xys</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">xys</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

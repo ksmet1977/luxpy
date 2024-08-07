@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cri.indices.thorntoncpi &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cri.indices.thorntoncpi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cri.indices.thorntoncpi</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Thornton&#39;s Color Preference Index</span>
+<span class="sd">=================================</span>
+
+<span class="sd"> :spd_to_thornton_cpi(): Calculate Thornton&#39;s Color Preference Index (CPI).</span>
+
+<span class="sd">Created on Fri Oct  2 20:33:31 2020</span>
+
+<span class="sd">@author: ksmet1977 at gmail.com</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_RFL</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cri.utils.helpers</span> <span class="kn">import</span> <span class="n">spd_to_jab_t_r</span>
+
+<span class="n">_RFL_CPI</span> <span class="o">=</span> <span class="n">_RFL</span><span class="p">[</span><span class="s1">&#39;cri&#39;</span><span class="p">][</span><span class="s1">&#39;cie-13.3-1995&#39;</span><span class="p">][</span><span class="s1">&#39;8&#39;</span><span class="p">]</span>
+
+<span class="c1">#add white so we have access to the white point chromaticity for a Judd-type translational CAT</span>
+<span class="n">_RFL_CPIw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">_RFL_CPI</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">_RFL_CPI</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))))</span> 
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd_to_thornton_cpi&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="spd_to_thornton_cpi">
+<a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_thornton_cpi">[docs]</a>
+<span class="k">def</span> <span class="nf">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">spd</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Thornton&#39;s Color Preference Index (CPI).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :spd:</span>
+<span class="sd">            | nd array with spectral power distribution(s) of the test light source(s).</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :cpi:</span>
+<span class="sd">            | ndarray with CPI values.</span>
+<span class="sd">        </span>
+<span class="sd">    Reference:</span>
+<span class="sd">        1. `Thornton, W. A. (1974). A Validation of the Color-Preference Index.</span>
+<span class="sd">        Journal of the Illuminating Engineering Society, 4(1), 48–52. </span>
+<span class="sd">        &lt;https://doi.org/10.1080/00994480.1974.10732288&gt;`_</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># sample 1976 u&#39;v&#39; coordinates for test and reference </span>
+    <span class="c1"># using CIE Ra calculation engine </span>
+    <span class="c1"># (only cspace, sampleset (with added white), and catf have changed; </span>
+    <span class="c1"># catf = None so no CAT is applied as Thornton CPI, </span>
+    <span class="c1"># like Judd&#39;s Flattery index, uses a Judd-type translational CAT)</span>
+    <span class="n">Yuv_t</span><span class="p">,</span> <span class="n">Yuv_r</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span><span class="o">=</span><span class="s1">&#39;ciera&#39;</span><span class="p">,</span>
+                                  <span class="n">cspace</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;Yuv&#39;</span><span class="p">,</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span>
+                                  <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                  <span class="n">sampleset</span> <span class="o">=</span> <span class="n">_RFL_CPIw</span><span class="p">)</span>
+    
+    <span class="c1"># Convert to 1960 UCS:</span>
+    <span class="n">Yuv_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*=</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">Yuv_r</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*=</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    
+    <span class="c1"># Perform Judd-type translational CAT with white point stored in last row:</span>
+    <span class="n">Yuv_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-=</span> <span class="n">Yuv_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">Yuv_r</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-=</span> <span class="n">Yuv_r</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Remove last row (white point):</span>
+    <span class="n">Yuv_t</span> <span class="o">=</span> <span class="n">Yuv_t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+    <span class="n">Yuv_r</span> <span class="o">=</span> <span class="n">Yuv_r</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+
+    <span class="c1"># Define preferred chromaticity shifts for 8 CIE CRI samples:</span>
+    <span class="c1"># (*5, because Thorton uses full preferred shifts unlike Judd&#39;s Flattery Index)</span>
+    <span class="n">uv_shifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0020</span><span class="p">,</span><span class="mf">0.0008</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.0000</span><span class="p">,</span><span class="mf">0.0000</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.0020</span><span class="p">,</span><span class="mf">0.0008</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.0020</span><span class="p">,</span><span class="mf">0.0010</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.0020</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0004</span><span class="p">],</span>
+                          <span class="p">[</span><span class="o">-</span><span class="mf">0.0012</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0020</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.0008</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0020</span><span class="p">],</span>
+                          <span class="p">[</span><span class="mf">0.0020</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0010</span><span class="p">]])</span><span class="o">*</span><span class="mi">5</span>
+
+    <span class="c1"># Calculate chromaticity difference between test and shifted ref coordinates:</span>
+    <span class="n">DE</span> <span class="o">=</span> <span class="mi">800</span><span class="o">*</span><span class="p">(((</span><span class="n">Yuv_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="p">(</span><span class="n">Yuv_r</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">uv_shifts</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span><span class="o">**</span><span class="mf">0.5</span>
+    
+    <span class="c1"># Calculate CPI:</span>
+    <span class="n">CPI</span> <span class="o">=</span> <span class="mi">156</span> <span class="o">-</span> <span class="mf">7.317</span><span class="o">*</span><span class="n">DE</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># in Thornton 1974 we find 7.18, but then CPI(D65)!=100    </span>
+    <span class="k">return</span> <span class="n">CPI</span></div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="n">F4</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">F4</span><span class="p">,</span> <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]))</span>
+    
+    <span class="n">cpi1</span> <span class="o">=</span> <span class="n">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">F4</span><span class="p">)</span>
+    <span class="n">cpi2</span> <span class="o">=</span> <span class="n">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">spds</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

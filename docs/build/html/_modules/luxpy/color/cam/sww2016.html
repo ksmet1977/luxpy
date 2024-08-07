@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>luxpy.color.cam.sww2016 &mdash; LuxPy 1.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../../_static/documentation_options.js?v=6cf1fb80"></script>
+        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html" class="icon icon-home">
+            LuxPy
+          </a>
+              <div class="version">
+                1.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../license.html">License: GPLv3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../required_packages.html">Imported (required) packages</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../luxpy_structure.html">Luxpy package structure</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">LuxPy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">luxpy.color.cam.sww2016</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for luxpy.color.cam.sww2016</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module with Smet, Webster and Whitehead 2016 CAM.</span>
+<span class="sd">=================================================</span>
+
+<span class="sd"> :_CAM_SWW16_AXES: dict with list[str,str,str] containing axis labels </span>
+<span class="sd">                   of defined cspaces.</span>
+<span class="sd">                   </span>
+<span class="sd"> :_CAM_SWW16_PARAMETERS: cam_sww16 model parameters.</span>
+<span class="sd"> </span>
+<span class="sd"> :cam_sww16(): A simple principled color appearance model based on a mapping </span>
+<span class="sd">               of the Munsell color system.</span>
+
+<span class="sd">References:</span>
+<span class="sd">    1. `Smet, K. A. G., Webster, M. A., &amp; Whitehead, L. A. (2016). </span>
+<span class="sd">    A simple principled approach for modeling and understanding uniform color metrics. </span>
+<span class="sd">    Journal of the Optical Society of America A, 33(3), A319–A331. </span>
+<span class="sd">    &lt;https://doi.org/10.1364/JOSAA.33.00A319&gt;`_</span>
+<span class="sd">    .. </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> 
+                   <span class="n">getwlr</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span> <span class="nn">luxpy.color.cam.helpers</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">_CAM_SWW16_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lab_cam_sww16&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;L (lab_cam_sww16)&quot;</span><span class="p">,</span> <span class="s2">&quot;a (lab_cam_sww16)&quot;</span><span class="p">,</span> <span class="s2">&quot;b (lab_cam_sww16)&quot;</span><span class="p">]}</span>
+
+<span class="n">_CAM_SWW16_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;JOSA&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;cLMS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;lms0&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4985.0</span><span class="p">,</span><span class="mf">5032.0</span><span class="p">,</span><span class="mf">4761.0</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;Cc&#39;</span><span class="p">:</span> <span class="mf">0.252</span><span class="p">,</span> <span class="s1">&#39;Cf&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="s1">&#39;clambda&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;calpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;cbeta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;cga1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">26.1</span><span class="p">,</span> <span class="mf">34.0</span><span class="p">],</span> <span class="s1">&#39;cgb1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.76</span><span class="p">,</span> <span class="mf">10.9</span><span class="p">],</span> <span class="s1">&#39;cga2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.587</span><span class="p">],</span> <span class="s1">&#39;cgb2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.952</span><span class="p">],</span> <span class="s1">&#39;cl_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">14.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;cab_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.99</span><span class="p">,</span><span class="mf">65.8</span><span class="p">],</span> <span class="s1">&#39;cab_out&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;Ccwb&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.21701045</span><span class="p">,</span>  <span class="mf">0.83573367</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0435106</span> <span class="p">],[</span><span class="o">-</span><span class="mf">0.42997951</span><span class="p">,</span>  <span class="mf">1.2038895</span> <span class="p">,</span>  <span class="mf">0.08621089</span><span class="p">],[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.46579234</span><span class="p">]]}}</span>
+<span class="n">_CAM_SWW16_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;best-fit-JOSA&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cLMS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;lms0&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4208.0</span><span class="p">,</span>  <span class="mf">4447.0</span><span class="p">,</span>  <span class="mf">4199.0</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;Cc&#39;</span><span class="p">:</span> <span class="mf">0.243</span><span class="p">,</span> <span class="s1">&#39;Cf&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.269</span><span class="p">,</span> <span class="s1">&#39;clambda&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;calpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;cbeta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;cga1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">22.38</span><span class="p">,</span> <span class="mf">26.42</span><span class="p">],</span> <span class="s1">&#39;cgb1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.36</span><span class="p">,</span> <span class="mf">9.61</span><span class="p">],</span> <span class="s1">&#39;cga2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.668</span><span class="p">],</span> <span class="s1">&#39;cgb2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.214</span><span class="p">],</span> <span class="s1">&#39;cl_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">15.0</span><span class="p">,</span> <span class="mf">1.04</span><span class="p">],</span> <span class="s1">&#39;cab_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.85</span><span class="p">,</span><span class="mf">65.86</span><span class="p">],</span> <span class="s1">&#39;cab_out&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">1.008</span><span class="p">,</span><span class="o">-</span><span class="mf">1.037</span><span class="p">],</span> <span class="s1">&#39;Ccwb&#39;</span><span class="p">:</span> <span class="mf">0.80</span><span class="p">,</span> <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.21701045</span><span class="p">,</span>  <span class="mf">0.83573367</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0435106</span> <span class="p">],[</span><span class="o">-</span><span class="mf">0.42997951</span><span class="p">,</span>  <span class="mf">1.2038895</span> <span class="p">,</span>  <span class="mf">0.08621089</span><span class="p">],[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.46579234</span><span class="p">]]}</span>
+<span class="n">_CAM_SWW16_PARAMETERS</span><span class="p">[</span><span class="s1">&#39;best-fit-all-Munsell&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cLMS&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;lms0&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5405.0</span><span class="p">,</span> <span class="mf">5617.0</span><span class="p">,</span>  <span class="mf">5520.0</span><span class="p">]</span> <span class="p">,</span> <span class="s1">&#39;Cc&#39;</span><span class="p">:</span> <span class="mf">0.206</span><span class="p">,</span> <span class="s1">&#39;Cf&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.128</span><span class="p">,</span> <span class="s1">&#39;clambda&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;calpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;cbeta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;cga1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">38.26</span><span class="p">,</span> <span class="mf">43.35</span><span class="p">],</span> <span class="s1">&#39;cgb1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">8.97</span><span class="p">,</span> <span class="mf">16.18</span><span class="p">],</span> <span class="s1">&#39;cga2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.512</span><span class="p">],</span> <span class="s1">&#39;cgb2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.896</span><span class="p">],</span> <span class="s1">&#39;cl_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">19.3</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">],</span> <span class="s1">&#39;cab_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">5.87</span><span class="p">,</span><span class="mf">63.24</span><span class="p">],</span> <span class="s1">&#39;cab_out&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.545</span><span class="p">,</span><span class="o">-</span><span class="mf">0.978</span><span class="p">],</span> <span class="s1">&#39;Ccwb&#39;</span><span class="p">:</span> <span class="mf">0.736</span><span class="p">,</span> <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.21701045</span><span class="p">,</span>  <span class="mf">0.83573367</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0435106</span> <span class="p">],[</span><span class="o">-</span><span class="mf">0.42997951</span><span class="p">,</span>  <span class="mf">1.2038895</span> <span class="p">,</span>  <span class="mf">0.08621089</span><span class="p">],[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.46579234</span><span class="p">]]}</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_CAM_SWW16_AXES&#39;</span><span class="p">,</span><span class="s1">&#39;_CAM_SWW16_PARAMETERS&#39;</span><span class="p">,</span><span class="s1">&#39;cam_sww16&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_lab_cam_sww16&#39;</span><span class="p">,</span><span class="s1">&#39;lab_cam_sww16_to_xyz&#39;</span><span class="p">]</span>
+
+ 
+
+<div class="viewcode-block" id="cam_sww16">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam_sww16">[docs]</a>
+<span class="k">def</span> <span class="nf">cam_sww16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
+              <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span>
+              <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A simple principled color appearance model based on a mapping of </span>
+<span class="sd">    the Munsell color system.</span>
+<span class="sd">    </span>
+<span class="sd">    | This function implements the JOSA A (parameters = &#39;JOSA&#39;) published model. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :data: </span>
+<span class="sd">            | ndarray with input tristimulus values </span>
+<span class="sd">            | or spectral data </span>
+<span class="sd">            | or input color appearance correlates</span>
+<span class="sd">            | Can be of shape: (N [, xM], x 3), whereby: </span>
+<span class="sd">            | N refers to samples and M refers to light sources.</span>
+<span class="sd">            | Note that for spectral input shape is (N x (M+1) x wl) </span>
+<span class="sd">        :dataw: </span>
+<span class="sd">            | None or ndarray, optional</span>
+<span class="sd">            | Input tristimulus values or spectral data of white point.</span>
+<span class="sd">            | None defaults to the use of CIE illuminant C.</span>
+<span class="sd">        :Yb: </span>
+<span class="sd">            | 20.0, optional</span>
+<span class="sd">            | Luminance factor of background (perfect white diffuser, Yw = 100)</span>
+<span class="sd">        :Lw:</span>
+<span class="sd">            | 400.0, optional</span>
+<span class="sd">            | Luminance (cd/m²) of white point.</span>
+<span class="sd">        :Ccwb:</span>
+<span class="sd">            | None,  optional</span>
+<span class="sd">            | Degree of cognitive adaptation (white point balancing)</span>
+<span class="sd">            | If None: use [..,..] from parameters dict.</span>
+<span class="sd">        :relative:</span>
+<span class="sd">            | True or False, optional</span>
+<span class="sd">            | True: xyz tristimulus values are relative (Yw = 100)</span>
+<span class="sd">        :parameters:</span>
+<span class="sd">            | &#39;JOSA&#39; or str or dict, optional</span>
+<span class="sd">            | Dict with model parameters.</span>
+<span class="sd">            |    - str: &#39;JOSA&#39;,&#39;best-fit-JOSA&#39; or &#39;best-fit-all-Munsell&#39;</span>
+<span class="sd">            |    - dict: user defined model parameters </span>
+<span class="sd">            |            (dict should have same structure)</span>
+<span class="sd">        :inputtype:</span>
+<span class="sd">            | &#39;xyz&#39; or &#39;spd&#39;, optional</span>
+<span class="sd">            | Specifies the type of input: </span>
+<span class="sd">            |     tristimulus values or spectral data for the forward mode.</span>
+<span class="sd">        :direction:</span>
+<span class="sd">            | &#39;forward&#39; or &#39;inverse&#39;, optional</span>
+<span class="sd">            |   -&#39;forward&#39;: xyz -&gt; cam_sww_2016</span>
+<span class="sd">            |   -&#39;inverse&#39;: cam_sww_2016 -&gt; xyz </span>
+<span class="sd">        :cieobs:</span>
+<span class="sd">            | &#39;2006_10&#39;, optional</span>
+<span class="sd">            | CMF set to use to perform calculations where spectral data </span>
+<span class="sd">            | is involved (inputtype == &#39;spd&#39;; dataw = None)</span>
+<span class="sd">            | Other options: see luxpy._CMF[&#39;types&#39;]</span>
+<span class="sd">        :match_conversionmatrix_to_cieobs:</span>
+<span class="sd">            | When changing to a different CIE observer, change the xyz_to_lms</span>
+<span class="sd">            | matrix to the one corresponding to that observer. If False: use </span>
+<span class="sd">            | the one set in parameters or _CAM_SWW16_PARAMETERS</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :returns: </span>
+<span class="sd">            | ndarray with color appearance correlates (:direction: == &#39;forward&#39;)</span>
+<span class="sd">            |  or </span>
+<span class="sd">            | XYZ tristimulus values (:direction: == &#39;inverse&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        | This function implements the JOSA A (parameters = &#39;JOSA&#39;) </span>
+<span class="sd">        | published model. </span>
+<span class="sd">        | With:</span>
+<span class="sd">        |    1. A correction for the parameter </span>
+<span class="sd">        |         in Eq.4 of Fig. 11: 0.952 --&gt; -0.952 </span>
+<span class="sd">        |         </span>
+<span class="sd">        |     2. The delta_ac and delta_bc white-balance shifts in Eq. 5e &amp; 5f </span>
+<span class="sd">        |         should be: -0.028 &amp; 0.821 </span>
+<span class="sd">        |  </span>
+<span class="sd">        |     (cfr. Ccwb = 0.66 in: </span>
+<span class="sd">        |         ab_test_out = ab_test_int - Ccwb*ab_gray_adaptation_field_int))</span>
+<span class="sd">             </span>
+<span class="sd">    References:</span>
+<span class="sd">        1. `Smet, K. A. G., Webster, M. A., &amp; Whitehead, L. A. (2016). </span>
+<span class="sd">        A simple principled approach for modeling and understanding uniform color metrics. </span>
+<span class="sd">        Journal of the Optical Society of America A, 33(3), A319–A331. </span>
+<span class="sd">        &lt;https://doi.org/10.1364/JOSAA.33.00A319&gt;`_</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Get model parameters:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">_CAM_SWW16_PARAMETERS</span><span class="p">[</span><span class="n">parameters</span><span class="p">]</span>
+    <span class="n">parameters</span> <span class="o">=</span> <span class="n">_update_parameter_dict</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> 
+                                        <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span>
+                                        <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>
+                                        <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="n">match_conversionmatrix_to_cieobs</span><span class="p">)</span>
+      
+    <span class="c1">#unpack model parameters:</span>
+    <span class="p">(</span><span class="n">Cc</span><span class="p">,</span> <span class="n">Ccwb</span><span class="p">,</span> <span class="n">Cf</span><span class="p">,</span> 
+     <span class="n">Mxyz2lms</span><span class="p">,</span> <span class="n">cLMS</span><span class="p">,</span> 
+     <span class="n">cab_int</span><span class="p">,</span> <span class="n">cab_out</span><span class="p">,</span> 
+     <span class="n">calpha</span><span class="p">,</span> <span class="n">cbeta</span><span class="p">,</span>
+     <span class="n">cga1</span><span class="p">,</span> <span class="n">cga2</span><span class="p">,</span> <span class="n">cgb1</span><span class="p">,</span> <span class="n">cgb2</span><span class="p">,</span> 
+     <span class="n">cl_int</span><span class="p">,</span> <span class="n">clambda</span><span class="p">,</span> <span class="n">lms0</span><span class="p">)</span>  <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span>
+
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Setup default white point / adaptation field:   </span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">dataw</span> <span class="o">=</span> <span class="n">_setup_default_adaptation_field</span><span class="p">(</span><span class="n">dataw</span> <span class="o">=</span> <span class="n">dataw</span><span class="p">,</span> 
+                                            <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span>
+                                            <span class="n">cie_illuminant</span> <span class="o">=</span> <span class="s1">&#39;C&#39;</span><span class="p">,</span>
+                                            <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                            <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">,</span>
+                                            <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Redimension input data to ensure most appropriate sizes </span>
+    <span class="c1"># for easy and efficient looping and initialize output array:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span><span class="p">,</span> 
+     <span class="n">camout</span><span class="p">,</span> <span class="n">originalshape</span><span class="p">)</span> <span class="o">=</span> <span class="n">_massage_input_and_init_output</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> 
+                                                             <span class="n">dataw</span><span class="p">,</span> 
+                                                             <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                                             <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span><span class="p">,</span>
+                                                             <span class="n">n_out</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+    
+    
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Do precomputations needed for both the forward and inverse model,</span>
+    <span class="c1"># and which do not depend on sample or light source data:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">Mxyz2lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cLMS</span><span class="p">),</span><span class="n">Mxyz2lms</span><span class="p">)</span> <span class="c1"># weight the xyz-to-lms conversion matrix with cLMS (cfr. stage 1 calculations)   </span>
+    <span class="n">invMxyz2lms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">)</span> <span class="c1"># Calculate the inverse lms-to-xyz conversion matrix</span>
+    <span class="n">MAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">clambda</span><span class="p">,</span><span class="n">calpha</span><span class="p">,</span><span class="n">cbeta</span><span class="p">])</span> <span class="c1"># Create matrix with scale factors for L, M, S for quick matrix multiplications</span>
+    <span class="n">invMAab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">MAab</span><span class="p">)</span> <span class="c1"># Pre-calculate its inverse to avoid repeat in loop.</span>
+
+
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="c1"># Apply forward/inverse model by looping over each row (=light source dim.)</span>
+    <span class="c1"># in data:</span>
+    <span class="c1">#--------------------------------------------------------------------------</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        <span class="c1">#  START FORWARD MODE and common part of inverse mode</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># Get absolute tristimulus values for stimulus field and white point for row i:</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzw_abs</span> <span class="o">=</span> <span class="n">_get_absolute_xyz_xyzw</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> 
+                                                      <span class="n">dataw</span><span class="p">,</span>
+                                                      <span class="n">i</span> <span class="o">=</span> <span class="n">i</span><span class="p">,</span> 
+                                                      <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> 
+                                                      <span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span><span class="p">,</span> 
+                                                      <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                                                      <span class="n">inputtype</span> <span class="o">=</span> <span class="n">inputtype</span><span class="p">,</span> 
+                                                      <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">)</span>
+        
+
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># stage 1: calculate photon rates of stimulus and white white, and</span>
+        <span class="c1"># adapting field: i.e. lmst, lmsw and lmsf</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># Convert to white point l,m,s:</span>
+        <span class="n">lmsw</span> <span class="o">=</span> <span class="mf">683.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">,</span><span class="n">xyzw</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span><span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span>
+        
+        <span class="c1"># Calculate adaptation field and convert to l,m,s:</span>
+        <span class="n">lmsf</span> <span class="o">=</span> <span class="p">(</span><span class="n">Yb</span><span class="o">/</span><span class="mf">100.0</span><span class="p">)</span><span class="o">*</span><span class="n">lmsw</span> 
+        
+        <span class="c1"># Calculate lms of stimulus </span>
+        <span class="c1"># or put adaptation lmsf in test field lmst for later use in inverse-mode (no xyz in &#39;inverse&#39; mode!!!):</span>
+        <span class="n">lmst</span> <span class="o">=</span> <span class="p">(</span><span class="mf">683.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Mxyz2lms</span><span class="p">,</span><span class="n">xyzt</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span><span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="p">(</span><span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">lmsf</span>
+
+
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># stage 2: calculate cone outputs of stimulus lmstp</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="n">lmstp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">Cc</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lmst</span><span class="o">/</span><span class="n">lms0</span><span class="p">)</span> <span class="o">+</span> <span class="n">Cf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lmsf</span><span class="o">/</span><span class="n">lms0</span><span class="p">)))</span> <span class="c1"># stimulus test field</span>
+        <span class="n">lmsfp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">erf</span><span class="p">(</span><span class="n">Cc</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lmsf</span><span class="o">/</span><span class="n">lms0</span><span class="p">)</span> <span class="o">+</span> <span class="n">Cf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lmsf</span><span class="o">/</span><span class="n">lms0</span><span class="p">)))</span> <span class="c1"># adaptation field</span>
+
+        
+        <span class="c1"># add adaptation field lms temporarily to lmstp for quick calculation</span>
+        <span class="n">lmstp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">lmsfp</span><span class="p">,</span><span class="n">lmstp</span><span class="p">))</span> 
+        
+        
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1"># stage 3: calculate optic nerve signals, lam*, alphp, betp:</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="n">lstar</span><span class="p">,</span> <span class="n">alph</span><span class="p">,</span> <span class="n">bet</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">MAab</span><span class="p">,</span> <span class="n">lmstp</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="n">alphp</span> <span class="o">=</span> <span class="n">cga1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">alph</span>
+        <span class="n">alphp</span><span class="p">[</span><span class="n">alph</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cga1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">alph</span><span class="p">[</span><span class="n">alph</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">betp</span> <span class="o">=</span> <span class="n">cgb1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">bet</span>
+        <span class="n">betp</span><span class="p">[</span><span class="n">bet</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgb1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">bet</span><span class="p">[</span><span class="n">bet</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span>
+
+        
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1">#  stage 4: calculate recoded nerve signals, alphapp, betapp:</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="n">alphpp</span> <span class="o">=</span> <span class="n">cga2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">alphp</span> <span class="o">+</span> <span class="n">betp</span><span class="p">)</span>
+        <span class="n">betpp</span> <span class="o">=</span> <span class="n">cgb2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">alphp</span> <span class="o">-</span> <span class="n">betp</span><span class="p">)</span>
+
+
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="c1">#  stage 5: calculate conscious color perception:</span>
+        <span class="c1">#-----------------------------------------------------------------------------</span>
+        <span class="n">lstar_int</span> <span class="o">=</span> <span class="n">cl_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">lstar</span> <span class="o">+</span> <span class="n">cl_int</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">alph_int</span> <span class="o">=</span> <span class="n">cab_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">alphpp</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">betpp</span><span class="p">)</span>
+        <span class="n">bet_int</span> <span class="o">=</span> <span class="n">cab_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">alphpp</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">betpp</span><span class="p">)</span>
+        <span class="n">lstar_out</span> <span class="o">=</span> <span class="n">lstar_int</span>
+
+
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        <span class="c1">#  stage 5 continued but SPLIT IN FORWARD AND INVERSE MODES:</span>
+        <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+        
+        <span class="c1">#--------------------------------------</span>
+        <span class="c1"># FORWARD MODE TO PERCEPTUAL SIGNALS:</span>
+        <span class="c1">#--------------------------------------</span>
+        <span class="k">if</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;forward&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">Ccwb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">alph_out</span> <span class="o">=</span> <span class="n">alph_int</span> <span class="o">-</span> <span class="n">cab_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bet_out</span> <span class="o">=</span> <span class="n">bet_int</span> <span class="o">-</span>  <span class="n">cab_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                
+                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Ccwb</span> <span class="o">=</span> <span class="n">Ccwb</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">Ccwb</span><span class="p">[</span><span class="n">Ccwb</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">Ccwb</span><span class="p">[</span><span class="n">Ccwb</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                
+                <span class="c1"># white balance shift using adaptation gray background (Yb=20%), with Ccw: degree of adaptation:</span>
+                <span class="n">alph_out</span> <span class="o">=</span> <span class="n">alph_int</span> <span class="o">-</span> <span class="n">Ccwb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">alph_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
+                <span class="n">bet_out</span> <span class="o">=</span> <span class="n">bet_int</span> <span class="o">-</span>  <span class="n">Ccwb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">bet_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="c1"># stack together and remove adaptation field from vertical stack</span>
+            <span class="c1"># camout is an ndarray with perceptual signals:</span>
+            <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">lstar_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">alph_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span><span class="n">bet_out</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span><span class="o">.</span><span class="n">T</span> 
+        
+        
+        <span class="c1">#--------------------------------------</span>
+        <span class="c1"># INVERSE MODE FROM PERCEPTUAL SIGNALS:</span>
+        <span class="c1">#--------------------------------------    </span>
+        <span class="k">elif</span> <span class="n">direction</span> <span class="o">==</span> <span class="s1">&#39;inverse&#39;</span><span class="p">:</span>
+             
+            <span class="c1"># stack cognitive pre-adapted adaptation field signals (first on stack) together:</span>
+            <span class="c1">#labf_int = np.hstack((lstar_int[0],alph_int[0],bet_int[0]))</span>
+            
+            <span class="c1"># get lstar_out, alph_out &amp; bet_out for data </span>
+            <span class="c1">#(contains model perceptual signals in inverse mode!!!):</span>
+            <span class="n">lstar_out</span><span class="p">,</span> <span class="n">alph_out</span><span class="p">,</span> <span class="n">bet_out</span> <span class="o">=</span> <span class="n">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+            <span class="c1">#------------------------------------------------------------------------</span>
+            <span class="c1">#  Inverse stage 5: undo cortical white-balance:</span>
+            <span class="c1">#------------------------------------------------------------------------</span>
+            <span class="k">if</span> <span class="n">Ccwb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">alph_int</span> <span class="o">=</span> <span class="n">alph_out</span> <span class="o">+</span> <span class="n">cab_out</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bet_int</span> <span class="o">=</span> <span class="n">bet_out</span> <span class="o">+</span>  <span class="n">cab_out</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Ccwb</span> <span class="o">=</span> <span class="n">Ccwb</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">))</span>
+                <span class="n">Ccwb</span><span class="p">[</span><span class="n">Ccwb</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">Ccwb</span><span class="p">[</span><span class="n">Ccwb</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                
+                <span class="c1">#  inverse white balance shift using adaptation gray background (Yb=20%), with Ccw: degree of adaptation</span>
+                <span class="n">alph_int</span> <span class="o">=</span> <span class="n">alph_out</span> <span class="o">+</span> <span class="n">Ccwb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">alph_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">bet_int</span> <span class="o">=</span> <span class="n">bet_out</span> <span class="o">+</span>  <span class="n">Ccwb</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">bet_int</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            
+
+            <span class="n">alphpp</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">cab_int</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">alph_int</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">bet_int</span><span class="p">)</span>
+            <span class="n">betpp</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">cab_int</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="o">-</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">alph_int</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="o">-</span><span class="n">cab_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span><span class="p">)</span><span class="o">*</span><span class="n">bet_int</span><span class="p">)</span>
+            <span class="n">lstar_int</span> <span class="o">=</span> <span class="n">lstar_out</span>
+            <span class="n">lstar</span> <span class="o">=</span> <span class="p">(</span><span class="n">lstar_int</span> <span class="o">/</span><span class="n">cl_int</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="n">cl_int</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+
+            
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="c1">#  Inverse stage 4: pre-adapted perceptual signals to recoded nerve signals:</span>
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="n">alphp</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">alphpp</span><span class="o">/</span><span class="n">cga2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">betpp</span><span class="o">/</span><span class="n">cgb2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># &lt;-- alphpp = (Cga2.*(alphp+betp));</span>
+            <span class="n">betp</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">alphpp</span><span class="o">/</span><span class="n">cga2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">betpp</span><span class="o">/</span><span class="n">cgb2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1"># &lt;-- betpp = (Cgb2.*(alphp-betp));</span>
+
+
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="c1">#  Inverse stage 3: recoded nerve signals to optic nerve signals:</span>
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="n">alph</span> <span class="o">=</span> <span class="n">alphp</span><span class="o">/</span><span class="n">cga1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">bet</span> <span class="o">=</span> <span class="n">betp</span><span class="o">/</span><span class="n">cgb1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">cga1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">sb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">cgb1</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">alph</span><span class="p">[(</span><span class="n">sa</span><span class="o">*</span><span class="n">alphp</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">alphp</span><span class="p">[(</span><span class="n">sa</span><span class="o">*</span><span class="n">alphp</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cga1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+            <span class="n">bet</span><span class="p">[(</span><span class="n">sb</span><span class="o">*</span><span class="n">betp</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">=</span> <span class="n">betp</span><span class="p">[(</span><span class="n">sb</span><span class="o">*</span><span class="n">betp</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">cgb1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+            <span class="n">lab</span> <span class="o">=</span> <span class="n">ajoin</span><span class="p">((</span><span class="n">lstar</span><span class="p">,</span> <span class="n">alph</span><span class="p">,</span> <span class="n">bet</span><span class="p">))</span>
+            
+
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="c1">#  Inverse stage 2: optic nerve signals to cone outputs:</span>
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="n">lmstp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">invMAab</span><span class="p">,</span><span class="n">lab</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> 
+            <span class="n">lmstp</span><span class="p">[</span><span class="n">lmstp</span><span class="o">&lt;-</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+            <span class="n">lmstp</span><span class="p">[</span><span class="n">lmstp</span><span class="o">&gt;</span><span class="mf">1.0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="c1">#  Inverse stage 1: cone outputs to photon rates:</span>
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="n">lmstp</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">erfinv</span><span class="p">(</span><span class="n">lmstp</span><span class="p">)</span> <span class="o">/</span> <span class="n">Cc</span> <span class="o">-</span> <span class="n">Cf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lmsf</span><span class="o">/</span><span class="n">lms0</span><span class="p">)</span>
+            <span class="n">lmst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lmstp</span><span class="p">)</span> <span class="o">*</span> <span class="n">lms0</span>
+
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="c1">#  Photon rates to absolute or relative tristimulus values:</span>
+            <span class="c1">#---------------------------------------------------------------------------</span>
+            <span class="n">xyzt</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">invMxyz2lms</span><span class="p">,</span><span class="n">lmst</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>  <span class="o">*</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;K&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">683.0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">relative</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">xyzt</span> <span class="o">=</span> <span class="p">(</span><span class="mi">100</span><span class="o">/</span><span class="n">Lw</span><span class="p">)</span> <span class="o">*</span> <span class="n">xyzt</span>
+
+            <span class="c1"># store in same named variable as forward mode:</span>
+            <span class="n">camout</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">xyzt</span>
+    
+            <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+            <span class="c1">#  END inverse mode </span>
+            <span class="c1">#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</span>
+
+    <span class="k">return</span> <span class="n">_massage_output_data_to_original_shape</span><span class="p">(</span><span class="n">camout</span><span class="p">,</span> <span class="n">originalshape</span><span class="p">)</span></div>
+
+        
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="xyz_to_lab_cam_sww16">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_lab_cam_sww16">[docs]</a>
+<span class="k">def</span> <span class="nf">xyz_to_lab_cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+                         <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam_sww16 forward mode with &#39;xyz&#39; input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam_sww16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span></div>
+
+                
+<div class="viewcode-block" id="lab_cam_sww16_to_xyz">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.lab_cam_sww16_to_xyz">[docs]</a>
+<span class="k">def</span> <span class="nf">lab_cam_sww16_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+                         <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Wrapper function for cam_sww16 inverse mode with &#39;xyz&#39; input.</span>
+<span class="sd">    </span>
+<span class="sd">    | For help on parameter details: ?luxpy.cam.cam_sww16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span></div>
+
+
+
+
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__0&#39;</span><span class="p">:</span>
+    <span class="c1">#------------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">test_model</span><span class="p">():</span>
+    
+        <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span> <span class="c1"># lazy import</span>
+    
+        <span class="c1"># Read selected set of Munsell samples and LMS10(lambda):</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;Munsell_LMS_nonlin_Nov18_2015_version.dat&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">YLMS10_</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;YLMS10_LMS_nonlin_Nov18_2015_version.dat&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">Y10_</span> <span class="o">=</span> <span class="n">YLMS10_</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">LMS10_</span> <span class="o">=</span> <span class="n">YLMS10_</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],:]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        
+        <span class="c1"># Calculate lms:</span>
+        <span class="n">Y10</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;1964_10&#39;</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">]),</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cmf&#39;</span><span class="p">)[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">],:]</span>
+        <span class="n">XYZ10_lx</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">XYZ10_lx</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">XYZ10_lx</span><span class="p">,</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">]),</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cmf&#39;</span><span class="p">)</span>
+        <span class="n">LMS10_lx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">XYZ10_lx</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:],</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">normalize_3x3_matrix</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;2006_10&#39;</span><span class="p">][</span><span class="s1">&#39;M&#39;</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]])),</span><span class="n">XYZ10_lx</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])))</span>
+        <span class="n">LMS10</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">LMS10_lx</span><span class="p">,</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">]),</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cmf&#39;</span><span class="p">)</span>
+        
+        <span class="c1">#LMS10 = np.vstack((XYZ10[:1,:],np.dot(lx.math.normalize_3x3_matrix(_CMF[&#39;2006_10&#39;][&#39;M&#39;],np.array([[1,1,1]])),XYZ10_lx[1:,:])))</span>
+    
+        <span class="c1">#LMS10[1:,:] = LMS10[1:,:]/LMS10[1:,:].sum(axis=1,keepdims=True)*Y10[1:,:].sum() </span>
+        
+        <span class="c1"># test python model vs excel calculator:</span>
+        <span class="k">def</span> <span class="nf">spdBB</span><span class="p">(</span><span class="n">CCT</span> <span class="o">=</span> <span class="mi">5500</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">):</span>
+            <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
+            <span class="n">dl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">spd</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">6.626068E-34</span><span class="o">*</span><span class="p">(</span><span class="mi">299792458</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="n">wl</span><span class="o">*</span><span class="mf">0.000000001</span><span class="p">)</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">6.626068E-34</span><span class="o">*</span><span class="mi">299792458</span><span class="o">/</span><span class="p">(</span><span class="n">wl</span><span class="o">*</span><span class="mf">0.000000001</span><span class="p">)</span><span class="o">/</span><span class="mf">1.3806503E-23</span><span class="o">/</span><span class="n">CCT</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">spd</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">spd</span><span class="o">/</span><span class="p">(</span><span class="n">dl</span><span class="o">*</span><span class="mi">683</span><span class="o">*</span><span class="p">(</span><span class="n">spd</span><span class="o">*</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span><span class="n">wl</span><span class="p">,</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;cmf&#39;</span><span class="p">)[</span><span class="mi">2</span><span class="p">,:])</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wl</span><span class="p">,</span><span class="n">spd</span><span class="p">))</span>
+        
+        <span class="c1"># Create long term and applied spds:</span>
+        <span class="n">spd5500</span> <span class="o">=</span> <span class="n">spdBB</span><span class="p">(</span><span class="mi">5500</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">)</span>
+        <span class="n">spd6500</span> <span class="o">=</span> <span class="n">spdBB</span><span class="p">(</span><span class="mi">6500</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Calculate lms0 as a check:</span>
+        <span class="n">clms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.98446776</span><span class="p">,</span> <span class="mf">0.98401909</span><span class="p">,</span> <span class="mf">0.98571412</span><span class="p">])</span> <span class="c1"># correction factor for slight differences in _CMF and the cmfs from the excel calculator</span>
+        <span class="n">lms0</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="mi">683</span><span class="o">*</span><span class="p">(</span><span class="n">spd5500</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">LMS10</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mf">0.2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        
+        
+        <span class="c1"># Full excel parameters for testing:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;cLMS&#39;</span><span class="p">:</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="s1">&#39;lms0&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">4985.02802565</span><span class="p">,</span><span class="mf">5032.49518502</span><span class="p">,</span><span class="mf">4761.27272226</span><span class="p">])</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span>
+                       <span class="s1">&#39;Cc&#39;</span><span class="p">:</span> <span class="mf">0.251617118325755</span><span class="p">,</span> <span class="s1">&#39;Cf&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="s1">&#39;clambda&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> 
+                       <span class="s1">&#39;calpha&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="s1">&#39;cbeta&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> 
+                       <span class="s1">&#39;cga1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">26.1047711317923</span><span class="p">,</span> <span class="mf">33.9721745703298</span><span class="p">],</span> <span class="s1">&#39;cgb1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">6.76038379211498</span><span class="p">,</span> <span class="mf">10.9220216677629</span><span class="p">],</span> 
+                       <span class="s1">&#39;cga2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.587271269247578</span><span class="p">],</span> <span class="s1">&#39;cgb2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.952412544980473</span><span class="p">],</span> 
+                       <span class="s1">&#39;cl_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">14.0035243121804</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;cab_int&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">4.99218965716342</span><span class="p">,</span><span class="mf">65.7869547646456</span><span class="p">],</span> 
+                       <span class="s1">&#39;cab_out&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="p">],</span> <span class="s1">&#39;Ccwb&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span> 
+                       <span class="s1">&#39;Mxyz2lms&#39;</span><span class="p">:</span> <span class="p">[[</span> <span class="mf">0.21701045</span><span class="p">,</span>  <span class="mf">0.83573367</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0435106</span> <span class="p">],</span>
+                                    <span class="p">[</span><span class="o">-</span><span class="mf">0.42997951</span><span class="p">,</span>  <span class="mf">1.2038895</span> <span class="p">,</span>  <span class="mf">0.08621089</span><span class="p">],</span>
+                                    <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.46579234</span><span class="p">]]}</span>
+                       
+        <span class="c1"># Note cLMS is a relative scaling factor between CIE2006 10° and 1964 10°:</span>
+    <span class="c1">#    clms = np.array([1.00164919, 1.00119269, 1.0029173 ]) = (Y10[1:,:].sum(axis=1)/LMS10[1:,:].sum(axis=1))*(406.98099078/400)</span>
+                        
+        <span class="c1">#parameters =_CAM_SWW16_PARAMETERS[&#39;JOSA&#39;]</span>
+        <span class="c1"># Calculate Munsell spectra multiplied with spd6500:</span>
+        <span class="n">spd6500xM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">spd6500</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:],</span><span class="n">spd6500</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="n">M</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]))</span>
+                   
+        <span class="c1"># Test spectral input:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SPD INPUT -----&#39;</span><span class="p">)</span>
+        <span class="n">jab</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">spd6500xM</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">spd6500</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                          <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
+                          <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span>
+                          <span class="n">match_to_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        
+    <span class="c1">#    # Test xyz input:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">XYZ INPUT -----&#39;</span><span class="p">)</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd6500xM</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;2006_10&#39;</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">xyzw</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd6500</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;2006_10&#39;</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">xyz2</span><span class="p">,</span><span class="n">xyzw2</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd6500</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="s1">&#39;2006_10&#39;</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">rfl</span><span class="o">=</span><span class="n">M</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+         
+    
+        <span class="nb">print</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
+        <span class="n">jab</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">400</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                          <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
+                          <span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span>
+                          <span class="n">match_to_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+
+    <span class="n">test_model</span><span class="p">()</span>
+    
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    
+    <span class="n">C</span> <span class="o">=</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">_MUNSELL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">M</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">rflM</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
+    <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
+    <span class="n">Lw</span> <span class="o">=</span> <span class="mi">400</span>
+    <span class="n">Yb</span> <span class="o">=</span> <span class="mi">20</span>
+    
+    <span class="c1"># Normalize to Lw:</span>
+    <span class="n">xyzw2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lw</span><span class="o">*</span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">xyzw2</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">CM</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">CM</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">rflM</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])))</span>
+    <span class="n">CM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">CM</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    
+    <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">C</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">rflM</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyz</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[:</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="n">CM</span> <span class="o">=</span> <span class="n">CM</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>
+    <span class="c1">#xyzw = np.vstack((xyzw[:1,:],xyzw[:1,:]))</span>
+    <span class="n">xyzw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">[:</span><span class="mi">1</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:</span><span class="mi">2</span><span class="p">,:]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xyz in:&#39;</span><span class="p">)</span>
+    <span class="n">lab</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+              <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> \
+              <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spd in:&#39;</span><span class="p">)</span>
+    <span class="n">lab2</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">CM</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:</span><span class="mi">2</span><span class="p">,:],</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+              <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span> \
+              <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lab2</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;inverse xyz in&#39;</span><span class="p">)</span>
+    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+              <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> \
+              <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">xyz_</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;inverse spd in&#39;</span><span class="p">)</span>
+    <span class="n">xyz_2</span> <span class="o">=</span> <span class="n">cam_sww16</span><span class="p">(</span><span class="n">lab2</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="n">C</span><span class="p">[:</span><span class="mi">2</span><span class="p">,:],</span> <span class="n">Yb</span> <span class="o">=</span> <span class="n">Yb</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="n">Lw</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+              <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;inverse&#39;</span><span class="p">,</span> \
+              <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">xyz_2</span><span class="p">)</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">diff xyz in: &#39;</span><span class="p">,</span> <span class="n">xyz</span><span class="o">-</span><span class="n">xyz_</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">xyz</span><span class="o">-</span><span class="n">xyz_</span><span class="p">)</span><span class="o">/</span><span class="n">xyz</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;diff spd in: &#39;</span><span class="p">,</span> <span class="n">xyz</span><span class="o">-</span><span class="n">xyz_2</span><span class="p">,(</span><span class="n">xyz</span><span class="o">-</span><span class="n">xyz_2</span><span class="p">)</span><span class="o">/</span><span class="n">xyz</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
