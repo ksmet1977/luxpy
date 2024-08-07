@@ -16,7 +16,7 @@ If you use the package, please cite the following **tutorial paper** published i
 
 ### **NEW** luxpy basic web-app [under development]:
 For some online spectral calculations (ANSI/IES TM30, CIE 13.3-1995 Ra, CIE 224:2017 Rf, alpha-opic irradiances, Equivalent Daylight Illuminance (EDI), Efficacy of Luminous Radiation (ELR), Daylight Efficacy Ratio (DER), IES/LDT Luminous Intensity Distribution plots/renders, ...) using a python web-application:
-[**luxpy.herokuapp.com**](https://luxpy.herokuapp.com/) or [**share.streamlit.io/ksmet1977/luxpy_app/main/luxpy_app.py**](https://share.streamlit.io/ksmet1977/luxpy_app/main/luxpy_app.py)
+[**share.streamlit.io/ksmet1977/luxpy_app/main/luxpy_app.py**](https://share.streamlit.io/ksmet1977/luxpy_app/main/luxpy_app.py)
  
 -------------------------------------------------------------------------------
 ## What is LuxPy?
