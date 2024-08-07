@@ -89,7 +89,7 @@ cct: Module with functions related to correlated color temperature calculations
  
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
 
- :cct_legacy: module with old (pre Nov 2021 cct conversion functions)
+
  
 ===============================================================================
 """
