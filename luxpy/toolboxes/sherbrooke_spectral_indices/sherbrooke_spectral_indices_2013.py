@@ -21,12 +21,14 @@ Created on Fri Jun 11 13:46:33 2021
 @author: ksmet1977 [at] gmail dot com
 """
 import os
-from luxpy import _CMF, _CIE_D65, cie_interp, getwlr
-from luxpy.utils import _PKG_PATH, _SEP, np, pd
+import numpy as np
+
+from luxpy import _CIE_D65, cie_interp, getwlr
+from luxpy.utils import _PKG_PATH, getdata
 
 
 _WLR_RANGE = [380, 730] # for 2013 indices (see ref. 1)
-_VSCOT_VM_MSAS_PAS = pd.read_csv(os.path.join(_PKG_PATH,'toolboxes','sherbrooke_spectral_indices','data','msas_pas_functions_2013.csv'),header = 'infer').values.T
+_VSCOT_VM_MSAS_PAS = getdata(os.path.join(_PKG_PATH,'toolboxes','sherbrooke_spectral_indices','data','msas_pas_functions_2013.csv'),header = 'infer').T
 
 __all__ = ['spd_to_msi','spd_to_ipi','spd_to_sli','_VSCOT_VM_MSAS_PAS','_WLR_RANGE']
 
@@ -131,7 +133,7 @@ def spd_to_sli(spd, force_5nm_interval = True):
 if __name__ == '__main__':
     
     # Read test spectrum:
-    cree = pd.read_csv(os.path.join(_PKG_PATH,'toolboxes','sherbrooke_spectral_indices','data','LED_CREE_BR30.csv')).values.T
+    cree = getdata(os.path.join(_PKG_PATH,'toolboxes','sherbrooke_spectral_indices','data','LED_CREE_BR30.csv')).T
     
     msi = spd_to_msi(cree)
     print('MSI:', msi)

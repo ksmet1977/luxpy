@@ -80,4 +80,4 @@ Last updated for seabreeze v1.3.0 (sep 2020) on March 9, 2021.
 """
 
 from .oceanoptics import *
-__all__ = oceanoptics.__all__
+#__all__ = oceanoptics.__all__

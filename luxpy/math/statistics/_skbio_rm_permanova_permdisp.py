@@ -8,13 +8,15 @@
    
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy.utils import np, pd, is_importable
+from luxpy.utils import is_importable
+
 import itertools
 from functools import partial
+import numpy as np
 
-import scipy
-from scipy.stats import f_oneway
-from scipy.spatial.distance import cdist
+# import scipy # has become lazy import
+# from scipy.stats import f_oneway # has become lazy import
+# from scipy.spatial.distance import cdist # has become lazy import
 
 # Try importing, if necessary pip-installing, hdmedian and skbio packages that
 # have not been 'required' by luxpy to reduce dependencies for rarely used modules.
@@ -35,7 +37,7 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
     # Create a matrix where objects in the same group are marked with the group
     # index (e.g. 0, 1, 2, etc.). objects that are not in the same group are
     # marked with -1. If paired == True: Do similar for test subjects:
-    grouping_matrix = -1 * np.ones((sample_size, sample_size), dtype=np.int32)
+    grouping_matrix = -1 * np.ones((sample_size, sample_size), dtype= np.int32)
     for group_idx in range(num_groups):
         within_indices = _index_combinations(np.where(grouping == group_idx)[0])
         grouping_matrix[within_indices] = group_idx 
@@ -56,7 +58,7 @@ def _compute_s_W_S(sample_size, num_groups, tri_idxs, distances, group_sizes, gr
 
     if paired == True:
         num_subjects = sample_size//num_groups
-        subjects_matrix = -1 * np.ones((sample_size, sample_size), dtype=np.int32)
+        subjects_matrix = -1 * np.ones((sample_size, sample_size), dtype= np.int32)
         for subject_idx in range(num_subjects):
             subject_indices = _index_combinations(np.where(subjects == subject_idx)[0])
             subjects_matrix[subject_indices] = subject_idx  
@@ -137,7 +139,7 @@ def _compute_f_stat(sample_size, num_groups, tri_idxs, distances, group_sizes,
 def _permutate_grouping(grouping, subjects, paired = False):
     """ permutate grouping and subjects indexing arrays"""
     if paired == False:
-        perm_idx = np.arange(grouping.shape[0],dtype=np.int32)
+        perm_idx = np.arange(grouping.shape[0],dtype= np.int32)
         perm_idx = np.random.permutation(perm_idx)
         perm_grouping = grouping[perm_idx]
         perm_subjects = subjects[perm_idx]
@@ -147,7 +149,7 @@ def _permutate_grouping(grouping, subjects, paired = False):
         if subjects is not None:
             s = subjects.reshape(len(groups),len(grouping)//len(groups))
         for i in range(o.shape[-1]):
-            perm_idx = np.arange(o.shape[0],dtype=np.int32)
+            perm_idx = np.arange(o.shape[0],dtype= np.int32)
             perm_idx = np.random.permutation(perm_idx)
             o[:,i] = o[perm_idx,i]
             s[:,i] = s[perm_idx,i]
@@ -175,7 +177,7 @@ def _run_monte_carlo_stats(test_stat_function, grouping, subjects, permutations,
     
     p_value = np.nan
     if permutations > 0:
-        perm_stats = np.empty(permutations, dtype=float)
+        perm_stats = np.empty(permutations, dtype=np.float64)
 
         for i in range(permutations):
             perm_grouping, perm_subjects = _permutate_grouping(grouping, subjects, paired = paired)    
@@ -365,7 +367,7 @@ def permdisp(distance_matrix, grouping, column=None, test='centroid',
     Raises:
           :TypeError:
                | If, when using the spatial median test, the pcoa ordination is not of
-               | type float, the spatial median function will fail
+               | type np.float32 or np.float64, the spatial median function will fail
                | and the centroid test should be used instead
           :ValueError:
                | If the test is not centroid or median.
@@ -538,9 +540,11 @@ def _compute_groups(samples, test_type, grouping, subjects, paired, *args):
     elif test_type == 'median':
         centroids = samples.groupby('grouping').aggregate(_config_med)
 
+    from scipy.spatial.distance import cdist # lazy import
     for label, df in samples.groupby('grouping'):
         groups.append(cdist(df.values[:, :-1], [centroids.loc[label].values], metric='euclidean'))
 
+    from scipy.stats import f_oneway # lazy import
     stat, _ = f_oneway(*groups)
     stat = stat[0]
     
@@ -569,7 +573,8 @@ def _build_results(method_name, paired, test_stat_name, sample_size, num_groups,
                    effect_sizes, 
                    permutations):
     """Return ``pandas.Series`` containing results of statistical test."""
-    return pd.Series(
+    import pandas # lazy import
+    return pandas.Series(
         data=[method_name, paired, test_stat_name, sample_size, num_groups, 
               stat, p_value, 
               effect_sizes['p_eta2'], effect_sizes['omega2'], effect_sizes['R2'],effect_sizes['R2adj'], 
@@ -584,7 +589,7 @@ def _build_results(method_name, paired, test_stat_name, sample_size, num_groups,
 def _get_distance_matrix_grouping(*X, metric = 'euclidean', Dscale = 1):
     """ Get distance matrix (skbio format) and grouping indexing array from raw data"""
     # Create long format data array and grouping indices:
-    ni = np.empty((len(X),), dtype=np.int32)
+    ni = np.empty((len(X),), dtype= np.int32)
     for i,Xi in enumerate(X):
         ni[i] = Xi.shape[0]
         if i == 0:
@@ -595,6 +600,7 @@ def _get_distance_matrix_grouping(*X, metric = 'euclidean', Dscale = 1):
     grouping = list(itertools.chain(*grouping))
     
     # Calculate pairwise distances:
+    import scipy # lazy import
     D = scipy.spatial.distance.pdist(XY, metric=metric)*Dscale
     Dsq = scipy.spatial.distance.squareform(D)
 

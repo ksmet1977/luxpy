@@ -27,18 +27,19 @@ Module for basic color rendition graphical output
 """
 import colorsys
 import os
-import imageio
-import copy
+
+import numpy as np
+
 from luxpy import math
-from luxpy.utils import np, plt, _PKG_PATH
+
+from luxpy.utils import _PKG_PATH, imread
+
 from luxpy.color.utils.plotters import plotcircle
 
-__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic','_CVG_BG']
 
-try:
-    _CVG_BG = imageio.imread(os.path.join(_PKG_PATH, 'color','cri','utils','cvg_background.jfif'))
-except:
-    _CVG_BG = None
+__all__ = [ 'plot_hue_bins','plot_ColorVectorGraphic']
+
+_CVG_BG = None
 
 def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
         plot_axis_labels = False, bin_labels = '#', plot_edge_lines = True, \
@@ -101,6 +102,8 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
               other plotting fcns)
         
     """
+    import matplotlib.pyplot as plt # lazy import 
+    global _CVG_BG
     
     # Setup hbincenters and hsv_hues:
     if isinstance(hbins,float) | isinstance(hbins,int):
@@ -245,7 +248,10 @@ def plot_hue_bins(hbins = 16, start_hue = 0.0, scalef = 100, \
 
         if (axtype != 'polar') & (plot_bin_colors == True) & (_CVG_BG is not None):
             ax.imshow(_CVG_BG, origin = 'upper', extent = axis_)
-        
+        elif (axtype != 'polar') & (plot_bin_colors == True) & (_CVG_BG is None):
+            cvg_background = imread(os.path.join(_PKG_PATH, 'color','cri','utils','cvg_background.jfif'))
+            ax.imshow(cvg_background, origin = 'upper', extent = axis_)
+            _CVG_BG = cvg_background
 
     return fig, ax, cmap
 

@@ -15,8 +15,9 @@ Module for color difference calculations
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
+
 from luxpy import cam, _CSPACE, colortf, xyz_to_lab
-from luxpy.utils import np, np2d
 
 
 __all__ = ['deltaH', 'DE_camucs', 'DE2000','DE_cspace']

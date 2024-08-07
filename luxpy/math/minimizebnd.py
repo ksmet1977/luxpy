@@ -11,7 +11,9 @@ Module with port from Matlab fminsearchbnd, but applied to SciPy's minimize fcn
 
 ===============================================================================
 """
-from luxpy.utils import np, sp, vec_to_dict
+import numpy as np
+
+from luxpy.utils import vec_to_dict
 
 __all__ = ['minimizebnd']
 
@@ -55,7 +57,8 @@ def minimizebnd(fun, x0, args=(), method = 'Nelder-Mead', use_bnd = True, \
         x0, vsize = vec_to_dict(dic = x0, vsize = x0_vsize, keys = x0_keys)
     
     if use_bnd == False:
-        res = sp.optimize.minimize(fun, x0, args = args, method = method, options = options, **kwargs)
+        from scipy.optimize import minimize # lazy import
+        res = minimize(fun, x0, args = args, method = method, options = options, **kwargs)
         res['fval'] = fun(res['x'], *args)
         if x0_keys is None:
             res['x_final'] = res['x']
@@ -217,7 +220,8 @@ def minimizebnd(fun, x0, args=(), method = 'Nelder-Mead', use_bnd = True, \
     
     # now we can call minimize, but with our own
     # intra-objective function.
-    res = sp.optimize.minimize(intrafun, x0u, args = params, method = method, options = options)
+    from scipy.optimize import minimize # lazy import
+    res = minimize(intrafun, x0u, args = params, method = method, options = options)
     #[xu,fval,exitflag,output] = fminsearch(@intrafun,x0u,options,params);
     
     # get function value:

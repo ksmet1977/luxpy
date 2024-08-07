@@ -38,10 +38,10 @@ References
 """
 raise Exception('Module is obsolete and will be removed in future, same functionality is now supported by the spdoptimizer2020 module.')
 import itertools
-import warnings
-from luxpy import (math, cri, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
-                   spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy.utils import sp, np, plt, _EPS, np2d, vec_to_dict
+import numpy as np
+
+from luxpy import (math, _CIEOBS, getwlr)
+from luxpy.utils import np2d
 from luxpy.math.particleswarm import particleswarm
 
 __all__ = ['spd_optimizer2',
@@ -217,6 +217,12 @@ def gaussian_prim_constructor(x, nprims, wlr,
     fwhm_to_sig = 1/(2*(2*np.log(2))**0.5) # conversion factor for FWHM to sigma of Gaussian
     return np.vstack((wlr,np.exp(-0.5*((pars['peakwl']-wlr.T)/(pars['fwhm']*fwhm_to_sig))**2).T))  
 
+#------------------------------------------------------------------------------
+def _get_n_triangle_strengths(n):
+    """ Get number of triangle strengths"""
+    import scipy # lazy import
+    n_triangle_strengths = int(scipy.special.factorial(n)/(scipy.special.factorial(n-3)*scipy.special.factorial(3)))
+    return n_triangle_strengths
      
 #------------------------------------------------------------------------------
 def _spd_constructor_tri(x, Yxy_target, n, wlr = [360,830,1], cieobs=_CIEOBS,
@@ -279,7 +285,7 @@ def _spd_constructor_tri(x, Yxy_target, n, wlr = [360,830,1], cieobs=_CIEOBS,
 
     # get primary spectra:
     if prims is None:
-        n_triangles = int(sp.special.factorial(n)/(sp.special.factorial(n-3)*sp.special.factorial(3)))
+        n_triangles = _get_n_triangle_strengths(n)
         # get triangle_strengths and remove them from x, remaining x are used to construct primaries:
         triangle_strengths = x[:,:n_triangles].T
         
@@ -486,7 +492,7 @@ def _get_minimize_options_and_pareto(minimize_method, minimize_opts = {}, n = No
             minimize_opts = math.DEMO.init_options(display = True)
         elif (minimize_method == 'nelder-mead'):
             if n is None: n = 10
-            minimize_opts = {'xtol': 1e-5, 'disp': True, 'maxiter' : 1000*n, 'maxfev' : 1000*n,'fatol': 0.01}
+            minimize_opts = {'xatol': 1e-5, 'disp': True, 'maxiter' : 1000*n, 'maxfev' : 1000*n,'fatol': 0.01}
         else:
             if not isinstance(minimize_method, str):
                 minimize_opts ={'type':'user-defined, specified as part of opt. function definition'}
@@ -515,8 +521,7 @@ def _start_optimization_tri(_fitnessfcn, n, fargs_dict, bnds, par_opt_types,
             | all weighted objective function values or not (False). Individual function values are
             | required by true multi-objective optimizers.
     """
-    
-    n_triangle_strengths = int(sp.special.factorial(n)/(sp.special.factorial(n-3)*sp.special.factorial(3)))
+    n_triangle_strengths = _get_n_triangle_strengths(n)
     N = n_triangle_strengths + len(par_opt_types)*n # number of optimization parameters
     fargs_list = [v for k,v in fargs_dict.items()] 
     
@@ -685,7 +690,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             | None, optional
             | Dict with minimization options. 
             | None defaults to the options depending on choice of minimize_method
-            |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+            |  - 'Nelder-Mead'   : {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
             |                       'maxfev' : 1000*Nc,'fatol': 0.01}
             |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
             |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
@@ -750,7 +755,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
                                                                   **prim_constructor_parameter_defs)
 
     # setup triangle bounds and attach the other bounds at the end:
-    n_triangle_strengths = int(sp.special.factorial(n)/(sp.special.factorial(n-3)*sp.special.factorial(3)))
+    n_triangle_strengths = _get_n_triangle_strengths(n)
     triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, n_triangle_strengths, min_ = 0, max_ = 1)
     bnds = triangle_strengths_bnds
     for k,v in par_bnds.items(): bnds = np.hstack((bnds, v))

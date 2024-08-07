@@ -93,11 +93,9 @@ spectrum/spectral.py
                 [`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_]
 
  :spd(): | All-in-one function that can:
-         |  1. Read spectral data from data file or take input directly as 
-            pandas.dataframe or ndarray.
-         |  2. Convert spd-like data from ndarray to pandas.dataframe and back.
-         |  3. Interpolate spectral data.
-         |  4. Normalize spectral data.
+         |  1. Read spectral data from data file or take input directly as ndarray.
+         |  2. Interpolate spectral data.
+         |  3. Normalize spectral data.
 
  :xyzbar(): Get color matching functions.
         

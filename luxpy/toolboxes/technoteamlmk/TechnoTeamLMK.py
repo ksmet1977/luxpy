@@ -480,8 +480,8 @@ class lmkActiveX:
         filter_wheel_names = config.get('PropertyList', 'FILTER_WHEEL_NAMES')
         filter_wheel_names = filter_wheel_names.split(' ')
     
-        if type(filter_wheel_names) == np.int32:
-            filter_wheel_names = np.vstack(filter_wheel_names).astype(np.int32)
+        if type(filter_wheel_names) == int:
+            filter_wheel_names = np.vstack(filter_wheel_names).astype(dtype = np.int32)
         else:
             filter_wheel_names = np.vstack(filter_wheel_names)
     

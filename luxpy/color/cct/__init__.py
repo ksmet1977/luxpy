@@ -100,9 +100,6 @@ __all__ = cct.__all__
 from .cctduv_ohno_CORM2011 import *
 __all__ += cctduv_ohno_CORM2011.__all__
 
-from luxpy.color.cct import cct_legacy  
-__all__ += ['cct_legacy']
-
 
 
 

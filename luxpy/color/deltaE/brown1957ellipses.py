@@ -13,8 +13,10 @@ Created on Thu Jul 15 13:52:25 2021
 
 @author: ksmet1877 [at] gmail.com
 """
-from luxpy import (math, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-from luxpy.utils import np, sp, plt, _EPS
+import numpy as np
+
+from luxpy import (math, plotSL, plotellipse)
+from luxpy.utils import _EPS
 eps = _EPS/10.0
 
 brown1957 = {
@@ -100,7 +102,8 @@ def get_brown1957_ellipse(xy = None, weighted = True, k_neighbours = 3, nsteps =
             cik_long = np.hstack((cik[:,0,:],cik[:,1,:]))
         
         # Calculate k_neighbours closest ellipses to xy:
-        tree = sp.spatial.cKDTree(v_brown1957[:,2:4], copy_data = True)
+        import scipy # lazy import
+        tree = scipy.spatial.cKDTree(v_brown1957[:,2:4], copy_data = True)
         d, inds = tree.query(xy, k = k_neighbours)
     
         if k_neighbours  > 1:

@@ -12,8 +12,10 @@ Created on Fri Nov  5 20:08:09 2021
 """
 
 import numpy as np
+
 from luxpy.spectrum.basics.spectral import cie_interp
-import pandas as pd
+from luxpy.utils import savetxt
+
 
 _FILE_NAME = 'LRC2021_CS_CLa_efficiency_functions.dat'
 
@@ -446,8 +448,9 @@ for i,label in enumerate(new_order):
     
     efs_new[i+1] = efs_new[i+1]/efs_new[i+1].max()
         
-df = pd.DataFrame(efs_new.T,columns = ['wl']+new_order)#
-df.to_csv(_FILE_NAME,header=True, index=False,float_format='%1.9f')
+#df = pandas.DataFrame(efs_new.T,columns = ['wl']+new_order)#
+#df.to_csv(_FILE_NAME,header=True, index=False,float_format='%1.9f')
+savetxt(_FILE_NAME,efs_new.T,header=['wl']+new_order, fmt='%1.9f')
 
         
         

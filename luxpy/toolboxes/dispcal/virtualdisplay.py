@@ -268,6 +268,7 @@ def virtualdisplay_kwak2000(rgb, channel_dependence = True, forward = True, nbit
         rgb_lin = _TR_SII_kwak2000(rgb, kwak2000_pars['S_shapeII_A'], kwak2000_pars['S_shapeII_abC'], nbit = nbit)
         
         if verbosity > 0: 
+            import matplotlib.pyplot as plt # lazy import
             plt.plot(rgb[:,0],rgb_lin[:,0],'r')
             plt.plot(rgb[:,1],rgb_lin[:,1],'g--')
             plt.plot(rgb[:,2],rgb_lin[:,2],'b:')
@@ -384,6 +385,9 @@ class VirtualDisplay:
         
 
 if __name__ == '__main__':
+    
+    import matplotlib.pyplot as plt 
+    
     # # === Test virtual diplay functions =======================================
     # rgb = np.array([[255,255,255],[200,150,60]])
     # xyz = virtualdisplay(rgb, forward = True, gain = 2, gamma = 2.4, tr_type = 'ggo', seed = 0)

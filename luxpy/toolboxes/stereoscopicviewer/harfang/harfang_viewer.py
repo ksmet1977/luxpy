@@ -15,18 +15,8 @@ from math import pi, sin, cos
 import numpy as np
 from ctypes import c_uint32
 
-from luxpy.utils import is_importable 
+from luxpy.utils import is_importable, imread, imsave 
 
-# from imageio import imread, imsave
-# import harfang as hg 
-
-# import imageio (and if necessary install it):
-success = is_importable('imageio', try_pip_install = True)
-if success:
-    try: 
-        from imageio.v3 import imread, imsave
-    except:
-        from imageio import imread, imsave
    
 # import harfang (and if necessary install it):
 success = is_importable('harfang', try_pip_install = True)

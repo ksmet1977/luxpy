@@ -78,21 +78,24 @@ Last updated for seabreeze v1.3.0 (sep 2020) on March 9, 2021.
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
+import warnings
 import time
 import os
 import tkinter
 from tkinter import messagebox
-from scipy.signal import savgol_filter
+import numpy as np
 
 from luxpy import cie_interp, getwlr
-from luxpy.utils import np, pd, plt, _EPS
+from luxpy.utils import _EPS, getdata, savetxt
 
-import seabreeze
-# seabreeze.use("pyseabreeze") # pre 09-March-2021 (use of seabreeze v.0.6.0)
-seabreeze.use("cseabreeze") # 9-March-2021: changed as with new v1.3.0 of seabreeze the C++ backend supports thermo-electric features, while the python backend does not
-plt.pause(5) # give some time for cseabreeze backend to load !
-import seabreeze.spectrometers as sb
+try: 
+    import seabreeze
+    # seabreeze.use("pyseabreeze") # pre 09-March-2021 (use of seabreeze v.0.6.0)
+    seabreeze.use("cseabreeze") # 9-March-2021: changed as with new v1.3.0 of seabreeze the C++ backend supports thermo-electric features, while the python backend does not
+    time.sleep(5) # give some time for cseabreeze backend to load !
+    import seabreeze.spectrometers as sb
+except:
+    warnings.warn("\n\nCould not import seabreeze.(Be sure to install it manually!)\nAborting...\nOceanOptics module not loaded!\n")
 
 __all__ = ['dvc_open','dvc_close', 'get_spd','create_dark_model','estimate_dark_from_model','plot_spd', 'get_temperature', 'set_temperature']
 
@@ -423,6 +426,9 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
     """
     Errors["create_dark_model"] = None
     out = out.replace(' ','')
+    
+    from scipy.signal import savgol_filter # lazy import
+    
     try:
         
         if isinstance(dvc,int):
@@ -443,6 +449,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
         
         # prepare graphic output:
         if verbosity > 1:
+            import matplotlib.pyplot as plt # lazy import
             dark_fig = plt.figure("Dark Model (savgol_window = {:1.1f})". format(savgol_window))    
             ax1 = dark_fig.add_subplot(1, 3, 1) 
             ax2 = dark_fig.add_subplot(1, 3, 2)  
@@ -466,7 +473,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
                 ax2.set_title('Dark Measurements (smoothed)')
                 ax2.plot(dvc._wavelengths, dark_cnts_s,'.')
                 plt.show()
-                plt.pause(0.1)
+                time.sleep(0.1)
       
             if i == 0:
                 dark_cnts_arr = dark_cnts
@@ -511,7 +518,7 @@ def create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, \
             if filename is not None:
                 if filename == 0:
                     filename = _DARK_MODEL_PATH
-                pd.DataFrame(dark_model).to_csv(filename, index=False, header=False, float_format='%1.5f')
+                savetxt(filename, dark_model, fmt='%1.5f')
         except:
             print('WARNING: Could not write dark_model to {:s}'.format(filename))
         Errors["create_dark_model"] = 0
@@ -685,6 +692,8 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
         :Errors:
             | dictionary with errors.
     """
+    if savgol_window > 0: from scipy.signal import savgol_filter # lazy import
+    
     Errors["_correct_for_dark"] = None
     out = out.replace(' ','')
     try:
@@ -716,7 +725,7 @@ def _correct_for_dark(dvc, cnts, Tint, method = 'dark_model.dat', \
                 root.withdraw()
         else:
             if isinstance(method,str):
-                dark_model = pd.read_csv(method, sep =',', header = None).values
+                dark_model = getdata(method, sep =',', header = None)
             dark_cnts, Errors = estimate_dark_from_model(Tint, dark_model, Errors=Errors, out = 'cnts,Errors')
             dark_cnts = dark_cnts[1] #take second row (first are wavelengths) 
         cnts = cnts - dark_cnts
@@ -830,6 +839,7 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
             max_number_of_ratio_increases = _MAX_NUMBER_OF_RATIO_INCREASES
             
             if verbosity > 1:
+                import matplotlib.pyplot as plt # lazy import
                 fig_opt = plt.figure('Integration time optimization')
                 ax_opt1 = fig_opt.add_subplot(1,1,1)
                 ax_opt1.set_xlabel('Integration time (s)')
@@ -869,7 +879,7 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
                 if verbosity > 1:
                     ax_opt1.plot(its[-1],max_cnts[-1],'o')
                     plt.show()
-                    plt.pause(0.1)
+                    time.sleep(0.1)
                 
                 # When current fitted Tint or max. cnts differ by less than 10%
                 # from previous or when Tint == Tint_max, break while loop 
@@ -893,7 +903,7 @@ def _find_opt_Tint(dvc, Tint, autoTint_max = _TINT_MAX, \
                 if verbosity > 1:
                     ax_opt1.plot(its[-1],max_cnts[-1],'s')
                     plt.show()
-                    plt.pause(0.1)
+                    time.sleep(0.1)
                     
             Tint = it
        
@@ -1320,13 +1330,16 @@ def plot_spd(ax, spd, Tint, sum_cnts = 0, max_cnts = 0, units = 'cnts/s'):
     ax.set_xlabel('Wavelength (nm)')
     ax.set_ylabel(units)
     ax.set_title("integration time = {:1.3f}s, sum_cnts = {:1.0f}, max_cnts = {:1.0f}".format(Tint, sum_cnts,max_cnts))
-    plt.pause(0.1)
+    time.sleep(0.1)
     return None
 
 
 #------------------------------------------------------------------------------
 # Code testing
 if __name__ == '__main__':
+
+    import matplotlib.pyplot as plt 
+    
     verbosity = 2 # 2: show text and graph output
     
     time.sleep(1) # ensure seabreeze has time to be fully imported.
@@ -1408,5 +1421,5 @@ if __name__ == '__main__':
         dark_model,Errors = create_dark_model(dvc, dark_model_Tints = _DARK_MODEL_TINTS, savgol_window = _SAVGOL_WINDOW, correct_dark_counts = _CORRECT_DARK_COUNTS, correct_nonlinearity = _CORRECT_NONLINEARITY, verbosity = verbosity, Errors=Errors, out = 'dark_model,Errors')
         
         # write dark model to file
-        pd.DataFrame(dark_model).to_csv('./data/dark_model.dat', index=False, header=False, float_format='%1.5f')
+        savetxt('./data/dark_model.dat',dark_model, fmt='%1.5f')
         

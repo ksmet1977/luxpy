@@ -28,7 +28,8 @@ Module with functions related to color rendering Pixel models
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy.utils import np
+import numpy as np 
+
 from .vectorshiftmodel import _VF_DELTAR, _VF_MAXR, generate_grid
 
 __all__ = ['get_pixel_coordinates','PX_colorshift_model']

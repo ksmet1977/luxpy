@@ -47,13 +47,12 @@ Module for IES color rendition graphical output
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import colorsys
-import matplotlib.patches as patches
 
-from luxpy.utils import np, plt
-from luxpy import (math, cat, _CIE_D65, xyz_to_srgb, spd_to_power, 
+import numpy as np
+
+from luxpy import (cat, _CIE_D65, xyz_to_srgb, spd_to_power, 
                    spd_normalize, spd_to_xyz, xyz_to_Yxy, xyz_to_Yuv)
 from luxpy.color.cri.utils.helpers import spd_to_cri
-from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 
 from luxpy.color.cri.utils.graphics import plot_ColorVectorGraphic
 from luxpy.color.cri.VFPX.vectorshiftmodel import  _VF_MODEL_TYPE, _VF_PCOLORSHIFT 
@@ -409,7 +408,8 @@ def plot_tm30_spd(spd, cri_type = 'ies-tm30', axh = None,
             | dictionary with required parameters for plotting functions.  
   
     """
-
+    import matplotlib.pyplot as plt # lazy import 
+    
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     
     # Normalize Sr to same luminous power as spd:
@@ -472,6 +472,8 @@ def plot_tm30_Rfi(spd, cri_type = 'ies-tm30', axh = None,
         :data:
             | dictionary with required parameters for plotting functions.     
     """
+    import matplotlib.pyplot as plt # lazy import 
+    
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
 
     Rfi = data['Rfi']
@@ -554,6 +556,7 @@ def plot_tm30_Rfhj(spd, cri_type = 'ies-tm30', axh = None,
         :data:
             | dictionary with required parameters for plotting functions.     
     """
+    import matplotlib.pyplot as plt # lazy import 
     
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
@@ -648,7 +651,7 @@ def plot_tm30_Rcshj(spd, cri_type = 'ies-tm30', axh = None,
         :data:
             | dictionary with required parameters for plotting functions.   
     """
-
+    import matplotlib.pyplot as plt # lazy import
     
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
@@ -747,7 +750,7 @@ def plot_tm30_Rhshj(spd, cri_type = 'ies-tm30', axh = None,
         :data:
             | dictionary with required parameters for plotting functions.     
     """
-
+    import matplotlib.pyplot as plt # lazy import
     
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     hdata = data['hue_bin_data']
@@ -841,6 +844,7 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     
     if axh is None:
+        import matplotlib.pyplot as plt # lazy import
         fig, axh = plt.subplots(nrows = 3, ncols = 1, sharex = True, figsize = figsize)
     
     plot_tm30_Rcshj(data, axh = axh[0], xlabel = False, y_offset = 0.02, font_size = font_size)
@@ -960,6 +964,7 @@ def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
     axh.text(7.5,1.0, "    $R_9$  {:1.0f}".format(cierai[8,0]), fontsize = 9, horizontalalignment='left',verticalalignment='top',color = 'k')
 
     # Create a Rectangle patch
+    import matplotlib.patches as patches # lazy import
     rect = patches.Rectangle((7.2,0.5),1.7,2.5,linewidth=1,edgecolor='k',facecolor='none')
     
     # Add the patch to the Axes
@@ -978,6 +983,7 @@ def _plot_tm30_report_full(spd, cri_type = 'ies-tm30',
                          suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
                          font_size = _TM30_FONT_SIZE_FULLREPORT, **kwargs):
     """ Create TM30 Color Rendition Report ('full'). """
+    import matplotlib.pyplot as plt # lazy import
     
     # Set up subplots:
     fig = plt.figure(constrained_layout=True, figsize = figsize)  
@@ -1036,6 +1042,7 @@ def _plot_tm30_report_intermediate(spd, cri_type = 'ies-tm30',
                                    suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
                                    font_size = _TM30_FONT_SIZE, **kwargs):
     """ Create TM30 Color Rendition Report ('intermediate'). """
+    import matplotlib.pyplot as plt # lazy import
     
     # Set up subplots:
     fig = plt.figure(constrained_layout=True, figsize = figsize)  
@@ -1072,6 +1079,7 @@ def _plot_tm30_report_simple(spd, cri_type = 'ies-tm30',
                          suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
                          font_size = _TM30_FONT_SIZE, **kwargs):
     """ Create TM30 Color Rendition Report ('simple'). """
+    import matplotlib.pyplot as plt # lazy import 
     
     # Set up subplots:
     fig = plt.figure(constrained_layout=True, figsize = figsize)  
@@ -1102,6 +1110,7 @@ def _plot_tm30_report_spd_cvg(spd, cri_type = 'ies-tm30',
                          suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
                          font_size = _TM30_FONT_SIZE, **kwargs):
     """ Create TM30 Color Rendition Report ('spd_cvg'). """
+    import matplotlib.pyplot as plt # lazy import 
     
     # Set up subplots:
     fig = plt.figure(constrained_layout=True, figsize = figsize)  
@@ -1457,6 +1466,7 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     #layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])
     layout = np.array([[6,7,0,0],[0,4,3,3],[3,4,3,3],[0,0,4,2],[2,0,2,2],[4,2,2,2],[4,0,2,2],[2,2,2,2]])
     
+    import matplotlib.pyplot as plt # lazy import
     def create_subplot(layout,n, polar = False, frameon = True):
         ax = plt.subplot2grid(layout[0,0:2], layout[n,0:2], 
                               colspan = layout[n,2], 
@@ -1593,6 +1603,8 @@ def plot_cri_graphics(data, cri_type = None, hbins = 16, start_hue = 0.0, scalef
     
 if __name__ == '__main__':
     import luxpy as lx
+    import matplotlib.pyplot as plt 
+    
     spd = lx._CIE_F4
 
     # illustration of ANSI/IES TM30 plots:

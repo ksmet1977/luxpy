@@ -80,9 +80,10 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
 
 ===============================================================================
 """
-       
+import numpy as np 
+
 from luxpy import _CMF, math, xyz_to_Vrb_mb, xyz_to_Yxy, xyz_to_lab
-from luxpy.utils import np, np2d, asplit, ajoin, _EPS
+from luxpy.utils import np2d, asplit, ajoin, _EPS
 
 __all__ = ['_WHITE_POINT','_LA', '_MCATS',
            'check_dimensions','get_transfer_function','get_degree_of_adaptation',

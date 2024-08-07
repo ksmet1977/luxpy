@@ -27,9 +27,10 @@ Created on Wed Sep 30 09:35:37 2020
 
 @author: ksmet1977@gmail.com
 """
+import numpy as np
 
 from luxpy import (math, _CIE_ILLUMINANTS, _CMF, spd_to_xyz)
-from luxpy.utils import (np, np2d, put_args_in_db)
+from luxpy.utils import (np2d, put_args_in_db)
 
 _CAM_DEFAULT_CIEOBS = '2006_10' # place holder for real deal in calling module
 
@@ -563,8 +564,10 @@ if __name__ == '__main__':
     # Code test
     #--------------------------------------------------------------------------
     
+    import matplotlib.pyplot as plt
+    import numpy as np
+    
     import luxpy as lx
-    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = _CIE_ILLUMINANTS['C'].copy()
@@ -643,7 +646,6 @@ if __name__ == '__main__':
     print('DELTA(xyz,spd): Single, Multi: ', (jabch3_a-jabch3_b).sum())
 
     # Module output plot:
-    import matplotlib.pyplot as plt
     xyz, xyzw = lx.spd_to_xyz(Ill1, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     jabch = _simple_cam(xyz, dataw = xyzw, Lw = Lw, relative = True, \
                  inputtype = 'xyz', direction = 'forward', cieobs = cieobs)

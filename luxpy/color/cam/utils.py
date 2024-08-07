@@ -16,9 +16,9 @@ Created on Wed Sep 30 15:43:49 2020
 
 @author: ksmet1977 at gmail.com
 """
+import numpy as np
 
 from luxpy import math
-from luxpy.utils import np
 
 __all__ = ['naka_rushton', 'hue_angle', 'deltaH', 'hue_quadrature']
 

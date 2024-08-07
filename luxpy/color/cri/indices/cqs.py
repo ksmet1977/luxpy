@@ -26,9 +26,9 @@ Reference
 
 
 """
+import numpy as np
 
 from luxpy import math
-from luxpy.utils import np
 from ..utils.DE_scalers import log_scale
 from ..utils.helpers import spd_to_DEi
 

@@ -57,7 +57,7 @@ Module with useful math functions
  :polyarea(): | Calculates area of polygon. 
               | (First coordinate should also be last)
 
- :erf(), erfinv(): erf-function and its inverse, direct import from scipy.special
+ :erf(), erfinv(): erf-function and its inverse, imported from scipy.special
 
  :cart2pol(): Converts Cartesian to polar coordinates.
 

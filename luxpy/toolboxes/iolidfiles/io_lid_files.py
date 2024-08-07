@@ -41,22 +41,20 @@ import os
 import io
 import copy
 import warnings
-from luxpy.utils import np, _PKG_PATH, _SEP
-from luxpy.utils import plt, Axes3D 
+
+from luxpy.utils import _PKG_PATH, _SEP, imsave
 
 import numpy as np
 from numpy import matlib
-import scipy.interpolate as interp
-import matplotlib
-from matplotlib import cm
 
-import imageio
 
 # from skimage import exposure, img_as_uint
 
 _PATH_DATA = os.path.join(_PKG_PATH, 'toolboxes','iolidfiles','data') + _SEP
 
 __all__ =['_PATH_DATA', 'read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
+
+
 
 def _read_file(string_data):
     if isinstance(string_data,io.StringIO):
@@ -139,7 +137,7 @@ def read_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0'
                    'values', 'map', 'Iv0', 'candela_values', 'candela_2d']
     
     if datasource == '?':
-        # print(common_keys)
+        print(common_keys)
         return dict(zip(common_keys,[np.nan]*len(common_keys))) 
     
 
@@ -707,7 +705,7 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         
         make_map = True
-    
+        
     elif (Isym == 0)  & (complete == True):
         
         phis[phis<0] = phis[phis<0] + 360
@@ -724,9 +722,9 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
         candela_2d, thetas = _complete_thetas(candela_2d.T, thetas)
         
         make_map = True
-
+        
     else:
-        print('\n######################\ncomplete_ldt_lid(): Other "Isym", not yet implemented. Creating map dictionary filled with original uncompleted values!\n######################\n')
+        warnings.warn('\n######################\ncomplete_ldt_lid(): Other "Isym", not yet implemented. Creating map dictionary filled with original uncompleted values!\n######################\n')
         make_map = False
     
     if make_map:
@@ -947,29 +945,30 @@ def get_uv_texture(theta, phi = None, values = None, input_types = ('array','arr
     if deg == False:
         theta = np.rad2deg(theta)
         phi = np.rad2deg(phi)
-
     
     if (input_types[0] == 'array') & (input_types[1] == 'mesh'):
         # create angle input mesh:
         thetam_in, phim_in = np.meshgrid(theta, phi)
     elif (input_types[0] == 'array') & (input_types[1] == 'array'):
         thetam_in, phim_in = theta, phi # work with array data
-
+    
     # if (phim_in[-1] != 360).all():
     #     phim_in = np.vstack((phim_in,np.ones_like(phim_in[0])*360))
     #     thetam_in = np.vstack((thetam_in,thetam_in[0]))
     #     values = np.vstack((values,values[0]))
-            
-            
+    
     # convert input angles to uv coordinates:
     um_in, vm_in = 0.5*phim_in/180, thetam_in/180
     
     # Interpolate values for uv_in to values for uv_map:
-    values_map = interp.griddata(np.array([um_in.ravel(),vm_in.ravel()]).T, values.ravel(), (um_map,vm_map), method = method)
+    from scipy import interpolate # lazy import
+    values_map = interpolate.griddata(np.array([um_in.ravel(),vm_in.ravel()]).T, values.ravel(), (um_map,vm_map), method = method)
+    
     if show == True:
         xm_map, ym_map, zm_map = _spher2cart(thetam_map,phim_map, r = 1, deg = True)
         xm_in, ym_in, zm_in = _spher2cart(thetam_in,phim_in, r = r, deg = True)
         
+        import matplotlib.pyplot as plt # lazy import
         fig = plt.figure()
         ax1 = fig.add_subplot(121, projection = '3d')
         ax1.plot(xm_map.ravel(), ym_map.ravel(), zm_map.ravel(),'bo', label = 'Output map')
@@ -1021,18 +1020,8 @@ def save_texture(filename, tex, bits = 16, transpose = True):
     if transpose == True:
         im = im.T
         
-    try: 
-        imageio.plugins.freeimage.download() 
-        imageio.imsave(filename, im)
-    except:
-        print("!!!      imageio.plugins.freeimage.download() failed. !!!")
-        print("!!  No image was saved. Returning 16-bit numpy ndarray !! ")
-        print("                                                          ")
-        print("  Try installing the freeimage plugin manually.") 
-        print("  or, try downgrading imageio")
-        print("  or, wait until the developers of imageio fix this.")
-        print("  or, try saving it using PIL or opencv or openexc or other.")
-        
+    imsave(filename, im)
+            
     return im
   
 #------------------------------------------------------------------------------
@@ -1127,6 +1116,7 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
     
     # make plot:
     if ax is None:
+        import matplotlib.pyplot as plt # lazy import
         fig = plt.figure()
         if projection == '3d':
             ax = fig.add_subplot(111, projection = '3d')
@@ -1153,6 +1143,10 @@ def draw_lid(LID, grid_interp_method = 'linear', theta_min = 0, angle_res = 1,
 
 def _make_3D_lid_plot(xm_map, ym_map, zm_map, values_map, plot_luminaire_position,
                       ax, use_scatter_plot, plot_colorbar,**plottingkwargs):
+    
+    import matplotlib # lazy import
+    import matplotlib.pyplot as plt # lazy import
+    
     V = values_map
     norm = matplotlib.colors.Normalize(vmin=V.min().min(), vmax=V.max().max())
     if use_scatter_plot:
@@ -1162,6 +1156,7 @@ def _make_3D_lid_plot(xm_map, ym_map, zm_map, values_map, plot_luminaire_positio
         ax.plot_surface(xm_map,ym_map,-zm_map, facecolors = plt.cm.jet(norm(V)), label = 'Normalized luminous intensity', **plottingkwargs)
     
     if plot_colorbar:
+        from matplotlib import cm # lazy import
         m = cm.ScalarMappable(cmap=plt.cm.jet, norm=norm)
         m.set_array([])
         plt.sca(ax)
@@ -1380,7 +1375,8 @@ def _read_luminous_intensity(thetas, phis, LID, method = 'linear'):
     # Interpolate values for uv_in to values for uv_map:
     thetam_in, phim_in = np.meshgrid(LID['map']['thetas'], LID['map']['phis'])
     Iv = LID['map']['values']
-    Ivs = interp.griddata(np.array([phim_in.ravel(),thetam_in.ravel()]).T, Iv.ravel(), (phis,thetas), method = method)
+    from scipy import interpolate # lazy import
+    Ivs = interpolate.griddata(np.array([phim_in.ravel(),thetam_in.ravel()]).T, Iv.ravel(), (phis,thetas), method = method)
     return Ivs
 
 def _get_luminaire_illuminance_at_plane(plum, nlum, pplane, lid, xyzm_maps):
@@ -1439,7 +1435,8 @@ def _get_plane_luminance(plum, nlum, lid, pplane, nplane, psensor, rho, xyzm_map
 #     x = np.linspace(corners[0,0],corners[2,0], res)
 #     y = np.linspace(corners[2,1],corners[0,1], res)
 #     xg, yg = np.meshgrid(x,y)
-#     Lv2D = interp.griddata(pplane,Lv, (x,y), method = method)
+#     from scipy import interpolate # lazy import
+#     Lv2D = interpolate.griddata(pplane,Lv, (x,y), method = method)
 #     return Lv2D
 
 
@@ -1616,6 +1613,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
 
     # Make plots:
     if ax3D is None:
+        import matplotlib.pyplot as plt # lazy import
         fig3D = plt.figure()
         if join_axes:
             if ax2D == False: 
@@ -1627,6 +1625,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
             ax3D = fig3D.add_subplot(111,projection='3d')
     
     if ax2D is None:
+        import matplotlib.pyplot as plt # lazy import
         fig2D = plt.figure()
         ax2D = fig2D.add_subplot(111)
 
@@ -1742,6 +1741,8 @@ if __name__ == '__main__':
     
 if __name__ == '__main__':
     
+    import matplotlib.pyplot as plt # lazy import
+    
     # Read lamp data from IES file:
     LIDi = read_lamp_data('./data/luxpy_test_lid_file.ies', verbosity = 1)
     LIDl = read_lamp_data('./data/luxpy_test_lid_file.ldt', verbosity = 1)
@@ -1760,6 +1761,7 @@ if __name__ == '__main__':
     # plt.figure()
     # plt.imshow(uv_map)
     # raise Exception('---')
+    
     
     # draw 2D polar plot of C0-C180 and C90-C270 planes::
     draw_lid(LID)

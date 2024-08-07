@@ -30,10 +30,10 @@ Created on Wed Sep 30 21:58:11 2020
 
 @author: ksmet1977 at gmail.com
 """
-
+import numpy as np
 
 from luxpy import math
-from luxpy.utils import np, asplit, ajoin
+from luxpy.utils import ajoin
 from luxpy import cat
 from luxpy.color.cam.utils import hue_angle, hue_quadrature, naka_rushton
 
@@ -511,8 +511,10 @@ if __name__ == '__main__':
     
     _cam = run
     
+    import matplotlib.pyplot as plt 
+    import numpy as np
+    
     import luxpy as lx
-    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()
@@ -551,7 +553,6 @@ if __name__ == '__main__':
     Ill2M = Ill2M[:(n+1),:,:]
     
     # Module output plot:
-    import matplotlib.pyplot as plt
     _cam_o = lambda xyz, xyzw, forward: lx.xyz_to_jabM_ciecam16(xyz,xyzw)
     xyz, xyzw = lx.spd_to_xyz(Ill1, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     jabch = _cam(xyz, xyzw = xyzw, forward = True, outin = 'J,aM,bM')

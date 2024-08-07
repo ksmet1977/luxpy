@@ -18,10 +18,11 @@ References:
     <https://doi.org/10.1364/JOSAA.33.00A319>`_
     .. 
 """
+import numpy as np 
 
 from luxpy import (math, _CIE_ILLUMINANTS, _MUNSELL, _CMF, spd_to_xyz, 
                    getwlr, cie_interp)
-from luxpy.utils import np, asplit, ajoin
+from luxpy.utils import asplit, ajoin
 from luxpy.color.cam.helpers import *
 
 _CAM_SWW16_AXES = {'lab_cam_sww16' : ["L (lab_cam_sww16)", "a (lab_cam_sww16)", "b (lab_cam_sww16)"]}
@@ -380,88 +381,87 @@ def lab_cam_sww16_to_xyz(lab, xyzw = None, Yb = 20.0, Lw = 400.0, Ccwb = None, r
 
 
 
-
-#------------------------------------------------------------------------------
-def test_model():
-
-    import pandas as pd
-    import luxpy as lx
-
-    # Read selected set of Munsell samples and LMS10(lambda):
-    M = pd.read_csv('Munsell_LMS_nonlin_Nov18_2015_version.dat',header=None,sep='\t').values
-    YLMS10_ = pd.read_csv('YLMS10_LMS_nonlin_Nov18_2015_version.dat',header=None,sep='\t').values
-    Y10_ = YLMS10_[[0,1],:].copy()
-    LMS10_ = YLMS10_[[0,2,3,4],:].copy()
-    
-    # Calculate lms:
-    Y10 = cie_interp(_CMF['1964_10']['bar'].copy(),getwlr([400,700,5]),kind='cmf')[[0,2],:]
-    XYZ10_lx = _CMF['2006_10']['bar'].copy()
-    XYZ10_lx = cie_interp(XYZ10_lx,getwlr([400,700,5]),kind='cmf')
-    LMS10_lx = np.vstack((XYZ10_lx[:1,:],np.dot(math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
-    LMS10 = cie_interp(LMS10_lx,getwlr([400,700,5]),kind='cmf')
-    
-    #LMS10 = np.vstack((XYZ10[:1,:],np.dot(lx.math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
-
-    #LMS10[1:,:] = LMS10[1:,:]/LMS10[1:,:].sum(axis=1,keepdims=True)*Y10[1:,:].sum() 
-    
-    # test python model vs excel calculator:
-    def spdBB(CCT = 5500, wl = [400,700,5], Lw = 25000, cieobs = '1964_10'):
-        wl = getwlr(wl)
-        dl = wl[1] - wl[0]
-        spd = 2*np.pi*6.626068E-34*(299792458**2)/((wl*0.000000001)**5)/(np.exp(6.626068E-34*299792458/(wl*0.000000001)/1.3806503E-23/CCT)-1)
-        spd = Lw*spd/(dl*683*(spd*cie_interp(_CMF[cieobs]['bar'].copy(),wl,kind='cmf')[2,:]).sum())
-        return np.vstack((wl,spd))
-    
-    # Create long term and applied spds:
-    spd5500 = spdBB(5500, Lw = 25000, wl = [400,700,5], cieobs = '1964_10')
-    spd6500 = spdBB(6500, Lw = 400, wl = [400,700,5], cieobs = '1964_10')
-    
-    # Calculate lms0 as a check:
-    clms = np.array([0.98446776, 0.98401909, 0.98571412]) # correction factor for slight differences in _CMF and the cmfs from the excel calculator
-    lms0 = 5*683*(spd5500[1:]*LMS10[1:,:]*0.2).sum(axis=1).T
-    
-    
-    # Full excel parameters for testing:
-    parameters = {'cLMS':np.array([1,1,1]), 'lms0': np.array([4985.02802565,5032.49518502,4761.27272226])*1,
-                   'Cc': 0.251617118325755, 'Cf': -0.4, 'clambda': [0.5, 0.5, 0.0], 
-                   'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 
-                   'cga1': [26.1047711317923, 33.9721745703298], 'cgb1': [6.76038379211498, 10.9220216677629], 
-                   'cga2': [0.587271269247578], 'cgb2': [-0.952412544980473], 
-                   'cl_int': [14.0035243121804,1.0], 'cab_int': [4.99218965716342,65.7869547646456], 
-                   'cab_out' : [-0.1,-1.0], 'Ccwb': None, 
-                   'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],
-                                [-0.42997951,  1.2038895 ,  0.08621089],
-                                [ 0.,  0.,  0.46579234]]}
-                   
-    # Note cLMS is a relative scaling factor between CIE2006 10° and 1964 10°:
-#    clms = np.array([1.00164919, 1.00119269, 1.0029173 ]) = (Y10[1:,:].sum(axis=1)/LMS10[1:,:].sum(axis=1))*(406.98099078/400)
-                    
-    #parameters =_CAM_SWW16_PARAMETERS['JOSA']
-    # Calculate Munsell spectra multiplied with spd6500:
-    spd6500xM = np.vstack((spd6500[:1,:],spd6500[1:,:]*M[1:,:]))
-               
-    # Test spectral input:
-    print('SPD INPUT -----')
-    jab = cam_sww16(spd6500xM, dataw = spd6500, Yb = 20.0, Lw = 400.0, Ccwb = 1,
-                      relative = True,  inputtype = 'spd', direction = 'forward',
-                      parameters = parameters, cieobs = '2006_10',
-                      match_to_conversionmatrix_to_cieobs = True)
-    
-#    # Test xyz input:
-    print('\nXYZ INPUT -----')
-    xyz = lx.spd_to_xyz(spd6500xM,cieobs='2006_10',relative=False)
-    xyzw = lx.spd_to_xyz(spd6500,cieobs='2006_10',relative=False)
-    xyz2,xyzw2 = lx.spd_to_xyz(spd6500,cieobs='2006_10',relative=False,rfl=M,out=2)
-     
-
-    print(xyzw)
-    jab = cam_sww16(xyz, dataw = xyzw, Yb = 20.0, Lw = 400, Ccwb = 1,
-                      relative = True,  inputtype = 'xyz', direction = 'forward',
-                      parameters = parameters, cieobs = '2006_10',
-                      match_to_conversionmatrix_to_cieobs = True)
-
 #------------------------------------------------------------------------------
 if __name__ == '__main__0':
+    #------------------------------------------------------------------------------
+    def test_model():
+    
+        import luxpy as lx # lazy import
+    
+        # Read selected set of Munsell samples and LMS10(lambda):
+        M = lx.loadtxt('Munsell_LMS_nonlin_Nov18_2015_version.dat',header=None,sep='\t')
+        YLMS10_ = lx.loadtxt('YLMS10_LMS_nonlin_Nov18_2015_version.dat',header=None,sep='\t')
+        Y10_ = YLMS10_[[0,1],:].copy()
+        LMS10_ = YLMS10_[[0,2,3,4],:].copy()
+        
+        # Calculate lms:
+        Y10 = cie_interp(_CMF['1964_10']['bar'].copy(),getwlr([400,700,5]),kind='cmf')[[0,2],:]
+        XYZ10_lx = _CMF['2006_10']['bar'].copy()
+        XYZ10_lx = cie_interp(XYZ10_lx,getwlr([400,700,5]),kind='cmf')
+        LMS10_lx = np.vstack((XYZ10_lx[:1,:],np.dot(math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
+        LMS10 = cie_interp(LMS10_lx,getwlr([400,700,5]),kind='cmf')
+        
+        #LMS10 = np.vstack((XYZ10[:1,:],np.dot(lx.math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
+    
+        #LMS10[1:,:] = LMS10[1:,:]/LMS10[1:,:].sum(axis=1,keepdims=True)*Y10[1:,:].sum() 
+        
+        # test python model vs excel calculator:
+        def spdBB(CCT = 5500, wl = [400,700,5], Lw = 25000, cieobs = '1964_10'):
+            wl = getwlr(wl)
+            dl = wl[1] - wl[0]
+            spd = 2*np.pi*6.626068E-34*(299792458**2)/((wl*0.000000001)**5)/(np.exp(6.626068E-34*299792458/(wl*0.000000001)/1.3806503E-23/CCT)-1)
+            spd = Lw*spd/(dl*683*(spd*cie_interp(_CMF[cieobs]['bar'].copy(),wl,kind='cmf')[2,:]).sum())
+            return np.vstack((wl,spd))
+        
+        # Create long term and applied spds:
+        spd5500 = spdBB(5500, Lw = 25000, wl = [400,700,5], cieobs = '1964_10')
+        spd6500 = spdBB(6500, Lw = 400, wl = [400,700,5], cieobs = '1964_10')
+        
+        # Calculate lms0 as a check:
+        clms = np.array([0.98446776, 0.98401909, 0.98571412]) # correction factor for slight differences in _CMF and the cmfs from the excel calculator
+        lms0 = 5*683*(spd5500[1:]*LMS10[1:,:]*0.2).sum(axis=1).T
+        
+        
+        # Full excel parameters for testing:
+        parameters = {'cLMS':np.array([1,1,1]), 'lms0': np.array([4985.02802565,5032.49518502,4761.27272226])*1,
+                       'Cc': 0.251617118325755, 'Cf': -0.4, 'clambda': [0.5, 0.5, 0.0], 
+                       'calpha': [1.0, -1.0, 0.0], 'cbeta': [0.5, 0.5, -1.0], 
+                       'cga1': [26.1047711317923, 33.9721745703298], 'cgb1': [6.76038379211498, 10.9220216677629], 
+                       'cga2': [0.587271269247578], 'cgb2': [-0.952412544980473], 
+                       'cl_int': [14.0035243121804,1.0], 'cab_int': [4.99218965716342,65.7869547646456], 
+                       'cab_out' : [-0.1,-1.0], 'Ccwb': None, 
+                       'Mxyz2lms': [[ 0.21701045,  0.83573367, -0.0435106 ],
+                                    [-0.42997951,  1.2038895 ,  0.08621089],
+                                    [ 0.,  0.,  0.46579234]]}
+                       
+        # Note cLMS is a relative scaling factor between CIE2006 10° and 1964 10°:
+    #    clms = np.array([1.00164919, 1.00119269, 1.0029173 ]) = (Y10[1:,:].sum(axis=1)/LMS10[1:,:].sum(axis=1))*(406.98099078/400)
+                        
+        #parameters =_CAM_SWW16_PARAMETERS['JOSA']
+        # Calculate Munsell spectra multiplied with spd6500:
+        spd6500xM = np.vstack((spd6500[:1,:],spd6500[1:,:]*M[1:,:]))
+                   
+        # Test spectral input:
+        print('SPD INPUT -----')
+        jab = cam_sww16(spd6500xM, dataw = spd6500, Yb = 20.0, Lw = 400.0, Ccwb = 1,
+                          relative = True,  inputtype = 'spd', direction = 'forward',
+                          parameters = parameters, cieobs = '2006_10',
+                          match_to_conversionmatrix_to_cieobs = True)
+        
+    #    # Test xyz input:
+        print('\nXYZ INPUT -----')
+        xyz = lx.spd_to_xyz(spd6500xM,cieobs='2006_10',relative=False)
+        xyzw = lx.spd_to_xyz(spd6500,cieobs='2006_10',relative=False)
+        xyz2,xyzw2 = lx.spd_to_xyz(spd6500,cieobs='2006_10',relative=False,rfl=M,out=2)
+         
+    
+        print(xyzw)
+        jab = cam_sww16(xyz, dataw = xyzw, Yb = 20.0, Lw = 400, Ccwb = 1,
+                          relative = True,  inputtype = 'xyz', direction = 'forward',
+                          parameters = parameters, cieobs = '2006_10',
+                          match_to_conversionmatrix_to_cieobs = True)
+
+
     test_model()
     
 if __name__ == '__main__':

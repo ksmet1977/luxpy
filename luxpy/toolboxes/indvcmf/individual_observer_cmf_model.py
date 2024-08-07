@@ -93,9 +93,11 @@ Notes
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import math, _WL3, _CMF, spd, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
-from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, getdata
 import warnings
+import numpy as np
+
+from luxpy import math, _WL3, _CMF, getwlr, getwld, cie_interp, spd_to_power, xyz_to_Yxy, spd_normalize
+from luxpy.utils import _PKG_PATH, _SEP, getdata
 
 __all__ = ['_DATA','_DSRC_STD_DEF', '_DSRC_LMS_ODENS_DEF','_LMS_TO_XYZ_METHOD']
 __all__ += ['load_database','init','query_state']
@@ -329,7 +331,7 @@ def _load_asano_lms_and_odensities(wl=None, path=None):
     data['wls'] = wl
     data['rmd'] = getdata(path + 'asano_cie2006_RelativeMacularDensity.dat', header = None).T 
     data['docul'] = getdata(path  + 'asano_cie2006_docul.dat', header = None).T 
-    data['LMSa'] = getdata(path + 'asano_cie2006_Alms.dat', header = None).T 
+    data['LMSa'] = getdata(path + 'asano_cie2006_Alms.dat', header = None).T
     for key in data.keys():
         if key != 'wls':
             data[key] = cie_interp(np.vstack((wls,data[key])), wl, kind='linear',negative_values_allowed=True)
@@ -361,7 +363,8 @@ def _docul_fine(ocular_sum_32, docul2):
     docul2_pad[:, 0] = np.arange(460, 835, 5)  # fill
     docul2_pad[:, 1] = 0                       # fill
     docul2 = np.concatenate((docul2, docul2_pad))
-    spl = sp.interpolate.InterpolatedUnivariateSpline(docul2[:, 0], docul2[:, 1])
+    from scipy import interpolate # lazy import
+    spl = interpolate.InterpolatedUnivariateSpline(docul2[:, 0], docul2[:, 1])
     docul2_fine = ocular_sum_32.copy()
     docul2_fine[:, 1] = spl(ocular_sum_32[:, 0])
     docul1_fine = ocular_sum_32.copy()
@@ -394,7 +397,7 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     if wl is None:
         wl = _WL_CIETC197
     # data from tc197:
-    tmp = pd.read_csv(path  + 'cietc197_absorbances0_1nm.dat', header=None).values[:, [0, 2, 3, 4, 5, 6]].T
+    tmp = getdata(path  + 'cietc197_absorbances0_1nm.dat', header=None)[:,[0, 2, 3, 4, 5, 6]].T
     isnan = np.isnan(tmp[3,:]) # find isnan for Sbar (missing values -> need to be set at -inf)
     first_isnan_wl = tmp[0,np.where(isnan)[0][0]] # find wavelength at which first isnan occurs for Sbar
     tmp = cie_interp(tmp,wl, kind = 'linear',negative_values_allowed = True)#, extrap_values = 'ext')
@@ -404,7 +407,7 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
 
     macula_rel = tmp[[0, 5],:] 
     macula_rel[1,:] /= 0.35  # div by 0.35 since macula at 2° has a maximum of 0.35 at 460 (at 5nm step)
-    docul2 = pd.read_csv(path  + 'cietc197_docul2.dat', header=None)
+    docul2 = getdata(path  + 'cietc197_docul2.dat', header=None)
     ocular_sum_32 = tmp[[0, 4],:].T  # 32 years only!
     docul2 = _docul_fine(ocular_sum_32, docul2)
     docul2 = cie_interp(docul2.T,wl, kind = 'linear',negative_values_allowed = True, extrap_values = 'ext')
@@ -413,15 +416,16 @@ def _load_cietc197_lms_and_odensities(wl=None, path = None):
     return data
 
 def _create_LMSa_interpolators(LMSa, kind = 1):
+    from scipy import interpolate # lazy import
     _peak_shft = []
     for i in range(3):
         if i < 2: 
             # L, M:
-            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0],LMSa[i+1], k = kind, ext = 0))
+            _peak_shft.append(interpolate.InterpolatedUnivariateSpline(LMSa[0],LMSa[i+1], k = kind, ext = 0))
         else:
             # S:
             non_nan_indices = np.logical_not(np.isnan(LMSa[i + 1]) | np.isneginf(LMSa[i + 1]))
-            _peak_shft.append(sp.interpolate.InterpolatedUnivariateSpline(LMSa[0][non_nan_indices],LMSa[i+1][non_nan_indices], k = kind, ext = 0))
+            _peak_shft.append(interpolate.InterpolatedUnivariateSpline(LMSa[0][non_nan_indices],LMSa[i+1][non_nan_indices], k = kind, ext = 0))
     return _peak_shft
 
 # Create the interpolators in advance for speed:
@@ -750,7 +754,7 @@ def _d_S_max(fieldsize = 10, var_od = 0):
 #         alpha_lms: 
 #             | ndarray with the calculated quantal absorptances of the L, M and S cones; row 0 are wavelenghts.
 #     """
-    
+#     from scipy import interpolate # lazy import
 #     if LMSa0 is None:
 #         LMSa = _DATA['odata']['LMSa'].copy()
 #     else:
@@ -770,18 +774,18 @@ def _d_S_max(fieldsize = 10, var_od = 0):
 #     if var_shft_LMS[0] == 0:
 #         LMSa_shft[0] = LMSa[0]
 #     else:
-#         LMSa_shft[0] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
+#         LMSa_shft[0] = interpolate.InterpolatedUnivariateSpline(wl_shifted[0],LMSa[0], k = kind, ext = "extrapolate")(wls)
 #     if var_shft_LMS[1] == 0:
 #         LMSa_shft[1] = LMSa[1]
 #     else:
-#         LMSa_shft[1] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
+#         LMSa_shft[1] = interpolate.InterpolatedUnivariateSpline(wl_shifted[1],LMSa[1], k = kind, ext = "extrapolate")(wls)
     
 #     if var_shft_LMS[2] == 0:
 #         LMSa_shft[2] = LMSa[2]
 #     else:
 #         LMSa[2,np.isinf(LMSa[2,:])] = np.nan
 #         non_nan_indices = np.logical_not(np.isnan(LMSa[2]))
-#         LMSa_shft[2] = sp.interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
+#         LMSa_shft[2] = interpolate.InterpolatedUnivariateSpline(wl_shifted[2][non_nan_indices],LMSa[2][non_nan_indices], k = kind, ext = "extrapolate")(wls)
 
 #         # Detect poor interpolation (sign switch due to instability):
 #         ssw = np.hstack((0,np.sign(np.diff(LMSa_shft[2,:])))) 
@@ -1224,6 +1228,8 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
             | The computed interpolated spectral chromaticity coordinates of the
             | CIE standard XYZ systems; wavelenghts in first row.
     """
+    from scipy import interpolate # lazy import
+    
     # Compute the xyz spectral chromaticity coordinates of the CIE standards 
     xyz31 = np.vstack((XYZ31_std[:1,:],(xyz_to_Yxy((XYZ31_std[1:,:]).T)[:,1:]).T))
     xyz64 = np.vstack((XYZ64_std[:1,:],(xyz_to_Yxy(XYZ64_std[1:,:].T)[:,1:]).T))
@@ -1246,17 +1252,17 @@ def _xyz_interpolated_reference_system(fieldsize, XYZ31_std, XYZ64_std):
                        700.,
                        830.])
     # wl values
-    wl31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl_knots, wl31_knots, k = 1)(wl31)
-    wl64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl_knots, wl64_knots, k = 1)(wl64)
+    wl31_interp = interpolate.InterpolatedUnivariateSpline(wl_knots, wl31_knots, k = 1)(wl31)
+    wl64_interp = interpolate.InterpolatedUnivariateSpline(wl_knots, wl64_knots, k = 1)(wl64)
 
     # x values
-    x31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl31, x31, k = 3)(wl31_interp)
-    x64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl64, x64, k = 3)(wl64_interp)
+    x31_interp = interpolate.InterpolatedUnivariateSpline(wl31, x31, k = 3)(wl31_interp)
+    x64_interp = interpolate.InterpolatedUnivariateSpline(wl64, x64, k = 3)(wl64_interp)
     x_values = (1-a) * x31_interp + a * x64_interp
     
     # y values
-    y31_interp = sp.interpolate.InterpolatedUnivariateSpline(wl31, y31, k = 3)(wl31_interp)
-    y64_interp = sp.interpolate.InterpolatedUnivariateSpline(wl64, y64, k = 3)(wl64_interp)
+    y31_interp = interpolate.InterpolatedUnivariateSpline(wl31, y31, k = 3)(wl31_interp)
+    y64_interp = interpolate.InterpolatedUnivariateSpline(wl64, y64, k = 3)(wl64_interp)
     y_values = (1-a) * y31_interp + a * y64_interp
     
     # z values
@@ -1444,6 +1450,8 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
             | tristimulus values for the tabulated wavelengths, given to
             | standard/specified precision; wavelengths in first row.
     """
+    from scipy import optimize # lazy import
+    
     # '_all'  : values given at 0.1 nm steps from 390 nm to 830 nm
     # '_main' : values given at 1 nm steps from 390 nm to 830 nm
     # '_spec' : values given at specified wavelengths
@@ -1490,13 +1498,13 @@ def _compute_XYZ(L_spline, M_spline, S_spline, V_spline,
         
         with warnings.catch_warnings():
             warnings.simplefilter('ignore')
-            a13 = sp.optimize.fmin(_square_sum, 0.39, 
+            a13 = optimize.fmin(_square_sum, 0.39, 
                                    (a21, a22, a33,
                                    xyz_ref_trunk, x_ref_min,
                                    L_wl_sum, M_wl_sum, S_wl_sum, V_wl_sum,
                                    L_wl_ref_min, M_wl_ref_min, S_wl_ref_min, V_wl_ref_min,
                                    LMS_390_830, wl_390_830, wl_x_min_ref, False),
-                                   xtol = 1e-10, disp = False) 
+                                xtol = 1e-10, disp = False) 
         trans_mat, wl_x_min_ref, ok = (_square_sum(a13, a21, a22, a33,  
                                        xyz_ref_trunk, x_ref_min,
                                        L_wl_sum, M_wl_sum, S_wl_sum, V_wl_sum,
@@ -1624,6 +1632,8 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
          (by Ivar Farup and Jan Henrik Wold, (c) 2012-2017) 
          <http://github.com/ifarup/ciefunctions>`_
     """
+    from scipy import interpolate # lazy import
+    
     # TC1-97 ciefunctions rounds fieldsize:
     fieldsize_tmp = np.round(fieldsize,1)
     if (fieldsize_tmp == 2) | (fieldsize_tmp == 10):
@@ -1674,9 +1684,9 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
         # =======================================================================
         # base:
         (wl_all, L_base_all, M_base_all, S_base_all) = LMS_base_all
-        L_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, L_base_all)
-        M_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, M_base_all)
-        S_base_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, S_base_all)
+        L_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, L_base_all)
+        M_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, M_base_all)
+        S_base_spline = interpolate.InterpolatedUnivariateSpline(wl_all, S_base_all)
             
         # =======================================================================
         # Compute the LMS-base cone fundamentals 
@@ -1715,7 +1725,7 @@ def compute_cmfs(fieldsize = 10, age = 32, wl = None,
 
             # Create spline function for Vlambda:
             wl_all, V_std_all = V_std_all
-            V_std_spline = sp.interpolate.InterpolatedUnivariateSpline(wl_all, V_std_all)
+            V_std_spline = interpolate.InterpolatedUnivariateSpline(wl_all, V_std_all)
             
             #  Determine reference diagram
             xyz_reference = _xyz_interpolated_reference_system(fieldsize, _CMF['1931_2']['bar'].copy(), _CMF['1964_10']['bar'].copy())
@@ -2388,6 +2398,7 @@ def plot_cmfs(cmf,axh = None, **kwargs):
     Plot cmf set.
     """
     if axh is None:
+        import matplotlib.pyplot as plt # lazy import
         fig = plt.figure()
         axh = fig.add_subplot(111)
     axh.plot(cmf[0],cmf[1], color ='r', **kwargs)
@@ -2405,6 +2416,7 @@ if __name__ == '__main__':
     ax = plot_cmfs(xyz2b)
     
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt # lazy import
     
     data = load_database(wl=_WL)
     _DATA = data.copy()
@@ -2429,7 +2441,9 @@ if __name__ == '__main__':
     plt.plot(lms[0],lms[3], color ='b', linestyle='--')
     plt.show()
 
-if __name__ == 'x__main__':    
+if __name__ == 'x__main__':  
+    import luxpy as lx 
+    
     out = outcmf + ',var_age,vAll'
 
     LMS_All, var_age, vAll = genMonteCarloObs(n_obs = 10, fieldsize = 10, list_Age = [32], out = out)
@@ -2470,7 +2484,7 @@ if __name__ == 'x__main__':
     add_to_cmf_dict(bar = XYZb_All_CatObs, cieobs = 'CatObs1', K = 683) 
     xyz2 = spd_to_xyz(_CIE_ILLUMINANTS['F4'], cieobs = '1931_2')
     xyz1 = spd_to_xyz(_CIE_ILLUMINANTS['F4'], cieobs = 'CatObs1')
-    cct2,duv2 = xyz_to_cct_ohno2014(xyz2, cieobs = '1931_2', out = 'cct,duv')
-    cct1,duv1 = xyz_to_cct_ohno2014(xyz1, cieobs = 'CatObs1', out = 'cct,duv')
+    cct2,duv2 = lx.xyz_to_cct_ohno2014(xyz2, cieobs = '1931_2', out = 'cct,duv')
+    cct1,duv1 = lx.xyz_to_cct_ohno2014(xyz1, cieobs = 'CatObs1', out = 'cct,duv')
     print('cct,duv using 1931_2: {:1.0f} K, {:1.4f}'.format(cct2[0,0],duv2[0,0]))
     print('cct,duv using CatObs1: {:1.0f} K, {:1.4f}'.format(cct1[0,0],duv1[0,0]))

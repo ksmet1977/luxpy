@@ -33,8 +33,10 @@ Functions:
 
 ===============================================================================
 """
+import numpy as np
+
 from luxpy import *
-from luxpy.utils import np
+
 __all__ = ['_COLORTF_DEFAULT_WHITE_POINT','colortf']
 
 

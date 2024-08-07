@@ -50,12 +50,11 @@ Notes
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-import warnings
 import itertools
-from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz, 
-                    xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy.utils import sp,np, plt, _EPS, np2d
-from luxpy import cri 
+import numpy as np
+
+from luxpy import (math, _CIEOBS, getwlr, colortf, xyz_to_cct)
+from luxpy.utils import np2d
 
 
 
@@ -663,7 +662,7 @@ class Minimizer():
             
             # import required minimizer function:
             try:
-                from luxpy.math.pyswarms_particleswarm import particleswarm
+                from luxpy.math.pyswarms_particleswarm import particleswarm # lazy import
             except:
                 raise Exception("Could not import particleswarm(), try a manual install of the 'pyswarms' package")
             
@@ -677,7 +676,7 @@ class Minimizer():
             
             # import required minimizer function:
             try:
-                from luxpy.math.pymoo_nsga_ii import nsga_ii
+                from luxpy.math.pymoo_nsga_ii import nsga_ii # lazy import
             except:
                 raise Exception("Could not import nsga_ii(), try a manual install of the 'pymoo' package")
             
@@ -916,6 +915,11 @@ class SpectralOptimizer():
                     self.free_pars_bnds[pt+'_bnds'] = None
             self.free_pars = []
                 
+    def _get_n_triangle_strengths(self):
+        """ Get number of triangle strengths"""
+        from scipy.special import factorial # lazy import
+        n_triangle_strengths = int(factorial(self.nprim)/(factorial(self.nprim-3)*factorial(3)))
+        return n_triangle_strengths
             
     def _update_triangle_strengths_bnds(self, nprim = None, triangle_strengths_bnds = None):
         """
@@ -923,7 +927,7 @@ class SpectralOptimizer():
         """
         if nprim is not None: self.nprim = nprim
         if self.optimizer_type == '3mixer':
-            self.n_triangle_strengths = int(sp.special.factorial(self.nprim)/(sp.special.factorial(self.nprim-3)*sp.special.factorial(3)))
+            self.n_triangle_strengths = self._get_n_triangle_strengths()
             self.triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, self.n_triangle_strengths, min_ = 0, max_ = 1)
             
         elif self.optimizer_type == 'no-mixer': # use triangle_strengths to store info on primary strengths in case of 'no-mixer'
@@ -1456,6 +1460,7 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
   #------------------------------------------------------------------------------
 if __name__ == '__main__':  
     
+    import matplotlib.pyplot as plt # lazy import
     
     run_example_class_1 = False # # class based example with pre-defined minimization methods
     
@@ -1571,7 +1576,7 @@ if __name__ == '__main__':
         
         
         # Create a minimization function with the specified interface:
-        from luxpy.math.pyswarms_particleswarm import particleswarm
+        from luxpy.math.pyswarms_particleswarm import particleswarm 
         def user_minim_ps(fitnessfcn, npars, args, bounds, verbosity = 1,**opts):
             results = particleswarm(fitnessfcn, npars, args = args, 
                                           bounds = bounds, 
@@ -1581,7 +1586,7 @@ if __name__ == '__main__':
             # Note that there is already a key 'x_final' in results
             return results
         
-        from luxpy.math.pymoo_nsga_ii import nsga_ii
+        from luxpy.math.pymoo_nsga_ii import nsga_ii 
         def user_minim_ga(fitnessfcn, npars, args, bounds, verbosity = 1,**opts):
             results = nsga_ii(fitnessfcn, npars, args = args, 
                               bounds = bounds, n_objectives = -1,

@@ -26,10 +26,12 @@ Module for Smits-style RGB to Spectrum conversion
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 
 """
+import copy
+import numpy as np 
 
 from luxpy import cie_interp, getwlr, _WL3, xyz_to_srgb, srgb_to_xyz
-from luxpy.utils import np
-import copy
+
+
 
 __all__ = ['rgb2spec_entries', 'rgb_to_spec_smits']
 

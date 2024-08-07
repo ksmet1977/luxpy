@@ -17,7 +17,8 @@ Module with scaling functions from DE to CRI-scale.
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy.utils import np
+import numpy as np
+
 __all__ = ['linear_scale', 'log_scale', 'psy_scale']
 
 #------------------------------------------------------------------------------

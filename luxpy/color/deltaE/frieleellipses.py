@@ -28,9 +28,9 @@ References:
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
-from luxpy import (math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-from luxpy.utils import np, plt
+from luxpy import (math, Yxy_to_xyz, plotSL, plotellipse)
 _M_XYZ_TO_PQS = np.array([[0.724, 0.382, -0.098],[-0.48,1.37,0.1276],[0,0,0.686]])
 
 __all__ = ['get_gij_fmc','get_fmc_discrimination_ellipse']
@@ -255,7 +255,9 @@ def get_fmc_discrimination_ellipse(Yxy = np.array([[100,1/3,1/3]]), etype = 'fmc
     return v
     
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt 
     from macadamellipses import get_macadam_ellipse
+    
     Yxy1 = np.array([[100,1/3,1/3]])
     Yxy2 = np.array([[100,1/3, 1/3],[50,1/3,1/3]])
     gij_11 = get_gij_fmc(Yxy1,etype = 'fmc1', ellipsoid=False)

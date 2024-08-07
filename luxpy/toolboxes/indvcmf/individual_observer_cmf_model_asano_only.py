@@ -72,8 +72,10 @@ https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
+
 from luxpy import math, _WL3, _CMF, spd, getwlr
-from luxpy.utils import np, sp, plt, _PKG_PATH, _SEP, getdata
+from luxpy.utils import _PKG_PATH, _SEP, getdata
 
 __all__ = ['_INDVCMF_DATA_PATH','_INDVCMF_DATA','_INDVCMF_STD_DEV_ALL_PARAM','_INDVCMF_CATOBSPFCTR', '_INDVCMF_M_2d', '_INDVCMF_M_10d']
 __all__ +=['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
@@ -222,6 +224,8 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
          4. `Asano's Individual Colorimetric Observer Model 
          <https://www.rit.edu/cos/colorscience/re_AsanoObserverFunctions.php>`_
     """
+    from scipy import interpolate # lazy import
+    
     fs = fieldsize
     rmd = _INDVCMF_DATA['rmd'].copy() 
     LMSa = _INDVCMF_DATA['LMSa'].copy() 
@@ -246,9 +250,9 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
     
     LMSa_shft = np.empty(LMSa.shape)
     kind = 'cubic'
-    LMSa_shft[0] = sp.interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
-    LMSa_shft[1] = sp.interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
-    LMSa_shft[2] = sp.interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[0] = interpolate.interp1d(wl_shifted[0],LMSa[0], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[1] = interpolate.interp1d(wl_shifted[1],LMSa[1], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
+    LMSa_shft[2] = interpolate.interp1d(wl_shifted[2],LMSa[2], kind = kind, bounds_error = False, fill_value = "extrapolate")(_WL)
 #    LMSa[2,np.where(_WL >= _WL_CRIT)] = 0 #np.nan # Not defined above 620nm
 #    LMSa_shft[2,np.where(_WL >= _WL_CRIT)] = 0
     
@@ -672,6 +676,8 @@ def add_to_cmf_dict(bar = None, cieobs = 'indv', K = 683, M = np.eye(3)):
     
     
 if __name__ == '__main__':
+    
+    import matplotlib.pyplot as plt # lazy import
     
     outcmf = 'lms'
     

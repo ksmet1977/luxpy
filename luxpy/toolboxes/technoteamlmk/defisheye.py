@@ -24,7 +24,7 @@ From github:  https://github.com/duducosmos/defisheye/blob/master/src/defisheye/
      2. Image output of convert is ndarray (image writing is now optional)
      3. Correction can be determined once and then applied by calling convert() on other same-sized images..
 """
-import numpy as np
+
 from numpy import arange, sqrt, arctan, sin, tan, zeros, array, ndarray, meshgrid, pi
 from numpy import argwhere, hypot
 

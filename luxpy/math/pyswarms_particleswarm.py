@@ -14,8 +14,9 @@ Notes:
 """
 
 # Import modules
-import subprocess
-from luxpy.utils import np, plt, is_importable
+import numpy as np
+
+from luxpy.utils import is_importable
 
 
 # import pyswarms (and if necessary install it):

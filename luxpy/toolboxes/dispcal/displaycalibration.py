@@ -40,10 +40,11 @@ Module for display calibration
        
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
 from luxpy import (math, _CMF, cie_interp, colortf, _CSPACE_AXES)
-from luxpy.utils import _PKG_PATH, _SEP, np, sp, plt, pd
-from scipy.signal import savgol_filter
+from luxpy.utils import _PKG_PATH, _SEP, getdata
+
 __all__ = ['_PATH_DATA', '_parse_rgbxyz_input', 'find_index_in_rgb',
            '_plot_target_vs_predicted_lab','_plot_DEs_vs_digital_values',
            'calibrate', 'calibration_performance', 
@@ -57,8 +58,8 @@ __all__ = ['_PATH_DATA', '_parse_rgbxyz_input', 'find_index_in_rgb',
 _PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'dispcal' + _SEP 
 _PATH_DATA = _PATH + _SEP + 'data' + _SEP
 
-_RGB = pd.read_csv(_PATH_DATA + 'RGBcal.csv',sep = ',', header=None).values # read default rgb calibration settings
-_XYZ = pd.read_csv(_PATH_DATA + 'XYZcal.csv',sep=',', header=None).values # read some example measured xyz data at _RGB settings
+_RGB = getdata(_PATH_DATA + 'RGBcal.csv',sep = ',', header=None) # read default rgb calibration settings
+_XYZ = getdata(_PATH_DATA + 'XYZcal.csv',sep=',', header=None) # read some example measured xyz data at _RGB settings
 
 #------------------------------------------------------------------------------
 # Start function definitions:
@@ -87,9 +88,8 @@ def find_pure_rgb(rgb, as_bool = True):
 def _clamp0(x): 
     """Clamp x to 0 to avoid negative values."""
     x[x<0] = 0 
-    return x   
+    return x    
 
-    
 # -- Tone response function ---------------------------------------------------
 def TR_ggo(x,*p):
     """ 
@@ -228,7 +228,7 @@ def _rgb_linearizer(rgb, tr, tr_type = 'lut', nbit = 8):
     elif tr_type == 'gogo':
         return _clamp0(np.array([TR_gogo(rgb[:,i]/max_dac,*tr[i]) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'lut':
-        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype=np.int32),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
+        return _clamp0(np.array([tr[np.asarray(rgb[:,i],dtype= np.int32),i] for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'pli':
         return _clamp0(np.array([tr['fw'][i](rgb[:,i]/max_dac) for i in range(3)]).T) # linearize all rgb values and clamp to 0
     elif tr_type == 'sigmoid':
@@ -369,11 +369,14 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
     max_dac = 2**nbit - 1
 
     # for smoothing data prior to fitting TR:    
-    if (tr_smooth_window_factor is not None):
+    if (tr_smooth_window_factor is not None): 
         make_odd = lambda x: x+np.abs(x%2-1)
         window_length = lambda x: make_odd(x.shape[0]//tr_smooth_window_factor)
         poly_orders = np.array([0,1,2,3])
         poly_order = lambda x: poly_orders[poly_orders < window_length(x)][-1]
+    
+        from scipy.signal import savgol_filter # lazy import
+        
         fsm = (lambda x: savgol_filter(x, window_length(x), poly_order(x))) 
     else:
         fsm = (lambda x: x)
@@ -399,6 +402,9 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
         
     # Get rgb linearizer parameters for GGO, GOG, GOGO models or lut or PLI and apply to all rgb's:
     if (tr_type == 'ggo') | (tr_type == 'gog') | (tr_type == 'gogo') | ('sigmoid' in tr_type): 
+    
+        from scipy.optimize import curve_fit # lazy import 
+        
         rgb_device = np.array([np.clip(rgb[p_pure[i],i] + 1e-300,0,max_dac) for i in range(3)])
         rgb_lin = np.array([np.clip(L[p_pure[i],i]/L[p_pure[i],i].max(),0,1) for i in range(3)])
         
@@ -438,9 +444,9 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
                 bounds = ((*tr_par_lower_bounds_cp[:3],0,0,0),(30,30,30,1,np.inf))
                 p0 = np.array([1,0,2,0.7,10])# + 2*(np.random.rand(6)-0.5)*0.005*k
             try: 
-                tr = np.array([sp.optimize.curve_fit(TR, rgb_device[i]/max_dac, fsm(rgb_lin[i]), p0 = p0, bounds = bounds)[0] for i in range(3)]) # calculate parameters of each TR
+                tr = np.array([curve_fit(TR, rgb_device[i]/max_dac, fsm(rgb_lin[i]), p0 = p0, bounds = bounds)[0] for i in range(3)]) # calculate parameters of each TR
             except: 
-                tr = np.array([sp.optimize.curve_fit(TR, rgb_device[i]/max_dac, fsm(rgb_lin[i]), p0 = p0, bounds = (0,np.inf))[0] for i in range(3)]) 
+                tr = np.array([curve_fit(TR, rgb_device[i]/max_dac, fsm(rgb_lin[i]), p0 = p0, bounds = (0,np.inf))[0] for i in range(3)]) 
             
             rgb_lin_est = _rgb_linearizer(rgb_device.T.copy(), tr, tr_type = tr_type, nbit = nbit)
             rms = np.array([((rgb_lin_est.T[i] - rgb_lin[i])**2).mean() for i in range(3)]).sum()**0.5
@@ -455,9 +461,12 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
     if (tr_type == 'ggo') | (tr_type == 'gog') | (tr_type == 'gogo') | ('sigmoid' in tr_type):
         pass
     elif tr_type == 'lut':
+    
+        from scipy import interpolate # lazy import
+
         dac = np.arange(2**nbit)
         idxs = [rgb[p_pure[i],i].argsort() for i in range(3)] # make sure we get monotonically increasing values for interpolation
-        lut = np.array([sp.interpolate.PchipInterpolator(rgb[p_pure[i],i][idxs[i]],fsm(L[p_pure[i],i][idxs[i]]/L[p_pure[i],i][idxs[i]].max()))(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
+        lut = np.array([interpolate.PchipInterpolator(rgb[p_pure[i],i][idxs[i]],fsm(L[p_pure[i],i][idxs[i]]/L[p_pure[i],i][idxs[i]].max()))(dac) for i in range(3)]).T # use this one to avoid potential overshoot with cubic spline interpolation (but slightly worse performance)
         lut[lut<0] = 0
         
         lut = lut/lut.max(axis=0,keepdims=True) # ensure lut has max 1! not 0.99999999999
@@ -479,9 +488,10 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
                 tr[np.where(tr[:,i] == 1)[0][0]:,i] = 1
                 
     elif tr_type == 'pli':
+        from scipy import interpolate # lazy import
         pli = {
-                'fw' : np.array([sp.interpolate.interp1d(rgb[p_pure[i],i]/max_dac,fsm(L[p_pure[i],i]/L[p_pure[i],i].max()), fill_value = (0,1)) for i in range(3)]).T,
-                'bw' : np.array([sp.interpolate.interp1d(L[p_pure[i],i]/L[p_pure[i],i].max(), fsm(rgb[p_pure[i],i]/max_dac), fill_value = (0,1)) for i in range(3)]).T
+                'fw' : np.array([interpolate.interp1d(rgb[p_pure[i],i]/max_dac,fsm(L[p_pure[i],i]/L[p_pure[i],i].max()), fill_value = (0,1)) for i in range(3)]).T,
+                'bw' : np.array([interpolate.interp1d(L[p_pure[i],i]/L[p_pure[i],i].max(), fsm(rgb[p_pure[i],i]/max_dac), fill_value = (0,1)) for i in range(3)]).T
                 }
         tr = pli
     else:
@@ -493,6 +503,9 @@ def estimate_tr(rgb, xyz, black_correct = True, xyz_black = None,
         linestyles = ['-','--',':']
         rgball = np.repeat(np.arange(2**nbit)[:,None],3,axis=1)
         Lall = _rgb_linearizer(rgball, tr, tr_type = tr_type, nbit = nbit)
+        
+        import matplotlib.pyplot as plt # lazy import
+        
         plt.figure()
         for i in range(3):
             plt.plot(rgb[p_pure[i],i],L[p_pure[i],i]/L[p_pure[i],i].max(),colors[i]+'o')
@@ -639,9 +652,9 @@ def _parse_rgbxyz_input(rgb, xyz = None, sep = ',', header=None):
     """ Parse the rgb and xyz inputs """
     # process rgb, xyz inputs:
     if isinstance(rgb, str):
-        rgb = pd.read_csv(rgb,sep=sep, header=header).values # read rgb data
+        rgb = getdata(rgb,sep=sep, header=header) # read rgb data
     if isinstance(xyz, str):
-        xyz = pd.read_csv(xyz,sep=sep, header=header).values # read measured xyz data 
+        xyz = getdata(xyz,sep=sep, header=header) # read measured xyz data 
     if xyz is None:
         rgb, xyz = rgb[...,:3], rgb[...,3:6]
     return rgb, xyz
@@ -876,6 +889,9 @@ def _plot_target_vs_predicted_lab(labtarget, labpredicted, cspace = 'lab', verbo
         fMa = 0.95*Ma if Ma < 0 else 1.05*Ma
         fmb = 1.05*mb if mb < 0 else 0.95*mb
         fMb = 0.95*Mb if Mb < 0 else 1.05*Mb
+        
+        import matplotlib.pyplot as plt # lazy import
+        
         fig,(ax0,ax1,ax2) = plt.subplots(nrows=1,ncols=3, figsize = (15,4))
         ax0.plot(labtarget[...,1],labtarget[...,2],'bo',label = 'target')
         ax0.plot(labpredicted[...,1],labpredicted[...,2],'ro',label = 'predicted')
@@ -905,6 +921,9 @@ def _plot_DEs_vs_digital_values(DEslab, DEsl, DEsab, rgbcal, avg = lambda x: ((x
         p_cyans = (rgbcal[:,0]==0) & (rgbcal[:,1]!=0) & (rgbcal[:,2]!=0)
         p_yellows = (rgbcal[:,0]!=0) & (rgbcal[:,1]!=0) & (rgbcal[:,2]==0)
         p_magentas = (rgbcal[:,0]!=0) & (rgbcal[:,1]==0) & (rgbcal[:,2]==0)
+        
+        import matplotlib.pyplot as plt # lazy import
+        
         fig,(ax0,ax1,ax2) = plt.subplots(nrows=1,ncols=3, figsize = (15,4))
         rgb_colors='rgb'
         rgb_labels=['red','green','blue']
@@ -1284,6 +1303,8 @@ class DisplayCalibration():
 
 if __name__ == '__main__':
     
+    import matplotlib.pyplot as plt 
+    import pandas as pd
     
     plt.close('all')
     

@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.10.1
-    * Date: Nov 24, 2023
+    * Version: 1.11.0
+    * Date: Aug 7, 2024
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -37,20 +37,18 @@ Imported core packages/modules/functions:
 ----------------------------------------
  * os, warnings, colorsys, itertools, copy, time, tkinter, ctypes, platform, subprocess, pathlib, importlib, sys, pickle, requests
  * collections.OrderedDict.odict
- * mpl_toolkits.mplot3d.Axes3D
  
  
 Imported 3e party dependencies :
 --------------------------------
  * numpy (automatic install)
  * scipy (stats, optimize, interpolate, ...)
+ 
+Lazily imported 3e party dependencies ():
+-----------------------------------------
  * matplotlib.pyplot (any graphic output anywhere)
  * imageio (imread(), imsave())
- * pandas (in luxpy.utils.write_to_excel)
- 
-Lazily imported 3e party dependencies:
---------------------------------------
- * openpyxl (in luxpy.utils.write_to_excel) 
+ * openpyxl (in luxpy.utils: read_excel, write_excel) 
  
 3e party dependencies (automatic install on import)
 ---------------------------------------------------
@@ -64,7 +62,7 @@ To control Ocean Optics spectrometers with spectro toolbox:
  * import seabreeze (conda install -c poehlmann python-seabreeze)
  * pip install pyusb (for use with 'pyseabreeze' backend of python-seabreeze)
 
-
+ 
 
 Global constants
 ----------------
@@ -82,11 +80,11 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.10.1'; """Current version"""
+__VERSION__ = 'v1.11.0'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = 'Nov-24-2023'; """release date"""
+__DATE__ = 'Aug-07-2024'; """release date"""
 
-__COPYRIGHT__ = 'Copyright (C) 2017-2023 - Kevin A.G. Smet'; """copyright info"""
+__COPYRIGHT__ = 'Copyright (C) 2017-2024 - Kevin A.G. Smet'; """copyright info"""
 
 __AUTHOR__ = 'Kevin A.G. Smet'; """Package author"""
 __EMAIL__ = 'ksmet1977 at gmail.com'; """contact info"""
@@ -111,8 +109,11 @@ __REQUIRED__={'core':['os','warnings','pathlib','importlib','sys',
                       'colorsys','itertools','copy','time','tkinter','ctypes',
                       'platform','subprocess',
                       'cProfile', 'pstats', 'io','requests','pickle'],
-              'other':['numpy','scipy','matplotlib.pyplot','pandas','imageio'],
-              'special':['seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang','scikit-learn']}
+              'basic':['numpy','scipy'],
+              'matplotlib' : ['numpy','scipy','matplotlib'],
+              'light' :['numpy','scipy','matplotlib','imageio','openpyxl'],
+              'heavy':['numpy','scipy','matplotlib','imageio','openpyxl',
+                         'seabreeze', 'seabreeze.spectrometers','pyswarms','pymoo','pywin32','easygui','harfang','sklearn']}
 # (some imports for spectro toolbox are done there to avoid dependency 
 # on manual install requirements)
 __all__ += ['__REQUIRED__']

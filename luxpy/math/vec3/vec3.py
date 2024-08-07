@@ -31,7 +31,7 @@ Simple module for 3D-vectors.
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy.utils import (np, plt, Axes3D) 
+import numpy as np
 
 __all__ = ['vec3', 'rotate', 'dot', 'cross', 'plot']
 
@@ -422,6 +422,7 @@ def plot(v, origin = None, ax = None, color = 'k', marker = '.', linestyle = '-'
             | handle to figure axes.          
     """
     if ax is None:
+        import matplotlib.pyplot as plt # lazy import
         fig = plt.figure()
         ax = fig.add_subplot(111, projection = '3d')
     if origin is None:

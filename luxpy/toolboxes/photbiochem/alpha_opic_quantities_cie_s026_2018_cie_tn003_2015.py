@@ -109,9 +109,10 @@ References:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np 
 
 from luxpy import _CIEOBS, _CIE_D65, _CIE_E, _BB, spd, getwld, vlbar, spd_to_power, spd_normalize, cie_interp
-from luxpy.utils import np, _PKG_PATH, _SEP, getdata
+from luxpy.utils import  _PKG_PATH, _SEP, getdata
 
 __all__ = ['_PHOTORECEPTORS','_QUANTITIES', 
            '_ACTIONSPECTRA','_ACTIONSPECTRA_CIES026','_ACTIONSPECTRA_CIETN003',
@@ -130,8 +131,8 @@ _E_UNITS = ['lux', 'lux', 'lux', 'lux', 'lux']
 _Q_UNITS = ['photons/m2/s', 'photons/m2/s', 'photons/m2/s', 'photons/m2/s', 'photons/m2/s'] 
 _QUANTITIES = ['erythropic', 'chloropic','cyanopic','rhodopic','melanopic'] #irradiance, illuminance
 
-_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat', header = 'infer', kind ='np', verbosity = 0).T
-_ACTIONSPECTRA_CIETN003 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_tn003_2015_SI_action_spectra.dat', header = 'infer', kind ='np', verbosity = 0).T
+_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat', header = 'infer', verbosity = 0).T
+_ACTIONSPECTRA_CIETN003 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_tn003_2015_SI_action_spectra.dat', header = 'infer', verbosity = 0).T
 _ACTIONSPECTRA = _ACTIONSPECTRA_CIES026
 
 # Calculate correction factor for Km in standard air:

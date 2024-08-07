@@ -87,8 +87,10 @@ VECTOR FIELD & PIXEL MODEL
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import os
+import numpy as np 
+
 from luxpy import _CIE_ILLUMINANTS, spd_to_xyz, colortf
-from luxpy.utils import np, pd
+from luxpy.utils import getdata
 from .vectorshiftmodel import *
 from .pixelshiftmodel import *
 
@@ -254,7 +256,8 @@ def subsample_RFL_set(rfl, rflpath = '', samplefcn = 'rand', S = _CIE_ILLUMINANT
     """
     # Testing effects of sample set, pixel size and gamut size:
     if type(rfl) == str:
-        rfl = pd.read_csv(os.path.join(rflpath,rfl),header = None).get_values().T
+        #rfl = pd.read_csv(os.path.join(rflpath,rfl),header = None).get_values().T
+        rfl = getdata(os.path.join(rflpath,rfl),header = None).T
   
     # Calculate Jab coordinates of samples:
     xyz,xyzw = spd_to_xyz(S, cieobs = cieobs, rfl = rfl.copy(), out = 2)

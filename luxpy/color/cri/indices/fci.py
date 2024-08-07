@@ -10,9 +10,10 @@ Created on Fri Oct  2 16:37:13 2020
 
 @author: ksmet1977 at gmail.com
 """
+import numpy as np 
 
-from luxpy import math, cat, cam, spd_to_xyz, _RFL, _CIE_D65, xyz_to_Yxy, xyz_to_lab 
-from luxpy.utils import np, pd, ajoin, asplit
+from luxpy import cat, cam, spd_to_xyz, _RFL, _CIE_D65, xyz_to_lab 
+from luxpy.utils import asplit
 
 # Get RFLs and calculate fixed reference D65 XYZs for speed:
 _RFL_FCI = _RFL['cri']['fci']

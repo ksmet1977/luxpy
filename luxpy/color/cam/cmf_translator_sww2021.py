@@ -21,7 +21,7 @@ Created on Wed Apr 28 11:37:17 2021
 @author: ksmet1977 [at] gmail.com
 """
 import numpy as np
-from luxpy import xyz_to_Yuv,_RFL, _WL3, _CMF, getwlr, cie_interp, spd_to_xyz, _CIE_D65, _CIE_E, spd_normalize
+from luxpy import xyz_to_Yuv,_RFL, _WL3, _CMF, getwlr, cie_interp, spd_to_xyz, _CIE_D65, spd_normalize
 
 __all__ = ['translate', 'get_rgb_smooth_prims','_R','_G','_B','get_conversion_matrix', 'translate_cmfI_to_cmfS']
 
@@ -265,44 +265,45 @@ if __name__ == '__main__':
     plt.xlabel('Wavelengths (nm)')
     plt.ylabel('Intensity (a.u.)')
     
+    cieobs = '2006_10'
     
     # get some stimulus data:
     relative = False
     spd = _CIE_D65.copy()
     spd = cie_interp(spd,getwlr([380,780,1]))
-    spd = spd_normalize(spd,norm_type='pu', norm_f = 100, cieobs = '1964_10')
-    xyzI_10 = spd_to_xyz(spd, relative = relative, cieobs = '1964_10')
+    spd = spd_normalize(spd,norm_type='pu', norm_f = 100, cieobs = cieobs)
+    xyzI_10 = spd_to_xyz(spd, relative = relative, cieobs = cieobs)
     print('Test translator with spectral and xyz input:')
     print("    xyzI_10: ", xyzI_10)
     xyzS_2 = spd_to_xyz(spd, relative = relative, cieobs = '1931_2')
     print("    xyzS_2: ", 100*xyzS_2/xyzS_2[...,1])
     
     # translate 1964_10 to 1931_2:
-    xyzS_2_est_spd, xyzI_10_spd, Mc = translate_cmfI_to_cmfS(spd, cmfI = '1964_10', cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = relative)
+    xyzS_2_est_spd, xyzI_10_spd, Mc = translate_cmfI_to_cmfS(spd, cmfI = cieobs, cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = relative)
     print('\n    Conversion matrix, Mc: \n', Mc)
     print("\n    xyzS_2_est_spd: ", 100*xyzS_2_est_spd/xyzS_2_est_spd[...,1])
-    xyzS_2_est_xyz = translate_cmfI_to_cmfS(xyzI_10, cmfI = '1964_10', cmfS = '1931_2', data_type = 'xyz', output = 'xyzS', relative = relative)
+    xyzS_2_est_xyz = translate_cmfI_to_cmfS(xyzI_10, cmfI = cieobs, cmfS = '1931_2', data_type = 'xyz', output = 'xyzS', relative = relative)
     print("    xyzS_2_est_xyz: ", 100*xyzS_2_est_xyz/xyzS_2_est_xyz[...,1])
     
     # test None input:
-    xyzS_2_est_None, xyzI_10_None, Mc = translate_cmfI_to_cmfS(None, cmfI = '1964_10', cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = relative)
+    xyzS_2_est_None, xyzI_10_None, Mc = translate_cmfI_to_cmfS(None, cmfI = cieobs, cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = relative)
     print('\nTest translator with None input:')
     print('\n    Conversion matrix, Mc: \n', Mc)
     print("\n    xyzS_2_est_None: ",xyzS_2_est_None)
     print("    xyzI_10_spd_None: ", xyzI_10_None)
     
     # test with rfl input:
-    rfl = _RFL['cri']['ies-tm30']['4880']['5nm'].copy()
+    rfl = _RFL['cri']['ies-tm30']['4880']['1nm'].copy()
     # rfl = _RFL['munsell']['R'].copy()
     xyzS_2_rfl = spd_to_xyz(spd, relative = True, cieobs = '1931_2', rfl = rfl)
     YuvS_2_rfl = xyz_to_Yuv(xyzS_2_rfl)
-    xyzS_2_rfl_est, xyzI_10_rfl, Mc = translate_cmfI_to_cmfS(spd, cmfI = '1964_10', cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = True, rfl = rfl)
+    xyzS_2_rfl_est, xyzI_10_rfl, Mc = translate_cmfI_to_cmfS(spd, cmfI = cieobs, cmfS = '1931_2', data_type = 'spd', output = 'xyzS,xyzI,Mc', relative = True, rfl = rfl)
     YuvS_2_rfl_est = xyz_to_Yuv(xyzS_2_rfl_est)
     YuvI_10_rfl = xyz_to_Yuv(xyzI_10_rfl)
     fig, axs = plt.subplots(1,2)
     axs[0].plot(YuvS_2_rfl[...,1],YuvS_2_rfl[...,2],'r.', label = 'S: standard observer (1931 2°)')
     axs[0].plot(YuvS_2_rfl_est[...,1],YuvS_2_rfl_est[...,2],'g.', label = 'S_est: estimated standard observer (1931 2°)')
-    axs[0].plot(YuvI_10_rfl[...,1],YuvI_10_rfl[...,2],'b.', label = 'I: individual observer (1964 10°)')
+    axs[0].plot(YuvI_10_rfl[...,1],YuvI_10_rfl[...,2],'b.', label = 'I: individual observer ({:s})'.format(cieobs))
     axs[0].legend()
     axs[0].set_xlabel("u'")
     axs[0].set_ylabel("v'")

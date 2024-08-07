@@ -4,8 +4,8 @@
 
 # Python toolbox for lighting and color science
 * Author: Kevin A.G. Smet (ksmet1977 at gmail.com)
-* Version: 1.10.1
-* Date: November 24, 2023
+* Version: 1.11.0
+* Date: August 7, 2024
 * License: [GPLv3](https://github.com/ksmet1977/luxpy/blob/master/LICENSE.md)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1298963.svg)](https://doi.org/10.5281/zenodo.1298963)

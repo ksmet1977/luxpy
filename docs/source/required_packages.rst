@@ -7,7 +7,6 @@ Core
  * import pathlib
  * import importlib
  * from collections import OrderedDict as odict 
- * from mpl_toolkits.mplot3d import Axes3D 
  * import colorsys 
  * import itertools 
  * import copy
@@ -21,20 +20,22 @@ Core
  * import io
 
 
-3e party dependencies (automatic install)
+Imported 3e party dependencies :
+--------------------------------
+ * numpy (automatic install)
+ * scipy (stats, optimize, interpolate, ...)
+ 
+Lazily imported 3e party dependencies ():
 -----------------------------------------
- * import numpy as np 
- * import pandas as pd 
- * import matplotlib.pyplot as plt 
- * import scipy as sp 
- * import imageio
+ * matplotlib.pyplot (any graphic output anywhere)
+ * imageio (imread(), imsave())
+ * openpyxl (in luxpy.utils: read_excel, write_excel) 
  
 3e party dependencies (automatic install on import)
 ---------------------------------------------------
  * import pyswarms (when importing particleswarms from math)
  * import pymoo (when importing pymoo_nsga_ii from math)
  * import harfang as hg (when importing toolbox.stereoscopicviewer)
- 
  
 3e party dependencies (requiring manual install)
 ------------------------------------------------

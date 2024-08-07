@@ -2,15 +2,15 @@
 # """
 # .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 # """
-import warnings
-from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_xyz, 
-                    xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy.utils import sp,np, plt, _EPS, np2d
-from luxpy import cri 
+import numpy as np
+
+from luxpy import (math, _CIEOBS, getwlr, colortf)
+from luxpy.utils import np2d
+
 from luxpy.math.particleswarm import particleswarm
 from luxpy.toolboxes.spdbuild.spdbuilder2020 import (_get_default_prim_parameters, _parse_bnds, 
-                              gaussian_prim_constructor, gaussian_prim_parameter_types,
-                              _extract_prim_optimization_parameters, _setup_wlr, _triangle_mixer)
+                              gaussian_prim_constructor, _extract_prim_optimization_parameters, 
+                              _setup_wlr, _triangle_mixer)
 
 __all__ = ['PrimConstructor','Minimizer','ObjFcns','SpectralOptimizer']
 
@@ -222,7 +222,7 @@ class Minimizer():
                 | None, optional
                 | Dict with minimization options. 
                 | None defaults to the options depending on choice of method
-                |  - 'Nelder-Mead'   : {'xtol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
+                |  - 'Nelder-Mead'   : {'xatol': 1e-5, 'disp': True, 'maxiter': 1000*Nc,
                 |                       'maxfev' : 1000*Nc,'fatol': 0.01}
                 |  - 'particleswarm' : {'iters': 100, 'n_particles': 10, 'ftol': -np.inf,
                 |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
@@ -286,7 +286,7 @@ class Minimizer():
                 self.opts = math.DEMO.init_options(display = display)
             elif (self.method == 'Nelder-Mead'):
                 npar = 10 if x0 is None else x0[0].size
-                self.opts = {'xtol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
+                self.opts = {'xatol': 1e-5, 'disp': display, 'maxiter' : 1000*npar, 'maxfev' : 1000*npar,'fatol': 0.01}
             else:
                 if not isinstance(self.method, str):
                     self.opts = {'type':'user-defined, specified as part of opt. function definition'}
@@ -538,7 +538,12 @@ class SpectralOptimizer():
                 else:
                     self.free_pars_bnds[pt+'_bnds'] = None
             self.free_pars = []
-                
+          
+    def _get_n_triangle_strengths(self):
+        """ Get number of triangle strengths"""
+        from scipy.special import factorial # lazy import
+        n_triangle_strengths = int(factorial(self.nprim)/(factorial(self.nprim-3)*factorial(3)))
+        return n_triangle_strengths
             
     def _update_triangle_strengths_bnds(self, nprim = None, triangle_strengths_bnds = None):
         """
@@ -546,7 +551,7 @@ class SpectralOptimizer():
         """
         if nprim is not None: self.nprim = nprim
         if self.optimizer_type == '3mixer':
-            self.n_triangle_strengths = int(sp.special.factorial(self.nprim)/(sp.special.factorial(self.nprim-3)*sp.special.factorial(3)))
+            self.n_triangle_strengths = self._get_n_triangle_strengths()
             self.triangle_strengths_bnds = _parse_bnds(triangle_strengths_bnds, self.n_triangle_strengths, min_ = 0, max_ = 1)
             
         elif self.optimizer_type == 'no-mixer': # use triangle_strengths to store info on primary strengths in case of 'no-mixer'

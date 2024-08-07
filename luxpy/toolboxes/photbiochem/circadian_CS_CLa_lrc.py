@@ -86,17 +86,18 @@ Also see notes in doc_string of spd_to_CS_CLa_lrc()
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-from luxpy import _CIE_ILLUMINANTS, getwld, cie_interp, _IESTM3015, blackbody, spd_to_power
-from luxpy.utils import np, _PKG_PATH, _SEP, getdata
-from scipy import integrate
+import numpy as np 
+
+from luxpy import _CIE_ILLUMINANTS, getwld, cie_interp
+from luxpy.utils import _PKG_PATH, _SEP, getdata
 
 __all__=['_LRC_CLA_CS_CONST','spd_to_CS_CLa_lrc','CLa_to_CS']
 
 # Get 2012 efficiency functions (originally from excel calculator):
-_LRC_CLA_CS_EFF_FCN_2012 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'LRC2012_CS_CLa_efficiency_functions.dat', header = 'infer', kind ='np', verbosity = 0).T
+_LRC_CLA_CS_EFF_FCN_2012 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'LRC2012_CS_CLa_efficiency_functions.dat', header = 'infer', verbosity = 0).T
 
 # Get 2021 efficiency functions (original data from github repository, and pre-generated using LRC2021_CS_CLa_efficiency_functions.py):
-_LRC_CLA_CS_EFF_FCN_2021 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'LRC2021_CS_CLa_efficiency_functions.dat', header = 'infer', kind ='np', verbosity = 0).T
+_LRC_CLA_CS_EFF_FCN_2021 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'LRC2021_CS_CLa_efficiency_functions.dat', header = 'infer', verbosity = 0).T
 
 
 _LRC_CLA_CS_CONST = {'CLa_2012' : {'Norm' : 1622, 'k': 0.2616, 'a_b_y':0.6201, 'a_rod' : 3.2347, 'RodSat' : 6.52,\
@@ -463,6 +464,7 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
     Elv = El[1:].copy()
       
     # define integral function:
+    # from scipy import integrate # lazy import
     # integral = lambda x: integrate.trapz(x, x = wl, axis = -1) 
     integral = lambda x: np.sum(x,  axis = -1) 
     
@@ -500,15 +502,16 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
 
         
 if __name__ == '__main__':
-    import pandas as pd
+
+    import luxpy as lx
     
     E = 1000
     El = _CIE_ILLUMINANTS['A'].copy() 
     El = El[:,(El[0]>=380) & (El[0]<=730) & ((El[0]%2)==0)]
     # El = El[:,(El[0]>=380) & (El[0]<=730)]# & ((El[0]%2)==0)]
     
-    # Ela = pd.read_csv('./data/Aa.dat',header=None).values.T
-    # Elr = pd.read_csv('./data/Ar.dat',header=None).values.T
+    # Ela = lx.utils.loadtxt('./data/Aa.dat',header=None).T
+    # Elr = lx.utils.loadtxt('./data/Ar.dat',header=None).T
     # El = np.vstack((Ela,Elr[1:]))
     
     CS, CLa = spd_to_CS_CLa_lrc(El = El, E = E, version = 'CLa1.0',\

@@ -27,9 +27,10 @@ References:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
 from luxpy import xyz_to_Yuv
-from luxpy.utils import np
+
 
 __all__ =['xyz_to_cct_ohno2011']
 
