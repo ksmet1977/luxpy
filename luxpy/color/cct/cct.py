@@ -116,17 +116,14 @@ cct: Module with functions related to correlated color temperature calculations
 
 import os
 import copy 
-import matplotlib.pyplot as plt
 import numpy as np
-from scipy.optimize import minimize
 
 # load some methods already programmed in luxpy:
 from luxpy import (math, _BB, _WL3, _CIEOBS, _CMF, 
                    cie_interp, spd_to_xyz, 
                    getwlr, getwld,
                    xyz_to_Yxy, Yxy_to_xyz, xyz_to_Yuv60, Yuv60_to_xyz, 
-                   xyz_to_Yuv, Yuv_to_xyz, cri_ref, 
-                   )
+                   xyz_to_Yuv, Yuv_to_xyz)
 from luxpy.utils import _PKG_PATH, _SEP, np2d, np2dT, getdata, save_pkl, load_pkl
 from luxpy.color.ctf.colortf import colortf
 
@@ -1452,10 +1449,12 @@ def _lut_to_float64(luts):
 
 def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
     """ Download lut(s) from the luxpy github repo """
-    import requests 
-    import pickle
-    import gzip
-    from io import BytesIO
+    
+    import requests # lazy import
+    import pickle # lazy import
+    import gzip # lazy import
+    from io import BytesIO # lazy import
+    
     if modes is None: modes = _CCT_LIST_OF_MODE_LUTS
     for mode in modes:
         if _CCT_PKL_COMPRESSLEVEL == 0: 
@@ -1468,7 +1467,6 @@ def _download_luts_from_github(modes = None, url = _CCT_LUT_PATH_LX_REPO):
                 lut = pickle.load(fobj)
             save_pkl(os.path.join(_CCT_LUT_PATH,mode+'_luts.pkl'), lut, compresslevel = _CCT_PKL_COMPRESSLEVEL)
 
-            
         
 def _initialize_lut(mode, lut_types, force_calc = _CCT_LUT_CALC, wl = None, lut_generator_kwargs = {}):
     """ Pre-generate / load from disk / download from github some LUTs for a specific mode """
@@ -1550,6 +1548,7 @@ def _get_Duv_for_T(u,v, T, wl, cieobs, cspace_dict, uvwbar = None, dl = None,
 #     Make a plot of the geometry of the test (u,v) and the
 #     3 points i-1, i, i+1. Helps for testing and understanding coded algorithms.
 #     """
+#     import matplotlib.pyplot as plt # lazy import
 #     import luxpy as lx
     
 #     plt.plot(u,v,'ro')
@@ -2147,7 +2146,7 @@ def _get_cascading_lut_Tx(mode, u, v, lut, lut_n_cols, lut_char, lut_resolution_
         
         # needed to get correct columns from updated lut_i:
         N = lut_i.shape[-1]//lut_n_cols
-        ns = lut_n_cols #np.arange(0,N*lut_n_cols,lut_n_cols,dtype=np.int32)
+        ns = lut_n_cols #np.arange(0,N*lut_n_cols,lut_n_cols,dtype= np.int32)
 
         # get Tx estimate, out_of_lut boolean array, and (TBB_m1, TBB_p1 or equivalent):
         if ((Tx is None) & (out_of_lut is None) & (TBB_l is None) & (TBB_r is None)) | (cascade_i > 0):
@@ -3018,11 +3017,13 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
     # setup and run optimization:    
     x0 = np.array([1])
     options = {'maxiter': 1e3, 'maxfev': 1e3,  'xatol': 1e-6, 'fatol': 1e-6}
+    from scipy.optimize import minimize # lazy import
     res = minimize(optfcn, x0, args = (T,Duv,'F'),method = 'Nelder-Mead', options = options)
     f_corr = np.round(res['x'][0],rr)
     F, dT2, dDuv2, Tx, Duvx = optfcn(res['x'], T, Duv, out = 'F,dT2,dDuv2,Tx,Duvx')
     
     if verbosity > 1: 
+        import matplotlib.pyplot as plt # lazy import
         fig,ax = plt.subplots(1,2,figsize=(10,5))
         ax[0].plot(T,dT2**0.5,'.')
         ax[0].set_title('dT (f_corr = {:1.5f})'.format(f_corr))
@@ -3452,11 +3453,13 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
     # setup and run optimization:    
     x0 = np.array([1])
     options = {'maxiter': 1e3, 'maxfev': 1e3,  'xatol': 1e-6, 'fatol': 1e-6}
+    from scipy.optimize import minimize # lazy import
     res = minimize(optfcn, x0, args = (T,Duv,'F'),method = 'Nelder-Mead', options = options)
     f_corr = np.round(res['x'][0],rr)
     F, dT2, dDuv2, Tx, Duvx = optfcn(res['x'], T, Duv, out = 'F,dT2,dDuv2,Tx,Duvx')
     
     if verbosity > 1: 
+        import matplotlib.pyplot as plt # lazy import
         fig,ax = plt.subplots(1,2,figsize=(10,5))
         ax[0].plot(T,dT2**0.5,'.')
         ax[0].set_title('dT (f_corr = {:1.5f})'.format(f_corr))
@@ -4511,7 +4514,7 @@ def cct_to_mired(data):
 if __name__ == '__main__':
            
     import luxpy as lx 
-    import pandas as pd
+    import matplotlib.pyplot as plt # lazy import
     
     cieobs = '1931_2'
     
@@ -4539,8 +4542,8 @@ if __name__ == '__main__':
     cctsduvs_t = np.hstack((ccts,duvs))
 
     # # Test 4 (from disk): 'ref_cct_duv_1500-40000K.csv' or 'test_rob_error.csv'
-    # # cctsduvs_t = pd.read_csv('test_rob_error.csv',header=None,index_col=None).values
-    # cctsduvs_t = pd.read_csv('ref_cct_duv_1500-40000K.csv',header='infer',index_col=None).values
+    # # cctsduvs_t = lx.utils.loadtxt('test_rob_error.csv',header=None)
+    # cctsduvs_t = lx.utils.loadtxt('ref_cct_duv_1500-40000K.csv',header='infer')
     # cctsduvs_t = cctsduvs_t[cctsduvs_t[:,0] <= 40000,:2]
     # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,0] >= 2000) & (cctsduvs_t[:,0] <= 20000),:2]
     # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,1] >= -0.03) & (cctsduvs_t[:,1] <= 0.03),:2]

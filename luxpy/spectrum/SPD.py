@@ -72,9 +72,10 @@ SPD methods
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
 from luxpy import _CIEOBS, spd_to_xyz, cie_interp, getwld, spd_normalize, plot_spectrum_colors
-from luxpy.utils import np, pd, plt
+from luxpy.utils import getdata
 from luxpy.color.CDATA import XYZ 
 
 class SPD:
@@ -192,7 +193,8 @@ class SPD:
             Spectral data in file should be organized in columns with the first
             column containing  the wavelengths.
         """
-        return pd.read_csv(file, names = None, index_col = None, header = header, sep = sep).values.T
+        #return pd.read_csv(file, names = None, index_col = None, header = header, sep = sep).values.T
+        return getdata(file, header = header, sep = sep).T
 
     def plot(self, ylabel = 'Spectrum', wavelength_bar = True, *args,**kwargs):
         """
@@ -202,6 +204,7 @@ class SPD:
             :returns:
                 | handle to current axes.
         """
+        import matplotlib.pyplot as plt # lazy import
         plt.plot(self.wl, self.value.T, *args,**kwargs)
         if wavelength_bar == True:
             Smax = np.nanmax(self.value)
@@ -350,7 +353,7 @@ class SPD:
                 |       (The use of the slow(er) 'sprague5' can be toggled on using :sprague5_allowed:).
                 | If kind = 'auto': use self.dtype
                 | Or :kind: can be any interpolation type supported by 
-                |     scipy.interpolate.interp1d (luxpy.math.interp1 if nan's are present!!)
+                |     luxpy.math.interp1
                 |     or can be 'sprague5' (uses luxpy.math.interp1_sprague5). 
             :sprague5_allowed:
                 | False, optional

@@ -16,10 +16,10 @@ Created on Mon Sep 28 16:34:14 2020
 
 
 import copy
+import numpy as np
 
 from luxpy import (math, spd_to_xyz, xyz_to_cct, getwld, getwlr, _CMF, blackbody, daylightphase, 
-                   _CRI_RFL, _CRI_REF_TYPES, _CRI_REF_TYPE,_CIEOBS, xyzbar, cie_interp)
-from luxpy.utils import np, plt
+                   _CRI_RFL, _CRI_REF_TYPES, cie_interp)
 from luxpy.color.cri.utils.DE_scalers import log_scale
 from luxpy.color.cri.utils.helpers import _get_hue_bin_data 
 
@@ -37,8 +37,6 @@ _CMF_ = copy.deepcopy(_CMF)
 for cmf_str in _CMF_['types']:
     _CMF_[cmf_str]['bar'] = cie_interp(_CMF[cmf_str]['bar'],wl_new = _WL3, kind = 'cmf')
 
-
-
 def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
             cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
             daylight_locus = None):
@@ -48,7 +46,7 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     """   
     if mix_range is None:
         mix_range =  _CRI_REF_TYPES[ref_type]['mix_range']
-
+        
     if (cct < mix_range[0]) | (ref_type == 'BB'):
         return blackbody(cct, wl3, n = n)
     elif (cct > mix_range[1]) | (ref_type == 'DL'):
@@ -56,8 +54,6 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     else:
         SrBB = blackbody(cct, wl3, n = n)
         SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
-        if cieobs_Y_normalization is None: cieobs_Y_normalization = cieobs 
-        if cieobs_Y_normalization is None: cieobs_Y_normalization = '1931_2'
         cmf = _CMF_[cieobs_Y_normalization]['bar'] if isinstance(cieobs_Y_normalization,str) else cieobs_Y_normalization 
         wl = SrBB[0]
         ld = getwld(wl)
@@ -374,6 +370,7 @@ def spd_to_tm30(St):
 if __name__ == '__main__':
     
     import luxpy as lx
+    import matplotlib.pyplot as plt 
     
     #------------------------------------------------------------------------------
     # For comparison
@@ -393,7 +390,7 @@ if __name__ == '__main__':
         return data
     
     spds = lx._IESTM3018['S']['data'].copy()
-    spds = lx.cie_interp(spds,wl_new = _WL,kind='spd')
+    # spds = lx.cie_interp(spds,wl_new = _WL,kind='spd')
     spds = spds[:202,:]
     data = spd_to_tm30(spds[[0,104],:])
     # data = spd_to_tm30(lx._CIE_F4)

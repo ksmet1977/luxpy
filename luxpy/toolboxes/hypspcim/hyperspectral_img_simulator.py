@@ -25,13 +25,13 @@ Module for hyper spectral image simulation
      
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
-from luxpy import (cat, colortf, _CIEOBS, _CIE_ILLUMINANTS, _CRI_RFL, _CIE_D65,_CIE_E,
+from luxpy import (cat, colortf, _CIEOBS, _CIE_ILLUMINANTS, _CRI_RFL, _CIE_E,
                    spd_to_xyz, plot_color_data, math, cie_interp, getwlr, xyz_to_srgb)
-from luxpy.utils import np, plt, sp, _PKG_PATH, _SEP, _EPS 
+from luxpy.utils import _PKG_PATH, _SEP, _EPS, imread, imsave
 
 import warnings
-from imageio import imsave
 
 __all__ =['_HYPSPCIM_PATH','_HYPSPCIM_DEFAULT_IMAGE','render_image','xyz_to_rfl',
           'get_superresolution_hsi','hsi_to_rgb','rfl_to_rgb','_CSF_NIKON_D700']             
@@ -149,12 +149,13 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
         lab = np.round(lab,csf_based_rgb_rounding) # speed up search
     
     
+    import scipy # lazy import
     
     if interp_type == 'nearest':
         # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
         # color coordinates for each value in lab_ur (i.e. smallest DE):
         # Construct cKDTree:
-        tree = sp.spatial.cKDTree(lab_rr, copy_data = True)
+        tree = scipy.spatial.cKDTree(lab_rr, copy_data = True)
         
         # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
         d, inds = tree.query(lab, k = k_neighbours )
@@ -176,7 +177,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
             # Find rfl (cfr. lab_rr) from rfl set that results in 'near' metameric 
             # color coordinates for each value in lab_ur (i.e. smallest DE):
             # Construct cKDTree:
-            tree = sp.spatial.cKDTree(lab_rr, copy_data = True)
+            tree = scipy.spatial.cKDTree(lab_rr, copy_data = True)
 
             # Interpolate rfls using k nearest neightbours and inverse distance weigthing:
             d, inds = tree.query(lab[_isnan,...], k = k_neighbours_nd)
@@ -223,6 +224,7 @@ def xyz_to_rfl(xyz, CSF = None, rfl = None, out = 'rfl_est', \
             n = 100 #min(rfl.shape[0]-1,rfl_est.shape[0]-1)
             s = np.random.permutation(rfl.shape[0]-1)[:min(n,rfl.shape[0]-1)]
             st = np.random.permutation(rfl_est.shape[0]-1)[:min(n,rfl_est.shape[0]-1)]
+            import matplotlib.pyplot as plt # lazy import
             fig = plt.figure()
             ax = np.zeros((3,),dtype=np.object)
             ax[0] = fig.add_subplot(131)
@@ -336,13 +338,12 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
     """
     
     # Get image:
-    #imread = lambda x: plt.imread(x) #matplotlib.pyplot
    
     if img is not None:
         if isinstance(img,str):
-            img = plt.imread(img).copy() # use matplotlib.pyplot's imread
+            img = imread(img).copy() # use matplotlib.pyplot's imread
     else:
-        img = plt.imread(_HYPSPCIM_DEFAULT_IMAGE).copy()
+        img = imread(_HYPSPCIM_DEFAULT_IMAGE).copy()
     
     if img.dtype == np.uint8: 
         img = img/255
@@ -461,6 +462,8 @@ def render_image(img = None, spd = None, rfl = None, out = 'img_hyp', \
             
     if show == True:
         # show images using pyplot.show():
+            
+        import matplotlib.pyplot as plt # lazy import
         plt.figure()
         
         plt.imshow(img_original_rendered)
@@ -643,6 +646,9 @@ def get_superresolution_hsi(lrhsi, hrci, CSF, wl = [380,780,1], csf_based_rgb_ro
     return hrhsi
 
 if __name__ == '__main__':
+    
+    import matplotlib.pyplot as plt # lazy import
+    
     
     #--------------------------------------------------------------------------
     # Example / test code for HSI simulation and rendering:

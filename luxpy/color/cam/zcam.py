@@ -45,10 +45,10 @@ Created on Wed Sep 30 21:58:11 2020
 
 @author: ksmet1977 at gmail.com
 """
+import numpy as np
 
-
-from luxpy import math, _CIEOBS, _CIE_D65, spd_to_xyz
-from luxpy.utils import np, np2d, asplit, ajoin
+from luxpy import _CIEOBS, _CIE_D65, spd_to_xyz
+from luxpy.utils import np2d, ajoin
 from luxpy import cat
 from luxpy.color.cam.utils import hue_angle, hue_quadrature
 
@@ -666,8 +666,10 @@ if __name__ == '__main__':
     
     _cam = run
     
+    import matplotlib.pyplot as plt 
+    import numpy as np
+    
     import luxpy as lx
-    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()
@@ -706,7 +708,6 @@ if __name__ == '__main__':
     Ill2M = Ill2M[:(n+1),:,:]
     
     # Module output plot:
-    import matplotlib.pyplot as plt
     # _cam_o = lambda xyz, xyzw, forward: lx.xyz_to_jabz(xyz)
     xyz, xyzw = lx.spd_to_xyz(Ill1, cieobs = cieobs, relative = True, rfl = rflM, out = 2)
     jabch = _cam(xyz, xyzw = xyzw, forward = True, outin = 'J,aM,bM')
@@ -779,7 +780,7 @@ if __name__ == '__main__':
     
    
     import luxpy as lx
-    from luxpy.utils import np, plt
+    import matplotlib.pyplot as plt
 
     np.set_printoptions(formatter={'float_kind':"{:.6f}".format})
 

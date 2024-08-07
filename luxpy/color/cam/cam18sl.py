@@ -23,8 +23,10 @@ Module with CAM18sl color appearance model
                Journal of the Optical Society of America A, 35(12), 2000–2009. 
                <https://doi.org/10.1364/JOSAA.35.002000>`_
 """
-from luxpy import  _CMF, _CIE_ILLUMINANTS, _MUNSELL,  spd_to_xyz, cie_interp, getwlr, _WL3
-from luxpy.utils import np, np2d, np2dT, asplit, ajoin
+import numpy as np
+
+from luxpy import  _CMF, _CIE_ILLUMINANTS, _MUNSELL,  spd_to_xyz, cie_interp, getwlr
+from luxpy.utils import np2d, np2dT, asplit, ajoin
 from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature, naka_rushton
 
 _CAM18SL_WL3 = [390,830,1]

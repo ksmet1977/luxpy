@@ -24,8 +24,10 @@ Reference
     <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
 
 """
+import numpy as np 
+
 from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, colortf, xyz_to_ipt, xyz_to_cct
-from luxpy.utils import np, np2d, asplit
+from luxpy.utils import np2d, asplit
 from ..utils.DE_scalers import psy_scale
 from ..utils.helpers import _get_hue_bin_data, _hue_bin_data_to_rg
 
@@ -105,7 +107,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None,
     SPD = np2d(SPD)
     
     if wl is not None: 
-        SPD = spd(data = SPD, interpolation = _S_INTERP_TYPE, kind = 'np', wl = wl)
+        SPD = spd(data = SPD, interpolation = _S_INTERP_TYPE, wl = wl)
     
     
     # unpack metric default values:

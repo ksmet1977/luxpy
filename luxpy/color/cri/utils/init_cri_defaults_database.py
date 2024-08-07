@@ -25,8 +25,10 @@ Module with color fidelity and color gamut area parameter dicts
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import copy
-from luxpy import math
-from luxpy.utils import np, put_args_in_db
+import numpy as np
+
+from luxpy import math, _CRI_RFL
+from luxpy.utils import put_args_in_db
 from .DE_scalers import linear_scale, log_scale, psy_scale
 
 __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
@@ -57,6 +59,7 @@ _CRI_DEFAULTS['ciera-14'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
 _CRI_DEFAULTS['ciera-14']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['14']"
 _CRI_DEFAULTS['ciera-15'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995']) # R15 is J-Z-8726 sample (asian skin)
 _CRI_DEFAULTS['ciera-15']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['15']"
+
 
 
 _CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 

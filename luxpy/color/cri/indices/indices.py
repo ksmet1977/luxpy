@@ -160,9 +160,9 @@ indices/thorntoncpi.py
 
 from luxpy import _CRI_RFL
 
-from ..utils.DE_scalers import linear_scale, log_scale, psy_scale
+#from ..utils.DE_scalers import linear_scale, log_scale, psy_scale
 
-from ..utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
+from ..utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS
 
 from ..utils.helpers import (_get_hue_bin_data, spd_to_jab_t_r, spd_to_rg,
                             spd_to_DEi, optimize_scale_factor, spd_to_cri,

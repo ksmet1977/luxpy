@@ -49,10 +49,12 @@ Module with color rendition, fidelity and gamut area helper functions
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import copy
-from luxpy import (_S_INTERP_TYPE, _CRI_RFL, _IESTM3015, math, cam, cat,
-                   spd, colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct)
-from luxpy.utils import np, sp,plt,asplit, np2d, put_args_in_db 
-from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale
+import numpy as np
+
+from luxpy import (_S_INTERP_TYPE, _IESTM3015, math, cam, cat, _CRI_RFL,
+                   colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct)
+from luxpy.utils import np2d 
+#from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale
 
 from luxpy.color.cri.utils.init_cri_defaults_database import _CRI_TYPE_DEFAULT, _CRI_DEFAULTS, process_cri_type_input
 
@@ -61,6 +63,7 @@ __all__ = ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi',
            '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
 
 _CCT_MODE = 'ohno2014'
+
 #------------------------------------------------------------------------------
 def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100):
     """ Helper function to return dict with required keys when nhbins = None in call to _get_hue_bin_data"""
@@ -257,6 +260,7 @@ def _get_hue_bin_data(jabt, jabr, start_hue = 0, nhbins = 16,
     jabtn[...,2] = (Ctn*np.sin(ht))
     jabrn[...,1] = (Crn*np.cos(hr))
     jabrn[...,2] = (Crn*np.sin(hr))
+    # import matplotlib.pyplot as plt # lazy import
     # plt.plot(jabtn[:,0,1],jabtn[:,0,2],'b+')
     # plt.plot(jabrn[:,0,1],jabrn[:,0,2],'rx')
     # plt.plot(jabtn_hj[:,0,1],jabtn_hj[:,0,2],'bo-')
@@ -664,7 +668,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     #Override input parameters with data specified in cri_type:
     args = copy.deepcopy(locals()) # get dict with keyword input arguments to function (used to overwrite non-None input arguments present in cri_type dict)
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
-
+    
     # unpack and update dict with parameters:
     (avg, catf, cieobs,
      cri_specific_pars, cspace, 
@@ -914,6 +918,7 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_av
     """
 
     if np.any(opt_scale_factor):
+        
         if 'opt_cri_type' not in cri_type['scale'].keys(): 
             opt_cri_type = _CRI_DEFAULTS['ciera'] # use CIE Ra-13.3-1995 as target
         else:
@@ -979,7 +984,8 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_av
             else: 
                 optfcn = lambda x : math.rms(avg(avg(np.round(scale_fcn(DEa,np.hstack( (x,sf[np.invert(opt_scale_factor)]) )),0))) - Rf_opt,axis=1) # optimize first N 'True' cfactor (for scale_factor input of len = n>=N)
         
-        optresult = sp.optimize.minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
+        from scipy.optimize import minimize # lazy import
+        optresult = minimize(fun = optfcn, x0 = x0, args=(), method = 'Nelder-Mead')
         scale_factor = optresult['x']
 
         #Reconstruct 'scale_factor' from optimized and fixed parts:

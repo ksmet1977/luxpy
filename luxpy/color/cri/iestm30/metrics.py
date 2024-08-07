@@ -28,10 +28,9 @@ Extension module for IES TM30 metric calculation with additional Vector Field su
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import copy
+import numpy as np
+
 from luxpy import _CRI_RFL
-from luxpy.utils import np
-
-
 from luxpy.color.cri.utils.helpers import (_get_hue_bin_data, 
                                             _hue_bin_data_to_rxhj, 
                                             _hue_bin_data_to_rfi,

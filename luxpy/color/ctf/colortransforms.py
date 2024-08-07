@@ -69,9 +69,10 @@ References
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
-from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, _CSPACE, math, spd_to_xyz, cie_interp
-from luxpy.utils import np, np2d, np2dT, np3d, todim, asplit, ajoin
+from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, math, spd_to_xyz , cie_interp
+from luxpy.utils import np2d, np3d, todim, asplit
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_Yuv76','Yuv76_to_xyz', 'xyz_to_Yuv60','Yuv60_to_xyz',

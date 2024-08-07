@@ -37,9 +37,9 @@ References:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
-from luxpy import (math, Yxy_to_xyz, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-from luxpy.utils import sp, np, plt
+from luxpy import (plotSL, plotellipse)
 from .macadamellipses import get_macadam_ellipse
 from .brown1957ellipses import get_brown1957_ellipse
 from .frieleellipses import (get_gij_fmc, get_fmc_discrimination_ellipse)
@@ -170,12 +170,15 @@ def discrimination_hotelling_t2(Yxy1, Yxy2, etype = 'fmc2', ellipsoid = True, Y1
     #T2 = np.atleast_2d(T2).T
     
     # Get p-value:
-    p = sp.stats.distributions.chi2.sf(T2, df)
+    from scipy import stats # lazy import
+    p = stats.distributions.chi2.sf(T2, df)
     
     return p, T2
     
     
 if __name__ == '__main__':
+    import matplotlib.pyplot as plt 
+    
     Yxy1 = np.array([[100,1/3,1/3]])
     Yxy2 = np.array([[100,1/3, 1/3],[50,1/3,1/3]])
     gij_11 = get_gij_fmc(Yxy1,etype = 'fmc1', ellipsoid=False)

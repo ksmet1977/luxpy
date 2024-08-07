@@ -75,10 +75,12 @@ References
 """
 import itertools
 import warnings
+import numpy as np
+
 from luxpy import (math, _WL3, _CIEOBS, getwlr, SPD, spd_to_power,
                    spd_to_xyz, xyz_to_Yxy, colortf, xyz_to_cct)
-from luxpy.utils import np, plt, _EPS, np2d, vec_to_dict
-from luxpy import cri 
+from luxpy.utils import _EPS, np2d, vec_to_dict
+
 
 #np.set_printoptions(formatter={'float': lambda x: "{0:0.2e}".format(x)})
 
@@ -552,6 +554,7 @@ def phosphor_led_spd(peakwl = 450, fwhm = 20, wl = _WL3, bw_order = -1, with_wl 
     component_spds = component_spds/component_spds.max(axis=1,keepdims=True)
 
     if verbosity > 0:
+        import matplotlib.pyplot as plt # lazy import
         mono_led_str = 'Mono_led_1'
         ph1_str = 'Phosphor_1'
         ph2_str = 'Phosphor_2'
@@ -734,6 +737,7 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
         Yxyi = xyz_to_Yxy(xyzi) #input for color3mixer is Yxy
         
 #        if verbosity > 0:
+#            import matplotlib.pyplot as plt # lazy import
 #            plt.figure()
 #            plt.plot(Yxyt[0,1],Yxyt[0,2],'k+')
 #            plt.plot(Yxyi[:N,1],Yxyi[:N,2],'bd')
@@ -773,6 +777,8 @@ def spd_builder(flux = None, component_spds = None, peakwl = 450, fwhm = 20, bw_
                 warnings.warn("spd_builder(): At least one solution is out of gamut. Check for NaN's in spd.")
 
     if verbosity > 0:
+        import matplotlib.pyplot as plt # lazy import 
+        
         if target is None:
             component_spds_plot = component_spds.T.copy()
         else:
@@ -2270,6 +2276,10 @@ def spd_optimizer(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cieobs = _CIEO
         return eval(out)
     
 if __name__ == '__main__':
+    
+    import matplotlib.pyplot as plt # lazy import
+    from luxpy import cri
+    
     print('3: spd_optimizer() with free peakwl and fwhm:')
     cieobs='1931_2'
     cspace_bwtf = {'cieobs':cieobs}

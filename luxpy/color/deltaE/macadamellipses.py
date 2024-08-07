@@ -26,9 +26,11 @@ References:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np 
 
-from luxpy import (math, plotSL, plot_chromaticity_diagram_colors, plotellipse)
-from luxpy.utils import np, sp, plt, _EPS
+from luxpy import (math, plotSL, plotellipse)
+from luxpy.utils import _EPS
+
 eps = _EPS/10.0
 
 __all__ = ['get_macadam_ellipse']
@@ -108,7 +110,8 @@ def get_macadam_ellipse(xy = None, k_neighbours = 3, nsteps = 10, average_cik = 
             cik_long = np.hstack((cik[:,0,:],cik[:,1,:]))
         
         # Calculate k_neighbours closest ellipses to xy:
-        tree = sp.spatial.cKDTree(v_mac[:,2:4], copy_data = True)
+        import scipy # lazy import
+        tree = scipy.spatial.cKDTree(v_mac[:,2:4], copy_data = True)
         d, inds = tree.query(xy, k = k_neighbours)
     
         if k_neighbours  > 1:

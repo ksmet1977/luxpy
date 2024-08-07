@@ -55,7 +55,9 @@ Module for demo_opt
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 
-from luxpy.utils import np, plt, Axes3D, put_args_in_db, getdata
+import numpy as np
+
+from luxpy.utils import put_args_in_db
 
 if __name__ == '__main__':
     np.set_printoptions(formatter={'float': lambda x: "{0:0.4f}".format(x)})
@@ -134,6 +136,7 @@ def demo_opt(f, dimensions, args = (), xrange = None, options = {}):
            P['f'][P['f']>1e308] = np.nan
            if (options['plot'] == True):
                if (k == 0) & (m < 4):
+                   import matplotlib.pyplot as plt # lazy import
                    fig = plt.gcf()
                    fig.show()
                    fig.canvas.draw()

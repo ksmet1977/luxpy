@@ -9,9 +9,9 @@ Created on Fri Oct  2 20:33:31 2020
 
 @author: ksmet1977 at gmail.com
 """
+import numpy as np 
 
-from luxpy import math, cat, spd_to_xyz, _CIE_D65, _RFL, xyz_to_Yuv
-from luxpy.utils import np, pd, ajoin
+from luxpy import _RFL
 from luxpy.color.cri.utils.helpers import spd_to_jab_t_r
 
 _RFL_CPI = _RFL['cri']['cie-13.3-1995']['8']

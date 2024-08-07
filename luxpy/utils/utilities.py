@@ -41,8 +41,7 @@ Module with utility functions and parameters
 
  :vec_to_dict(): Convert dict to vec and vice versa.
 
- :getdata(): Get data from csv-file or convert between pandas dataframe
-             and numpy 2d-array.
+ :getdata(): Get data from csv-file.
 
  :dictkv(): Easy input of of keys and values into dict 
             (both should be iterable lists).
@@ -65,9 +64,9 @@ Module with utility functions and parameters
            with shape of another array.
            
  :read_excel(): Read data from a specific Sheet and Cell_Range of an existing an Excel file.
-          
+           
  :write_excel(): Write an ndarray into specific Sheet and Cell_Range of an (existing) Excel file.
-            
+ 
  :show_luxpy_tree(): Show luxpy folder structure
  
  :is_importable(): Check if a module is importable / loaded and if it doesn't exist installing it using subprocess
@@ -86,7 +85,8 @@ Module with utility functions and parameters
  
  :imsave(): save image file using imageio
  
-  
+ :lazy_import(): for lazy importing of a module
+ 
 ===============================================================================
 """
 #------------------------------------------------------------------------------
@@ -95,7 +95,9 @@ Module with utility functions and parameters
 import os
 import warnings
 import subprocess
+import sys
 import importlib
+import importlib.util
 import time
 import cProfile
 import pstats
@@ -103,17 +105,15 @@ import io
 import pickle
 import gzip
 from collections import OrderedDict as odict
-from mpl_toolkits.mplot3d import Axes3D
-__all__ = ['odict','Axes3D']
+__all__ = ['odict']
 
 # other:
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import scipy as sp
+# import matplotlib.pyplot as plt # have become lazy imports 
+# import scipy as sp # have become lazy imports 
 
-__all__ += ['np','pd','plt','sp']
-
+# import lazy_loader as lazy
+# __all__ += ['lazy']
 
 #------------------------------------------------------------------------------
 # os related utility parameters:
@@ -131,17 +131,23 @@ __all__+=['_EPS']
 
 #------------------------------------------------------------------------------
 from .folder_tree import tree
-__all__ += ['np2d','np3d','np2dT','np3dT',
-           'put_args_in_db','vec_to_dict',
-           'loadtxt','savetxt', 'getdata',
-           'dictkv','OD','meshblock','asplit','ajoin',
-           'broadcast_shape','todim','read_excel','write_excel','show_luxpy_tree',
-           'is_importable','get_function_kwargs','profile_fcn','unique',
-           'save_pkl', 'load_pkl','imread','imsave']
+__all__ += ['get_Axes3D_module',
+            'np2d','np3d','np2dT','np3dT',
+            'put_args_in_db','vec_to_dict',
+            'loadtxt', 'savetxt','getdata',
+            'dictkv','OD','meshblock','asplit','ajoin',
+            'broadcast_shape','todim','read_excel', 'write_excel',
+            'show_luxpy_tree', 'is_importable','get_function_kwargs',
+            'profile_fcn','unique',
+            'save_pkl', 'load_pkl','imread','imsave', 'lazy_import']
 
 ##############################################################################
 # Start function definitions
 ##############################################################################
+def get_Axes3D_module():
+    """ Get Axes3D module from mpl_toolkits.mplot3d """
+    from mpl_toolkits.mplot3d import Axes3D # lazy import
+    return Axes3D
 
 #------------------------------------------------------------------------------
 def np2d(data):
@@ -406,22 +412,21 @@ def savetxt(filename, X, header = None, sep = ',', fmt = ':1.18f', aw = 'w'):
         else:
             np.savetxt(filename, X, fmt = fmt, delimiter = sep)
 
-#--------------------------------------------------------------------------------------------------
-def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatype = 'S', copy = True, verbosity = True):
+
+#------------------------------------------------------------------------------
+def getdata(data, dtype = float, header = None, sep = ',', 
+            datatype = 'S', copy = True, verbosity = False, missing_values = np.nan):
     """
-    Get data from csv-file 
-    or convert between pandas dataframe and numpy 2d-array.
+    Get data from csv-file. 
     
     Args:
         :data: 
             | - str with path to file containing data
             | - ndarray with data
-            | - pandas.dataframe with data
-        :kind: 
-            | str ['np','df'], optional 
-            | Determines type(:returns:), np: ndarray, df: pandas.dataframe
-        :columns:
-            | None or list[str] of column names for dataframe, optional
+        :dtype:
+            | float, optional
+            | dtype of elements in ndarray data array
+            | If None: mixture of datatypes is expected->dtype of output will be object
         :header:
             | None, optional
             |   - None: no header in file
@@ -438,42 +443,39 @@ def getdata(data, kind = 'np', columns = None, header = None, sep = ',', datatyp
             |   or other.   
         :copy:
             | True, optional
-            | Return a copy of ndarray if kind == 'np', or copy of pd.DataFrame if kind == 'df'
+            | Return a copy of ndarray 
         :verbosity:
             | True, False, optional
             | Print warning when inferring headers from file.
     
     Returns:
         :returns:
-            | data as ndarray or pandas.dataframe
+            | data as ndarray 
       
     """
     if isinstance(data,str):
         datafile = data
-        data = pd.read_csv(data,names=None,index_col = None,header = header,sep = sep)
-
-        # Set column headers:
+        input_is_string = True
         if header == 'infer':
+            #data = (np.array((np.genfromtxt(datafile, delimiter = sep, dtype = None,skip_header = 1, encoding = None)).tolist(),dtype=object))
+            #header = np.genfromtxt(datafile, delimiter = sep, dtype = str, max_rows = 1)
+            data, header = loadtxt(datafile, sep = sep, dtype = dtype, header = header, missing_values = missing_values)
             if verbosity == True:
-                print('getdata(): Infering HEADERS from data file: {:s}!'.format(datafile))
-            columns = data.columns
-        elif (columns is None):
-            data.columns = ['{}{}'.format(datatype,x) for x in range(len(data.columns))] 
-        if columns is not None:
-            data.columns = columns
-
-    if isinstance(data,np.ndarray) & (kind == 'df'):
-        if columns is None:
-            columns = ['{}{}'.format(datatype,x)  for x in range(data.shape[1])] 
-        data = pd.DataFrame(data, columns = columns)
-
-    elif isinstance(data,pd.DataFrame) & (kind == 'np'):
-        data = data.values
-    elif copy == True:
-        data = data.copy()
+                warnings.warn('getdata(): Infering HEADERS from data file: {}!'.format(datafile))
+        else:
+            #data = (np.array((np.genfromtxt(datafile, delimiter = sep, dtype = None, encoding = None)).tolist(),dtype=object))
+            data, header = loadtxt(datafile, sep = sep, dtype = dtype, header = header, missing_values = missing_values)
+    
+    else:
+        input_is_string = False
+        
+    if copy == True: data = data.copy()
+    if (dtype is not None) & (input_is_string): 
+        try: 
+            data = data.astype(dtype)
+        except: 
+            pass
     return data
-
-
 
 #--------------------------------------------------------------------------------------------------
 def dictkv(keys=None,values=None, ordered = True): 
@@ -680,7 +682,7 @@ def todim(x,tshape, add_axis = 1, equal_shape = False):
             return x
         else:
             return np.ones(tshape)*x #make dims of x equal to those of a (tshape)
-       
+        
 #------------------------------------------------------------------------------
 def read_excel(filename, sheet_name = None, cell_range = None, dtype = float, 
                force_dictoutput = False, out = 'X'):
@@ -720,8 +722,13 @@ def read_excel(filename, sheet_name = None, cell_range = None, dtype = float,
         :wb:
             | If in :out: the loaded workbook is also output.
     """
-    
-    import openpyxl 
+    success = is_importable('openpyxl')
+    if success:
+        try:
+            import openpyxl # lazy import
+        except:
+            raise Exception("Could not import (nor pip install openpyxl)! Please try a manual install. And retry.")
+            
     wb = openpyxl.load_workbook(filename = filename, data_only=True)
     
     # process sheet_names:
@@ -824,7 +831,13 @@ def write_excel(filename, X, sheet_name = None, cell_range = None):
             | If tuple/list: then length must match that of the list of sheet_names!
     """
     
-    import openpyxl 
+    success = is_importable('openpyxl')
+    if success:
+        try:
+            import openpyxl # lazy import
+        except:
+            raise Exception("Could not import (nor pip install openpyxl)! Please try a manual install. And retry.")
+
     if os.path.exists(filename):
         #wb = openpyxl.load_workbook(filename = filename, data_only = True)
 
@@ -910,83 +923,7 @@ def write_excel(filename, X, sheet_name = None, cell_range = None):
     
     return None
 
-
-# #------------------------------------------------------------------------------
-# def write_to_excel(filename, df, sheet_name='Sheet1', startrow=None,
-#                        truncate_sheet=False, 
-#                        **to_excel_kwargs):
-#     """
-#     Writes a DataFrame to an existing Excel file into a specified sheet.
-#     | If [filename] doesn't exist, then this function will create it.
-
-#     Args:
-#       :filename: 
-#           | File path or existing ExcelWriter
-#           | (Example: '/path/to/file.xlsx')
-#       :df: 
-#           | dataframe to save to workbook
-#       :sheet_name: 
-#           | Name of sheet which will contain DataFrame.
-#           | (default: 'Sheet1')
-#       :startrow: 
-#           | upper left cell row to dump data frame.
-#           | Per default (startrow=None) calculate the last row
-#           | in the existing DF and write to the next row...
-#       :truncate_sheet: 
-#           | truncate (remove and recreate) [sheet_name]
-#           | before writing DataFrame to Excel file
-#       :to_excel_kwargs: 
-#           | arguments which will be passed to `DataFrame.to_excel()`
-#           | [can be dictionary]
-
-#     Returns: None
     
-#     Notes:
-#         Copied from https://stackoverflow.com/questions/20219254/how-to-write-to-an-existing-excel-file-without-overwriting-data-using-pandas
-#     """
-#     from openpyxl import load_workbook
-
-#     # ignore [engine] parameter if it was passed
-#     if 'engine' in to_excel_kwargs:
-#         to_excel_kwargs.pop('engine')
-
-#     writer = pd.ExcelWriter(filename, engine='openpyxl')
-
-#     try:
-#         # try to open an existing workbook
-#         writer.book = load_workbook(filename)
-
-#         # get the last row in the existing Excel sheet
-#         # if it was not specified explicitly
-#         if startrow is None and sheet_name in writer.book.sheetnames:
-#             startrow = writer.book[sheet_name].max_row
-
-#         # truncate sheet
-#         if truncate_sheet and sheet_name in writer.book.sheetnames:
-#             # index of [sheet_name] sheet
-#             idx = writer.book.sheetnames.index(sheet_name)
-#             # remove [sheet_name]
-#             writer.book.remove(writer.book.worksheets[idx])
-#             # create an empty sheet [sheet_name] using old index
-#             writer.book.create_sheet(sheet_name, idx)
-
-#         # copy existing sheets
-#         writer.sheets = {ws.title:ws for ws in writer.book.worksheets}
-    
-#     except FileNotFoundError:
-#         # file does not exist yet, we will create it
-#         pass
-
-#     if startrow is None:
-#         startrow = 0
-
-#     # write out the new sheet
-#     df.to_excel(writer, sheet_name, startrow=startrow, **to_excel_kwargs)
-
-#     # save the workbook
-#     writer.save()
-    
-#------------------------------------------------------------------------------
 def show_luxpy_tree(omit = ['.pyc','__pycache__',
                             '.txt','.dat','.csv','.npz',
                             '.png','.jpg','.md','.pdf','.ini','.log', '.rar',
@@ -1040,8 +977,7 @@ def is_importable(string, pip_string = None, try_pip_install = False):
         except:
             success = False
             raise Exception("Tried importing '{:s}', then tried pip installing it. Please install it manually: pip install {:s}".format(string,pip_string))   
-    return success
-    
+    return success    
 #------------------------------------------------------------------------------
 def get_function_kwargs(f):
     """
@@ -1175,10 +1111,12 @@ def load_pkl(filename, gzipped = False):
     return obj
 
 #------------------------------------------------------------------------------
-def _try_imageio_import(use_freeimage=True): # lazy import
-    success = is_importable('imageio')
+def _try_imageio_import(use_freeimage=True): 
+    success = is_importable('imageio', try_pip_install = True)
     if success: 
-        import imageio 
+        import imageio # lazy import
+    else:
+        imageio = None
     try: 
         if use_freeimage: imageio.plugins.freeimage.download() 
     except:
@@ -1192,17 +1130,28 @@ def _try_imageio_import(use_freeimage=True): # lazy import
     return imageio
 
 def imsave(file, img, use_freeimage = False):
-    imageio = _try_imageio_import(use_freeimage)
+    """ Save image using imageio"""
+    imageio = _try_imageio_import(use_freeimage) # lazy-import
     try: 
-        from imageio.v3 import imsave as _imsave
+        imageio.v3.imwrite(file, img)
     except:
-        from imageio import imsave as _imsave
-    _imsave(file, img)
+        imageio.imwrite(file, img)
     
 def imread(file, use_freeimage = False):
-    imageio = _try_imageio_import(use_freeimage)
+    """ Read image using imageio"""
+    imageio = _try_imageio_import(use_freeimage) # lazy-import
     try: 
-        from imageio.v3 import imread as _imread
+        return imageio.v3.imread(file)
     except:
-        from imageio import imread as _imread
-    return _imread(file)
+        return imageio.imread(file)
+
+#------------------------------------------------------------------------------
+def lazy_import(name):
+    """ Lazy import of module """
+    spec = importlib.util.find_spec(name)
+    loader = importlib.util.LazyLoader(spec.loader)
+    spec.loader = loader 
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[name] = module
+    loader.exec_module(module)
+    return module

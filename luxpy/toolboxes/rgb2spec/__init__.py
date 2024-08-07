@@ -25,7 +25,9 @@ Module for RGB to spectrum conversions
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from luxpy import _WL3
+
 from .smits_mitsuba import *
+
 __all__ = smits_mitsuba.__all__
 __all__ += ['convert']
 

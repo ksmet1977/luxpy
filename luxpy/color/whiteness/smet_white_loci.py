@@ -28,9 +28,9 @@ References
     <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&origin=search)>`_
 
 """
+import numpy as np
 
-from luxpy import math, cat, xyz_to_Yuv, cri_ref, spd_to_xyz, xyz_to_cct
-from luxpy.utils import np  
+from luxpy import cat, xyz_to_Yuv, cri_ref, spd_to_xyz, xyz_to_cct  
 
 _UW_NEUTRALITY_PARAMETERS_SMET2014 = {'L200': np.array([1900.1, 1408.4, 0.2069, 0.4571, -934.1, 8.5, 6568, -0.0088 ])} 
 _UW_NEUTRALITY_PARAMETERS_SMET2014['L1000'] = np.array([1418.3, 842.9, 0.2088, 0.4632, -659.8, 8.2, 6076, -0.0076])   

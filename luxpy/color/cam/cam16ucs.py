@@ -28,7 +28,9 @@ Created on Wed Sep 30 22:15:57 2020
 
 @author: ksmet1977 at gmail.com
 """
-from luxpy.utils import np, asplit, ajoin
+import numpy as np
+
+from luxpy.utils import ajoin
 from luxpy.color.cam.ciecam16 import run as ciecam16
 
 
@@ -260,8 +262,10 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     _cam = run
     
+    import matplotlib.pyplot as plt 
+    import numpy as np 
+    
     import luxpy as lx
-    from luxpy.utils import np, plt
     
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()
@@ -300,7 +304,6 @@ if __name__ == '__main__':
     Ill2M = Ill2M[:(n+1),:,:]
     
     # Module output plot:
-    import matplotlib.pyplot as plt
     _cam_o = lambda xyz, xyzw, forward: lx.xyz_to_jab_cam16ucs(xyz,xyzw)
 
     xyz, xyzw = lx.spd_to_xyz(Ill1, cieobs = cieobs, relative = True, rfl = rflM, out = 2)

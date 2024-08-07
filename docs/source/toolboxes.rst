@@ -174,4 +174,3 @@ stereoscopicviewer/
    :members:
    :undoc-members:
    :private-members:
-   

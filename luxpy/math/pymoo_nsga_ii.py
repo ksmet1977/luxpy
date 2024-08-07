@@ -16,7 +16,7 @@ Notes:
 
 # Import modules
 import copy
-import subprocess
+
 from luxpy.utils import is_importable 
 
 

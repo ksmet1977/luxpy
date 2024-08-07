@@ -63,11 +63,10 @@ Module with functions related to plotting of color data
  
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
 from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
-from luxpy.utils import np, plt,_EPS, asplit
-from matplotlib.patches import Polygon
-from matplotlib import cm
+from luxpy.utils import _EPS, asplit
 
 __all__ = ['get_cmap','get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
            'plotceruleanline','plotUH','plotcircle','plotellipse',
@@ -89,6 +88,7 @@ def get_cmap(N, cmap_name = 'jet'):
         :cmap:
             | ndarray with rgba values.
     """
+    from matplotlib import cm # lazy import
     cmap = cm.get_cmap(cmap_name, N)
     cmap = cmap(range(N))
     return cmap
@@ -152,6 +152,8 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
         :returns: 
             | handle to current axes (:show: == False)
     """
+    import matplotlib.pyplot as plt # lazy import
+    
     x = np.atleast_1d(x)
     y = np.atleast_1d(y)
     
@@ -367,6 +369,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         :returns: 
             | handle to current axes (:show: == False)
     """
+    
     if isinstance(cieobs,str):
         SL = _CMF[cieobs]['bar'][1:4].T
     else:
@@ -411,6 +414,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         axh.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
     
     if showcopy:
+        import matplotlib.pyplot as plt # lazy import
         plt.show()
     return axh    
         
@@ -464,6 +468,7 @@ def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 
     xyz_b = cmf[1:,p_b].T
     lab = colortf(np.vstack((xyz_b,xyz_y)),tf = cspace, tfa0 = cspace_pars)
     if axh is None:
+        import matplotlib.pyplot as plt # lazy import
         axh = plt.gca()
     hcerline = axh.plot(lab[:,1],lab[:,2],formatstr,label = 'Cerulean line')    
     return hcerline
@@ -537,6 +542,7 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
     if xyz0 is None:
         xyz0 = np.array([100.0,100.0,100.0])
     if axh is None:
+        import matplotlib.pyplot as plt # lazy import
         axh = plt.gca()
     for huenr in uhues:
         lab = colortf(np.vstack((xyz0,xyz_uh[huenr])),tf = cspace, tfa0 = cspace_pars)
@@ -571,6 +577,7 @@ def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10),
     xs = np.array([0])
     ys = xs.copy()
     if ((out != 'x,y') & (axh is None)):
+        import matplotlib.pyplot as plt # lazy import
         fig, axh = plt.subplots(rows=1,ncols=1)
     for ri in radii:
         x = center[:,0] + ri*np.cos(angles*np.pi/180)
@@ -701,6 +708,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
         # plot ellipses:
         if show == True:
             if (axh is None) & (i == 0):
+                import matplotlib.pyplot as plt # lazy import
                 fig = plt.figure()
                 axh = fig.add_subplot(111)
             
@@ -725,7 +733,7 @@ def plotellipse(v, cspace_in = 'Yxy', cspace_out = None, nsamples = 100, \
             axh.set_xlabel(xlabel, fontname = label_fontname, fontsize = label_fontsize)
             axh.set_ylabel(ylabel, fontname = label_fontname, fontsize = label_fontsize)
             if show_grid == True:
-                plt.grid(True)
+                axh.grid(True)
             #plt.show()     
     Yxys = np.transpose(Yxys,axes=(0,2,1))       
     if out is not None:
@@ -824,8 +832,10 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
 
     if show == True:
         if axh is None:
+            import matplotlib.pyplot as plt # lazy import
             fig = plt.figure()
             axh = fig.add_subplot(111)
+        from matplotlib.patches import Polygon # lazy import
         polygon = Polygon(SL, facecolor='none', edgecolor='none')
         axh.add_patch(polygon)
         image = axh.imshow(
@@ -923,6 +933,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
     srgb = srgb/srgb.max()
     
     if show == True:
+        import matplotlib.pyplot as plt # lazy import
         if axh is None:
             fig = plt.figure()
             axh = fig.add_subplot(111)
@@ -971,6 +982,7 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
         axh.set_xlim([x_min,x_max])
         axh.set_ylim([y_min,y_max])     
 
+        from matplotlib.patches import Polygon # lazy import
         polygon = Polygon(SLrect, facecolor=None, edgecolor=None)
         axh.add_patch(polygon)
         padding = 0.1
@@ -1059,6 +1071,7 @@ def plot_rgb_color_patches(rgb, patch_shape = (100,100), patch_layout = None, ax
             | Axes is returned if show == True, else: ndarray with rgb image is returned.
     """
     if ax is None:
+        import matplotlib.pyplot as plt # lazy import
         fig, ax = plt.subplots(1,1)
         
     if patch_layout is None:
@@ -1115,6 +1128,7 @@ def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensi
     """
     if isinstance(cmf_symbols,list):
         cmf_symbols = ['$\overline{'+cmf_symbols[i][0]+'}'+cmf_symbols[i][1:]+'(\lambda)$' for i in range(3)]
+        # cmf_symbols_no_mathtext = [cmf_symbols[i][0]+cmf_symbols[i][1:]+'(lambda)' for i in range(3)]   
     else:
         cmf_symbols = [cmf_symbols,None,None]
         if isinstance(colors,list):
@@ -1122,11 +1136,18 @@ def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensi
         else:
             colors = [colors]*3
     if axh is None:
+        import matplotlib.pyplot as plt # lazy import
         fig, axh = plt.subplots(1,1)
 
     for i in range(3):
         label = cmf_label + cmf_symbols[i] if cmf_symbols[i] is not None else None
-        axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs)    
+        axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs) 
+        # try: 
+        #     axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs)  
+        # except: # to deal with matplotlib font issue
+        #     cmf_symbols[i] = cmf_symbols_no_mathtext[i]
+        #     label = cmf_label + cmf_symbols[i] if cmf_symbols[i] is not None else None
+        #     axh.plot(cmfs[0],cmfs[i+1],color = colors[i], label = label,**kwargs)
     
     if wavelength_bar == True:
         axh = plot_spectrum_colors(spd = None,spdmax = np.nanmax(cmfs[1:]), axh = axh, wavelength_height = -0.05)

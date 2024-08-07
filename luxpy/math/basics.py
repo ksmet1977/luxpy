@@ -56,7 +56,7 @@ Module with useful basic math functions
  :polyarea(): | Calculates area of polygon. 
               | (First coordinate should also be last)
 
- :erf(), erfinv(): erf-function and its inverse, direct import from scipy.special
+ :erf(), erfinv(): erf-function and its inverse, imported from scipy.special
 
  :cart2pol(): Converts Cartesian to polar coordinates.
 
@@ -106,11 +106,10 @@ Module with useful basic math functions
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
+import numpy as np
 
-from luxpy.utils import np, sp, np2d, _EPS, asplit
-from scipy.special import erf, erfinv
-from scipy import stats
-from scipy.interpolate import interp1d 
+from luxpy.utils import np2d, _EPS, asplit
+# from scipy import stats # has become a lazy import
 
 __all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 
@@ -121,6 +120,17 @@ __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit
 __all__ += ['in_hull','interp1_sprague5','interp1', 'ndinterp1','ndinterp1_scipy']
 __all__ += ['box_m','pitman_morgan', 'stress','stress_F_test','mean_distance_weighted']
 
+
+#------------------------------------------------------------------------------
+def erf(*args,**kwargs):
+    "erf(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])\n\nerf(z)\n\nReturns the error function of complex argument.\n\nIt is defined as ``2/sqrt(pi)*integral(exp(-t**2), t=0..z)``.\n\nParameters\n----------\nx : ndarray\n    Input array.\n\nReturns\n-------\nres : ndarray\n    The values of the error function at the given points `x`.\n\nSee Also\n--------\nerfc, erfinv, erfcinv, wofz, erfcx, erfi\n\nNotes\n-----\nThe cumulative of the unit normal distribution is given by\n``Phi(z) = 1/2[1 + erf(z/sqrt(2))]``.\n\nReferences\n----------\n.. [1] https://en.wikipedia.org/wiki/Error_function\n.. [2] Milton Abramowitz and Irene A. Stegun, eds.\n    Handbook of Mathematical Functions with Formulas,\n    Graphs, and Mathematical Tables. New York: Dover,\n    1972. http://www.math.sfu.ca/~cbm/aands/page_297.htm\n.. [3] Steven G. Johnson, Faddeeva W function implementation.\n   http://ab-initio.mit.edu/Faddeeva\n\nExamples\n--------\n>>> from scipy import special\n>>> import matplotlib.pyplot as plt\n>>> x = np.linspace(-3, 3)\n>>> plt.plot(x, special.erf(x))\n>>> plt.xlabel('$x$')\n>>> plt.ylabel('$erf(x)$')\n>>> plt.show()"
+    from scipy.special import erf # lazy import
+    return erf(*args,**kwargs)
+
+def erfinv(*args,**kwargs):
+    "erfinv(x, /, out=None, *, where=True, casting='same_kind', order='K', dtype=None, subok=True[, signature, extobj])\n\nInverse of the error function.\n\n    Computes the inverse of the error function.\n\n    In the complex domain, there is no unique complex number w satisfying\n    erf(w)=z. This indicates a true inverse function would have multi-value.\n    When the domain restricts to the real, -1 < x < 1, there is a unique real\n    number satisfying erf(erfinv(x)) = x.\n\n    Parameters\n    ----------\n    y : ndarray\n        Argument at which to evaluate. Domain: [-1, 1]\n\n    Returns\n    -------\n    erfinv : ndarray\n        The inverse of erf of y, element-wise)\n\n    See Also\n    --------\n    erf : Error function of a complex argument\n    erfc : Complementary error function, ``1 - erf(x)``\n    erfcinv : Inverse of the complementary error function\n\n    Examples\n    --------\n    1) evaluating a float number\n\n    >>> from scipy import special\n    >>> special.erfinv(0.5)\n    0.4769362762044698\n\n    2) evaluating an ndarray\n\n    >>> from scipy import special\n    >>> y = np.linspace(-1.0, 1.0, num=10)\n    >>> special.erfinv(y)\n    array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,\n            0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])"
+    from scipy.special import erfinv # lazy import
+    return erfinv(*args,**kwargs)
 
 #------------------------------------------------------------------------------
 def normalize_3x3_matrix(M, xyz0 = np.array([[1.0,1.0,1.0]])):
@@ -751,7 +761,7 @@ def histogram(a, bins=10, bin_center = False, range=None, weights=None, density=
 
     else:
         return np.histogram(a, bins=bins, range=range, weights=weights, density=density)
-
+    
 #------------------------------------------------------------------------------
 def v_to_cik(v, inverse = False):
     """
@@ -875,6 +885,8 @@ def remove_outliers(data, alpha = 0.01):
         :data:
             | (N-... x p) ndarray with multivariate data; outliers removed.
     """
+    from scipy import stats # lazy import
+    
     # delete outliers:    
     datac = data.mean(axis=0)
     cov_ = np.cov(data.T)
@@ -1000,7 +1012,8 @@ def fit_cov_ellipse(xy, alpha = 0.05, pdf = 'chi2', SE = False,
         :v:
             | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]
     """
-
+    from scipy import stats # lazy import 
+    
     # delete outliers:    
     if robust == True:
         xy = remove_outliers(xy, alpha = robust_alpha)
@@ -1047,8 +1060,9 @@ def in_hull(p, hull):
         :bool:
             | boolean ndarray with True for in-gamut and False for out-of-gamut points
     """
-    if not isinstance(hull,sp.spatial.Delaunay):
-        hull = sp.spatial.Delaunay(hull)
+    from scipy.spatial import Delaunay # lazy import
+    if not isinstance(hull,Delaunay):
+        hull = Delaunay(hull)
     return hull.find_simplex(p)>=0
 
 #------------------------------------------------------------------------------
@@ -1058,7 +1072,7 @@ _SPRAGUE_COEFFICIENTS = np.array([
                                  [-24, 144, -367, 488, -540, 508],
                                  [-180, 1080, -2648, 3033, -1960, 884],
                                  ]).T / 209.0
-def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan)):
+def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = 'interp1d'):
     """ 
     Perform a 1-dimensional 5th order Sprague interpolation.
     
@@ -1088,7 +1102,9 @@ def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan)):
                 yne[:,(xn<x[0])] = extrap[0]
                 yne[:,(xn>x[-1])] = extrap[1]
         elif isinstance(extrap,str):
-            yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = 'extrapolate')(xn)
+            #from scipy.interpolate import interp1d # lazy import
+            #yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = 'extrapolate')(xn)
+            yne = interp1(x, y, xn, kind = extrap, ext = 'extrapolate', scipy_interpolator = scipy_interpolator)
         else:
             raise Exception('Invalid option for extrap argument. Only tuple and string allowed.')
         xn_x = xn[(xn>=x[0]) & (xn<=x[-1])]
@@ -1134,9 +1150,12 @@ def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan)):
         return yne
 
 #------------------------------------------------------------------------------
-def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None, None], check_finite = False):
+def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', fill_value = 'extrapolate', 
+            force_scipy_interpolator = False, scipy_interpolator = 'interp1d',
+            w = None, bbox=[None, None], check_finite = False):
     """
-    Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+    Perform a 1-dimensional interpolation 
+    (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).
     
     Args:
         :X: 
@@ -1147,18 +1166,99 @@ def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', w = None, bbox=[None
             | ndarray of new coordinates (last axis represents dimension)
         :kind:
             | str or int,  optional
-            | if str: kind is 'translated' to an int value for input to scipy.interpolate.InterpolatedUnivariateSpline()
-            | supported options for str: 'linear', 'quadratic', 'cubic', 'quartic', 'quintic'
+            | supported options for str: 'linear', 'quadratic', 'cubic'
+        :ext:
+            | 'extrapolate', optional
+            | options: 
+            |   - 'extrapolate'
+            |   - 'zeros': out-of-bounds values are filled with zeros
+            |   - 'const': out-of-bounds values are filled with nearest value
+            |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+        :fill_value:
+            | 'extrpolate' or float or int or tupple, optional
+            | If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+        :force_scipy_interpolator:
+            | False, optional
+            | If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | 'interp1d', optional
+            | options: ['InterpolatedUnivariateSpline', 'interp1d'] (or 0 or 1)
         :other args:
             | see scipy.interpolate.InterpolatedUnivariateSpline()
         
     Returns:
         :Ynew:
             | ndarray with new values at coordinates in Xnew
+    
+    Note:
+        1. 'numpy.interp' is fastest (but only works for linear interpolation without extrapolation)
+        2. For linear interpolation: 'interp1d' is faster for Y (N,...) with N > 1, else 'InterpolatedUnivariateSpline' is faster
+        3. For 'cubic' interpolation: 'InterpolatedUnivariateSpline' is faster for Y (N,...) with N > 1, else 'interp1d' is faster
     """
-    k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+    
+    if X.ndim == 2: X = X[0]
+    if Xnew.ndim == 2: Xnew = Xnew[0]
+    
+    # avoid interpolation/extrapolation if none is needed:
+    if np.array_equal(X,Xnew): return Y
+    
+    if isinstance(scipy_interpolator,int): scipy_interpolator = ['InterpolatedUnivariateSpline', 'interp1d'][scipy_interpolator]
+    if isinstance(kind,str):
+        if kind == 'nearest': kind, ext = 'linear', 'const'
+        if scipy_interpolator == 'InterpolatedUnivariateSpline': 
+            k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+        else:
+            k = ['zero', 'linear', 'quadratic', 'cubic'].index(kind) 
+    else:
+        k = kind
     if ext == 'nearest': ext = 'const'
-    return sp.interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
+    
+    if (k == 1) & (force_scipy_interpolator == False):
+        if (((((ext == 'const') | (ext == 3) | (ext == 'zeros') | (ext == 1))) | 
+            ((ext == 'fill_value') & (not (fill_value == 'extrapolate')))) |
+            ((Xnew[0] >= X[0]) & (Xnew[-1] <= (X[-1])))):
+            if ((ext == 'zeros') | (ext == 1)):
+                (left, right) = (0.0,0.0) 
+            elif ((ext == 'const') | (ext == 3)): 
+                (left, right) = (None, None)
+            elif ((ext == 'fill_value')):
+                if isinstance(fill_value, (float,int)): 
+                    fill_value = (fill_value, fill_value) 
+                (left,right) = fill_value
+            else:
+                (left, right) = (None, None)
+
+            if Y.ndim == 1:
+                return np.interp(Xnew, X, Y, left = left, right = right)
+            else:
+                return np.array([np.interp(Xnew, X, Y[i], left = left, right = right) for i in range(Y.shape[0])])
+    
+    from scipy import interpolate # lazy import
+    if scipy_interpolator == 'InterpolatedUnivariateSpline':
+        ext_original = ext
+        if ext == 'fill_value':
+            ext = 'extrapolate'
+        if Y.ndim == 1:
+            Yn = interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
+        else:
+           Yn = np.array([interpolate.InterpolatedUnivariateSpline(X,Y[i], ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew) for i in range(Y.shape[0])])
+        if (ext_original == 'fill_value') & (not (fill_value == 'extrapolate')):
+            if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value)
+            Yn[:,Xnew < X[0]] = fill_value[0]
+            Yn[:,Xnew > X[-1]] = fill_value[1]
+        return Yn
+            
+    else:
+        if ((ext == 'extrapolate') | (ext == 0)): 
+            fill_value = 'extrapolate'
+        elif ((ext == 'zeros') | (ext == 1)):
+            fill_value = (0.0,0.0) 
+        elif ((ext == 'const') | (ext == 3)):
+            fill_value = (X[0], X[-1])
+        elif ((ext == 'fill_value')):
+            if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value) 
+        return interpolate.interp1d(X, Y, kind = k, bounds_error = False, fill_value = fill_value)(Xnew)
+
 #------------------------------------------------------------------------------
 def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):    
     """
@@ -1186,7 +1286,8 @@ def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):
         :Ynew:
             | ndarray with new values at coordinates in Xnew
     """
-    return sp.interpolate.LinearNDInterpolator(X,Y, fill_value = fill_value,  rescale = rescale).__call__(Xnew)
+    from scipy import interpolate # lazy import
+    return interpolate.LinearNDInterpolator(X,Y, fill_value = fill_value,  rescale = rescale).__call__(Xnew)
 
 def ndinterp1(X, Y, Xnew):
     """
@@ -1209,7 +1310,8 @@ def ndinterp1(X, Y, Xnew):
     #get dimensions:
     n = Xnew.shape[-1]
     # create an object with triangulation
-    tri = sp.spatial.Delaunay(X) 
+    from scipy.spatial import Delaunay # lazy import
+    tri = Delaunay(X) 
     # find simplexes that contain interpolated points
     s = tri.find_simplex(Xnew)
     # get the vertices for each simplex
@@ -1275,7 +1377,8 @@ def box_m(*X, ni = None, verbosity = 0, robust = False, robust_alpha = 0.01):
         1. If p==1: Reduces to Bartlett's test for equal variances.
         2. If (ni>20).all() & (p<6) & (k<6): then a more appropriate chi2 test is used in a some cases.
     """
-
+    from scipy import stats # lazy import
+    
     k = len(X) # groups
     p = np.atleast_2d(X[0]).shape[1] # variables
     if p == 1: # for p == 1: only variance!
@@ -1313,7 +1416,7 @@ def box_m(*X, ni = None, verbosity = 0, robust = False, robust_alpha = 0.01):
         b = v1/(1 - A1 -(v1/v2))
         Fv1v2 = M/b
         statistic = Fv1v2
-        pval = 1.0 - sp.stats.f.cdf(Fv1v2,v1,v2)
+        pval = 1.0 - stats.f.cdf(Fv1v2,v1,v2)
         dfs = [v1,v2]
         
         if verbosity == 1:
@@ -1323,13 +1426,13 @@ def box_m(*X, ni = None, verbosity = 0, robust = False, robust_alpha = 0.01):
         b = v2/(1 - A1 + (2/v2))
         Fv1v2 = v2*M/(v1*(b - M))
         statistic = Fv1v2
-        pval = 1.0 - sp.stats.f.cdf(Fv1v2,v1,v2)
+        pval = 1.0 - stats.f.cdf(Fv1v2,v1,v2)
         dfs = [v1,v2]
 
         if (ni>20).all() & (p<6) & (k<6): #use Chi2v1
             chi2v1 = M*(1-A1)
             statistic = chi2v1
-            pval = 1.0 - sp.stats.chi2.cdf(chi2v1,v1)
+            pval = 1.0 - stats.chi2.cdf(chi2v1,v1)
             dfs = [v1]
             if verbosity == 1:
                 print('M = {:1.4f}, chi2 = {:1.4f}, df1 = {:1.1f}, p = {:1.4f}'.format(M,chi2v1,v1,pval))
@@ -1365,6 +1468,8 @@ def pitman_morgan(X,Y, verbosity = 0):
         1. Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.
         2. Python port from matlab code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)
     """
+    from scipy import stats # lazy import
+    
     N = X.shape[0]
     var1, var2 = X.var(axis=0),Y.var(axis=0)
     cor = np.corrcoef(X,Y)[0,1]
@@ -1390,7 +1495,7 @@ def pitman_morgan(X,Y, verbosity = 0):
     tval = numerator3/denominator5
     
     # compute stats:
-    p = 2*(1.0-sp.stats.t.cdf(tval,df))
+    p = 2*(1.0-stats.t.cdf(tval,df))
     if verbosity == 1:
         print('tval = {:1.4f}, df = {:1.1f}, p = {:1.4f}'.format(tval,df, p))
 
@@ -1445,6 +1550,8 @@ def stress_F_test(stressA, stressB, N, alpha = 0.05):
             | - 'Fc': critcal values
             | - 'H': string reporting on significance of A compared to B.
     """
+    from scipy import stats # lazy import
+    
     N = N*np.ones(stressA.shape[0])
     Fvs = np.nan*np.ones_like(stressA)
     ps = Fvs.copy()

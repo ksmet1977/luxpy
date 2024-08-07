@@ -125,9 +125,9 @@ Notes
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 from .spdbuilder import *
-__all__ = spdbuilder.__all__
+#__all__ = spdbuilder.__all__
 
 
 from .spdoptimizer2020 import *
-__all__ += spdoptimizer2020.__all__
+#__all__ += spdoptimizer2020.__all__
 

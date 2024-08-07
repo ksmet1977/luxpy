@@ -63,10 +63,10 @@ Module with functions related to color rendering Vector Field model
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
-
+import numpy as np
 
 from luxpy import math, _CIE_ILLUMINANTS, _MUNSELL
-from luxpy.utils import np, plt, _EPS
+from luxpy.utils import _EPS
 from ..utils.helpers import spd_to_cri
 from ..utils.init_cri_defaults_database import _CRI_DEFAULTS
 from ..utils.graphics import plot_hue_bins
@@ -371,6 +371,7 @@ def generate_vector_field(poly_model, pmodel, \
     
     # Plot vectorfield:
     if color is not False: 
+        import matplotlib.pyplot as plt # lazy import
         #plt.plot(axr, bxr,'ro',markersize=2)
         plt.quiver(axr, bxr, axt-axr, bxt-bxr, headlength=1,color = color)
         plt.xlabel("a'")
@@ -758,7 +759,8 @@ def plot_shift_data(data, fieldtype = 'vectorfield', scalef = _VF_MAXR, color = 
             |          (for use in other plotting fcns)
    
     """
-       
+    import matplotlib.pyplot as plt # lazy import 
+    
     # Plot basis of CVG:
     figCVG, hax, cmap = plot_hue_bins(hbins = hbins, axtype = axtype, ax = ax, plot_center_lines = plot_center_lines, plot_edge_lines = plot_edge_lines, plot_bin_colors = plot_bin_colors, scalef = scalef, force_CVG_layout = force_CVG_layout, bin_labels = bin_labels)
     
@@ -816,12 +818,13 @@ def plotcircle(radii = np.arange(0,60,10), \
     """
     x = np.array([0])
     y = x.copy()
-    for ri in radii:
+    for i, ri in enumerate(radii):
         xi = ri*np.cos(angles*np.pi/180)
         yi = ri*np.sin(angles*np.pi/180)
         x = np.hstack((x,xi))
         y = np.hstack((y,yi))
         if out != 'x,y':
+            if i == 0: import matplotlib.pyplot as plt # lazy import
             plt.plot(xi,yi,color = color, linestyle = linestyle)
     if out == 'x,y':
         return x,y

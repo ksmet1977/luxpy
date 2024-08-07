@@ -31,14 +31,16 @@ Reference:
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np 
+
 from luxpy import deltaE, _CIE_ILLUMINANTS, spd_to_xyz, blackbody, xyz_to_cct
-from luxpy.utils import np, _PKG_PATH, _SEP, getdata 
+from luxpy.utils import _PKG_PATH, _SEP, getdata 
 
 __all__ = ['_COI_RFL_BLOOD','_COI_CIEOBS','_COI_CSPACE','spd_to_COI_ASNZS1680']
 
 
 # Reflectance spectra of 100% and 50% oxygenated blood
-_COI_RFL_BLOOD = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'ASNZS_1680.2.5_1997_cyanosisindex_100_50.dat', header = None, kind ='np', verbosity = 0).T
+_COI_RFL_BLOOD = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'ASNZS_1680.2.5_1997_cyanosisindex_100_50.dat', header = None, verbosity = 0).T
 
 _COI_CIEOBS = '1931_2' # default CMF set
 

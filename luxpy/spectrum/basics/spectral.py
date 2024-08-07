@@ -46,11 +46,9 @@ Module supporting basic spectral calculations.
                 [`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_]
 
  :spd(): | All-in-one function that can:
-         |  1. Read spectral data from data file or take input directly as 
-            pandas.dataframe or ndarray.
-         |  2. Convert spd-like data from ndarray to pandas.dataframe and back.
-         |  3. Interpolate spectral data.
-         |  4. Normalize spectral data.
+         |  1. Read spectral data from data file or take input directly as ndarray.
+         |  2. Interpolate spectral data.
+         |  3. Normalize spectral data.
 
  :xyzbar(): Get color matching functions.
         
@@ -85,11 +83,12 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
+import numpy as np 
+
 from luxpy import  _CIEOBS, math
-from luxpy.utils import np, pd, sp, plt, _PKG_PATH, _SEP, np2d, getdata, _EPS
+from luxpy.utils import _PKG_PATH, _SEP, np2d, getdata, _EPS
 
 from .cmf import _CMF
-from scipy import signal
 __all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_TYPE',
            'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
            'vlbar_cie_mesopic', 'get_cie_mesopic_adaptation',
@@ -356,22 +355,38 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
             Si = np.zeros([N,wl_new.shape[0]])
             Si.fill(np.nan)
             if (rows_with_no_nans.size>0): 
-
+                
                 S_no_nans = S[rows_with_no_nans]
-
+                
+                # Use most time-efficient interpolator:
+                N_no_nans = S_no_nans.shape[0]
+                if kind == 'linear':
+                    scipy_interpolator_int = 'interp1d' if (N_no_nans == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+                else:
+                    scipy_interpolator_int = 'InterpolatedUnivariateSpline' if (N_no_nans == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+                if extrapolation_kind == 'linear':
+                    scipy_interpolator_ext = 'interp1d' if (N_no_nans == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+                else:
+                    scipy_interpolator_ext = 'InterpolatedUnivariateSpline' if (S_no_nans.shape[0] == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+                
+                    
                 # prepare + do 'ext' extrapolation:
+                # from scipy import interpolate # lazy import
                 if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')): 
                     fill_value = (0,0)
                     if extrap_log:
-                        Si_ext_no_nans = np.exp(np.atleast_2d(sp.interpolate.interp1d(wl, np.log(S_no_nans + _EPS), kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
+                        # Si_ext_no_nans = np.exp(np.atleast_2d(interpolate.interp1d(wl, np.log(S_no_nans + _EPS), kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
+                        Si_ext_no_nans = np.exp(np.atleast_2d(math.interp1(wl, np.log(S_no_nans + _EPS), wl_new, kind = extrapolation_kind, fill_value = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))) 
                     else:
-                        Si_ext_no_nans = np.atleast_2d(sp.interpolate.interp1d(wl, S_no_nans, kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
+                        # Si_ext_no_nans = np.atleast_2d(interpolate.interp1d(wl, S_no_nans, kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
+                        Si_ext_no_nans = np.atleast_2d(math.interp1(wl, S_no_nans, wl_new, kind = extrapolation_kind, fill_value = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))
                 else:
                     fill_value, Si_ext_no_nans = (extrap_values[0],extrap_values[-1]), None
 
                 # interpolate:
                 if kind != 'sprague5':
-                    Si_no_nans = sp.interpolate.interp1d(wl, S_no_nans, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
+                    # Si_no_nans = interpolate.interp1d(wl, S_no_nans, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
+                    Si_no_nans = math.interp1(wl, S_no_nans, wl_new, kind = kind, ext = 'fill_value', fill_value = fill_value, scipy_interpolator = scipy_interpolator_int)
                 else:
                     Si_no_nans = math.interp1_sprague5(wl, S_no_nans, wl_new, extrap = fill_value)
 
@@ -384,7 +399,18 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
                 
             # In case there are NaN's:
             if rows_with_nans.size > 0:
-
+                
+                # Use most time-efficient interpolator:
+                if kind == 'linear':
+                    scipy_interpolator_int = 'interp1d' # faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+                else: 
+                    scipy_interpolator_int = 'InterpolatedUnivariateSpline' # faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+                if extrapolation_kind == 'linear':
+                    scipy_interpolator_ext = 'interp1d' # faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+                else: 
+                    scipy_interpolator_ext = 'InterpolatedUnivariateSpline' # faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+                
+                    
                 # looping required as some values are NaN's:
                 for i in rows_with_nans:
 
@@ -393,8 +419,8 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
                     S_i_nonan = S[i][nonan_indices]
                     
                     if (kind != 'sprague5'): 
-                        Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = kind, ext = 'extrapolate')
-#                       Si_nonan = sp.interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)
+                        Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_int)
+                      # Si_nonan = interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)
                     else:
                         # check wavelength spacing constancy:
                         dwl_nonan = np.diff(wl_nonan)
@@ -402,15 +428,15 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
                             Si_nonan = math.interp1_sprague5(wl_nonan, S_i_nonan, wl_new, extrap = (0,0))
                         else:
                             # fall back to 'cubic interpolation!:
-                            Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = 'cubic', ext = 'extrapolate')
+                            Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = 'cubic', ext = 'extrapolate', scipy_interpolator = 'InterpolatedUnivariateSpline')
   
                     # Do extrapolation:
                     if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')): 
                         if extrapolation_kind != 'nearest':
                             if extrap_log:
-                                Si_nonan_ext = np.exp(math.interp1(wl_nonan,np.log(S_i_nonan + _EPS), wl_new, kind = extrapolation_kind, ext = 'extrapolate'))
+                                Si_nonan_ext = np.exp(math.interp1(wl_nonan,np.log(S_i_nonan + _EPS), wl_new, kind = extrapolation_kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))
                             else:
-                                Si_nonan_ext = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = extrapolation_kind, ext = 'extrapolate')
+                                Si_nonan_ext = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = extrapolation_kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_ext)
                         else: # do nearest neighbour extrapolation
                             Si_nonan_ext = np.zeros((wl_new.size))
                             Si_nonan_ext[wl_new<wl_nonan[0]] = S_i_nonan[0]
@@ -436,30 +462,24 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
     return data.copy()
 
 #--------------------------------------------------------------------------------------------------
-def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values = None, \
-        columns = None, sep = ',',header = None, datatype = 'S', \
-        norm_type = None, norm_f = None):
+def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
+        sep = ',',header = None, datatype = 'S', \
+        norm_type = None, norm_f = None,**kwargs):
     """
     | All-in-one function that can:
-    |    1. Read spectral data from data file or take input directly 
-         as pandas.dataframe or ndarray.
-    |    2. Convert spd-like data from ndarray to pandas.dataframe and back.
-    |    3. Interpolate spectral data.
-    |    4. Normalize spectral data.
+    |    1. Read spectral data from data file or take input directly as ndarray.
+    |    2. Interpolate spectral data.
+    |    3. Normalize spectral data.
             
     Args:
         :data: 
             | - str with path to file containing spectral data
             | - ndarray with spectral data
-            | - pandas.dataframe with spectral data
             | (.shape = (number of spectra + 1, number of original wavelengths))
         :interpolation:
             | None, optional
             | - None: don't interpolate
             | - str with interpolation type or spectrum type
-        :kind: 
-            | str ['np','df'], optional 
-            | Determines type(:returns:), np: ndarray, df: pandas.dataframe
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
@@ -467,8 +487,6 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values
         :extrap_values:
             | None, optional
             | Controls extrapolation. See cie_interp.
-        :columns: 
-            | -  None or list[str] of column names for dataframe, optional
         :header: 
             | None or 'infer', optional
             | - None: no header in file
@@ -493,13 +511,12 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values
         :norm_f:
             | 1, optional
             | Normalization factor that determines the size of normalization 
-              for 'max' and 'area' 
-              or which wavelength is normalized to 1 for 'lambda' option.
+            |  for 'max' and 'area' 
+            |  or which wavelength is normalized to 1 for 'lambda' option.
     
     Returns:
         :returns: 
-            | ndarray or pandas.dataframe 
-            | with interpolated and/or normalized spectral data.
+            | ndarray with interpolated and/or normalized spectral data.
     """
     transpose = True if isinstance(data,str) else False #when spd comes from file -> transpose (columns in files should be different spectra)
          
@@ -509,32 +526,25 @@ def spd(data = None, interpolation = None, kind = 'np', wl = None, extrap_values
     # Data input:
     if data is not None:
         if (interpolation is None) & (norm_type is None):
-            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype, copy = True)
+            data = getdata(data = data, sep = sep, header = header, datatype = datatype, copy = True)
             if (transpose == True): data = data.T
         else:
-            data = getdata(data = data, kind = 'np', columns = columns, sep = sep, header = header, datatype = datatype, copy = True)#interpolation requires np-array as input
+            data = getdata(data = data, sep = sep, header = header, datatype = datatype, copy = True)#interpolation requires np-array as input
             if (transpose == True): data = data.T
             data = cie_interp(data = data, wl_new = wl,kind = interpolation, extrap_values = extrap_values)
             data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
         
-        if isinstance(data,pd.DataFrame): columns = data.columns #get possibly updated column names
-
     else:
         data = np2d(wl)
-  
-     
-    if ((data.shape[0] - 1) == 0): columns = None #only wavelengths
        
-    if kind == 'df':  data = data.T
-        
     # convert to desired kind:
-    data = getdata(data = data,kind = kind, columns = columns, datatype = datatype, copy = False) # already copy when data is not None, else new anyway
+    data = getdata(data = data, datatype = datatype, copy = False) # already copy when data is not None, else new anyway
         
     return data
 
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = 'ext'):
+def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext'):
     """
     Get color matching functions.  
     
@@ -550,9 +560,6 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_va
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :kind: 
-            | str ['np','df'], optional 
-            | Determines type(:returns:), np: ndarray, df: pandas.dataframe
         :extrap_values:
             | 'ext', optional
             | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
@@ -561,7 +568,7 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_va
 
     Returns:
         :returns: 
-            | ndarray or pandas.dataframe with CMFs 
+            | ndarray with CMFs 
         
             
     References:
@@ -574,10 +581,10 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_va
     elif scr == 'cieobs':
         dict_or_file = cieobs #can be file or data itselfµ
     if extrap_values is None: extrap_values = (np.nan, np.nan)
-    return spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','xb','yb','zb'])
+    return spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', extrap_values = extrap_values)
 
 #--------------------------------------------------------------------------------------------------
-def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_values = 'ext', out = 1):
+def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext', out = 1):
     """
     Get Vlambda functions.  
     
@@ -596,9 +603,6 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_val
             | None, optional
             | New wavelength range for interpolation. 
             | Defaults to wavelengths specified by luxpy._WL3.
-        :kind: 
-            | str ['np','df'], optional 
-            | Determines type(:returns:), np: ndarray, df: pandas.dataframe
         :extrap_values:
             | 'ext', optional
             | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
@@ -611,7 +615,7 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_val
     
     Returns:
         :returns: 
-            | dataframe or ndarray with Vlambda of type :cieobs: 
+            | ndarray with Vlambda of type :cieobs: 
         
             
     References:
@@ -624,14 +628,14 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, kind = 'np', extrap_val
         dict_or_file = cieobs #can be file or data itself
         K = 1
     if extrap_values is None: extrap_values = (np.nan, np.nan)
-    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', kind = kind, extrap_values = extrap_values, columns = ['wl','Vl'])
+    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', extrap_values = extrap_values)
     if out == 2:
         return Vl, K
     else:
         return Vl
 
 #--------------------------------------------------------------------------------------------------
-def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
+def vlbar_cie_mesopic(m = [1], wl_new = None, out = 1,
                       Lp = None, Ls = None, SP = None):
     """
     Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
@@ -687,14 +691,8 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, kind = 'np', out = 1,
     Kmes = 683/Vlmes[1:,Vlmes[0,:] == 555]
     Vlmes[1:,:] = Vlmes[1:,:]/Vlmes[1:,:].max(axis=1,keepdims=True) # normalize to max = 1
     
-    if kind == 'df':
-        columns = ['wl']
-        for i in range(m.size):
-            columns.append('Vmes{:0.2f}'.format(m[i,0]))
-    else:
-        columns = ['wl',['Vmes']*m.size]
     Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear',
-                norm_type = 'max', norm_f = 1, kind = kind, columns = columns)
+                norm_type = 'max', norm_f = 1)
     
     if out == 2:
         return Vlmes, Kmes
@@ -759,7 +757,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
        
     Args: 
         :data: 
-            | ndarray or pandas.dataframe with spectral data
+            | ndarray with spectral data
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
@@ -811,7 +809,7 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
     
-    data = getdata(data,kind = 'np') if isinstance(data,pd.DataFrame) else np2d(data) # convert to np format and ensure 2D-array
+    data = np2d(data) if isinstance(data,np.ndarray) else getdata(data) # convert to np format and ensure 2D-array
 
     # get wl spacing:
     dl = getwld(data[0])
@@ -825,11 +823,11 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         if (K is None) & (relative == False): K = 1
     
     # Interpolate to wl of data:
-    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0], kind = 'np') 
+    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0]) 
     
     # Add CIE standard deviate observer function to cmf if requested:
     if cie_std_dev_obs is not None:
-        cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), scr = scr, wl_new = data[0], kind = 'np')
+        cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), scr = scr, wl_new = data[0])
         cmf[1:] = cmf[1:] + cmf_cie_std_dev_obs[1:] 
     
     # Rescale xyz using k or 100/Yw:
@@ -868,7 +866,7 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
        
     Args: 
         :data: 
-            | ndarray or pandas.dataframe with spectral data
+            | ndarray with spectral data
             | (.shape = (number of spectra + 1, number of wavelengths))
             | Note that :data: is never interpolated, only CMFs and RFLs. 
             | This way interpolation errors due to peaky spectra are avoided. 
@@ -892,9 +890,9 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     
     if isinstance(cieobs,str):    
         if K == None: K = _CMF[cieobs]['K']
-        Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0], kind = 'np')[1:2] #also interpolate to wl of data
+        Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0])[1:2] #also interpolate to wl of data
     else:
-        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf', kind = 'np')[1:2]
+        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf')[1:2]
         if K is None: raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
     dl = getwld(data[0])
     return ((K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)).T
@@ -983,7 +981,10 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             | - 'fwhms_mid' : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in 'peaks', then their is some non-symmetry in the peaks)
             | - 'fwhms_mid_heights' : height at the middle of the peak
     """
+    from scipy import signal, interpolate # lazy import
+    
     props = []
+    ips_to_spd_fit = np.polyfit(np.arange(spd.shape[1]),spd[0],1)
     for i in range(spd.shape[0]-1):
         peaks_, prop_ = signal.find_peaks(spd[i+1,:], **kwargs)
         prominences = signal.peak_prominences(spd[i+1,:], peaks_)[0]
@@ -994,12 +995,15 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             prominences[prominences.argmax()] = 0
         peaks = np.sort(np.array(peaks))
         peak_heights = spd[i+1,peaks]
-        widths, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
-        left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
+        _, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
+        #left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
+        left_ips, right_ips = np.polyval(ips_to_spd_fit, left_ips), np.polyval(ips_to_spd_fit, right_ips)
+        widths = (right_ips - left_ips)
+        
     
         # get middle of fwhm and calculate peak position and height:
         mpeaks = left_ips + widths/2
-        hmpeaks = sp.interpolate.interp1d(spd[0,:],spd[i+1,:])(mpeaks)
+        hmpeaks = interpolate.InterpolatedUnivariateSpline(spd[0,:],spd[i+1,:])(mpeaks)
     
         prop = {'peaks_idx' : peaks,'peaks' : spd[0,peaks], 'heights' : peak_heights,
                 'fwhms' : widths, 'fwhms_mid' : mpeaks, 'fwhms_mid_heights' : hmpeaks}
@@ -1007,10 +1011,12 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
         if verbosity == 1:
             print('Peak properties:', prop)
             results_half = (widths, width_heights, left_ips, right_ips)
+            import matplotlib.pyplot as plt # lazy import
             plt.plot(spd[0,:],spd[i+1,:],'b-',label = 'spectrum')
             plt.plot(spd[0,peaks],spd[i+1,peaks],'ro', label = 'peaks')
             plt.hlines(*results_half[1:], color="C2", label = 'FWHM range of peaks')
             plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
+    if verbosity == 1: plt.show()
     return props
 
 #------------------------------------------------------------------------------
@@ -1038,6 +1044,8 @@ def create_spectral_interpolator(S, wl = None, kind = 1):
     Note:
         1. Nan's, +infs, -infs will be ignored when generating the interpolators. 
     """
+    from scipy import interpolate # lazy import
+    
     if S.ndim == 1:
         S = S[None,:] # make 2d
     if wl is None:
@@ -1046,7 +1054,7 @@ def create_spectral_interpolator(S, wl = None, kind = 1):
     interpolators = []
     for i in range(S.shape[0]):
         indices = np.logical_not(np.isnan(S[i]) | np.isneginf(S[i]) |  np.isposinf(S[i]))
-        interpolators.append(sp.interpolate.InterpolatedUnivariateSpline(wl[indices],S[i][indices], k = kind, ext = 0))
+        interpolators.append(interpolate.InterpolatedUnivariateSpline(wl[indices],S[i][indices], k = kind, ext = 0))
     return interpolators
 
 def wls_shift(shfts, log_shft = False, wl = None, S = None, interpolators = None, kind = 1):

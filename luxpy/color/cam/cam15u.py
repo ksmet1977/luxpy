@@ -30,8 +30,10 @@ Module with CAM15u color appearance model
             Opt. Express, vol. 23, no. 10, pp. 13455–13466. 
             <https://www.osapublishing.org/oe/abstract.cfm?uri=oe-23-10-13455&origin=search>`_
 """
+import numpy as np
+
 from luxpy import  _CMF, _CIE_ILLUMINANTS, _MUNSELL, spd_to_xyz, cie_interp
-from luxpy.utils import np, np2d, asplit, ajoin
+from luxpy.utils import np2d, asplit, ajoin
 from luxpy.color.cam.colorappearancemodels import hue_angle, hue_quadrature
 
 _CAM15U_AXES = {'qabW_cam15u' : ["Q (cam15u)", "aW (cam15u)", "bW (cam15u)"]} 

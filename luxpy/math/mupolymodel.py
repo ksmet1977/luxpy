@@ -21,7 +21,7 @@ Multivariate polynomial model
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import colorsys
-from luxpy.utils import np, plt, Axes3D
+import numpy as np
 from . import (cart2pol, positive_arctan)
 
 _EPS = np.finfo('float').eps # used in model to avoid division by zero ! 
@@ -493,6 +493,7 @@ def plot_vector_field(xyzRTt, xyzRTr, color = 'k', axh = None, title = None, axt
             
         
         if (axh == None):
+            import matplotlib.pyplot as plt # lazy import
             fig, newfig = plt.figure(), True
         else:
             newfig = False
@@ -639,6 +640,7 @@ def plotcircle(center = np.array([[0.,0.]]),radii = np.arange(0,60,10),
     xs = np.array([0])
     ys = xs.copy()
     if ((out != 'x,y') & (axh is None)):
+        import matplotlib.pyplot as plt # lazy import
         fig, axh = plt.subplots(rows=1,ncols=1)
     for ri in radii:
         x = center[:,0] + ri*np.cos(angles*np.pi/180)
@@ -811,7 +813,7 @@ class MuPolyModel:
 if __name__ == '__main__':
     
     import luxpy as lx
-    import pandas as pd
+    import matplotlib.pyplot as plt 
     
     run_example_1 = True
     run_example_2 = False
@@ -891,9 +893,9 @@ if __name__ == '__main__':
     # EXAMPLE 2: as transformation (example with 2D data, but should work for 3D)
     #--------------------------------------------------------------------------
     if run_example_2:
-        ab_test = pd.read_csv('./data/bipolymodeltests/ab_test.dat',header=None,sep='\t').values # final ab SWW CAM signal
-        ab_ref = pd.read_csv('./data/bipolymodeltests/ab_ref.dat',header=None,sep='\t').values   # final CIECAM02
-        dLMS = pd.read_csv('./data/bipolymodeltests/dLMS.dat',header=None,sep='\t').values  # L-M, (L+M)/2 signal of SWW from which final ab signal should be predicted
+        ab_test = lx.utils.loadtxt('./data/bipolymodeltests/ab_test.dat',header=None,sep='\t') # final ab SWW CAM signal
+        ab_ref = lx.utils.loadtxt('./data/bipolymodeltests/ab_ref.dat',header=None,sep='\t')   # final CIECAM02
+        dLMS = lx.utils.loadtxt('./data/bipolymodeltests/dLMS.dat',header=None,sep='\t')  # L-M, (L+M)/2 signal of SWW from which final ab signal should be predicted
      
         # Generate forward and reverse models:
         # pm2 = LMS -> ab:

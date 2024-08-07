@@ -131,8 +131,9 @@ LAB methods
 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
+import numpy as np
 
-from luxpy import _CMF, _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES
+from luxpy import  _COLORTF_DEFAULT_WHITE_POINT, _CIEOBS, _CSPACE, _CSPACE_AXES
 from luxpy.color.cam.colorappearancemodels import _CAM_DEFAULT_WHITE_POINT, _CAM_DEFAULT_CONDITIONS 
 from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_Yuv76, xyz_to_Yuv60, xyz_to_wuv, xyz_to_lab, xyz_to_luv, xyz_to_Vrb_mb, xyz_to_ipt, xyz_to_Ydlep, xyz_to_xyz, xyz_to_lms, 
                    Yxy_to_xyz, Yuv_to_xyz, Yuv76_to_xyz, Yuv60_to_xyz, lab_to_xyz, luv_to_xyz, Vrb_mb_to_xyz, ipt_to_xyz, Ydlep_to_xyz, lms_to_xyz, 
@@ -147,7 +148,9 @@ from luxpy import (xyz_to_Yxy, xyz_to_Yuv, xyz_to_Yuv76, xyz_to_Yuv60, xyz_to_wu
                    xyz_to_srgb, srgb_to_xyz, 
                    xyz_to_jabz, jabz_to_xyz,
                    colortf)
-from luxpy.utils import plt, np, todim, put_args_in_db
+from luxpy.utils import todim, put_args_in_db
+
+
 
 class CDATA():
     
@@ -376,6 +379,8 @@ class XYZ(CDATA):
             :gca:
                 | handle to current axes.
         """
+        import matplotlib.pyplot as plt # lazy import
+        
         X,Y,Z = self.split_()
         if ax is None:
             fig = plt.figure()
@@ -904,6 +909,8 @@ class LAB(CDATA):
             :gca: 
                 | handle to current axes.
         """
+        import matplotlib.pyplot as plt # lazy import
+        
         L,a,b = self.split_()
         if ax is None:
             fig = plt.figure()

@@ -32,7 +32,6 @@ Created on Thu June 8 15:36:29 2022
 import os
 import pickle
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 # get path to module:
@@ -43,7 +42,7 @@ __all__ = ['_CCT_LUT_WL3','_CCT_AVOID_ZERO_DIV','_CCT_AVOID_INF','_CCT_MIN','_CC
           '_CCT_FAST_DUV','_CCT_MAX_ITER','_CCT_SPLIT_CALC_AT_N',
           '_CCT_LUT_PATH','_CCT_LUT','_CCT_LIST_OF_CIEOBS_LUTS','_CCT_CIEOBS',
           '_BB','_WL3',
-          'save_pkl','load_pkl','get_tcs4','calculate_lut',
+          'save_pkl','load_pkl','get_tcs4','calculate_lut','loadtxt',
           'xyz_to_cct','xyz_to_duv','cct_to_xyz']
 
 #==============================================================================
@@ -115,6 +114,44 @@ def load_pkl(filename):
         obj = pickle.load(handle)
     return obj
 
+def loadtxt(filename, header = None, sep = ',', dtype = float, missing_values = np.nan):
+    """ 
+    Load data from text file. 
+    
+    Args:
+        :filename:
+            | String with filename [+path]
+        :header:
+            | None, optional
+            | None: no header present, 'infer' get from file.
+        :sep:
+            | ',', optional
+            | Delimiter (',' -> csv file)
+        :dtype:
+            | float, optional
+            | Try casting output array to this datatype.
+        :missing_values:
+            | np.nan, optional
+            | Replace missing values with this.
+            
+    Returns:
+        :ndarray:
+            | loaded data in ndarray of type dtype or object (in case of mixed types)
+    """
+    with open(filename,'r') as f:
+        lines = f.readlines()
+    out = np.array([line.strip().split(sep) for line in lines], dtype = object)
+    N = len(lines)
+    if header == 'infer':
+        header = out[0]
+        out = out[1:]
+    if dtype is not None:
+        try: 
+            out[out==''] = missing_values
+            out = out.astype(dtype)
+        except:
+            out = out.astype(object)
+    return out, header
 
 def positive_arctan(x,y, htype = 'deg'):
     """
@@ -360,7 +397,7 @@ def Yuv60_to_xyz(Yuv, **kwargs):
 #------------------------------------------------------------------------------
 # XYZ calculation, CMFs and CMFs conversion (apply color space transform already to CMFs!)
 #------------------------------------------------------------------------------
-import luxpy as lx
+# import luxpy as lx
 def _get_xyzbar_wl_dl(cieobs):
     """
     Get the xyzbar CMF set corresponding to cieobs.
@@ -596,7 +633,8 @@ def calculate_lut(ccts, cieobs, lut_vars = ['T','uv','uvp','uvpp','iso-T-slope']
     """   
     # Get ndarray with Planckian temperatures, Ts:
     if isinstance(ccts, str):
-        ccts = pd.read_csv(ccts, names = None, index_col = None, header = None, sep = ',').values
+        #ccts = pandas.read_csv(ccts, names = None, index_col = None, header = None, sep = ',').values
+        ccts = loadtxt(ccts, header = None, sep = ',')
     elif isinstance(ccts, tuple):
         if len(ccts) == 4:
             ccts = get_tcs4(ccts, cct_min = cct_min, cct_max = cct_max)
@@ -1253,7 +1291,7 @@ if __name__ == '__main__':
 
     # # # Test 4 (from disk):
     # # Test 4 (from disk): 'ref_cct_duv_1500-40000K.csv' or 'test_rob_error.csv'
-    # cctsduvs_t = pd.read_csv('../ref_cct_duv_1500-40000K.csv',header='infer',index_col=None).values
+    # cctsduvs_t = pandas.read_csv('../ref_cct_duv_1500-40000K.csv',header='infer',index_col=None).values
     # cctsduvs_t = cctsduvs_t[cctsduvs_t[:,0] <= 40000,:2]
     # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,0] >= 2000) & (cctsduvs_t[:,0] <= 20000),:2]
     # # cctsduvs_t = cctsduvs_t[(cctsduvs_t[:,1] >= -0.03) & (cctsduvs_t[:,1] <= 0.03),:2]
