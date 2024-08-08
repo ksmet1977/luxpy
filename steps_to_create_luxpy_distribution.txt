@@ -9,13 +9,16 @@ cd docs
 make html
 make latexpdf
 
+# Clean __pycache__ :
+pyclean . #pip install pyclean
+
 # Make source distribution and wheel:
 python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.11.0*
+twine upload dist/luxpy-1.11.1*
 
 
 # Build conda version:
 cd conda
 conda skeleton pypi luxpy
 conda-build luxpy
-anaconda upload C:\Miniconda3\envs\np2\conda-bld\win-64\luxpy-1.11.0-py312h19e89cd_0.tar.bz2
+anaconda upload C:\Miniconda3\envs\np2\conda-bld\win-64\luxpy-1.11.1-py312h19e89cd_0.tar.bz2
