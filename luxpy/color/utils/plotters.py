@@ -1127,7 +1127,7 @@ def plot_cmfs(cmfs, cmf_symbols = ['x','y','z'], cmf_label = '', ylabel = 'Sensi
             | figure axes handle.
     """
     if isinstance(cmf_symbols,list):
-        cmf_symbols = ['$\overline{'+cmf_symbols[i][0]+'}'+cmf_symbols[i][1:]+'(\lambda)$' for i in range(3)]
+        cmf_symbols = [r'$\overline{'+cmf_symbols[i][0]+r'}'+cmf_symbols[i][1:]+r'(\lambda)$' for i in range(3)]
           
     else:
         cmf_symbols = [cmf_symbols,None,None]
