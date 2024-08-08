@@ -14,7 +14,7 @@ pyclean . #pip install pyclean
 
 # Make source distribution and wheel:
 python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.11.1*
+twine upload dist/luxpy-1.11.2*
 
 
 # Build conda version:

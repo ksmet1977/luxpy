@@ -73,7 +73,7 @@ author = 'Kevin A.G. Smet'
 # built documents.
 #
 # The short X.Y version.
-version = '1.11.1'
+version = '1.11.2'
 # The full version, including alpha/beta/rc tags.
 release = version
 
@@ -229,4 +229,4 @@ epub_exclude_files = ['search.html']
 
 
 autodoc_member_order = 'bysource'
-autodoc_mock_imports = ["numpy, scipy, matplotlib, mpl_toolkits, plt, pd, np, Axes3D, imageio"]
+autodoc_mock_imports = ["numpy, scipy, matplotlib, mpl_toolkits, plt, pd, np, Axes3D, imageio, openpyxl"]
