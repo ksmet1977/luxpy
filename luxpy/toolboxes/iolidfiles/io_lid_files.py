@@ -28,6 +28,8 @@ Module for reading / writing LID data from IES and LDT files.
  :draw_lid(): Draw 2D polar plots or 3D light intensity distribution.
  
  :render_lid(): Render a light intensity distribution.
+ 
+ :luminous_intensity_to_luminous_flux(): Calculate luminous flux from luminous intensity values.
 
     Notes:
         1. Only basic support (reading / visualization). Writing is not yet implemented.
@@ -52,7 +54,8 @@ from numpy import matlib
 
 _PATH_DATA = os.path.join(_PKG_PATH, 'toolboxes','iolidfiles','data') + _SEP
 
-__all__ =['_PATH_DATA', 'read_lamp_data','get_uv_texture','save_texture','draw_lid','render_lid']
+__all__ =['_PATH_DATA', 'read_lamp_data','get_uv_texture','save_texture',
+          'draw_lid','render_lid','luminous_intensity_to_luminous_flux']
 
 
 
@@ -95,6 +98,7 @@ def read_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 'I0'
             | 'I0', optional
             | If 'I0': normalize LID to intensity at (theta,phi) = (0,0)
             | If 'max': normalize to max = 1.
+            | If None: do not normalize.
         :only_common_keys:
             | False, optional
             | If True, output only common dict keys related to angles, values
@@ -181,6 +185,7 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
             | 'I0', optional
             | If 'I0': normalize LID to intensity at (theta,phi) = (0,0)
             | If 'max': normalize to max = 1.
+            | If None: do not normalize.
             
     Returns:
         :IES: dict with IES data.
@@ -322,11 +327,11 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
     if not h_same:
         displaymsg('INFO', "Different offsets for horizontal angles!", verbosity = verbosity)
         
-    # normalize candela values
-    maxval = max([max(row) for row in candela_2d])
-    candela_2d = [[val / maxval for val in row] for row in candela_2d]
-    intensity = maxval * multiplier * candela_mult
-    #intensity = max(500, min(intensity, 5000)) #???
+    # # normalize candela values
+    # maxval = max([max(row) for row in candela_2d])
+    # candela_2d = [[val / maxval for val in row] for row in candela_2d]
+    # intensity = maxval * multiplier * candela_mult
+    # #intensity = max(500, min(intensity, 5000)) #???
 
     # Summarize in dict():
     IES = {'datasource': datasource}
@@ -351,7 +356,7 @@ def read_IES_lamp_data(datasource, multiplier = 1.0, verbosity = 0, normalize = 
     IES['candela_2d'] = np.asarray(candela_2d)
     IES['v_same'] = v_same
     IES['h_same'] = h_same
-    IES['intensity'] = intensity
+    IES['intensity'] = None#intensity
     IES['map'] = {}
     
     # normalize candela values to max = 1 or I0 = 1:
@@ -450,7 +455,7 @@ def _complete_ies_lid(IES, lamp_h_type = 'TYPE90', complete = True):
             phis[phis>360] = phis[phis>360] - 360
         else:
             candela_2d = matlib.repmat(candela_2d,361,1)
-            phis = np.arange(phis, phis + 360 + 1)
+            phis = np.arange(phis[0], phis[0] + 360 + 1)
             phis[phis>360] = phis[phis>360] - 360
         
         # complete thetas:
@@ -515,6 +520,7 @@ def read_ldt_lamp_data(datasource, multiplier = 1.0, normalize = 'I0'):
             | 'I0', optional
             | If 'I0': normalize LID to intensity at (theta,phi) = (0,0)
             | If 'max': normalize to max = 1.
+            | If None: do not normalize.
             
     Returns:
         :LDT: dict with LDT data.
@@ -698,7 +704,7 @@ def _complete_ldt_lid(LDT, Isym = 4, complete = True):
     elif (Isym == 1) & (complete == True):
         # complete phis:
         candela_2d = np.repeat(candela_2d,361,axis=0)
-        phis = np.arange(phis,phis + 360 + 1)
+        phis = np.arange(phis[0],phis[0] + 360 + 1)
         phis[phis>360] = phis[phis>360] - 360
         
         # complete thetas:
@@ -1711,6 +1717,86 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
         
     return eval(out)
 
+#------------------------------------------------------------------------------
+def luminous_intensity_to_luminous_flux(phis, thetas, I, interp = False, dp = 1, dt = 1, use_RBFInterpolator = True):
+    """
+    Calculate luminous flux from luminous intensity values.
+    
+    Args:
+        :phis:
+            | Array [N,] of Phi angles in degrees for which intensity values are available.
+        :thetas:
+            | Array [M,] of Theta angles in degrees for which intensity values are available.
+        :I:
+            | Array [N,M] of luminous intensity values (in cd).
+        :interp:
+            | False, optional
+            | If True interpolate I for new phis [0,360] with :dp: spacing and new thetas [0,360] with :dt: spacing
+        :dp:
+            | Angle spacing of new phi angles upon interpolation.
+        :dt:
+            | Angle spacing of new theta angles upon interpolation.
+        :use_RBFInterpolator:
+            | If True: use slower more smooth scipy.interpolate.RBFInterpolator
+            | If False: use scipy.interpolate.LinearNDInterpolator
+            
+    Returns:
+        :flux:
+            | Luminous flux (in lm).
+    """
+    
+    if interp:
+        from scipy import interpolate # lazy import
+        
+        thetas_2d,phis_2d  = np.meshgrid(thetas, phis)
+        thetasphis_2d = np.dstack((thetas_2d[...,None],phis_2d[...,None]))
+        N = np.prod(thetas_2d.shape)
+        thetasphis_2d = thetasphis_2d.reshape((N,2))
+        
+        if use_RBFInterpolator == False:
+            f = interpolate.LinearNDInterpolator(thetasphis_2d, I.reshape(N))
+        else: 
+            f = interpolate.RBFInterpolator(thetasphis_2d, I.reshape(N))
+        
+        thetas = np.arange(0,180+dt,dt)
+        phis = np.arange(0,360+dp,dp)
+        thetas_2d,phis_2d  = np.meshgrid(thetas, phis) 
+        if use_RBFInterpolator: 
+            thetasphis_2d = np.dstack((thetas_2d[...,None],phis_2d[...,None]))
+            I = f(thetasphis_2d.reshape((np.prod(thetasphis_2d.shape[:2]),-2))).reshape(thetasphis_2d.shape[:2])
+        else:
+            I = f(thetas_2d,phis_2d)
+        
+        #plt.pcolormesh(thetas_2d, phis_2d, I, shading='auto')
+    
+    # get meshgrid for angles:
+    thetas_2d,phis_2d  = np.meshgrid(thetas, phis)
+    
+    # get angle differences:
+    dthetas_2d = np.abs(np.roll(thetas_2d,-1,axis=-1) - thetas_2d)
+    dthetas_2d[dthetas_2d>=180] = dthetas_2d[dthetas_2d>=180] - 180
+    dphis_2d = np.abs(np.roll(phis_2d,-1,axis=0) - phis_2d)
+    dphis_2d[dphis_2d>=360] = dphis_2d[dphis_2d>=360] - 360
+    
+    # convert to radians:
+    thetas_rad = thetas*np.pi/180
+    phis_rad = phis*np.pi/180
+    thetas_2d_rad = thetas_2d*np.pi/180
+    phis_2d_rad = phis_2d*np.pi/180
+    dthetas_2d_rad = dthetas_2d*np.pi/180
+    dphis_2d_rad = dphis_2d*np.pi/180
+    
+    # get solid angle meshgrid: dOmega = sin(theta)*dtheta*dphi
+    dOmega = np.sin(thetas_2d_rad)*dthetas_2d_rad*dphis_2d_rad
+    
+    # Calculate flux = integrate(I*dOmega) = integrate(I*dtheta*dphi)
+    # (approximate integral with sum)
+    # return np.sum(np.sum(I*dOmega))
+    from scipy import integrate # lazy import
+    return (integrate.trapezoid(integrate.trapezoid(I*np.sin(thetas_2d_rad), x = thetas_rad, axis = -1), x = phis_rad, axis = 0))
+    
+    
+
 if __name__ == '__main__':
 
     # tests for different LDT and IES formats:
@@ -1806,6 +1892,15 @@ if __name__ == '__main__':
                         plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
                         out = 'Lv2D')
     # Lv2D = render_lid(LID, ax3D = False)
+    
+    # Calculate luminous flux (assuming absolute photometry with luminous intensities in cd):
+    thetas = LID['map']['thetas'].copy()
+    phis = LID['map']['phis'].copy()
+    I = LID['map']['values'].copy()
+    
+    flux = luminous_intensity_to_luminous_flux(phis, thetas, I, interp = False, dt = 1, dp = 1)
+    print('flux = ', flux)
+        
     
     
     
