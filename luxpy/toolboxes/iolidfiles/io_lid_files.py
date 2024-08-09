@@ -1899,7 +1899,7 @@ if __name__ == '__main__':
     I = LID['map']['values'].copy()
     
     flux = luminous_intensity_to_luminous_flux(phis, thetas, I, interp = False, dt = 1, dp = 1)
-    print('flux = ', flux)
+    print('flux [lm] = ', flux)
         
     
     
