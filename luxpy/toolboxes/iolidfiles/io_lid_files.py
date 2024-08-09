@@ -1770,30 +1770,30 @@ def luminous_intensity_to_luminous_flux(phis, thetas, I, interp = False, dp = 1,
         #plt.pcolormesh(thetas_2d, phis_2d, I, shading='auto')
     
     # get meshgrid for angles:
-    thetas_2d,phis_2d  = np.meshgrid(thetas, phis)
+    # thetas_2d,phis_2d  = np.meshgrid(thetas, phis)
     
-    # get angle differences:
-    dthetas_2d = np.abs(np.roll(thetas_2d,-1,axis=-1) - thetas_2d)
-    dthetas_2d[dthetas_2d>=180] = dthetas_2d[dthetas_2d>=180] - 180
-    dphis_2d = np.abs(np.roll(phis_2d,-1,axis=0) - phis_2d)
-    dphis_2d[dphis_2d>=360] = dphis_2d[dphis_2d>=360] - 360
+    # # get angle differences:
+    # dthetas_2d = np.abs(np.roll(thetas_2d,-1,axis=-1) - thetas_2d)
+    # dthetas_2d[dthetas_2d>=180] = dthetas_2d[dthetas_2d>=180] - 180
+    # dphis_2d = np.abs(np.roll(phis_2d,-1,axis=0) - phis_2d)
+    # dphis_2d[dphis_2d>=360] = dphis_2d[dphis_2d>=360] - 360
     
     # convert to radians:
     thetas_rad = thetas*np.pi/180
     phis_rad = phis*np.pi/180
-    thetas_2d_rad = thetas_2d*np.pi/180
-    phis_2d_rad = phis_2d*np.pi/180
-    dthetas_2d_rad = dthetas_2d*np.pi/180
-    dphis_2d_rad = dphis_2d*np.pi/180
+    # thetas_2d_rad = thetas_2d*np.pi/180
+    # phis_2d_rad = phis_2d*np.pi/180
+    # dthetas_2d_rad = dthetas_2d*np.pi/180
+    # dphis_2d_rad = dphis_2d*np.pi/180
     
-    # get solid angle meshgrid: dOmega = sin(theta)*dtheta*dphi
-    dOmega = np.sin(thetas_2d_rad)*dthetas_2d_rad*dphis_2d_rad
+    # # get solid angle meshgrid: dOmega = sin(theta)*dtheta*dphi
+    # dOmega = np.sin(thetas_2d_rad)*dthetas_2d_rad*dphis_2d_rad
     
     # Calculate flux = integrate(I*dOmega) = integrate(I*dtheta*dphi)
     # (approximate integral with sum)
     # return np.sum(np.sum(I*dOmega))
     from scipy import integrate # lazy import
-    return (integrate.trapezoid(integrate.trapezoid(I*np.sin(thetas_2d_rad), x = thetas_rad, axis = -1), x = phis_rad, axis = 0))
+    return (integrate.trapezoid(integrate.trapezoid(I*np.sin(thetas_rad), x = thetas_rad, axis = -1), x = phis_rad, axis = 0))
     
     
 
