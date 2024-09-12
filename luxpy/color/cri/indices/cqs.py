@@ -121,6 +121,7 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
     
     if version == 'v7.5':
         GA = (9.2672*(1.0e-11))*cct**3.0  - (8.3959*(1.0e-7))*cct**2.0 + 0.00255*cct - 1.612 
+        GA = np.where(cct < 3500, GA, 1)
     elif version == 'v9.0':
         GA = np.ones(cct.shape)
     else:
