@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.toolboxes.iolidfiles.io_lid_files &mdash; LuxPy 1.11.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=9080e127"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.11.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -107,6 +107,8 @@
 <span class="sd"> :draw_lid(): Draw 2D polar plots or 3D light intensity distribution.</span>
 <span class="sd"> </span>
 <span class="sd"> :render_lid(): Render a light intensity distribution.</span>
+<span class="sd"> </span>
+<span class="sd"> :luminous_intensity_to_luminous_flux(): Calculate luminous flux from luminous intensity values.</span>
 
 <span class="sd">    Notes:</span>
 <span class="sd">        1. Only basic support (reading / visualization). Writing is not yet implemented.</span>
@@ -131,7 +133,8 @@
 
 <span class="n">_PATH_DATA</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_PKG_PATH</span><span class="p">,</span> <span class="s1">&#39;toolboxes&#39;</span><span class="p">,</span><span class="s1">&#39;iolidfiles&#39;</span><span class="p">,</span><span class="s1">&#39;data&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">_SEP</span>
 
-<span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_PATH_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;read_lamp_data&#39;</span><span class="p">,</span><span class="s1">&#39;get_uv_texture&#39;</span><span class="p">,</span><span class="s1">&#39;save_texture&#39;</span><span class="p">,</span><span class="s1">&#39;draw_lid&#39;</span><span class="p">,</span><span class="s1">&#39;render_lid&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_PATH_DATA&#39;</span><span class="p">,</span> <span class="s1">&#39;read_lamp_data&#39;</span><span class="p">,</span><span class="s1">&#39;get_uv_texture&#39;</span><span class="p">,</span><span class="s1">&#39;save_texture&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;draw_lid&#39;</span><span class="p">,</span><span class="s1">&#39;render_lid&#39;</span><span class="p">,</span><span class="s1">&#39;luminous_intensity_to_luminous_flux&#39;</span><span class="p">]</span>
 
 
 
@@ -176,6 +179,7 @@
 <span class="sd">            | &#39;I0&#39;, optional</span>
 <span class="sd">            | If &#39;I0&#39;: normalize LID to intensity at (theta,phi) = (0,0)</span>
 <span class="sd">            | If &#39;max&#39;: normalize to max = 1.</span>
+<span class="sd">            | If None: do not normalize.</span>
 <span class="sd">        :only_common_keys:</span>
 <span class="sd">            | False, optional</span>
 <span class="sd">            | If True, output only common dict keys related to angles, values</span>
@@ -263,6 +267,7 @@
 <span class="sd">            | &#39;I0&#39;, optional</span>
 <span class="sd">            | If &#39;I0&#39;: normalize LID to intensity at (theta,phi) = (0,0)</span>
 <span class="sd">            | If &#39;max&#39;: normalize to max = 1.</span>
+<span class="sd">            | If None: do not normalize.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :IES: dict with IES data.</span>
@@ -404,11 +409,11 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">h_same</span><span class="p">:</span>
         <span class="n">displaymsg</span><span class="p">(</span><span class="s1">&#39;INFO&#39;</span><span class="p">,</span> <span class="s2">&quot;Different offsets for horizontal angles!&quot;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">)</span>
         
-    <span class="c1"># normalize candela values</span>
-    <span class="n">maxval</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">max</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">candela_2d</span><span class="p">])</span>
-    <span class="n">candela_2d</span> <span class="o">=</span> <span class="p">[[</span><span class="n">val</span> <span class="o">/</span> <span class="n">maxval</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">candela_2d</span><span class="p">]</span>
-    <span class="n">intensity</span> <span class="o">=</span> <span class="n">maxval</span> <span class="o">*</span> <span class="n">multiplier</span> <span class="o">*</span> <span class="n">candela_mult</span>
-    <span class="c1">#intensity = max(500, min(intensity, 5000)) #???</span>
+    <span class="c1"># # normalize candela values</span>
+    <span class="c1"># maxval = max([max(row) for row in candela_2d])</span>
+    <span class="c1"># candela_2d = [[val / maxval for val in row] for row in candela_2d]</span>
+    <span class="c1"># intensity = maxval * multiplier * candela_mult</span>
+    <span class="c1"># #intensity = max(500, min(intensity, 5000)) #???</span>
 
     <span class="c1"># Summarize in dict():</span>
     <span class="n">IES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;datasource&#39;</span><span class="p">:</span> <span class="n">datasource</span><span class="p">}</span>
@@ -433,7 +438,7 @@
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;candela_2d&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">)</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;v_same&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v_same</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;h_same&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_same</span>
-    <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">intensity</span>
+    <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="c1">#intensity</span>
     <span class="n">IES</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     
     <span class="c1"># normalize candela values to max = 1 or I0 = 1:</span>
@@ -532,7 +537,7 @@
             <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">matlib</span><span class="o">.</span><span class="n">repmat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">phis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
             <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         
         <span class="c1"># complete thetas:</span>
@@ -597,6 +602,7 @@
 <span class="sd">            | &#39;I0&#39;, optional</span>
 <span class="sd">            | If &#39;I0&#39;: normalize LID to intensity at (theta,phi) = (0,0)</span>
 <span class="sd">            | If &#39;max&#39;: normalize to max = 1.</span>
+<span class="sd">            | If None: do not normalize.</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :LDT: dict with LDT data.</span>
@@ -780,7 +786,7 @@
     <span class="k">elif</span> <span class="p">(</span><span class="n">Isym</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">complete</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
         <span class="c1"># complete phis:</span>
         <span class="n">candela_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">candela_2d</span><span class="p">,</span><span class="mi">361</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span><span class="n">phis</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">phis</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">phis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">phis</span><span class="p">[</span><span class="n">phis</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
         
         <span class="c1"># complete thetas:</span>
@@ -1805,6 +1811,89 @@
     <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
 
+<span class="c1">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="luminous_intensity_to_luminous_flux">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.iolidfiles.luminous_intensity_to_luminous_flux">[docs]</a>
+<span class="k">def</span> <span class="nf">luminous_intensity_to_luminous_flux</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">interp</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">use_RBFInterpolator</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate luminous flux from luminous intensity values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :phis:</span>
+<span class="sd">            | Array [N,] of Phi angles in degrees for which intensity values are available.</span>
+<span class="sd">        :thetas:</span>
+<span class="sd">            | Array [M,] of Theta angles in degrees for which intensity values are available.</span>
+<span class="sd">        :I:</span>
+<span class="sd">            | Array [N,M] of luminous intensity values (in cd).</span>
+<span class="sd">        :interp:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True interpolate I for new phis [0,360] with :dp: spacing and new thetas [0,360] with :dt: spacing</span>
+<span class="sd">        :dp:</span>
+<span class="sd">            | Angle spacing of new phi angles upon interpolation.</span>
+<span class="sd">        :dt:</span>
+<span class="sd">            | Angle spacing of new theta angles upon interpolation.</span>
+<span class="sd">        :use_RBFInterpolator:</span>
+<span class="sd">            | If True: use slower more smooth scipy.interpolate.RBFInterpolator</span>
+<span class="sd">            | If False: use scipy.interpolate.LinearNDInterpolator</span>
+<span class="sd">            </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :flux:</span>
+<span class="sd">            | Luminous flux (in lm).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">interp</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+        
+        <span class="n">thetas_2d</span><span class="p">,</span><span class="n">phis_2d</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">phis</span><span class="p">)</span>
+        <span class="n">thetasphis_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">thetas_2d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">],</span><span class="n">phis_2d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]))</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">thetas_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">thetasphis_2d</span> <span class="o">=</span> <span class="n">thetasphis_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">N</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">use_RBFInterpolator</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="n">thetasphis_2d</span><span class="p">,</span> <span class="n">I</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span> 
+            <span class="n">f</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">RBFInterpolator</span><span class="p">(</span><span class="n">thetasphis_2d</span><span class="p">,</span> <span class="n">I</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+        
+        <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">180</span><span class="o">+</span><span class="n">dt</span><span class="p">,</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">phis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">360</span><span class="o">+</span><span class="n">dp</span><span class="p">,</span><span class="n">dp</span><span class="p">)</span>
+        <span class="n">thetas_2d</span><span class="p">,</span><span class="n">phis_2d</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">phis</span><span class="p">)</span> 
+        <span class="k">if</span> <span class="n">use_RBFInterpolator</span><span class="p">:</span> 
+            <span class="n">thetasphis_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dstack</span><span class="p">((</span><span class="n">thetas_2d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">],</span><span class="n">phis_2d</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]))</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">thetasphis_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">thetasphis_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]),</span><span class="o">-</span><span class="mi">2</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">thetasphis_2d</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">I</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">thetas_2d</span><span class="p">,</span><span class="n">phis_2d</span><span class="p">)</span>
+        
+        <span class="c1">#plt.pcolormesh(thetas_2d, phis_2d, I, shading=&#39;auto&#39;)</span>
+    
+    <span class="c1"># get meshgrid for angles:</span>
+    <span class="c1"># thetas_2d,phis_2d  = np.meshgrid(thetas, phis)</span>
+    
+    <span class="c1"># # get angle differences:</span>
+    <span class="c1"># dthetas_2d = np.abs(np.roll(thetas_2d,-1,axis=-1) - thetas_2d)</span>
+    <span class="c1"># dthetas_2d[dthetas_2d&gt;=180] = dthetas_2d[dthetas_2d&gt;=180] - 180</span>
+    <span class="c1"># dphis_2d = np.abs(np.roll(phis_2d,-1,axis=0) - phis_2d)</span>
+    <span class="c1"># dphis_2d[dphis_2d&gt;=360] = dphis_2d[dphis_2d&gt;=360] - 360</span>
+    
+    <span class="c1"># convert to radians:</span>
+    <span class="n">thetas_rad</span> <span class="o">=</span> <span class="n">thetas</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+    <span class="n">phis_rad</span> <span class="o">=</span> <span class="n">phis</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+    <span class="c1"># thetas_2d_rad = thetas_2d*np.pi/180</span>
+    <span class="c1"># phis_2d_rad = phis_2d*np.pi/180</span>
+    <span class="c1"># dthetas_2d_rad = dthetas_2d*np.pi/180</span>
+    <span class="c1"># dphis_2d_rad = dphis_2d*np.pi/180</span>
+    
+    <span class="c1"># # get solid angle meshgrid: dOmega = sin(theta)*dtheta*dphi</span>
+    <span class="c1"># dOmega = np.sin(thetas_2d_rad)*dthetas_2d_rad*dphis_2d_rad</span>
+    
+    <span class="c1"># Calculate flux = integrate(I*dOmega) = integrate(I*dtheta*dphi)</span>
+    <span class="c1"># (approximate integral with sum)</span>
+    <span class="c1"># return np.sum(np.sum(I*dOmega))</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">integrate</span> <span class="c1"># lazy import</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">integrate</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">I</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">thetas_rad</span><span class="p">),</span> <span class="n">x</span> <span class="o">=</span> <span class="n">thetas_rad</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">x</span> <span class="o">=</span> <span class="n">phis_rad</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span></div>
+
+    
+    
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
 
     <span class="c1"># tests for different LDT and IES formats:</span>
@@ -1900,6 +1989,15 @@
                         <span class="n">plot_floor_edges</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_floor_luminance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_floor_intersections</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                         <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Lv2D&#39;</span><span class="p">)</span>
     <span class="c1"># Lv2D = render_lid(LID, ax3D = False)</span>
+    
+    <span class="c1"># Calculate luminous flux (assuming absolute photometry with luminous intensities in cd):</span>
+    <span class="n">thetas</span> <span class="o">=</span> <span class="n">LID</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">][</span><span class="s1">&#39;thetas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">phis</span> <span class="o">=</span> <span class="n">LID</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">][</span><span class="s1">&#39;phis&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">LID</span><span class="p">[</span><span class="s1">&#39;map&#39;</span><span class="p">][</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">luminous_intensity_to_luminous_flux</span><span class="p">(</span><span class="n">phis</span><span class="p">,</span> <span class="n">thetas</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">interp</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">dt</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dp</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;flux [lm] = &#39;</span><span class="p">,</span> <span class="n">flux</span><span class="p">)</span>
+        
     
     
     

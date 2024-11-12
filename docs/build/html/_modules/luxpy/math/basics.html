@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.math.basics &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.math.basics &mdash; LuxPy 1.11.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../_static/documentation_options.js?v=9080e127"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.11.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -1495,7 +1495,7 @@
         <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
             <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> 
         <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span>
-            <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
         <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span> 
         <span class="k">return</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">)</span></div>

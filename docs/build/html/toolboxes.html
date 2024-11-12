@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Toolboxes &mdash; LuxPy 1.11.2 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.11.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="_static/documentation_options.js?v=9080e127"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -36,7 +36,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.11.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -150,6 +150,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.iolidfiles.save_texture"><code class="docutils literal notranslate"><span class="pre">save_texture()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.iolidfiles.draw_lid"><code class="docutils literal notranslate"><span class="pre">draw_lid()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.iolidfiles.render_lid"><code class="docutils literal notranslate"><span class="pre">render_lid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.iolidfiles.luminous_intensity_to_luminous_flux"><code class="docutils literal notranslate"><span class="pre">luminous_intensity_to_luminous_flux()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spectro">spectro/</a><ul>
@@ -4466,6 +4467,7 @@ are sampled (different increment) independently from the remainder of the cube.<
 <div class="line">‘I0’, optional</div>
 <div class="line">If ‘I0’: normalize LID to intensity at (theta,phi) = (0,0)</div>
 <div class="line">If ‘max’: normalize to max = 1.</div>
+<div class="line">If None: do not normalize.</div>
 </div>
 </dd>
 <dt class="field-odd">only_common_keys<span class="colon">:</span></dt>
@@ -4945,6 +4947,62 @@ are sampled (different increment) independently from the remainder of the cube.<
 <dt class="field-odd">returns<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">Whatever requested as determined by the string in :out:</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.iolidfiles.luminous_intensity_to_luminous_flux">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.iolidfiles.</span></span><span class="sig-name descname"><span class="pre">luminous_intensity_to_luminous_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">thetas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">I</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_RBFInterpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/iolidfiles/io_lid_files.html#luminous_intensity_to_luminous_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.iolidfiles.luminous_intensity_to_luminous_flux" title="Link to this definition"></a></dt>
+<dd><p>Calculate luminous flux from luminous intensity values.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">phis<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Array [N,] of Phi angles in degrees for which intensity values are available.</div>
+</div>
+</dd>
+<dt class="field-even">thetas<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Array [M,] of Theta angles in degrees for which intensity values are available.</div>
+</div>
+</dd>
+<dt class="field-odd">I<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Array [N,M] of luminous intensity values (in cd).</div>
+</div>
+</dd>
+<dt class="field-even">interp<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If True interpolate I for new phis [0,360] with :dp: spacing and new thetas [0,360] with :dt: spacing</div>
+</div>
+</dd>
+<dt class="field-odd">dp<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Angle spacing of new phi angles upon interpolation.</div>
+</div>
+</dd>
+<dt class="field-even">dt<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Angle spacing of new theta angles upon interpolation.</div>
+</div>
+</dd>
+<dt class="field-odd">use_RBFInterpolator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">If True: use slower more smooth scipy.interpolate.RBFInterpolator</div>
+<div class="line">If False: use scipy.interpolate.LinearNDInterpolator</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">flux<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Luminous flux (in lm).</div>
 </div>
 </dd>
 </dl>
