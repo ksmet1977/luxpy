@@ -1327,7 +1327,7 @@ def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', fill_value = 'extrap
         elif ((ext == 'zeros') | (ext == 1)):
             fill_value = (0.0,0.0) 
         elif ((ext == 'const') | (ext == 3)):
-            fill_value = (X[0], X[-1])
+            fill_value = (Y[...,0], Y[...,-1])
         elif ((ext == 'fill_value')):
             if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value) 
         return interpolate.interp1d(X, Y, kind = k, bounds_error = False, fill_value = fill_value)(Xnew)
