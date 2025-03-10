@@ -279,9 +279,10 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     hpr[(apr==0)*(br==0)] = 0
     
     # Step 2:
-    dL = np.abs(Lr - Lt)
-    dCp = np.abs(Cpr - Cpt)
+    dL = (Lr - Lt)
+    dCp = (Cpr - Cpt)
     dhp_ = hpr - hpt  
+
 
     dhp = dhp_.copy()
     dhp[np.where(np.abs(dhp_) > 180)] = dhp[np.where(np.abs(dhp_) > 180)] - 360
@@ -309,11 +310,10 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
     SC = 1 + 0.045*Cp
     SH = 1 + 0.015*Cp*T
     RT = -np.sin(2*dtheta*np.pi/180)*RC
-
+   
     kL, kC, kH = KLCH
     
     DEi = ((dL/(kL*SL))**2 , (dCp/(kC*SC))**2 + (dH/(kH*SH))**2 + RT*(dCp/(kC*SC))*(dH/(kH*SH)))
-    
 
     return _process_DEi(DEi, DEtype = DEtype, avg = avg, avg_axis = avg_axis, out = out)
 
