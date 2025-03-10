@@ -285,8 +285,8 @@ def DE2000(xyzt, xyzr, dtype = 'xyz', DEtype = 'jab', avg = None, avg_axis = 0, 
 
 
     dhp = dhp_.copy()
-    dhp[np.where(np.abs(dhp_) > 180)] = dhp[np.where(np.abs(dhp_) > 180)] - 360
-    dhp[np.where(np.abs(dhp_) < -180)] = dhp[np.where(np.abs(dhp_) < -180)] + 360
+    dhp[np.where((dhp_) > 180)] = dhp[np.where((dhp_) > 180)] - 360
+    dhp[np.where((dhp_) < -180)] = dhp[np.where((dhp_) < -180)] + 360
     dhp[np.where(Cpprod == 0)] = 0
 
     #dH = 2*np.sqrt(Cpprod)*np.sin(dhp/2*np.pi/180)
