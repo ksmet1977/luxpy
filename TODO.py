@@ -4,9 +4,4 @@
 @author: kevin.smet
 """
 
-#NSGA-II
-
-# Whiteness formula
-
-# CAM18sl
 
