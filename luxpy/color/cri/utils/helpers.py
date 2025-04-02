@@ -51,7 +51,7 @@ Module with color rendition, fidelity and gamut area helper functions
 import copy
 import numpy as np
 
-from luxpy import (_S_INTERP_TYPE, _IESTM3015, math, cam, cat, _CRI_RFL,
+from luxpy import (_IESTM3015, math, cam, cat, _CRI_RFL,
                    colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct)
 from luxpy.utils import np2d 
 #from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale
@@ -62,7 +62,6 @@ __all__ = ['_get_hue_bin_data','spd_to_jab_t_r','spd_to_rg', 'spd_to_DEi',
            'optimize_scale_factor','spd_to_cri',
            '_hue_bin_data_to_rxhj', '_hue_bin_data_to_rfi', '_hue_bin_data_to_rg']
 
-_CCT_MODE = 'ohno2014'
 
 #------------------------------------------------------------------------------
 def _get_hue_bin_data_individual_samples(jabt,jabr, normalized_chroma_ref = 100):
@@ -572,8 +571,11 @@ def _hue_bin_data_to_rf(hue_bin_data = None, cri_type = _CRI_TYPE_DEFAULT,
 
 def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', 
                    wl = None, sampleset = None, ref_type = None, 
-                   cieobs  = None, cspace = None, catf = None, 
-                   cri_specific_pars = None):
+                   calculation_wavelength_range = None,
+                   cieobs  = None, cct_mode = None, cspace = None, catf = None, 
+                   cri_specific_pars = None,
+                   round_daylightphase_Mi_to_cie_recommended = False,
+                   interp_settings = None):
     """
     Calculates jab color values for a sample set illuminated with test source 
     SPD and its reference illuminant.
@@ -617,6 +619,9 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
             |            'cierf': used in CIE 224-2017, 
             |            'iesrf': used in TM30-15, ...
             |     - ndarray: user defined reference SPD
+        :calculation_wavelength_range:
+            | None or list, optional
+            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.
         :cieobs:
             | None or dict, optional
             | Specifies which CMF sets to use for the calculation of the sample 
@@ -625,6 +630,10 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
             |     - key: 'xyz': str specifying CMF set for calculating xyz 
             |                   of samples and white 
             |     - key: 'cct': str specifying CMF set for calculating cct
+        :cct_mode:
+            | None or str or (str, dict), optional
+            | Specifies which mode to use when calculating xyz_to_cct().
+            | If tuple: second element is dict with additional kwargs for xyz_to_cct
         :cspace:
             | None or dict, optional
             | Specifies which color space to use.
@@ -656,7 +665,10 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
             |     - dict: user specified parameters. 
             |         For its use, see for example:
             |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
-    
+        :round_daylightphase_Mi_to_cie_recommended:
+            | False, optional
+            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+
     Returns:
         :returns: 
             | (ndarray, ndarray) 
@@ -670,34 +682,43 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
     
     # unpack and update dict with parameters:
-    (avg, catf, cieobs,
+
+    (avg, calculation_wavelength_range, catf, cct_mode, cieobs,
      cri_specific_pars, cspace, 
-     ref_type, rf_from_avg_rounded_rfi, rg_pars, sampleset, scale) = [cri_type[x] for x in sorted(cri_type.keys())] 
+     ref_type, rf_from_avg_rounded_rfi, rg_pars, 
+     round_daylightphase_Mi_to_cie_recommended, 
+     sampleset, scale) = [cri_type[x] for x in sorted(cri_type.keys())] 
+
 
     # pre-interpolate SPD:
     if wl is not None: 
-        St = cie_interp(St, wl_new = wl, kind = _S_INTERP_TYPE)
+        St = cie_interp(St, wl_new = wl, datatype = 'spd', interp_settings = interp_settings)
       
+    # Drop wavelengths outside of calculation_wavelength_range:
+    if calculation_wavelength_range is not None:
+        St = St[:,(St[0]>=calculation_wavelength_range[0]) & (St[0]<=calculation_wavelength_range[1])]
+
     # obtain sampleset:
     if isinstance(sampleset,str):
         sampleset = eval(sampleset)
     
     # A. calculate reference illuminant:
     # A.a. get xyzw:
-    xyztw_cct = spd_to_xyz(St, cieobs = cieobs['cct'], rfl = None, out = 1)
+    xyztw_cct = spd_to_xyz(St, cieobs = cieobs['cct'], rfl = None, out = 1, interp_settings = interp_settings)
 
     # A.b. get cct:
-    cct, duv = xyz_to_cct(xyztw_cct, cieobs = cieobs['cct'], out = 'cct,duv',mode = _CCT_MODE)
+    if not (isinstance(cct_mode,tuple) | isinstance(cct_mode, list)): cct_mode = (cct_mode, {})
+    cct, duv = xyz_to_cct(xyztw_cct, mode = cct_mode[0], cieobs = cieobs['cct'], out = 'cct,duv', interp_settings = interp_settings, **cct_mode[1])
     cct = np.abs(cct) # out-of-lut ccts are encoded as negative
     
     # A.c. get reference ill.:
     if isinstance(ref_type,np.ndarray):
-        Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = St[0])
+        Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = St[0], interp_settings = interp_settings, round_daylightphase_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended)
     else:
-        Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = St[0])
+        Sr = cri_ref(cct, ref_type = ref_type, cieobs = cieobs['cct'], wl3 = St[0], interp_settings = interp_settings, round_daylightphase_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended)
 
     # B. calculate xyz and xyzw of SPD and Sr (stack for speed):
-    xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
+    xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2, interp_settings = interp_settings)
     #xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     N = St.shape[0]-1
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
@@ -756,8 +777,13 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
 
 #------------------------------------------------------------------------------
 def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
-               sampleset = None, ref_type = None, cieobs = None, avg = None, \
-               cspace = None, catf = None, cri_specific_pars = None):
+               sampleset = None, ref_type = None, 
+               calculation_wavelength_range = None, 
+               round_daylightphase_Mi_to_cie_recommended = None,
+               cieobs = None, cct_mode = None, avg = None, \
+               cspace = None, catf = None, cri_specific_pars = None,
+
+               interp_settings = None):
     """
     Calculates color differences (~fidelity), DEi, of spectral data.
     
@@ -838,7 +864,10 @@ def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
             |     - dict: user specified parameters. 
             |         For its use, see for example:
             |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
-    
+        :round_daylightphase_Mi_to_cie_recommended:
+            | None or bool, optional
+            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+
     Returns:
         :returns: 
             | float or ndarray with DEi for :out: 'DEi'
@@ -857,7 +886,8 @@ def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
      xyzri, xyzrw,
      xyztw_cct,
      cct, duv, St, Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
-                                        out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr')
+                                        out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr',
+                                        interp_settings = interp_settings)
       
     # E. calculate DEi, DEa:
     DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
@@ -881,7 +911,8 @@ def spd_to_DEi(St, cri_type = _CRI_TYPE_DEFAULT, out = 'DEi', wl = None, \
 
 
 #------------------------------------------------------------------------------
-def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_avg_rounded_rfi) :
+def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_avg_rounded_rfi,
+                            interp_settings = None) :
     """
     Optimize scale_factor of cri-model in cri_type 
     such that average Rf for a set of light sources is the same as that 
@@ -939,18 +970,18 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_av
         rf_from_avg_rounded_rfi = cri_type['rf_from_avg_rounded_rfi']
         
         if not rf_from_avg_rounded_rfi_opt:
-            DEa_opt = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = opt_cri_type) # DEa using target cri
+            DEa_opt = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = opt_cri_type, interp_settings = interp_settings) # DEa using target cri
             Rf_opt = avg(scale_fcn_opt(DEa_opt,scale_factor_opt))
             
         else:
-            DEi_opt = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = opt_cri_type) # DEa using target cri
+            DEi_opt = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = opt_cri_type, interp_settings = interp_settings) # DEa using target cri
             Rfi_opt = avg(np.round(scale_fcn_opt(DEi_opt,scale_factor_opt),0)) # average rounded individual Rfi to get Rf !!!
             Rf_opt = avg(Rfi_opt)
             
         if not rf_from_avg_rounded_rfi:
-            DEa = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = cri_type) # DEa using current cri
+            DEa = spd_to_DEi(opt_spd_set, out ='DEa', cri_type = cri_type, interp_settings = interp_settings) # DEa using current cri
         else:
-            DEi = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = cri_type) # DEa using target cri
+            DEi = spd_to_DEi(opt_spd_set, out ='DEi', cri_type = cri_type, interp_settings = interp_settings) # DEa using target cri
                         
             
         # optimize scale_factor to minimize rms difference:
@@ -1001,10 +1032,13 @@ def optimize_scale_factor(cri_type, opt_scale_factor, scale_fcn, avg, rf_from_av
     return scale_factor
 
 #------------------------------------------------------------------------------
-def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
-              sampleset = None, ref_type = None, cieobs  = None, avg = None, \
+def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, 
+              sampleset = None, ref_type = None, 
+              calculation_wavelength_range = None, 
+              round_daylightphase_Mi_to_cie_recommended = None,
+              cct_mode = None, cieobs  = None, avg = None, 
               cspace = None, catf = None, cri_specific_pars = None, rg_pars = None,
-              fit_gamut_ellipse = False):
+              fit_gamut_ellipse = False, interp_settings = None):
     """
     Calculates the color gamut index, Rg, of spectral data. 
     
@@ -1046,6 +1080,9 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |            'cierf': used in CIE 224-2017, 
             |            'iesrf': used in TM30-15, ...
             |     - ndarray: user defined reference SPD
+        :calculation_wavelength_range:
+            | None or list, optional
+            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.
         :cieobs:
             | None or dict, optional
             | Specifies which CMF sets to use for the calculation of the sample 
@@ -1054,6 +1091,10 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |     - key: 'xyz': str specifying CMF set for calculating xyz 
             |                   of samples and white 
             |     - key: 'cct': str specifying CMF set for calculating cct
+        :cct_mode:
+            | None or str or (str, dict), optional
+            | Specifies which mode to use when calculating xyz_to_cct().
+            | If tuple: second element is dict with additional kwargs for xyz_to_cct
         :cspace:
             | None or dict, optional
             | Specifies which color space to use.
@@ -1085,6 +1126,9 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
             |     - dict: user specified parameters. 
             |         For its use, see for example:
             |             luxpy.cri._CRI_DEFAULTS['mcri']['cri_specific_pars']
+        :round_daylightphase_Mi_to_cie_recommended:
+            | None or bool, optional
+            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
         :rg_pars: 
             | None or dict, optional
             | Dict containing specifying parameters for slicing the gamut.
@@ -1174,7 +1218,8 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
      xyzri,xyzrw,
      xyztw_cct,
      cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
-                                          out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
+                                    out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr',
+                                    interp_settings = interp_settings) 
 
     # calculate gamut area index:
     rg_pars = cri_type['rg_pars'] 
@@ -1216,10 +1261,14 @@ def spd_to_rg(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rg', wl = None, \
     
 #------------------------------------------------------------------------------
 def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
-               sampleset = None, ref_type = None, cieobs = None, \
+               sampleset = None, ref_type = None, 
+               calculation_wavelength_range = None, \
+               round_daylightphase_Mi_to_cie_recommended = None, 
+               cieobs = None, cct_mode = None, \
                avg = None, rf_from_avg_rounded_rfi = None,\
                scale = None, opt_scale_factor = False, cspace = None, catf = None,\
-               cri_specific_pars = None, rg_pars = None, fit_gamut_ellipse = False):
+               cri_specific_pars = None, rg_pars = None, fit_gamut_ellipse = False, \
+               interp_settings = None):
     """
     Calculates the color rendering fidelity index, Rf, of spectral data. 
     
@@ -1261,6 +1310,12 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |            'cierf': used in CIE 224-2017, 
             |            'iesrf': used in TM30-15, ...
             |     - ndarray: user defined reference SPD
+        :calculation_wavelength_range:
+            | None or list, optional
+            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.
+        :round_daylightphase_Mi_to_cie_recommended:
+            | None or bool, optional
+            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
         :cieobs:
             | None or dict, optional
             | Specifies which CMF sets to use for the calculation of the sample 
@@ -1269,6 +1324,10 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
             |     - key: 'xyz': str specifying CMF set for calculating xyz 
             |                   of samples and white 
             |     - key: 'cct': str specifying CMF set for calculating cct
+        :cct_mode:
+            | None or str or (str, dict), optional
+            | Specifies which mode to use when calculating xyz_to_cct().
+            | If tuple: second element is dict with additional kwargs for xyz_to_cct
         :cspace:
             | None or dict, optional
             | Specifies which color space to use.
@@ -1445,7 +1504,8 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
      xyzri,xyzrw,
      xyztw_cct,
      cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
-                                          out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr') 
+                                     out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr',
+                                     interp_settings = interp_settings) 
 
     # E. calculate DEi, DEa:
     DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5
@@ -1522,8 +1582,8 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
 # For testing:
 # from luxpy import _CIE_F4, _CIE_D65, _IESTM3018
 
-# F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], kind = 'spd')
-# D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], kind = 'spd')
+# F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], datatype = 'spd')
+# D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], datatype = 'spd')
 # out = spd_to_cri(np.vstack((F4,D65[1:])), out = 'Rf,Rg,data') #, 
 #                  # opt_scale_factor = True, 
 #                  # scale = {'fcn':log_scale, 

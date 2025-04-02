@@ -70,16 +70,16 @@ spectrum/spectral.py
 
  :_WL3: Default wavelength specification in vector-3 format: 
         numpy.array([start, end, spacing])
+        
+
+ :_INTERP_REFERENCE:  Sets the specific interpolation for spectrum types: ['spd','cmf','rfl','none'] 
+
+ :_INTERP_SETTINGS_ALL: Nested Dict with interpolation settings per spectral type ['spd','cmf','rfl','none'] for various interp_reference keys.
+
+ :_INTERP_SETTINGS: Nested Dict with interpolation settings per spectral type ['spd','cmf','rfl','none'].
 
  :_INTERP_TYPES: Dict with interpolation types associated with various types of
                  spectral data according to CIE recommendation:  
-
- :_S_INTERP_TYPE: Interpolation type for light source spectral data
-
- :_R_INTERP_TYPE: Interpolation type for reflective/transmissive spectral data
- 
- :_C_INTERP_TYPE: Interpolation type for CMF and cone-fundamental spectral data
-
 
  :getwlr(): Get/construct a wavelength range from a (start, stop, spacing) 
             3-vector.
@@ -104,6 +104,10 @@ spectrum/spectral.py
  :vlbar_cie_mesopic(): Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
 
  :get_cie_mesopic_adaptation(): Get the mesopic adaptation state according to CIE191:2010
+ 
+ :spd_to_xyz_legacy(): Calculates xyz tristimulus values from spectral data. (luxpy version <= 1.11.4)
+
+ :spd_to_xyz_barebones(): Calculates xyz tristimulus values from equal wavelength spectral data (no additional processing) 
 
  :spd_to_xyz(): Calculates xyz tristimulus values from spectral data. 
             

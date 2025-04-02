@@ -934,12 +934,12 @@ def cntsps_to_radiom_units(cntsps, REFmeas = None, REFspd = None, RFL = None, \
     spd = cntsps.copy()
     try:
         if (REFmeas is not None) & (REFspd is not None):
-            REFmeas = cie_interp(REFmeas, spd[0,:], kind = 'spd')
-            REFspd = cie_interp(REFspd, spd[0,:], kind = 'spd')
+            REFmeas = cie_interp(REFmeas, spd[0,:], datatype = 'spd')
+            REFspd = cie_interp(REFspd, spd[0,:], datatype = 'spd')
             REFspd[1,np.where(REFspd[1,:]==0)] = _EPS # avoid division by zero
             spd[1,:] = spd[1,:]/REFmeas[1,:]*REFspd[1,:]
         if RFL is not None:
-            RFL = cie_interp(RFL, spd[0,:], kind = 'rfl')
+            RFL = cie_interp(RFL, spd[0,:], datatype = 'rfl')
             RFL[1,np.where(RFL[1,:]==0)] = _EPS # avoid division by zero
             spd[1,:] = spd[1,:]/RFL[1,:]
         Errors["cntsps_to_radiom_units"] = 0
@@ -1222,7 +1222,7 @@ def get_spd(dvc = 0, Tint = _TINT, autoTint_max = _TINT_MAX, \
         
         # Interpolate to requested wavelength range and stepsize:
         if (wlstep is not None) & (wlstart is not None) & (wlend is not None):
-            spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), kind = 'spd')
+            spd = cie_interp(spd, getwlr([wlstart,wlend,wlstep]), datatype = 'spd')
         
         # Convert to units:
         if units == 'cnts':

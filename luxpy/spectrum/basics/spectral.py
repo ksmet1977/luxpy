@@ -24,6 +24,11 @@ Module supporting basic spectral calculations.
  :_WL3: Default wavelength specification in vector-3 format: 
         ndarray([start, end, spacing])
 
+ :_INTERP_REFERENCE:  Sets the specific interpolation for spectrum types: ['spd','cmf','rfl','none'] 
+
+ :_INTERP_SETTINGS_ALL: Nested Dict with interpolation settings per spectral type ['spd','cmf','rfl','none'] for various interp_reference keys.
+
+ :_INTERP_SETTINGS: Nested Dict with interpolation settings per spectral type ['spd','cmf','rfl','none'].
 
  :_INTERP_TYPES: Dict with interpolation types associated with various types of
                  spectral data according to CIE recommendation:  
@@ -41,7 +46,7 @@ Module supporting basic spectral calculations.
 
  :spd_normalize(): Spectrum normalization (supports: area, max, lambda, 
                    radiometric, photometric and quantal energy units).
-
+                   
  :cie_interp(): Interpolate / extrapolate spectral data following standard 
                 [`CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_]
 
@@ -57,6 +62,10 @@ Module supporting basic spectral calculations.
  :vlbar_cie_mesopic(): Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
 
  :get_cie_mesopic_adaptation(): Get the mesopic adaptation state according to CIE191:2010
+
+ :spd_to_xyz_legacy(): Calculates xyz tristimulus values from spectral data. (luxpy version <= 1.11.4)
+
+ :spd_to_xyz_barebones(): Calculates xyz tristimulus values from equal wavelength spectral data (no additional processing) 
 
  :spd_to_xyz(): Calculates xyz tristimulus values from spectral data. 
             
@@ -83,6 +92,7 @@ References
 """
 
 #--------------------------------------------------------------------------------------------------
+import copy
 import numpy as np 
 
 from luxpy import  _CIEOBS, math
@@ -90,10 +100,12 @@ from luxpy.utils import _PKG_PATH, _SEP, np2d, getdata, _EPS
 
 from .cmf import _CMF
 __all__ = ['_BB','_WL3','_INTERP_TYPES','_S_INTERP_TYPE', '_R_INTERP_TYPE','_C_INTERP_TYPE',
-           'getwlr','getwld','spd_normalize','cie_interp','spd','xyzbar', 'vlbar', 
+           '_SPECTRUM_TYPES','_INTERP_REFERENCE','_INTERP_SETTINGS','_INTERP_SETTINGS_ALL', 
+           'getwlr','getwld','spd_normalize','spectral_interp','cie_interp','spd','xyzbar', 'vlbar', 
            'vlbar_cie_mesopic', 'get_cie_mesopic_adaptation',
-           'spd_to_xyz', 'spd_to_ler', 'spd_to_power', 'detect_peakwl',
-           'create_spectral_interpolator','wls_shift']
+           'spd_to_xyz', 'spd_to_xyz_barebones','spd_to_ler', 'spd_to_power', 'detect_peakwl',
+           'create_spectral_interpolator','wls_shift',
+           'spd_to_xyz_legacy']
 
 
 #--------------------------------------------------------------------------------------------------
@@ -102,16 +114,41 @@ _WL3 = [360.0,830.0,1.0]
     
 #--------------------------------------------------------------------------------------------------
 # set coefficients for blackbody radiators (c2 rounded to 1.4388e-2 as defiend for ITS-90 International Temperature Scale):
-_BB = {'c1' : 3.74177185e-16, 'c2' : np.round(1.4387768775e-2,6),'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.62607015e-34, 'k' : 1.380649e-23} # blackbody c1,c2 & n standard values (h,k,c from NIST, CODATA2018)
+_BB = {'c1' : 3.74177185e-16, 'c2' : np.round(1.4387768775e-2,6),'n': 1.000, 'na': 1.00028, 'c' : 299792458, 'h' : 6.62607015e-34, 'k' : 1.380649e-23, 'e' : 1.602176634e-19} # blackbody c1,c2 & n standard values (h,k,c,e from NIST, CODATA2018); 'e' = electron charge in Coulomb
 
 
 #--------------------------------------------------------------------------------------------------
 # Define interpolation types (conform CIE15:20xx): 
+_SPECTRUM_TYPES = ['spd','cmf','rfl','none']
+_INTERP_REFERENCE = 'CIE15:2018'
+_INTERP_SETTINGS_ALL = {'CIE15:2018' : {'spd'  : {'itype' : 'cubic',  'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
+                                    'cmf'  : {'itype' : 'linear', 'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
+                                    'rfl'  : {'itype' : 'cubic',  'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
+                                    'none' : {'itype' : 'linear', 'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False}
+                                    },
+                    'CIE15:2004' : {'spd'  : {'itype' : 'cubic',  'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False},
+                                    'cmf'  : {'itype' : 'linear', 'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False},
+                                    'rfl'  : {'itype' : 'cubic',  'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False},
+                                    'none' : {'itype' : 'linear', 'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False}
+                                    },
+                    'general' : {'force_scipy_interpolator' : False, 'scipy_interpolator' : 'interp1d',
+                                 'sprague_allowed' : False, 'sprague_method' : 'spargue_cie224_2017', 
+                                 'choose_most_efficient_interpolator' : False,
+                                 'interp_log' : False, 'extrap_log' : False}
+                    }
+_INTERP_SETTINGS = copy.deepcopy(_INTERP_SETTINGS_ALL[_INTERP_REFERENCE])
+_INTERP_SETTINGS['general'] = _INTERP_SETTINGS_ALL['general']
 _INTERP_TYPES = {'linear' : ['xyzbar','cmf','lms','undefined','Dxx'],'cubic': ['S', 'spd','SPD','Le','rfl','RFL','r','R'],'none':None}
 _INTERP_TYPES['sprague5'] = _INTERP_TYPES['cubic']
-_S_INTERP_TYPE = 'cubic' # -> cie_interp(): changeds this to Sprague5 for equal wavelength spacings !
-_R_INTERP_TYPE = 'cubic' # -> cie_interp(): changeds this to Sprague5 for equal wavelength spacings !
+_INTERP_TYPES['sprague_cie224_2017'] = _INTERP_TYPES['cubic']
+_INTERP_TYPES['lagrange5'] = _INTERP_TYPES['cubic']
+_S_INTERP_TYPE = 'cubic' # -> cie_interp(): changes this to Sprague5 for equal wavelength spacings, if explicitely allowed (slower code)!
+_R_INTERP_TYPE = 'cubic' # -> cie_interp(): changes this to Sprague5 for equal wavelength spacings, if explicitely allowed (slower code) !
 _C_INTERP_TYPE = 'linear'
+                    
+                    
+
+ 
 
 
 #--------------------------------------------------------------------------------------------------
@@ -159,7 +196,8 @@ def getwld(wl):
 
 
 #------------------------------------------------------------------------------
-def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOBS):
+def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOBS, K = None,
+                  interp_settings = None):
     """
     Normalize a spectral power distribution (SPD).
     
@@ -185,9 +223,13 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             | True or False, optional 
             | If True, the first column of data contains wavelengths.
         :cieobs:
-            | _CIEOBS or str, optional
+            | _CIEOBS or str or ndarray, optional
             | Type of cmf set to use for normalization using photometric units 
             | (norm_type == 'pu')
+        :K:
+            | None, optional
+            | Luminous efficacy of radiation.
+            | Must be supplied if cieobs is an array for norm_type == 'pu'
     
     Returns:
         :returns: 
@@ -225,7 +267,8 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
                 wl_index = np.abs(wlr-norm_f_).argmin()
                 data[i+offset]=data[i+offset]/data[i+offset][wl_index]
             elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type == 'pusa') | (norm_type_ == 'qu'):
-                rpq_power = spd_to_power(data[[0,i+offset],:], cieobs = cieobs, ptype = norm_type_)
+                rpq_power = spd_to_power(data[[0,i+offset],:], cieobs = cieobs, K = K, ptype = norm_type_,
+                                         interp_settings = interp_settings)
                 data[i+offset] = (norm_f/rpq_power)*data[i+offset]
             else:
                 data[i+offset]=data[i+offset]/norm_f_
@@ -233,61 +276,267 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
 
 
 #--------------------------------------------------------------------------------------------------
-def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_values_allowed = False,
-               extrap_values = 'ext', extrap_kind = 'linear', extrap_log = False):
+def spectral_interp(data, wl_new, stype = 'cmf', 
+                    interp_settings = copy.deepcopy(_INTERP_SETTINGS),
+                    itype = None, etype = None, fill_value = None,
+                    negative_values_allowed = False,
+                    delete_nans = True,
+                    force_scipy_interpolator = False,
+                    scipy_interpolator = 'InterpolatedUnivariateSpline',
+                    interp_log = False, extrap_log = False,
+                    choose_most_efficient_interpolator = False,
+                    verbosity = 0):
+    """
+    Perform a 1-dimensional interpolation of spectral data
+        
+    Args:
+        :data: 
+            | ndarray with (n+1,N)-dimensional spectral data (0-row: wavelengths, remaining n rows: data)
+        :wl_new: 
+            | ndarray of new wavelengths (N,)
+        :stype:
+            | None, optional 
+            | Type of spectral data: None or ('spd', 'cmf', 'rfl')
+            | If None: itype, etype and fill_value kwargs should not be none!
+        :itype:
+            | None or str,  optional
+            | supported options for str: 'linear', 'quadratic', 'cubic'
+            | If None: use value in interp_settings.
+        :etype:
+            | None, or str, optional
+            | options: 
+            |   - 'extrapolate','ext': use method specified in :itype: to extrapolate.
+            |   - 'zeros': out-of-bounds values are filled with zeros
+            |   - 'const': out-of-bounds values are filled with nearest value
+            |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+            |   - 'linear','quadratic','cubic': use of of these methods (slows down function 
+            |       if this method is different from the one in :itype:)
+            | If None: use value in intp_settings.
+        :fill_value:
+            | None or str or float or int or tupple, optional
+            | If etype == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+            | ('extrapolate' when etype requires extrapolation)
+            | If None: use value in interp_settings.
+        :negative_values_allowed: 
+            | False, optional
+            | If False: negative values are clipped to zero.
+        :delete_nans:
+            | True, optional
+            | If NaNs are present, remove them and (and try to) interpolate without them.
+        :force_scipy_interpolator:
+            | False, optional
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | 'InterpolatedUnivariateSpline', optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+        :w,bbox,check_finite:
+            | see scipy.interpolate.InterpolatedUnivariateSpline()
+        :interp_log:
+            | Perform interpolation method ('linear', 'quadratic', or 'cubic') in log space.
+        :extrap_log:
+            | Perform extrapolation method ('linear', 'quadratic', or 'cubic') in log space.
+ 
+    Returns:
+        :data_new:
+            | ndarray with interpolated (n+1,N)-dimensional spectral data 
+            | (0-row: wavelengths, remaining n rows: interpolated data)
+    
+    Note:
+        1. 'numpy.interp' is fastest (but only works for linear interpolation and linear or no extrapolation)
+        2. For linear interpolation: 'interp1d' is faster for Y (N,...) with N > 1, else 'InterpolatedUnivariateSpline' is faster
+        3. For 'cubic' interpolation: 'InterpolatedUnivariateSpline' is faster for Y (N,...) with N > 1, else 'interp1d' is faster
+    """    
+    if wl_new.ndim == 2: wl_new = wl_new[0]
+    if np.array_equal(wl_new, data[0]): return data 
+    
+    # Split wavelengths and data:
+    wl, data = data[0], data[1:]
+
+    # Deal with possible override of dict keys by kwargs:
+    if stype is not None: 
+        if itype is not None: interp_settings[stype]['itype'] = itype
+        if etype is not None: interp_settings[stype]['etype'] = etype
+        if fill_value is not None: interp_settings[stype]['fill_value'] = fill_value
+    else:
+        stype = 'none'
+        interp_settings[stype]['itype'] = itype
+        interp_settings[stype]['etype'] = etype
+        interp_settings[stype]['fill_value'] = fill_value
+
+    # Interpolate & extrapolate:
+    if interp_settings[stype]['itype'] == 'sprague5':
+        if (interp_settings[stype]['etype'] == 'fill_value') & ((interp_settings[stype]['fill_value'] != 'ext') | (interp_settings[stype]['fill_value'] != 'extrapolate')):
+            extrap = interp_settings[stype]['fill_value']
+        else:
+            extrap = interp_settings[stype]['etype']
+        if verbosity > 0: print('Interpolation/Extrapolation: using luxpy.math.interp1_sprague5.')
+        datan = np.vstack((wl_new, math.interp1_sprague5(wl, data, wl_new, 
+                                                extrap = extrap, 
+                                                force_scipy_interpolator = force_scipy_interpolator,
+                                                scipy_interpolator = scipy_interpolator,
+                                                delete_nans = delete_nans,
+                                                choose_most_efficient_interpolator = choose_most_efficient_interpolator)))
+    elif interp_settings[stype]['itype'] == 'sprague_cie224_2017':
+        if (interp_settings[stype]['etype'] == 'fill_value') & ((interp_settings[stype]['fill_value'] != 'ext') | (interp_settings[stype]['fill_value'] != 'extrapolate')):
+            extrap = interp_settings[stype]['fill_value']
+        else:
+            extrap = interp_settings[stype]['etype']
+        if verbosity > 0: print('Interpolation/Extrapolation: using luxpy.math.interp1_sprague_cie224_2017.')
+        datan = np.vstack((wl_new, math.interp1_sprague_cie224_2017(wl, data, wl_new, 
+                                                extrap = extrap, 
+                                                force_scipy_interpolator = force_scipy_interpolator,
+                                                scipy_interpolator = scipy_interpolator,
+                                                delete_nans = delete_nans,
+                                                choose_most_efficient_interpolator = choose_most_efficient_interpolator)))
+
+    elif interp_settings[stype]['itype'][:8] == 'lagrange':
+        k_lagrange = int(interp_settings[stype]['itype'][8:]) if (len(interp_settings[stype]['itype']) > 8) else 5 
+        if (interp_settings[stype]['etype'] == 'fill_value') & ((interp_settings[stype]['fill_value'] != 'ext') | (interp_settings[stype]['fill_value'] != 'extrapolate')):
+            extrap = interp_settings[stype]['fill_value']
+        else:
+            extrap = interp_settings[stype]['etype']
+        if verbosity > 0: print('Interpolation/Extrapolation: using luxpy.math.interp1_lagrange.')
+        datan = np.vstack((wl_new, math.interp1_lagrange(wl, data, wl_new, k = k_lagrange,
+                                                extrap = extrap, 
+                                                force_scipy_interpolator = force_scipy_interpolator,
+                                                scipy_interpolator = scipy_interpolator,
+                                                delete_nans = delete_nans,
+                                                choose_most_efficient_interpolator = choose_most_efficient_interpolator)))
+
+    else:
+        #print('::',interp_settings[stype]['itype'],interp_settings[stype]['etype'],interp_settings[stype]['fill_value'])
+        datan = np.vstack((wl_new, math.interp1(wl, data, wl_new,
+                                        kind = interp_settings[stype]['itype'],
+                                        ext = interp_settings[stype]['etype'],
+                                        fill_value = interp_settings[stype]['fill_value'],
+                                        force_scipy_interpolator = force_scipy_interpolator,
+                                        scipy_interpolator = scipy_interpolator,
+                                        delete_nans = delete_nans,
+                                        interp_log = interp_log,
+                                        extrap_log = extrap_log,
+                                        choose_most_efficient_interpolator = choose_most_efficient_interpolator,
+                                        verbosity = verbosity)))
+        
+    # No negative values allowed for spectra:    
+    if negative_values_allowed == False:
+        if np.any(datan): datan[datan<0.0] = 0.0
+
+    return datan
+
+def _get_itype_sprague_interp_options(itype, sprague_method, wl, wl_new):
+    dwl = np.diff(wl)
+    if np.all(dwl == dwl[0]):
+        dwl_new = np.diff(wl_new)
+        if np.all(dwl_new == dwl_new[0]):
+            itype = sprague_method # force recommended 5th order Sprague interpolation or Sprague interpolation defined in CIE224-2017 for equal wavelength spacings when kind was a spectral data type. The latter is only available when downsampling 5:1 (e.g. 5 nm -> 1 nm)!
+            if (dwl[0]/dwl_new[0] != 5): itype = 'sprague5' # 'sprague_cie224_2017 is only for 5 nm -> 1 nm  
+        elif ('sprague' in itype):
+            raise Exception('Sprague interpolation requires an equal wavelength spacing!')
+    elif ('sprague' in itype):
+            raise Exception('Sprague interpolation requires an equal wavelength spacing!')
+    return itype
+
+#--------------------------------------------------------------------------------------------------
+def cie_interp(data, wl_new, datatype = 'none',
+               interp_settings = copy.deepcopy(_INTERP_SETTINGS), 
+               kind = None, 
+               extrap_kind = None, extrap_values = None,
+               sprague_allowed = None, sprague_method = 'sprague_cie224_2017',
+               negative_values_allowed = None,
+               interp_log = None, extrap_log = None,
+               force_scipy_interpolator = None, scipy_interpolator = None,
+               choose_most_efficient_interpolator = None,
+               verbosity = 0):
     """
     Interpolate / extrapolate spectral data following standard CIE15-2018.
     
-    | The kind of interpolation depends on the spectrum type defined in :kind:. 
+    | The kind of interpolation depends on the spectrum type defined in :datatype: 
+    |  (or in :kind: for legacy puprposes-> overrules :datatype:). 
     
     Args:
         :data: 
             | ndarray with spectral data 
             | (.shape = (number of spectra + 1, number of original wavelengths))
         :wl_new: 
-            | ndarray with new wavelengths
+            | None or ndarray with new wavelengths or [start wavelength, stop wavelength, wavelength interval]
+            | If None: no interpolation is done, a copy of the original data is returned.
+        :datatype: 
+            | 'spd' (light source) or 'rfl' (reflectance) or 'cmf' (color matching functions) or 'none' (undefined), optional
+            | Specifies a type of spectral data. 
+            | Is used to select the interpolation and extrapolation defaults, specified
+            | in :interp_settings:. 
+        :interp_settings:
+            | _INTERP_SETTINGS or dict, optional
+            | Dictionary of dictionaries (see _INTERP_SETTINGS), with at least a key entry 
+            | with the interpolation and extrapolation settings for the type specified in 
+            | :datatype: (or :kind: if string with spectrum datatype) and one key entry 'none'
+            | ('none' is used in case :extrap_kind: is None or 'ext').
+            | 
         :kind: 
             | None, optional
-            |   - If :kind: is None, return original data.
-            |   - If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
-            |     interpolation type is automatically chosen 
-            |       (The use of the slow(er) 'sprague5' can be toggled on using :sprague5_allowed:).
-            |   - Or :kind: can be any interpolation type supported by 
-            |     scipy.interpolate.interp1d (or luxpy.math.interp1 if nan's are present!!)
-            |     or can be 'sprague5' (uses luxpy.math.interp1_sprague5).  
-        :sprague5_allowed:
-            | False, optional
-            | If True: When kind is a spectral data type from _INTERP_TYPES['cubic'],
+            | - If None: the value from interp_settings is used, based on the value of :datatype:.
+            | - If :kind: is a spectrum type (see :interp_settings:), the correct 
+            |     interpolation type is automatically chosen based on the values in :interp_settings:
+            |       (The use of the slow(er) 'sprague5' or 'sprague_cie224_2017' can be toggled on using :sprague_allowed:).
+            | - Or :kind: can be 'linear', 'quadratic', 'cubic' (or 'sprague5', or 'sprague_cie224_2017, or 'lagrange5'). 
+            |       (see luxpy.spectral_interp?) 
+        :sprague_allowed:
+            | None, optional
+            | If None: the value from interp_settings is used.
+            | If True: When kind is a spectral data type that corresponds to 'cubic' interpolation,
             |    then a cubic spline interpolation will be used in case of 
-            |    unequal wavelength spacings, otherwise a 5th order Sprague will be used.
-            | If False: always use 'cubic', don't use 'sprague5'. 
+            |    unequal wavelength spacings, otherwise a 5th order Sprague or Sprague as defined in CIE224-2017 will be used.
+            | If False: always use 'cubic', don't use 'sprague5' or 'sprague_cie224_2017'. 
             |           This is the default, as differences are minimal and 
-            |           use of the 'sprague5' function is a lot slower!
+            |           use of the 'sprague' functions is a lot slower ('sprague5' = slowest )!
+        :sprague_method:
+            | 'sprague_cie224_2017', optional
+            | Specific sprague method used for interpolation. (Only for equal spacings, 'sprague_cie224_2017' also on for 5 nm -> 1nm)
+            | - options: 'sprague5' (use luxpy.math.interp1_sprague5), 'sprague_cie224_2017' (use luxpy.interp1_sprague_cie224_2017)
         :negative_values_allowed: 
-            | False, optional
+            | None, optional
+            | If None: the value from interp_settings is used.
             | If False: negative values are clipped to zero.
-        :extrap_values:
-            | 'ext', optional
-            | If 'ext': extrapolate using 'linear' ('cie167:2005'), 'quadratic' ('cie15:2018') 
-            |           'nearest' ('cie15:2004') recommended or other (e.g. 'cubic') methods.
-            | If None: same as 'ext'
-            | If float or list or ndarray, use those values to fill extrapolated value(s).
         :extrap_kind:
-            | 'linear', optional
-            | Extrapolation method used when :extrap_values: is set to 'ext'. 
-            | Options: 'linear' ('cie167:2005'), 'quadratic' ('cie15:2018'), 
-            |           'nearest' ('cie15:2004'), 'cubic'
+            | None, optional
+            | If None or 'ext': use the method specified interp_settings[datatype].
+            | If 'kind' or 'itype':
+            |   - If possible, use the same method as the interpolation method 
+            |         (only for 'linear', 'quadratic', 'cubic'), 
+            |   - otherwise: use the method specified :interp_settings['none']:.
+            | Other options: 'linear' (or 'cie167:2005'), 'quadratic' (or 'cie15:2018'), 
+            |           'nearest' (or 'cie15:2004' or 'const' or 'flat'), 'cubic', 'fill_value' (use value(s)n in extrap_values)
+            |   - If 'linear','quadratic','cubic': slow down of function 
+            |       in case this method is different from the interpolation method used.
             | CIE15:2018 states that based on a 2017 paper by Wang that 'quadratic' is 'better'. 
             | However, no significant difference was found between 'quadratic' and 'linear' methods.
             | Also see note 1 below, for why the CIE67:2005 recommended 'linear' extrapolation
             | is set as the default.
+        :extrap_values:
+            | None, optional
+            | If float or list or ndarray, use those values to fill extrapolated value(s) when :extrap_kind:S == 'fill_value'.
         :extrap_log:
-            | False, optional
+            | None, optional
+            | If None: the value from interp_settings is used.
             | If True: extrap the log of the spectral values 
             |     (not CIE recommended but in most cases seems to give a 
             |     more realistic estimate, but can sometimes seriously fail, 
             |     especially for the 'quadratic' extrapolation case (see note 1)!!!)
-    
+            | If any zero or negative values are present in a spectrum, then the log is NOT taken.
+        :interp_log:
+            | None, optional
+            | If None: the value from interp_settings is used.
+            | Take log before interpolating the spectral data, afterwards take exp of interpolated data.
+            | If any zero or negative values are present in a spectrum, then the log is NOT taken.
+        :force_scipy_interpolator:
+            | None, optional
+            | If None: the value from interp_settings is used.
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | None, optional
+            | If None: the value from interp_settings is used.
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+
     Returns:
         :returns: 
             | ndarray of interpolated spectral data.
@@ -309,162 +558,88 @@ def cie_interp(data, wl_new, kind = None, sprague5_allowed = False, negative_val
         |       'linear' is more similar to 'quadratic' when :extrap_log: is False, otherwise 'linear'
         |       remains the 'best'. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!
     """
-    if (kind is not None):
+    if (wl_new is None):
+        return data.copy()
+    else:
+
+        # Make sure interp_settings is dict with minimum required entries
+        if interp_settings is None: 
+            interp_settings = _INTERP_SETTINGS
+        else: 
+            if ('general' not in interp_settings): interp_settings['general'] = copy.deepcopy(_INTERP_SETTINGS['general'])
+            if ('none' not in interp_settings): interp_settings['none'] = copy.deepcopy(_INTERP_SETTINGS['none'])
+            if (((kind is None) | (extrap_kind is None)) & (datatype not in interp_settings)):
+                raise Exception("Interpolation and extrapolation methods for specified datatype not in interp_settings.")
+            
         # Wavelength definition:
         wl_new = getwlr(wl_new)
-        
-        if (not np.array_equal(data[0],wl_new)) | np.isnan(data).any():
-       
-            extrap_values = np.atleast_1d(extrap_values)
-            
-            # define wl, S, wl_new:
-            wl = np.array(data[0])
-            S = data[1:]
-            wl_new = np.array(wl_new)
-            
-            # Set interpolation type based on data type:
-            if kind in _INTERP_TYPES['linear']:
-                kind = 'linear'
-            elif kind in _INTERP_TYPES['cubic']:
-                kind = 'cubic'
-                if sprague5_allowed: 
-                    dwl = np.diff(wl)
-                    if np.all(dwl == dwl[0]):
-                        kind = 'sprague5' # force recommended 5th order Sprague interpolation for equal wavelength spacings when kind was a spectral data type!
+        wl = data[0]
 
-            # Set extrapolation type based on CIE report:
-            if extrap_kind == 'cie167:2005':
-                extrapolation_kind = 'linear'
-            elif extrap_kind == 'cie15:2018':
-                extrapolation_kind = 'quadratic'
-            elif extrap_kind == 'cie15:2004':
-                extrapolation_kind = 'nearest'
+        # Set interpolation type based on data type:
+        if kind is None: 
+            itype = interp_settings[datatype]['itype']
+        elif kind in _SPECTRUM_TYPES:
+            datatype = kind # override with kind for legacy purposes.
+            itype = interp_settings[datatype]['itype']
+        elif kind in ('linear','quadratic','cubic'): 
+            itype = kind
+        elif kind in ('sprague5', 'sprague_cie224_2017', 'lagrange5'):
+            itype = kind
+            if 'sprague' in kind: sprague_method = kind
+        else:
+            raise Exception("Unsupported interpolation type, kind = {:s}.\n Options = None or 'linear', 'quadratic', 'cubic'  or 'spd', 'cmf', 'rfl'.".format(kind)) 
+        if (itype == 'cubic'):
+            if sprague_allowed: 
+                itype = _get_itype_sprague_interp_options(itype, sprague_method, wl, wl_new)
+        elif ('sprague' in itype):
+            itype = _get_itype_sprague_interp_options(itype, sprague_method, wl, wl_new)
+   
+        # Set extrapolation type based on CIE report:
+        if extrap_kind is None: 
+            etype = interp_settings[datatype]['etype']
+        elif extrap_kind[:3] == 'ext':
+            etype = interp_settings[datatype]['etype']
+        elif (extrap_kind == 'itype') | (extrap_kind == 'kind'):
+            if itype in ('linear','quadratic','cubic'): 
+                etype = itype
             else:
-                extrapolation_kind = extrap_kind
+                etype = interp_settings['none']['etype']
+        elif extrap_kind in ('nearest','flat','zeros','const','linear','quadratic','cubic','fill_value'):
+            etype = extrap_kind
+        elif extrap_kind == 'cie167:2005':
+            etype = 'linear'
+        elif extrap_kind == 'cie15:2018':
+            etype = 'quadratic'
+        elif extrap_kind == 'cie15:2004':
+            etype = 'nearest'
+        else:
+            raise Exception("Unsupported extrapolation type, extrap_kind = {}.\n - Options: None or 'nearest',[= 'flat', 'const'],'zeros','linear','quadratic','cubic','fill_value'".format(extrap_kind))
+        
+        if (extrap_values is None): extrap_values = interp_settings[datatype]['fill_value']
+        if (negative_values_allowed is None): negative_values_allowed = interp_settings[datatype]['negative_values_allowed'] 
+        if (force_scipy_interpolator is None): force_scipy_interpolator = interp_settings['general']['force_scipy_interpolator']
+        if (scipy_interpolator is None): scipy_interpolator = interp_settings['general']['scipy_interpolator'] 
+        if (interp_log is None): interp_log = interp_settings['general']['interp_log'] 
+        if (extrap_log is None): extrap_log = interp_settings['general']['extrap_log']
 
-            # Interpolate each spectrum in S: 
-            N = S.shape[0]
-            nan_indices = np.isnan(S)
-            
-            # Interpolate all spectra:
-            all_rows = np.arange(S.shape[0])
-            rows_with_nans = np.where(nan_indices.sum(axis=1))[0]
-            rows_with_no_nans = np.setdiff1d(all_rows,rows_with_nans)
-            # rows_with_no_nans = np.where(~np.isnan(S.sum(axis=1)))
-
-            Si = np.zeros([N,wl_new.shape[0]])
-            Si.fill(np.nan)
-            if (rows_with_no_nans.size>0): 
-                
-                S_no_nans = S[rows_with_no_nans]
-                
-                # Use most time-efficient interpolator:
-                N_no_nans = S_no_nans.shape[0]
-                if kind == 'linear':
-                    scipy_interpolator_int = 'interp1d' if (N_no_nans == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
-                else:
-                    scipy_interpolator_int = 'InterpolatedUnivariateSpline' if (N_no_nans == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
-                if extrapolation_kind == 'linear':
-                    scipy_interpolator_ext = 'interp1d' if (N_no_nans == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
-                else:
-                    scipy_interpolator_ext = 'InterpolatedUnivariateSpline' if (S_no_nans.shape[0] == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
-                
-                    
-                # prepare + do 'ext' extrapolation:
-                # from scipy import interpolate # lazy import
-                if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')): 
-                    fill_value = (0,0)
-                    if extrap_log:
-                        # Si_ext_no_nans = np.exp(np.atleast_2d(interpolate.interp1d(wl, np.log(S_no_nans + _EPS), kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)))
-                        Si_ext_no_nans = np.exp(np.atleast_2d(math.interp1(wl, np.log(S_no_nans + _EPS), wl_new, kind = extrapolation_kind, fill_value = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))) 
-                    else:
-                        # Si_ext_no_nans = np.atleast_2d(interpolate.interp1d(wl, S_no_nans, kind = extrapolation_kind, bounds_error = False, fill_value = 'extrapolate')(wl_new))
-                        Si_ext_no_nans = np.atleast_2d(math.interp1(wl, S_no_nans, wl_new, kind = extrapolation_kind, fill_value = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))
-                else:
-                    fill_value, Si_ext_no_nans = (extrap_values[0],extrap_values[-1]), None
-
-                # interpolate:
-                if kind != 'sprague5':
-                    # Si_no_nans = interpolate.interp1d(wl, S_no_nans, kind = kind, bounds_error = False, fill_value = fill_value)(wl_new)
-                    Si_no_nans = math.interp1(wl, S_no_nans, wl_new, kind = kind, ext = 'fill_value', fill_value = fill_value, scipy_interpolator = scipy_interpolator_int)
-                else:
-                    Si_no_nans = math.interp1_sprague5(wl, S_no_nans, wl_new, extrap = fill_value)
-
-                # Add extrapolated part to the interpolate part (which had extrapolated fill values set to zero)
-                if Si_ext_no_nans is not None: 
-                    Si_ext_no_nans[:,(wl_new >= wl[0]) & (wl_new <= wl[-1])] = 0
-                    Si_no_nans += Si_ext_no_nans
-                
-                Si[rows_with_no_nans] = Si_no_nans
-                
-            # In case there are NaN's:
-            if rows_with_nans.size > 0:
-                
-                # Use most time-efficient interpolator:
-                if kind == 'linear':
-                    scipy_interpolator_int = 'interp1d' # faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
-                else: 
-                    scipy_interpolator_int = 'InterpolatedUnivariateSpline' # faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
-                if extrapolation_kind == 'linear':
-                    scipy_interpolator_ext = 'interp1d' # faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
-                else: 
-                    scipy_interpolator_ext = 'InterpolatedUnivariateSpline' # faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
-                
-                    
-                # looping required as some values are NaN's:
-                for i in rows_with_nans:
-
-                    nonan_indices = np.logical_not(nan_indices[i])
-                    wl_nonan = wl[nonan_indices]
-                    S_i_nonan = S[i][nonan_indices]
-                    
-                    if (kind != 'sprague5'): 
-                        Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_int)
-                      # Si_nonan = interpolate.interp1d(wl_nonan, S_i_nonan, kind = kind, bounds_error = False, fill_value = 'extrapolate')(wl_new)
-                    else:
-                        # check wavelength spacing constancy:
-                        dwl_nonan = np.diff(wl_nonan)
-                        if np.all(dwl_nonan == dwl_nonan[0]):
-                            Si_nonan = math.interp1_sprague5(wl_nonan, S_i_nonan, wl_new, extrap = (0,0))
-                        else:
-                            # fall back to 'cubic interpolation!:
-                            Si_nonan = math.interp1(wl_nonan, S_i_nonan, wl_new, kind = 'cubic', ext = 'extrapolate', scipy_interpolator = 'InterpolatedUnivariateSpline')
-  
-                    # Do extrapolation:
-                    if (extrap_values[0] is None) | (((type(extrap_values[0])==np.str_)|(type(extrap_values[0])==str)) and (extrap_values[0][:3]=='ext')): 
-                        if extrapolation_kind != 'nearest':
-                            if extrap_log:
-                                Si_nonan_ext = np.exp(math.interp1(wl_nonan,np.log(S_i_nonan + _EPS), wl_new, kind = extrapolation_kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_ext))
-                            else:
-                                Si_nonan_ext = math.interp1(wl_nonan,S_i_nonan, wl_new, kind = extrapolation_kind, ext = 'extrapolate', scipy_interpolator = scipy_interpolator_ext)
-                        else: # do nearest neighbour extrapolation
-                            Si_nonan_ext = np.zeros((wl_new.size))
-                            Si_nonan_ext[wl_new<wl_nonan[0]] = S_i_nonan[0]
-                            Si_nonan_ext[wl_new>wl_nonan[-1]] = S_i_nonan[-1]
-                        Si_nonan_ext[(wl_new >= wl_nonan[0]) & (wl_new <= wl_nonan[-1])] = 0
-                        Si_nonan[(wl_new<wl_nonan[0]) | (wl_new>wl_nonan[-1])] = 0
-                        Si_nonan = Si_nonan + Si_nonan_ext
-
-                    else:
-                        Si_nonan[wl_new<wl_nonan[0]] = extrap_values[0]
-                        Si_nonan[wl_new>wl_nonan[-1]] = extrap_values[-1]  
-                    
-                    # add to array:
-                    Si[i] = Si_nonan              
-                
-            # No negative values allowed for spectra:    
-            if negative_values_allowed == False:
-                if np.any(Si): Si[Si<0.0] = 0.0
-            
-            # Add wavelengths to data array: 
-            return np.vstack((wl_new,Si))  
-    
-    return data.copy()
+        if (choose_most_efficient_interpolator is None): choose_most_efficient_interpolator = interp_settings['general']['choose_most_efficient_interpolator']
+ 
+        return spectral_interp(data, wl_new, stype = None, 
+                                itype = itype, etype = etype, fill_value = extrap_values,
+                                negative_values_allowed = negative_values_allowed,
+                                delete_nans = True,
+                                force_scipy_interpolator = force_scipy_interpolator,
+                                scipy_interpolator = scipy_interpolator,
+                                interp_log = interp_log, extrap_log = extrap_log,
+                                choose_most_efficient_interpolator = choose_most_efficient_interpolator,
+                                verbosity = verbosity)
 
 #--------------------------------------------------------------------------------------------------
-def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
-        sep = ',',header = None, datatype = 'S', \
-        norm_type = None, norm_f = None,**kwargs):
+def spd(data = None, wl = None, \
+        interp_settings = None, \
+        kind = None, extrap_kind = None, extrap_values = None, \
+        sep = ',',header = None, datatype = 'spd', \
+        norm_type = None, norm_f = None, **kwargs):
     """
     | All-in-one function that can:
     |    1. Read spectral data from data file or take input directly as ndarray.
@@ -476,14 +651,18 @@ def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
             | - str with path to file containing spectral data
             | - ndarray with spectral data
             | (.shape = (number of spectra + 1, number of original wavelengths))
-        :interpolation:
-            | None, optional
-            | - None: don't interpolate
-            | - str with interpolation type or spectrum type
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
-            | Defaults to wavelengths specified by luxpy._WL3.
+            | If None: no interpolation will be done.
+        :kind:
+            | None, optional
+            | - None: use defaults in interp_settings for specified datatype.
+            | - str with interpolation type or spectrum type (if spectrum type: overrides anything set in :datatype:)
+        :extrap_kind:
+            | None, optional
+            | - None: use defaults in interp_settings for specified datatype.
+            | - str with extrapolation type
         :extrap_values:
             | None, optional
             | Controls extrapolation. See cie_interp.
@@ -495,9 +674,9 @@ def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
             | ',' or '\t' or other char, optional
             | Column separator in case :data: specifies a data file. 
         :datatype': 
-            | 'S' (light source) or 'R' (reflectance) or other, optional
+            | 'spd' (light source) or 'rfl' (reflectance) or 'cmf' (color matching functions) or 'none' (undefined), optional
             | Specifies a type of spectral data. 
-            | Is used when creating column headers when :column: is None.
+            | Is used to determine interpolation and extrapolation defaults. 
         :norm_type: 
             | None, optional 
             |       - 'lambda': make lambda in norm_f equal to 1
@@ -520,22 +699,31 @@ def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
     """
     transpose = True if isinstance(data,str) else False #when spd comes from file -> transpose (columns in files should be different spectra)
          
-    # Wavelength definition:
-    wl = getwlr(wl)
-    
     # Data input:
     if data is not None:
-        if (interpolation is None) & (norm_type is None):
+        if (wl is None) & (norm_type is None):
             data = getdata(data = data, sep = sep, header = header, datatype = datatype, copy = True)
             if (transpose == True): data = data.T
         else:
             data = getdata(data = data, sep = sep, header = header, datatype = datatype, copy = True)#interpolation requires np-array as input
             if (transpose == True): data = data.T
-            data = cie_interp(data = data, wl_new = wl,kind = interpolation, extrap_values = extrap_values)
-            data = spd_normalize(data,norm_type = norm_type, norm_f = norm_f, wl = True)
+            # if kind in _SPECTRUM_TYPES: datatype = kind
+            # if kind is None: kind = interp_settings[datatype]['itype'] 
+            # if extrap_kind is None: extrap_kind = interp_settings[datatype]['etype']
+            # if extrap_values is None: extrap_values = interp_settings[datatype]['fill_value']
+            if interp_settings is None: interp_settings = copy.deepcopy(_INTERP_SETTINGS)
+            if kind in _SPECTRUM_TYPES: datatype = kind
+            if kind is not None: interp_settings[datatype]['itype'] = kind
+            if extrap_kind is not None: interp_settings[datatype]['etype'] = extrap_kind
+            if extrap_values is not None: interp_settings[datatype]['fill_value'] = extrap_values
+
+            data = cie_interp(data = data, wl_new = wl, datatype = datatype, interp_settings = interp_settings)
+            data = spd_normalize(data, norm_type = norm_type, norm_f = norm_f, wl = True, interp_settings = interp_settings)
         
     else:
-        data = np2d(wl)
+        # Wavelength definition:
+        if wl is None: wl = _WL3
+        data = np2d(getwlr(wl))
        
     # convert to desired kind:
     data = getdata(data = data, datatype = datatype, copy = False) # already copy when data is not None, else new anyway
@@ -544,7 +732,9 @@ def spd(data = None, interpolation = None, wl = None, extrap_values = None, \
 
 
 #--------------------------------------------------------------------------------------------------
-def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext'):
+def xyzbar(cieobs = _CIEOBS, src = 'dict', wl_new = None, 
+           interp_settings = None,
+           kind = None, extrap_kind = None, extrap_values = None):
     """
     Get color matching functions.  
     
@@ -552,19 +742,25 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext')
         :cieobs: 
             | luxpy._CIEOBS, optional
             | Sets the type of color matching functions to load.
-        :scr: 
+        :src: 
             | 'dict' or 'file', optional
             | Determines whether to load cmfs from file (./data/cmfs/) 
             | or from dict defined in .cmf.py
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
-            | Defaults to wavelengths specified by luxpy._WL3.
+            | If None: no interpolation is done.
+        :kind:
+            | None, optional
+            | - None: use defaults in interp_settings for "cmf" datatype.
+            | - str with interpolation type
+        :extrap_kind:
+            | None, optional
+            | - None: use defaults in interp_settings for specified datatype.
+            | - str with extrapolation type
         :extrap_values:
-            | 'ext', optional
-            | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
-            | If None: fill out with np.nan,
-            | Else use 'ext'.
+            | None, optional
+            | Controls extrapolation. See cie_interp.
 
     Returns:
         :returns: 
@@ -574,25 +770,34 @@ def xyzbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext')
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    if scr == 'file':
+    if src == 'file':
         dict_or_file = _PKG_PATH + _SEP + 'data' + _SEP + 'cmfs' + _SEP + 'ciexyz_' + cieobs + '.dat'
-    elif scr == 'dict':
+    elif src == 'dict':
         dict_or_file = _CMF[cieobs]['bar']
-    elif scr == 'cieobs':
+    elif src == 'cieobs':
         dict_or_file = cieobs #can be file or data itselfµ
     if extrap_values is None: extrap_values = (np.nan, np.nan)
-    return spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', extrap_values = extrap_values)
+    return spd(data = dict_or_file, wl = wl_new, datatype = 'cmf', 
+                interp_settings = interp_settings,
+                kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
 
 #--------------------------------------------------------------------------------------------------
-def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext', out = 1):
+def vlbar(cieobs = _CIEOBS, K = None, src = 'dict', wl_new = None, 
+          interp_settings = None, 
+          kind = None, extrap_kind = None, extrap_values = None, 
+          out = 1):
     """
     Get Vlambda functions.  
     
     Args:
         :cieobs: 
-            | str, optional
-            | Sets the type of Vlambda function to obtain.
-        :scr: 
+            | str or ndarray, optional
+            | If str: Sets the type of Vlambda function to obtain.
+        :K:
+            | None, optional
+            | Luminous efficacy of radiation.
+            | Must be supplied if cieobs is an array
+        :src: 
             | 'dict' or array, optional
             | - 'dict': get from ybar from _CMF
             | - 'array': ndarray in :cieobs:
@@ -602,12 +807,18 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext', 
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
-            | Defaults to wavelengths specified by luxpy._WL3.
+            | If None: no interpolation is done.
+        :kind:
+            | None, optional
+            | - None: use defaults in interp_settings for "cmf" datatype.
+            | - str with interpolation type
+        :extrap_kind:
+            | None, optional
+            | - None: use defaults in interp_settings for specified datatype.
+            | - str with extrapolation type
         :extrap_values:
-            | 'ext', optional
-            | If (xl,xr): Don't extrapolate, but set missing values to xl and xr to left and right, respectively.
-            | If None: fill out with np.nan,
-            | Else use 'ext'.
+            | None, optional
+            | Controls extrapolation. See cie_interp.
         :out: 
             | 1 or 2, optional
             |     1: returns Vlambda
@@ -621,14 +832,17 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext', 
     References:
         1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
     """
-    if scr == 'dict':
+    if src == 'dict':
         dict_or_file = _CMF[cieobs]['bar'][[0,2],:] 
         K = _CMF[cieobs]['K']
-    elif scr == 'vltype':
+    elif src == 'vltype':
         dict_or_file = cieobs #can be file or data itself
-        K = 1
+        if K is None: K = 1
     if extrap_values is None: extrap_values = (np.nan, np.nan)
-    Vl = spd(data = dict_or_file, wl = wl_new, interpolation = 'cmf', extrap_values = extrap_values)
+    Vl = spd(data = dict_or_file, wl = wl_new, datatype = 'cmf', 
+             interp_settings = interp_settings,
+             kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
+    if Vl.shape[0] > 2: Vl = Vl[[0,2]]
     if out == 2:
         return Vl, K
     else:
@@ -636,7 +850,9 @@ def vlbar(cieobs = _CIEOBS, scr = 'dict', wl_new = None, extrap_values = 'ext', 
 
 #--------------------------------------------------------------------------------------------------
 def vlbar_cie_mesopic(m = [1], wl_new = None, out = 1,
-                      Lp = None, Ls = None, SP = None):
+                      Lp = None, Ls = None, SP = None,
+                      interp_settings = None, 
+                      kind = None, extrap_kind = None, extrap_values = None):
     """
     Get CIE mesopic luminous efficiency function Vmesm according to CIE191:2010
     
@@ -646,7 +862,7 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, out = 1,
         :wl: 
             | None, optional
             | New wavelength range for interpolation. 
-            | Defaults to wavelengths specified by luxpy._WL3.
+            | If None: no interpolation is done.
         :out: 
             | 1 or 2, optional
             |     1: returns Vmesm
@@ -664,6 +880,17 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, out = 1,
             | None, optional
             | S/P ratio
             | If None: Ls must be supplied.
+        :kind:
+            | None, optional
+            | - None: use defaults in interp_settings for "cmf" datatype.
+            | - str with interpolation type
+        :extrap_kind:
+            | None, optional
+            | - None: use defaults in interp_settings for specified datatype.
+            | - str with extrapolation type
+        :extrap_values:
+            | None, optional
+            | Controls extrapolation. See cie_interp.
         
     Returns:
         :Vmes: 
@@ -684,14 +911,16 @@ def vlbar_cie_mesopic(m = [1], wl_new = None, out = 1,
     m = np.atleast_2d(m).T
     m[m<0] = 0
     m[m>1] = 1
-    Vl = vlbar(cieobs='1931_2')
-    Vlp = vlbar(cieobs='1951_20_scotopic')
+    Vl = vlbar(cieobs='1931_2', interp_settings = interp_settings)#, wl_new = wl_new, interp_settings = interp_settings, kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
+    Vlp = vlbar(cieobs='1951_20_scotopic', interp_settings = interp_settings)#, wl_new = wl_new, interp_settings = interp_settings, kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
     Vlmes= m*(Vl[1:,:]) + (1-m)*(Vlp[1:,:])
     Vlmes = np.vstack((Vl[:1,:],Vlmes))
     Kmes = 683/Vlmes[1:,Vlmes[0,:] == 555]
     Vlmes[1:,:] = Vlmes[1:,:]/Vlmes[1:,:].max(axis=1,keepdims=True) # normalize to max = 1
     
-    Vlmes = spd(data = Vlmes, wl = wl_new, interpolation = 'linear',
+    Vlmes = spd(data = Vlmes, wl = wl_new, datatype = 'cmf',
+                interp_settings = interp_settings, 
+                kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values,
                 norm_type = 'max', norm_f = 1)
     
     if out == 2:
@@ -751,7 +980,7 @@ def get_cie_mesopic_adaptation(Lp, Ls = None, SP = None):
     return Lmes, m
 
 #--------------------------------------------------------------------------------------------------
-def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None, cie_std_dev_obs = None):
+def spd_to_xyz_legacy(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, out = None, cie_std_dev_obs = None):
     """
     Calculates xyz tristimulus values from spectral data.
        
@@ -817,17 +1046,17 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
     # get cmf,k for cieobs:
     if isinstance(cieobs,str):
         if K is None: K = _CMF[cieobs]['K']
-        scr = 'dict'
+        src = 'dict'
     else:
-        scr = 'cieobs'
+        src = 'cieobs'
         if (K is None) & (relative == False): K = 1
     
     # Interpolate to wl of data:
-    cmf = xyzbar(cieobs = cieobs, scr = scr, wl_new = data[0]) 
+    cmf = xyzbar(cieobs = cieobs, src = src, wl_new = data[0]) 
     
     # Add CIE standard deviate observer function to cmf if requested:
     if cie_std_dev_obs is not None:
-        cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), scr = scr, wl_new = data[0])
+        cmf_cie_std_dev_obs = xyzbar(cieobs = 'cie_std_dev_obs_' + cie_std_dev_obs.lower(), src = src, wl_new = data[0])
         cmf[1:] = cmf[1:] + cmf_cie_std_dev_obs[1:] 
     
     # Rescale xyz using k or 100/Yw:
@@ -858,9 +1087,247 @@ def spd_to_xyz(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = None, o
         xyz = xyz[rflwasnotnone:,...]
         if rflwasnotnone == 0: xyz = np.squeeze(xyz,axis = 0)
         return xyz
+        
+def spd_to_xyz_barebones(spd, cmf, K = 1.0, relative = True, rfl = None, wl = None, matmul = True):
+    """
+    Calculate tristimulus values from equal wavelength spectral data.
+
+    Args:
+        :spd: 
+            | ndarray with (N+1,number of wavelengths)-dimensional spectral data (0-row: wavelengths, remaining n rows: data)
+        :cmf:
+            | color matching functions (3+1,number of wavelengths). (0-row: spectral wavelengths)
+        :K: 
+            | 1.0, optional
+            |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
+            |   or K = 100/sum(spd*dl)        (relative == True)
+        :relative:
+            | False, optional
+            | If False: use K, else calculate K = 100 ./ Yw
+        :rfl: 
+            | None, optional 
+            | If not None, must be ndarray with (M+1,number of wavelengths)-dimensional spectral reflectance data (0-row: wavelengths, remaining n rows: data)
+        :wl: 
+            | None, optional 
+            | If None: first row of all spectral data are the wavelengths, else wl is ndarray with corresponding wavelengths of shape (number of wavelength,).
+        :matmul:
+            | True, optional
+            | If True: use matrix multiplication and broadcasting to calculate tristimulus values, else use sumproduct with loop over cmfs.
+
+    Returns:
+        :XYZ, XYZw:
+            | ndarrays with tristimulus values (X,Y,Z are on last dimension)
+            |  - XYZ: tristim. values of all rfls (if rfl is None: same as XYZw) [M,N,3]
+            |  - XYZw: tristim. values of all white points (purely spds are used) [N,3] 
+
+    """
+    if rfl is None: 
+        rfl = np.ones(((wl is None)+ 2,cmf.shape[-1]))
+        
+    if wl is None: 
+        wl, spd, cmf, rfl = spd[0], spd[1:], cmf[1:], rfl[1:]
+    
+    dl = getwld(wl) 
+        
+    # Compute the xyz values
+    if matmul: 
+        xyz = (((dl* rfl[:,None,:]) * spd[None]) @ cmf.T)
+    else:
+        dl_x_rfl_x_s = dl*rfl[:,None,:]*spd[None]
+        xyz = np.transpose(([np.inner(dl_x_rfl_x_s,cmf[i]) for i in range(cmf.shape[0])]),(2,1,0))
+
+    if relative: K = 100 / xyz[:1,:,1:2]
+    
+    xyz *= K 
+
+    # Setup output:
+    return xyz[1:,...], xyz[0,...]
+
+    
+    
+def spd_to_xyz(spds, cieobs = _CIEOBS, K = None, relative = True, rfl = None,
+               out = None, cie_std_dev_obs = None,
+               rounding = None, matmul = True, 
+               interpolate_to = 'spd',
+               interp_settings = _INTERP_SETTINGS,
+               kind = None, extrap_kind = None, extrap_values = None,
+               negative_values_allowed = None, 
+               sprague_allowed = None,
+               sprague_method = 'sprague_cie224_2017',
+               force_scipy_interpolator = None,
+               scipy_interpolator = None,
+               choose_most_efficient_interpolator = None, 
+               verbosity = 0):
+    """
+    Calculate tristimulus values from spectral data.
+
+    Args:
+        :spds: 
+            | ndarray with (N+1,number of wavelengths)-dimensional spectral data (0-row: wavelengths, remaining n rows: data)
+        :cieobs:
+            | luxpy._CIEOBS or str or ndarray, optional
+            | Determines the color matching functions to be used in the 
+            | calculation of XYZ.
+            | If ndarray: color matching functions (3+1,number of wavelengths). (0-row: spectral wavelengths)
+        :K: 
+            | None, optional
+            |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
+            |   or K = 100/sum(spd*dl)        (relative == True)
+        :relative:
+            | True, optional
+            | If False: use K, else calculate K = 100 ./ Yw
+        :rfl: 
+            | None, optional 
+            | If not None, must be ndarray with (M+1,number of wavelengths)-dimensional spectral reflectance data (0-row: wavelengths, remaining n rows: data)
+        :out:
+            | None or 1 or 2, optional
+            | Determines number and shape of output. (see :returns:)
+        :cie_std_dev_obs: 
+            | None or str, optional
+            | - None: don't use CIE Standard Deviate Observer function.
+            | - 'f1': use F1 function.
+        :matmul:
+            | True, optional
+            | If True: use matrix multiplication and broadcasting to calculate tristimulus values, else use sumproduct with loop over cmfs.
+        :rounding:
+            | None, optional
+            | if not None: round xyz output to this many decimals. (see math.round for more options).
+        :interpolate_to:
+            | 'spd', optional
+            | Interpolate other spectral data to the wavelengths of specified spectral type.
+            | Options: 'spd' or 'cmf'
+        :interp_settings:
+            | Nested Dict with interpolation settings per spectral type ['spd','cmf','rfl','none'].
+            | Keys per spectrum type: 
+            |   - 'itype': str
+            |              supported options for str: 'linear', 'quadratic', 'cubic'
+            |   - 'etype': str
+            |              supported options: 
+            |                   + 'extrapolate'
+            |                   + 'zeros': out-of-bounds values are filled with zeros
+            |                   + 'const': out-of-bounds values are filled with nearest value
+            |                   + 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+            |   - 'fill_value': str or float or int or tupple, optional
+            |              If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+            |               ('extrapolate' when etype requires extrapolation)
+        :negative_values_allowed: 
+            | None, optional
+            | If False: after interpolation/extrapolation, any negative values are clipped to zero.
+            | If None: use the value in the interp_settings dictionary.
+        :force_scipy_interpolator:
+            | None, optional
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+            | If None: use the value in the interp_settings dictionary.
+        :scipy_interpolator:
+            | None, optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+            | If None: use the value in the interp_settings dictionary.
+        :choose_most_efficient_interpolator:
+            | None, optional
+            | If True: Choose most efficient interpolator
+            | If None: use the value in the interp_settings dictionary.
+        
+    Returns:
+        :returns:
+            | If rfl is None:
+            |    If out is None: ndarray of xyz values 
+            |        (.shape = (data.shape[0],3))
+            |    If out == 1: ndarray of xyz values 
+            |        (.shape = (data.shape[0],3))
+            |    If out == 2: (ndarray of xyz, ndarray of xyzw) values
+            |        Note that xyz == xyzw, with (.shape = (data.shape[0],3))
+            | If rfl is not None:
+            |   If out is None: ndarray of xyz values 
+            |         (.shape = (rfl.shape[0],data.shape[0],3))
+            |   If out == 1: ndarray of xyz values 
+            |       (.shape = (rfl.shape[0]+1,data.shape[0],3))
+            |        The xyzw values of the light source spd are the first set 
+            |        of values of the first dimension. The following values 
+            |       along this dimension are the sample (rfl) xyz values.
+            |    If out == 2: (ndarray of xyz, ndarray of xyzw) values
+            |        with xyz.shape = (rfl.shape[0],data.shape[0],3)
+            |        and with xyzw.shape = (data.shape[0],3)
+    
+     References:
+        1. `CIE15:2018, “Colorimetry,” CIE, Vienna, Austria, 2018. <https://doi.org/10.25039/TR.015.2018>`_
+    """
+    
+    spds = np2d(spds) if isinstance(spds,np.ndarray) else getdata(spds) # convert to np format and ensure 2D-array
+
+    # get cmf, K data:
+    if isinstance(cieobs,str):
+        if K is None: K = _CMF[cieobs]['K']
+        cmf = _CMF[cieobs]['bar']
+    else:
+        if (K is None) & (relative == False): K = 1
+        cmf = cieobs
+
+    # fintp = lambda data, wl, stype: spectral_interp(data, wl, stype, interp_settings = interp_settings,
+    #                                                 delete_nans = True, 
+    #                                                 negative_values_allowed = negative_values_allowed,
+    #                                                 force_scipy_interpolator = force_scipy_interpolator,
+    #                                                 scipy_interpolator = scipy_interpolator,
+    #                                                 choose_most_efficient_interpolator = choose_most_efficient_interpolator)
+    
+    fintp = lambda data, wl, stype: cie_interp(data, wl, datatype = stype, interp_settings = interp_settings,
+                                                kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values,
+                                                sprague_allowed = sprague_allowed, sprague_method = sprague_method,
+                                                negative_values_allowed = negative_values_allowed,
+                                                interp_log = False, extrap_log = False,
+                                                force_scipy_interpolator = force_scipy_interpolator,
+                                                scipy_interpolator = scipy_interpolator,
+                                                choose_most_efficient_interpolator = choose_most_efficient_interpolator, 
+                                                verbosity = verbosity)
+    
+    # Interpolate spectral input:
+    if interpolate_to == 'spd':
+        wl = spds[0]
+        # Interpolate cmf set
+        if verbosity > 0: print('Interpolate/Extrapolate cmfs')
+        cmf = fintp(cmf, wl, 'cmf')[1:]
+        s = spds[1:]
+    else:
+        wl = cmf[0]
+        # Interpolate spd set
+        if verbosity > 0: print('Interpolate/Extrapolate spds')
+        s = fintp(spds, wl, 'spd')[1:]
+        cmf = cmf[1:]
+    if rfl is not None:
+        eew = np.ones_like(wl)
+        rflwasnotnone = True
+        # Interpolate rfl set
+        if verbosity > 0: print('Interpolate/Extrapolate rfls')
+        rfl = fintp(rfl, wl, 'rfl')[1:]
+        rfl = np.vstack((eew, rfl))
+    else:
+        eew = None
+        rflwasnotnone = False
+        rfl = np.ones((2,wl.shape[0]))
+
+    # Add CIE standard deviate observer function to cmf if requested:
+    if cie_std_dev_obs is not None:
+        cmf_cie_std_dev_obs = _CMF['cie_std_dev_obs_' + cie_std_dev_obs.lower()]
+        cmf_cie_std_dev_obs = fintp(cmf_cie_std_dev_obs, wl, 'cmf')[1:]
+        cmf = cmf + cmf_cie_std_dev_obs
+
+    # Compute the xyz values
+    xyz, xyzw = spd_to_xyz_barebones(s, cmf, K = K, relative = relative, rfl = rfl, wl = wl, matmul = matmul)
+
+    # Setup output:
+    if out == 2:
+        if rflwasnotnone == False: xyz = np.squeeze(xyz,axis = 0)
+        return math.round((xyz,xyzw), rounding)
+    elif out == 1:
+        if rflwasnotnone == False: xyz = np.squeeze(xyz,axis = 0)
+        return math.round(xyz, rounding)
+    else: 
+        #xyz = xyz[rflwasnotnone:,...]
+        if rflwasnotnone == False: xyz = np.squeeze(xyz,axis = 0)
+        return math.round(xyz, rounding)
     
 #------------------------------------------------------------------------------
-def spd_to_ler(data, cieobs = _CIEOBS, K = None):
+def spd_to_ler(data, cieobs = _CIEOBS, K = None,
+               interp_settings = None, kind = None, extrap_kind = None, extrap_values = None):
     """
     Calculates Luminous efficacy of radiation (LER) from spectral data.
        
@@ -890,15 +1357,18 @@ def spd_to_ler(data, cieobs = _CIEOBS, K = None):
     
     if isinstance(cieobs,str):    
         if K == None: K = _CMF[cieobs]['K']
-        Vl = vlbar(cieobs = cieobs, scr = 'dict',wl_new = data[0])[1:2] #also interpolate to wl of data
+        Vl = vlbar(cieobs = cieobs, src = 'dict',wl_new = data[0], interp_settings = interp_settings, 
+                   kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)[1:2] #also interpolate to wl of data
     else:
-        Vl = spd(wl = data[0], data = cieobs, interpolation = 'cmf')[1:2]
+        Vl = spd(wl = data[0], data = cieobs, datatype = 'cmf', interp_settings = interp_settings, 
+                 kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)[1:2]
         if K is None: raise Exception("spd_to_ler: User defined Vlambda, but no K scaling factor has been supplied.")
     dl = getwld(data[0])
     return ((K * np.dot((Vl*dl),data[1:].T))/np.sum(data[1:]*dl, axis = data.ndim-1)).T
 
 #------------------------------------------------------------------------------
-def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
+def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS, K = None,
+                 interp_settings = None, kind = None, extrap_kind = None, extrap_values = None):
     """
     Calculate power of spectral data in radiometric, photometric 
     or quantal energy units.
@@ -914,8 +1384,11 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
             |                to standard air (cfr. CIE TN003-2015)
             |      - 'qu': in quantal energy units
         :cieobs: 
-            | _CIEOBS or str, optional
+            | _CIEOBS or str or ndarray, optional
             | Type of cmf set to use for photometric units.
+        :K:
+            | None, optional
+            | Luminous efficacy of radiation, must be supplied if cieobs is an array.
     
     Returns:
         returns: 
@@ -936,15 +1409,31 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS):
         Km_correction_factor = 1/(1 - (1 - 0.9998567)*(lambdad - 555)) # correction factor for Km in standard air
 
         # Get Vlambda and Km (for E):
-        Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
-        Km *= Km_correction_factor
-        p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
+        if isinstance(cieobs, str): 
+            src = 'dict'
+        else:
+            src = 'vltype' # if str -> cieobs is an array
+            if K is None: raise Exception('If cieobs is an array, Km must be explicitely supplied')
+        
+        Vl, Km = vlbar(cieobs = cieobs, K = K, src = src, wl_new = data[0], out = 2, 
+                       interp_settings = interp_settings, kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
+        if K is None: K = Km
+        K *= Km_correction_factor
+        p = K*np2d(np.dot(data[1:],dl*Vl[1])).T
         
     elif ptype == 'pu': # normalize in photometric units
     
         # Get Vlambda and Km (for E):
-        Vl, Km = vlbar(cieobs = cieobs, wl_new = data[0], out = 2)
-        p = Km*np2d(np.dot(data[1:],dl*Vl[1])).T
+        if isinstance(cieobs, str): 
+            src = 'dict'
+        else:
+            src = 'vltype' # if str -> cieobs is an array
+            if K is None: raise Exception('If cieobs is an array, Km must be explicitely supplied')
+        
+        Vl, Km = vlbar(cieobs = cieobs, K = K, src = src, wl_new = data[0], out = 2, 
+                       interp_settings = interp_settings, kind = kind, extrap_kind = extrap_kind, extrap_values = extrap_values)
+        if K is None: K = Km
+        p = K*np2d(np.dot(data[1:],dl*Vl[1])).T
 
     
     elif ptype == 'qu': # normalize to quantual units
@@ -1020,7 +1509,7 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
     return props
 
 #------------------------------------------------------------------------------
-def create_spectral_interpolator(S, wl = None, kind = 1):
+def create_spectral_interpolator(S, wl = None, kind = 1, ext = 0):
     """ 
     Create an interpolator of kind for spectral data S. 
     
@@ -1054,10 +1543,10 @@ def create_spectral_interpolator(S, wl = None, kind = 1):
     interpolators = []
     for i in range(S.shape[0]):
         indices = np.logical_not(np.isnan(S[i]) | np.isneginf(S[i]) |  np.isposinf(S[i]))
-        interpolators.append(interpolate.InterpolatedUnivariateSpline(wl[indices],S[i][indices], k = kind, ext = 0))
+        interpolators.append(interpolate.InterpolatedUnivariateSpline(wl[indices],S[i][indices], k = kind, ext = ext))
     return interpolators
 
-def wls_shift(shfts, log_shft = False, wl = None, S = None, interpolators = None, kind = 1):
+def wls_shift(shfts, log_shft = False, wl = None, S = None, interpolators = None, kind = 1, ext = 0):
     """ 
     Wavelength-shift array S over shft wavelengths.
     
@@ -1118,7 +1607,7 @@ def wls_shift(shfts, log_shft = False, wl = None, S = None, interpolators = None
             N = None
         
     if (interpolators is None) | (S is not None): 
-        interpolators = create_spectral_interpolator(S, kind = kind)
+        interpolators = create_spectral_interpolator(S, kind = kind, ext = ext)
     else: 
         if not isinstance(interpolators, (list,tuple)):
             if N is None: N = len(shfts)

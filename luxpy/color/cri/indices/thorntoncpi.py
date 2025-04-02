@@ -21,7 +21,7 @@ _RFL_CPIw = np.vstack((_RFL_CPI,np.ones((1,_RFL_CPI.shape[1]))))
 
 __all__ = ['spd_to_thornton_cpi']
 
-def spd_to_thornton_cpi(spd):
+def spd_to_thornton_cpi(spd, interp_settings = None):
     """
     Calculate Thornton's Color Preference Index (CPI).
     
@@ -47,7 +47,8 @@ def spd_to_thornton_cpi(spd):
     Yuv_t, Yuv_r = spd_to_jab_t_r(spd, cri_type='ciera',
                                   cspace = {'type':'Yuv','xyzw':None},
                                   catf = None,
-                                  sampleset = _RFL_CPIw)
+                                  sampleset = _RFL_CPIw,
+                                  interp_settings = interp_settings)
     
     # Convert to 1960 UCS:
     Yuv_t[...,2]*=(2/3)
@@ -81,8 +82,8 @@ def spd_to_thornton_cpi(spd):
 
 if __name__ == '__main__':
     import luxpy as lx
-    F4 = lx.cie_interp(lx._CIE_F4, wl_new = lx.getwlr([360,830,1]), kind = 'spd')
-    D65 = lx.cie_interp(lx._CIE_D65, wl_new = lx.getwlr([360,830,1]), kind = 'spd')
+    F4 = lx.cie_interp(lx._CIE_F4, wl_new = lx.getwlr([360,830,1]), datatype = 'spd')
+    D65 = lx.cie_interp(lx._CIE_D65, wl_new = lx.getwlr([360,830,1]), datatype = 'spd')
     spds = np.vstack((F4, D65[1:,:]))
     
     cpi1 = spd_to_thornton_cpi(F4)

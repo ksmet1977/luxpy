@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utils sub-package &mdash; LuxPy 1.11.4 documentation</title>
+  <title>Utils sub-package &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9080e127"></script>
+        <script src="_static/documentation_options.js?v=fe8e256b"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.4
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -408,8 +408,8 @@ the values of the corresponding keys in dict db.
 </dd>
 <dt class="field-odd">header<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">None, optional</div>
-<div class="line">None: no header present, ‘infer’ get from file.</div>
+<div class="line">None or list, optional</div>
+<div class="line">None: no header present.</div>
 </div>
 </dd>
 <dt class="field-even">sep<span class="colon">:</span></dt>
@@ -768,9 +768,11 @@ the values of the corresponding keys in dict db.
 <div class="line-block">
 <div class="line">with the requested data arrays.</div>
 </div>
+<div class="line">If False: in case only a single sheet_name is supplied or only a single</div>
+<div class="line-block">
+<div class="line">sheet is present, then the output will be an ndarray!</div>
 </div>
-<p><a href="#id1"><span class="problematic" id="id2">|</span></a>If False: in case only a single sheet_name is supplied or only a single
-|          sheet is present, then the output will be an ndarray!</p>
+</div>
 </dd>
 <dt class="field-even">out<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
@@ -1093,7 +1095,7 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

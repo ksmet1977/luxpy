@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.technoteamlmk.TechnoTeamLMK &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.toolboxes.technoteamlmk.TechnoTeamLMK &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -439,9 +439,9 @@
 <span class="sd">        Initializes a connection to LMK LabSoft.</span>
 
 <span class="sd">          Input:</span>
-<span class="sd">            -objectiveCalibrationPath: path to calibration file</span>
+<span class="sd">            - objectiveCalibrationPath: path to calibration file</span>
 <span class="sd">          Output:</span>
-<span class="sd">            -answer: 0=no error, other=error code</span>
+<span class="sd">            - answer: 0=no error, other=error code</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">objectiveCalibrationPath</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objectiveCalibrationPath</span> <span class="o">=</span> <span class="n">objectiveCalibrationPath</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">objectiveCalibrationPath</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -490,14 +490,16 @@
 
 <span class="sd">        Input:</span>
 <span class="sd">          - open_dialog:</span>
-<span class="sd">                If 0: No dialog window.</span>
-<span class="sd">                Else: Opens a dialog window in the Labsoft application.</span>
-<span class="sd">                      The user can choose whether they wish to save </span>
-<span class="sd">                      the current state or not or or cancel </span>
-<span class="sd">                      the closing of LabSoft.</span>
+<span class="sd">                If 0: | No dialog window.</span>
+<span class="sd">                Else: | Opens a dialog window in the Labsoft application.</span>
+<span class="sd">                      | The user can choose whether they wish to save </span>
+<span class="sd">                      | the current state or not or or cancel </span>
+<span class="sd">                      | the closing of LabSoft.</span>
+<span class="sd">                      </span>
 <span class="sd">        Output:</span>
-<span class="sd">          -answer: 0=no error, other=error code</span>
+<span class="sd">          - answer: 0=no error, other=error code</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;close_lmk_labsoft_connection(): lmk is closed.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
@@ -827,12 +829,14 @@
     <span class="k">def</span> <span class="nf">createEllips</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">centerPt</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create an ellips with a:</span>
-<span class="sd">            - centerPoint defined by centerPt (contains x and y value)</span>
-<span class="sd">            - certain width (horizontal axis)</span>
-<span class="sd">            - certain height (vertical axis)</span>
-<span class="sd">            - give the ellips region a regionName (string)</span>
+<span class="sd">        | - centerPoint defined by centerPt (contains x and y value)</span>
+<span class="sd">        | - certain width (horizontal axis)</span>
+<span class="sd">        | - certain height (vertical axis)</span>
+<span class="sd">        | - give the ellips region a regionName (string)</span>
+
 <span class="sd">        Function returns the regionIndex of the ellips</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">listXpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">centerPt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">centerPt</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">centerPt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">width</span><span class="p">)]]</span>
         <span class="n">listYpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">centerPt</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">centerPt</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">height</span><span class="p">),</span> <span class="n">centerPt</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
         
@@ -860,10 +864,12 @@
     <span class="k">def</span> <span class="nf">createPolygon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pointsXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a polygon with:</span>
-<span class="sd">            - vertices specified in pointsXY (x-&gt;width, y-&gt;height)</span>
-<span class="sd">            - give the polygon region a regionName (string)</span>
+<span class="sd">        | - vertices specified in pointsXY (x-&gt;width, y-&gt;height)</span>
+<span class="sd">        | - give the polygon region a regionName (string)</span>
+
 <span class="sd">        Function returns the regionIndex of the polygon</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">listXpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pointsXY</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
         <span class="n">listYpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">pointsXY</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
         
@@ -892,10 +898,12 @@
     <span class="k">def</span> <span class="nf">createRectangle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">topleftXY</span><span class="p">,</span> <span class="n">bottomrightXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a Rectangle spanning:</span>
-<span class="sd">            - the top-left and bottom-right vertices </span>
-<span class="sd">            - give the rectangle region a regionName (string)</span>
+<span class="sd">        | - the top-left and bottom-right vertices </span>
+<span class="sd">        | - give the rectangle region a regionName (string)</span>
+<span class="sd">        </span>
 <span class="sd">        Function returns the regionIndex of the rectangle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">listXpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">topleftXY</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">bottomrightXY</span><span class="p">[</span><span class="mi">0</span><span class="p">]]]</span>
         <span class="n">listYpts</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="n">topleftXY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">bottomrightXY</span><span class="p">[</span><span class="mi">1</span><span class="p">]]]</span>
         
@@ -947,8 +955,7 @@
     <span class="k">def</span> <span class="nf">createStatisticObjectOfRegion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regionName</span><span class="p">,</span> <span class="n">statisticType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a color statistic object</span>
-<span class="sd">            call as follows:</span>
-<span class="sd">            createStatisticObjectOfRegion(&#39;regionTestName&#39;,statisticType[&#39;standardColor&#39;])</span>
+<span class="sd">        | call as follows: createStatisticObjectOfRegion(&#39;regionTestName&#39;,statisticType[&#39;standardColor&#39;])</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iCreateStatistic</span><span class="p">(</span><span class="n">statisticType</span><span class="p">,</span><span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span><span class="p">,</span><span class="bp">cls</span><span class="o">.</span><span class="n">getRegionIndexByName</span><span class="p">(</span><span class="n">regionName</span><span class="p">),</span><span class="mi">1</span><span class="p">,[</span><span class="s1">&#39;1&#39;</span><span class="p">])</span></div>
 
@@ -990,12 +997,13 @@
     <span class="k">def</span> <span class="nf">setIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wishedTime</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set integration time.</span>
-<span class="sd">        </span>
-<span class="sd">          [int32, double] LMKAxServer::iSetIntegrationTime	(double _dWishedTime, double &amp; _drRealizedTime)</span>
-<span class="sd">          Parameters</span>
-<span class="sd">         	_dWishedTime	Wished integration time</span>
-<span class="sd">         	_drRealizedTime	Realized integration time</span>
+<span class="sd">        |  [int32, double] LMKAxServer::iSetIntegrationTime	(double _dWishedTime, double &amp; _drRealizedTime)</span>
+
+<span class="sd">        Parameters:</span>
+<span class="sd">            :_dWishedTime: Wished integration time</span>
+<span class="sd">         	:_drRealizedTime: Realized integration time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="n">tempFlag</span><span class="p">,</span> <span class="n">realizedTime</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iSetIntegrationTime</span><span class="p">(</span><span class="n">wishedTime</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">tempFlag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1012,18 +1020,18 @@
     <span class="k">def</span> <span class="nf">getIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get integration time.</span>
+<span class="sd">        |  [int32, double, double, double, double, double]	LMKAxServer::iGetIntegrationTime</span>
+<span class="sd">        | 	(handle, double _drCurrentTime, double &amp; _drPreviousTime,</span>
+<span class="sd">        |		double &amp; _drNextTime, double &amp; _drMinTime, double &amp; _drMaxTime )</span>
+<span class="sd">        |</span>
+<span class="sd">        |  Determine current exposure time and other time parameters.</span>
 <span class="sd">        </span>
-<span class="sd">          [int32, double, double, double, double, double]	LMKAxServer::iGetIntegrationTime</span>
-<span class="sd">         	(handle, double _drCurrentTime, double &amp; _drPreviousTime,</span>
-<span class="sd">        		double &amp; _drNextTime, double &amp; _drMinTime, double &amp; _drMaxTime )</span>
-<span class="sd">        </span>
-<span class="sd">          Determine current exposure time and other time parameters.</span>
-<span class="sd">          Parameters</span>
-<span class="sd">         	_drCurrentTime	Current integration time</span>
-<span class="sd">         	_drPreviousTime	Next smaller (proposed) time</span>
-<span class="sd">         	_drNextTime	Next larger (proposed) time</span>
-<span class="sd">         	_drMinTime	Minimal possible time</span>
-<span class="sd">         	_drMaxTime	Maximal possible time</span>
+<span class="sd">        Parameters:</span>
+<span class="sd">         	:_drCurrentTime: Current integration time</span>
+<span class="sd">         	:_drPreviousTime: Next smaller (proposed) time</span>
+<span class="sd">         	:_drNextTime: Next larger (proposed) time</span>
+<span class="sd">         	:_drMinTime: Minimal possible time</span>
+<span class="sd">         	:_drMaxTime: Maximal possible time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tempFlag</span><span class="p">,</span> <span class="n">currInt</span><span class="p">,</span> <span class="n">prevInt</span><span class="p">,</span> <span class="n">nextInt</span><span class="p">,</span> <span class="n">minInt</span><span class="p">,</span> <span class="n">maxInt</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iGetIntegrationTime</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
         
@@ -1048,6 +1056,7 @@
 <span class="sd">        determined before each capture by the autoscan algorithm. In the case of a</span>
 <span class="sd">        color capture the autoscan algorithm is applied to each color filter separately.</span>
 <span class="sd">        &quot;&quot;&quot;</span> 
+
         <span class="k">if</span> <span class="n">autoscan</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">autoscan</span> <span class="o">=</span> <span class="n">autoscan</span>
         <span class="c1"># if cls.autoscan == 1:</span>
         <span class="n">tempFlag</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iSetAutoscan</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">autoscan</span><span class="p">))</span>
@@ -1066,6 +1075,7 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get auto scan. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
+
         <span class="n">tempFlag</span><span class="p">,</span> <span class="n">autoscan</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iGetAutoscan</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tempFlag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;iGetAutoscan: AutoScan </span><span class="si">{:s}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">boolStr</span><span class="p">[</span><span class="n">autoscan</span><span class="p">]))</span>
@@ -1086,6 +1096,7 @@
 <span class="sd">        If this flag is set, all exposure times will automatically </span>
 <span class="sd">        adjusted if camera exposure time is reduced or enlarged.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">autoexposure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">autoexposure</span> <span class="o">=</span> <span class="n">autoexposure</span>
         <span class="c1"># if cls.autoexposure == 1:</span>
         <span class="n">tempFlag</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iSetAutomatic</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">1</span><span class="o">*</span><span class="bp">cls</span><span class="o">.</span><span class="n">autoexposure</span><span class="p">))</span>
@@ -1158,14 +1169,14 @@
     <span class="k">def</span> <span class="nf">set_max_exposure_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">maxtime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Set the maximum possible exposure time.</span>
-<span class="sd">            int LMKAxServer::iSetMaxCameraTime	(	double 	_dMaxCameraTime	)</span>
+<span class="sd">        |  int LMKAxServer::iSetMaxCameraTime	(	double 	_dMaxCameraTime	)</span>
+<span class="sd">        | </span>
+<span class="sd">        |  The maximum values is of course restricted by camera properties.</span>
+<span class="sd">        |  But you can use an even smaller time to avoid to long meausrement times.</span>
 <span class="sd">         </span>
-<span class="sd">          The maximum values is of course restricted by camera properties.</span>
-<span class="sd">          But you can use an even smaller time to avoid to long meausrement times.</span>
-<span class="sd">         </span>
-<span class="sd">         Parameters</span>
-<span class="sd">           _dMaxCameraTime     Wished value</span>
-<span class="sd">            maxCameraTime</span>
+<span class="sd">        Parameters:</span>
+<span class="sd">            :_dMaxCameraTime: Wished value</span>
+<span class="sd">            :maxCameraTime:</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">maxtime</span> <span class="o">=</span> <span class="n">maxtime</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">maxtime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1201,15 +1212,15 @@
     <span class="nd">@classmethod</span> 
     <span class="k">def</span> <span class="nf">set_mod_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">modfrequency</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">         Set the frequency of modulated light.</span>
-<span class="sd">            int LMKAxServer::iSetModulationFrequency	(	double 	_dModFrequency	)</span>
+<span class="sd">        Set the frequency of modulated light.</span>
+<span class="sd">        |  int LMKAxServer::iSetModulationFrequency	(	double 	_dModFrequency	)</span>
+<span class="sd">        |</span>
+<span class="sd">        |  If the light source is driven by alternating current,</span>
+<span class="sd">        |  there are some restriction for the exposure times.</span>
+<span class="sd">        |  Please inform the program about the modulation frequency.</span>
 <span class="sd">        </span>
-<span class="sd">          If the light source is driven by alternating current,</span>
-<span class="sd">          there are some restriction for the exposure times.</span>
-<span class="sd">          Please inform the program about the modulation frequency.</span>
-<span class="sd">        </span>
-<span class="sd">           Parameters</span>
-<span class="sd">             _dModFrequency	Frequency of light source. 0 if no modulation is to be concerend</span>
+<span class="sd">        Parameters:</span>
+<span class="sd">            :_dModFrequency:	Frequency of light source. 0 if no modulation is to be concerend</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">modfrequency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">modfrequency</span> <span class="o">=</span> <span class="n">modfrequency</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">modfrequency</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">modfrequency</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()):</span>
@@ -1529,7 +1540,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

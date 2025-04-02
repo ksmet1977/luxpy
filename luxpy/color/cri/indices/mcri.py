@@ -4,16 +4,19 @@
 ###############################################################################
 
  :_MCRI_DEFAULTS: default settings for MCRI 
-                  (major dict has 9 keys (04-Jul-2017): 
-                  sampleset [str/dict], 
-                  ref_type [str], 
-                  cieobs [str], 
-                  avg [fcn handle], 
-                  scale [dict], 
-                  cspace [dict], 
-                  catf [dict], 
-                  rg_pars [dict], 
-                  cri_specific_pars [dict])
+                 (major dict has 13 keys (04-Mar-2025): 
+                 sampleset [str/dict], 
+                 ref_type [str], 
+                 cieobs [Dict], 
+                 cct_mode [str],
+                 avg [fcn handle], 
+                 rf_from_avg_rounded_rfi [Bool],
+                 round_daylightphase_Mi_to_cie_recommended [Bool],
+                 scale [dict], 
+                 cspace [dict], 
+                 catf [dict], 
+                 rg_pars [dict], 
+                 cri_specific_pars [dict])
 
  :spd_to_mcri(): Calculates the memory color rendition index, Rm:
     
@@ -26,7 +29,7 @@ Reference
 """
 import numpy as np 
 
-from luxpy import cat, math, _CRI_RFL, _S_INTERP_TYPE, spd, spd_to_xyz, colortf, xyz_to_ipt, xyz_to_cct
+from luxpy import cat, math, _CRI_RFL,  spd, spd_to_xyz, colortf, xyz_to_ipt, xyz_to_cct
 from luxpy.utils import np2d, asplit
 from ..utils.DE_scalers import psy_scale
 from ..utils.helpers import _get_hue_bin_data, _hue_bin_data_to_rg
@@ -34,8 +37,12 @@ from ..utils.helpers import _get_hue_bin_data, _hue_bin_data_to_rg
 
 _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']", 
                   'ref_type' : None, 
+                  'calculation_wavelength_range' : None,
                   'cieobs' : {'xyz' : '1964_10', 'cct': '1931_2'}, 
+                  'cct_mode' : ('ohno2014', {}),
                   'avg': math.geomean, 
+                  'rf_from_avg_rounded_rfi' : False,
+                  'round_daylightphase_Mi_to_cie_recommended' : False,
                   'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 
                   'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,    0.707270,   -0.080674],[-0.228111, 1.150561,    0.061230],[0.0, 0.0,    0.931757]]}, 
                   'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':'cat02', 'catmode' : '1>2'}, 
@@ -57,7 +64,7 @@ __all__ = ['spd_to_mcri','_MCRI_DEFAULTS']
 
 ###############################################################################
 def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None,
-                mcri_defaults = None):
+                mcri_defaults = None, interp_settings = None):
     """
     Calculates the MCRI or Memory Color Rendition Index, Rm
     
@@ -107,22 +114,28 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None,
     SPD = np2d(SPD)
     
     if wl is not None: 
-        SPD = spd(data = SPD, interpolation = _S_INTERP_TYPE, wl = wl)
+        SPD = spd(data = SPD, datatype = 'spd', wl = wl, interp_settings = interp_settings)
     
     
-    # unpack metric default values:
+    # unpack metric default values:  
     if mcri_defaults is None: mcri_defaults = _MCRI_DEFAULTS
-    avg, catf, cieobs, cri_specific_pars, cspace, ref_type, rg_pars, sampleset, scale = [mcri_defaults[x] for x in sorted(mcri_defaults.keys())] 
+    avg, calculation_wavelength_range, catf, cct_mode, cieobs, cri_specific_pars, cspace, ref_type, rf_from_avg_rounded_rfi, rg_pars, round_daylightphase_Mi_to_cie_recommended, sampleset, scale = [mcri_defaults[x] for x in sorted(mcri_defaults.keys())] 
     similarity_ai = cri_specific_pars['similarity_ai']
     Mxyz2lms = cspace.get('Mxyz2lms',None)
     scale_fcn = scale['fcn']
     scale_factor = scale['cfactor']
     if isinstance(sampleset,str): sampleset = eval(sampleset)
+
+    # Drop wavelengths outside of calculation_wavelength_range:
+    if calculation_wavelength_range is not None:
+        SPD = SPD[:,(SPD[0]>=calculation_wavelength_range[0]) & (SPD[0]<=calculation_wavelength_range[1])]
+
     
     # A. calculate xyz:
     xyzti, xyztw = spd_to_xyz(SPD, cieobs = cieobs['xyz'],  rfl = sampleset, out = 2)
     if 'cct' in out.split(','):
-        cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], out = 'cct,duv')
+        if not (isinstance(cct_mode,tuple) | isinstance(cct_mode, list)): cct_mode = (cct_mode, {})
+        cct, duv = xyz_to_cct(xyztw, cieobs = cieobs['cct'], cct_mode = cct_mode[0], out = 'cct,duv', **cct_mode[1])
         cct = np.abs(cct) # out-of-lut ccts are encoded as negative
         
     # B. perform chromatic adaptation to adopted whitepoint of ipt color space, i.e. D65:

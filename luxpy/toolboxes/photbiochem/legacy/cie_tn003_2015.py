@@ -192,7 +192,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, sid_unit
 
 
     # get SI actinic action spectra, sa:
-    sa = spd(_ACTIONSPECTRA, wl = sid[0], interpolation = 'cmf', norm_type = 'max')
+    sa = spd(_ACTIONSPECTRA, wl = sid[0], datatype = 'cmf', norm_type = 'max')
     
     # get wavelength spacing:
     dl = getwld(sid[0])
@@ -254,7 +254,7 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
             | of all spectra in :sid: in SI-units. 
     """
     Eeas = spd_to_aopicE(sid, cieobs = cieobs, Ee = Ee, E = E, Q = Q, sid_units = sid_units)[0] # calculate all alpha-opic values and select last one (melanopic)
-    D65 = cie_interp(_CIE_D65, wl_new = sid[0], kind = 'spd')
+    D65 = cie_interp(_CIE_D65, wl_new = sid[0], datatype = 'spd')
     Eeas_D65 = spd_to_aopicE(D65, cieobs = cieobs)[0] # calculate all alpha-opic values for D65 and select last one (melanopic)
     Ev_D65 = spd_to_power(D65, ptype = 'pusa', cieobs = cieobs)[:,0] # calculate photometric (illuminance) value for D65
     a_edi = Eeas * (Ev_D65/Eeas_D65) # calculate MEDI

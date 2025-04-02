@@ -384,7 +384,7 @@ def generate_vector_field(poly_model, pmodel, \
 def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TYPE, \
                         cspace = _VF_CSPACE, sampleset = None, pool = False, \
                         pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),'Cref' : _VF_MAXR, 'sig' : _VF_SIG}, \
-                        vfcolor = 'k',verbosity = 0):
+                        vfcolor = 'k',verbosity = 0, interp_settings = None):
     """
     Applies full vector field model calculations to spectral data.
     
@@ -476,7 +476,8 @@ def VF_colorshift_model(S, cri_type = _VF_CRI_DEFAULT, model_type = _VF_MODEL_TY
         cri_type_str = None
     
     # Calculate Rf, Rfi and Jabr, Jabt:
-    Rf, Rfi, Jabt, Jabr,cct,duv,cri_type  = spd_to_cri(S, cri_type= cri_type,out='Rf,Rfi,jabt,jabr,cct,duv,cri_type', sampleset=sampleset)
+    Rf, Rfi, Jabt, Jabr,cct,duv,cri_type  = spd_to_cri(S, cri_type= cri_type,out='Rf,Rfi,jabt,jabr,cct,duv,cri_type', sampleset=sampleset,
+                                                       interp_settings = interp_settings)
     
     # In case of multiple source SPDs, pool:
     if (len(Jabr.shape) == 3) & (Jabr.shape[1]>1) & (pool == True):
@@ -837,7 +838,8 @@ def plotcircle(radii = np.arange(0,60,10), \
 def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, \
                              cri_type = _VF_CRI_DEFAULT, \
                              modeltype = _VF_MODEL_TYPE,\
-                             determine_hue_angles = _DETERMINE_HUE_ANGLES):
+                             determine_hue_angles = _DETERMINE_HUE_ANGLES,
+                             interp_settings = None):
     """
     Initialize the hue angles that will be used to 'summarize' 
     the VF model fitting parameters.
@@ -879,7 +881,8 @@ def initialize_VF_hue_angles(hx = None, Cxr = _VF_MAXR, \
     # Determine Munsell hue angles in cam02ucs:
     pool = False  
     IllC = _CIE_ILLUMINANTS['C'] # for determining Munsell hue angles in cam02ucs
-    outM = VF_colorshift_model(IllC, cri_type = cri_type, sampleset = rflM, vfcolor = 'g',pool = pool)
+    outM = VF_colorshift_model(IllC, cri_type = cri_type, sampleset = rflM, vfcolor = 'g',pool = pool, 
+                                interp_settings = interp_settings)
     #------------------------------------------------------------------------------
     if (determine_hue_angles == True) | (hx is None):
         # find samples at major Munsell hue angles:

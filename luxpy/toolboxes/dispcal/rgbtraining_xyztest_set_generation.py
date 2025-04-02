@@ -312,7 +312,7 @@ def plot_rgb_xyz_lab_of_set(rgb_xyz_lab, subscript = '', data_contains = ['rgb',
             | ndarray with RGB, XYZ, Lab data.
         :subscript:
             | '', optional
-            |subscript to add to the axis labels.
+            | subscript to add to the axis labels.
         :data_contains:
             | ['rgb','xyz','lab'], optional
             | specifies what is in rgb_xyz_lab
@@ -340,8 +340,8 @@ def plot_rgb_xyz_lab_of_set(rgb_xyz_lab, subscript = '', data_contains = ['rgb',
     Return:
         :fig, axs:
             | Handles to the figure and the three axes in that figure.
-        
     """
+    
     if fig is None:
         fig = plt.figure(figsize = figsize)
     

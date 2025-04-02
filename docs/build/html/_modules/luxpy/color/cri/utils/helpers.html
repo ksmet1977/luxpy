@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.cri.utils.helpers &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
@@ -130,7 +130,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_S_INTERP_TYPE</span><span class="p">,</span> <span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span>
+<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">_IESTM3015</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cam</span><span class="p">,</span> <span class="n">cat</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span>
                    <span class="n">colortf</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">xyz_to_cct</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np2d</span> 
 <span class="c1">#from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale</span>
@@ -141,7 +141,6 @@
            <span class="s1">&#39;optimize_scale_factor&#39;</span><span class="p">,</span><span class="s1">&#39;spd_to_cri&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_hue_bin_data_to_rxhj&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rfi&#39;</span><span class="p">,</span> <span class="s1">&#39;_hue_bin_data_to_rg&#39;</span><span class="p">]</span>
 
-<span class="n">_CCT_MODE</span> <span class="o">=</span> <span class="s1">&#39;ohno2014&#39;</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">def</span> <span class="nf">_get_hue_bin_data_individual_samples</span><span class="p">(</span><span class="n">jabt</span><span class="p">,</span><span class="n">jabr</span><span class="p">,</span> <span class="n">normalized_chroma_ref</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
@@ -665,8 +664,11 @@
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_jab_t_r">[docs]</a>
 <span class="k">def</span> <span class="nf">spd_to_jab_t_r</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr&#39;</span><span class="p">,</span> 
                    <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                   <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                   <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                   <span class="n">calculation_wavelength_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cct_mode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                   <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                   <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                   <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates jab color values for a sample set illuminated with test source </span>
 <span class="sd">    SPD and its reference illuminant.</span>
@@ -710,6 +712,9 @@
 <span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
 <span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
 <span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :calculation_wavelength_range:</span>
+<span class="sd">            | None or list, optional</span>
+<span class="sd">            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.</span>
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
@@ -718,6 +723,10 @@
 <span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
 <span class="sd">            |                   of samples and white </span>
 <span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cct_mode:</span>
+<span class="sd">            | None or str or (str, dict), optional</span>
+<span class="sd">            | Specifies which mode to use when calculating xyz_to_cct().</span>
+<span class="sd">            | If tuple: second element is dict with additional kwargs for xyz_to_cct</span>
 <span class="sd">        :cspace:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which color space to use.</span>
@@ -749,7 +758,10 @@
 <span class="sd">            |     - dict: user specified parameters. </span>
 <span class="sd">            |         For its use, see for example:</span>
 <span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
-<span class="sd">    </span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | (ndarray, ndarray) </span>
@@ -763,34 +775,43 @@
     <span class="n">cri_type</span> <span class="o">=</span> <span class="n">process_cri_type_input</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">callerfunction</span> <span class="o">=</span> <span class="s1">&#39;cri.spd_to_jab_t_r&#39;</span><span class="p">)</span>
     
     <span class="c1"># unpack and update dict with parameters:</span>
-    <span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span>
+
+    <span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">calculation_wavelength_range</span><span class="p">,</span> <span class="n">catf</span><span class="p">,</span> <span class="n">cct_mode</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span>
      <span class="n">cri_specific_pars</span><span class="p">,</span> <span class="n">cspace</span><span class="p">,</span> 
-     <span class="n">ref_type</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
+     <span class="n">ref_type</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">,</span> <span class="n">rg_pars</span><span class="p">,</span> 
+     <span class="n">round_daylightphase_Mi_to_cie_recommended</span><span class="p">,</span> 
+     <span class="n">sampleset</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span><span class="n">cri_type</span><span class="p">[</span><span class="n">x</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">cri_type</span><span class="o">.</span><span class="n">keys</span><span class="p">())]</span> 
+
 
     <span class="c1"># pre-interpolate SPD:</span>
     <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
-        <span class="n">St</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">_S_INTERP_TYPE</span><span class="p">)</span>
+        <span class="n">St</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
       
+    <span class="c1"># Drop wavelengths outside of calculation_wavelength_range:</span>
+    <span class="k">if</span> <span class="n">calculation_wavelength_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">St</span> <span class="o">=</span> <span class="n">St</span><span class="p">[:,(</span><span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">calculation_wavelength_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">calculation_wavelength_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
     <span class="c1"># obtain sampleset:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sampleset</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
         <span class="n">sampleset</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">sampleset</span><span class="p">)</span>
     
     <span class="c1"># A. calculate reference illuminant:</span>
     <span class="c1"># A.a. get xyzw:</span>
-    <span class="n">xyztw_cct</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">xyztw_cct</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
 
     <span class="c1"># A.b. get cct:</span>
-    <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw_cct</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span><span class="n">mode</span> <span class="o">=</span> <span class="n">_CCT_MODE</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">cct_mode</span><span class="p">,</span><span class="nb">tuple</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cct_mode</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span> <span class="n">cct_mode</span> <span class="o">=</span> <span class="p">(</span><span class="n">cct_mode</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyztw_cct</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">cct_mode</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct,duv&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">,</span> <span class="o">**</span><span class="n">cct_mode</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">cct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span> <span class="c1"># out-of-lut ccts are encoded as negative</span>
     
     <span class="c1"># A.c. get reference ill.:</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
-        <span class="n">Sr</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">Sr</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">ref_type</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">,</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">Sr</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">Sr</span> <span class="o">=</span> <span class="n">cri_ref</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="n">ref_type</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;cct&#39;</span><span class="p">],</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">St</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">,</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span><span class="p">)</span>
 
     <span class="c1"># B. calculate xyz and xyzw of SPD and Sr (stack for speed):</span>
-    <span class="n">xyzi</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">St</span><span class="p">,</span><span class="n">Sr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">xyzi</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">St</span><span class="p">,</span><span class="n">Sr</span><span class="p">[</span><span class="mi">1</span><span class="p">:])),</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="s1">&#39;xyz&#39;</span><span class="p">],</span> <span class="n">rfl</span> <span class="o">=</span> <span class="n">sampleset</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     <span class="c1">#xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs[&#39;xyz&#39;], rfl = sampleset, out = 2)</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">St</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
     <span class="n">xyzti</span><span class="p">,</span> <span class="n">xyzri</span> <span class="o">=</span>  <span class="n">xyzi</span><span class="p">[:,:</span><span class="n">N</span><span class="p">,:],</span> <span class="n">xyzi</span><span class="p">[:,</span><span class="n">N</span><span class="p">:,:]</span>
@@ -852,8 +873,13 @@
 <div class="viewcode-block" id="spd_to_DEi">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_DEi">[docs]</a>
 <span class="k">def</span> <span class="nf">spd_to_DEi</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
-               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
-               <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">calculation_wavelength_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+               <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cct_mode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+
+               <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates color differences (~fidelity), DEi, of spectral data.</span>
 <span class="sd">    </span>
@@ -934,7 +960,10 @@
 <span class="sd">            |     - dict: user specified parameters. </span>
 <span class="sd">            |         For its use, see for example:</span>
 <span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
-<span class="sd">    </span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | None or bool, optional</span>
+<span class="sd">            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | float or ndarray with DEi for :out: &#39;DEi&#39;</span>
@@ -953,7 +982,8 @@
      <span class="n">xyzri</span><span class="p">,</span> <span class="n">xyzrw</span><span class="p">,</span>
      <span class="n">xyztw_cct</span><span class="p">,</span>
      <span class="n">cct</span><span class="p">,</span> <span class="n">duv</span><span class="p">,</span> <span class="n">St</span><span class="p">,</span> <span class="n">Sr</span><span class="p">)</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> 
-                                        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">)</span>
+                                        <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">,</span>
+                                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
       
     <span class="c1"># E. calculate DEi, DEa:</span>
     <span class="n">DEi</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
@@ -980,7 +1010,8 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="optimize_scale_factor">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.optimize_scale_factor">[docs]</a>
-<span class="k">def</span> <span class="nf">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">)</span> <span class="p">:</span>
+<span class="k">def</span> <span class="nf">optimize_scale_factor</span><span class="p">(</span><span class="n">cri_type</span><span class="p">,</span> <span class="n">opt_scale_factor</span><span class="p">,</span> <span class="n">scale_fcn</span><span class="p">,</span> <span class="n">avg</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">,</span>
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimize scale_factor of cri-model in cri_type </span>
 <span class="sd">    such that average Rf for a set of light sources is the same as that </span>
@@ -1038,18 +1069,18 @@
         <span class="n">rf_from_avg_rounded_rfi</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rf_from_avg_rounded_rfi&#39;</span><span class="p">]</span>
         
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi_opt</span><span class="p">:</span>
-            <span class="n">DEa_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+            <span class="n">DEa_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
             <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEa_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">))</span>
             
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">DEi_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+            <span class="n">DEi_opt</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">opt_cri_type</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
             <span class="n">Rfi_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">scale_fcn_opt</span><span class="p">(</span><span class="n">DEi_opt</span><span class="p">,</span><span class="n">scale_factor_opt</span><span class="p">),</span><span class="mi">0</span><span class="p">))</span> <span class="c1"># average rounded individual Rfi to get Rf !!!</span>
             <span class="n">Rf_opt</span> <span class="o">=</span> <span class="n">avg</span><span class="p">(</span><span class="n">Rfi_opt</span><span class="p">)</span>
             
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rf_from_avg_rounded_rfi</span><span class="p">:</span>
-            <span class="n">DEa</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using current cri</span>
+            <span class="n">DEa</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEa&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># DEa using current cri</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">DEi</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
+            <span class="n">DEi</span> <span class="o">=</span> <span class="n">spd_to_DEi</span><span class="p">(</span><span class="n">opt_spd_set</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span><span class="s1">&#39;DEi&#39;</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># DEa using target cri</span>
                         
             
         <span class="c1"># optimize scale_factor to minimize rms difference:</span>
@@ -1103,10 +1134,13 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_rg">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_rg">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_rg</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
-              <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+<span class="k">def</span> <span class="nf">spd_to_rg</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rg&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+              <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+              <span class="n">calculation_wavelength_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+              <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+              <span class="n">cct_mode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span>  <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
               <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-              <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+              <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the color gamut index, Rg, of spectral data. </span>
 <span class="sd">    </span>
@@ -1148,6 +1182,9 @@
 <span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
 <span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
 <span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :calculation_wavelength_range:</span>
+<span class="sd">            | None or list, optional</span>
+<span class="sd">            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.</span>
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
@@ -1156,6 +1193,10 @@
 <span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
 <span class="sd">            |                   of samples and white </span>
 <span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cct_mode:</span>
+<span class="sd">            | None or str or (str, dict), optional</span>
+<span class="sd">            | Specifies which mode to use when calculating xyz_to_cct().</span>
+<span class="sd">            | If tuple: second element is dict with additional kwargs for xyz_to_cct</span>
 <span class="sd">        :cspace:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which color space to use.</span>
@@ -1187,6 +1228,9 @@
 <span class="sd">            |     - dict: user specified parameters. </span>
 <span class="sd">            |         For its use, see for example:</span>
 <span class="sd">            |             luxpy.cri._CRI_DEFAULTS[&#39;mcri&#39;][&#39;cri_specific_pars&#39;]</span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | None or bool, optional</span>
+<span class="sd">            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
 <span class="sd">        :rg_pars: </span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Dict containing specifying parameters for slicing the gamut.</span>
@@ -1276,7 +1320,8 @@
      <span class="n">xyzri</span><span class="p">,</span><span class="n">xyzrw</span><span class="p">,</span>
      <span class="n">xyztw_cct</span><span class="p">,</span>
      <span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">St</span><span class="p">,</span><span class="n">Sr</span><span class="p">)</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> 
-                                          <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">)</span> 
+                                    <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">,</span>
+                                    <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> 
 
     <span class="c1"># calculate gamut area index:</span>
     <span class="n">rg_pars</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">[</span><span class="s1">&#39;rg_pars&#39;</span><span class="p">]</span> 
@@ -1321,10 +1366,14 @@
 <div class="viewcode-block" id="spd_to_cri">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_cri">[docs]</a>
 <span class="k">def</span> <span class="nf">spd_to_cri</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">_CRI_TYPE_DEFAULT</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
-               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">sampleset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ref_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">calculation_wavelength_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+               <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+               <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cct_mode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rf_from_avg_rounded_rfi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                <span class="n">scale</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">opt_scale_factor</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
-               <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+               <span class="n">cri_specific_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rg_pars</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fit_gamut_ellipse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> \
+               <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the color rendering fidelity index, Rf, of spectral data. </span>
 <span class="sd">    </span>
@@ -1366,6 +1415,12 @@
 <span class="sd">            |            &#39;cierf&#39;: used in CIE 224-2017, </span>
 <span class="sd">            |            &#39;iesrf&#39;: used in TM30-15, ...</span>
 <span class="sd">            |     - ndarray: user defined reference SPD</span>
+<span class="sd">        :calculation_wavelength_range:</span>
+<span class="sd">            | None or list, optional</span>
+<span class="sd">            | Specifies the range outside of which all values of the SPD will be dropped in the calculations.</span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | None or bool, optional</span>
+<span class="sd">            | Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
 <span class="sd">        :cieobs:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which CMF sets to use for the calculation of the sample </span>
@@ -1374,6 +1429,10 @@
 <span class="sd">            |     - key: &#39;xyz&#39;: str specifying CMF set for calculating xyz </span>
 <span class="sd">            |                   of samples and white </span>
 <span class="sd">            |     - key: &#39;cct&#39;: str specifying CMF set for calculating cct</span>
+<span class="sd">        :cct_mode:</span>
+<span class="sd">            | None or str or (str, dict), optional</span>
+<span class="sd">            | Specifies which mode to use when calculating xyz_to_cct().</span>
+<span class="sd">            | If tuple: second element is dict with additional kwargs for xyz_to_cct</span>
 <span class="sd">        :cspace:</span>
 <span class="sd">            | None or dict, optional</span>
 <span class="sd">            | Specifies which color space to use.</span>
@@ -1550,7 +1609,8 @@
      <span class="n">xyzri</span><span class="p">,</span><span class="n">xyzrw</span><span class="p">,</span>
      <span class="n">xyztw_cct</span><span class="p">,</span>
      <span class="n">cct</span><span class="p">,</span><span class="n">duv</span><span class="p">,</span><span class="n">St</span><span class="p">,</span><span class="n">Sr</span><span class="p">)</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">St</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span> 
-                                          <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">)</span> 
+                                     <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr&#39;</span><span class="p">,</span>
+                                     <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> 
 
     <span class="c1"># E. calculate DEi, DEa:</span>
     <span class="n">DEi</span> <span class="o">=</span> <span class="p">((</span><span class="n">jabt</span> <span class="o">-</span> <span class="n">jabr</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span>
@@ -1628,8 +1688,8 @@
 <span class="c1"># For testing:</span>
 <span class="c1"># from luxpy import _CIE_F4, _CIE_D65, _IESTM3018</span>
 
-<span class="c1"># F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], kind = &#39;spd&#39;)</span>
-<span class="c1"># D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], kind = &#39;spd&#39;)</span>
+<span class="c1"># F4 = cie_interp(_CIE_F4, wl_new=[360,830,1], datatype = &#39;spd&#39;)</span>
+<span class="c1"># D65 = cie_interp(_CIE_D65, wl_new=[360,830,1], datatype = &#39;spd&#39;)</span>
 <span class="c1"># out = spd_to_cri(np.vstack((F4,D65[1:])), out = &#39;Rf,Rg,data&#39;) #, </span>
 <span class="c1">#                  # opt_scale_factor = True, </span>
 <span class="c1">#                  # scale = {&#39;fcn&#39;:log_scale, </span>
@@ -1645,7 +1705,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

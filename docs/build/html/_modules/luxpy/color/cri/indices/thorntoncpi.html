@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cri.indices.thorntoncpi &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.cri.indices.thorntoncpi &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
@@ -102,7 +102,7 @@
 
 <div class="viewcode-block" id="spd_to_thornton_cpi">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.spd_to_thornton_cpi">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">spd</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate Thornton&#39;s Color Preference Index (CPI).</span>
 <span class="sd">    </span>
@@ -128,7 +128,8 @@
     <span class="n">Yuv_t</span><span class="p">,</span> <span class="n">Yuv_r</span> <span class="o">=</span> <span class="n">spd_to_jab_t_r</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span><span class="o">=</span><span class="s1">&#39;ciera&#39;</span><span class="p">,</span>
                                   <span class="n">cspace</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;Yuv&#39;</span><span class="p">,</span><span class="s1">&#39;xyzw&#39;</span><span class="p">:</span><span class="kc">None</span><span class="p">},</span>
                                   <span class="n">catf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                                  <span class="n">sampleset</span> <span class="o">=</span> <span class="n">_RFL_CPIw</span><span class="p">)</span>
+                                  <span class="n">sampleset</span> <span class="o">=</span> <span class="n">_RFL_CPIw</span><span class="p">,</span>
+                                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     
     <span class="c1"># Convert to 1960 UCS:</span>
     <span class="n">Yuv_t</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*=</span><span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
@@ -163,8 +164,8 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
-    <span class="n">F4</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
-    <span class="n">D65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">F4</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
+    <span class="n">D65</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">getwlr</span><span class="p">([</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
     <span class="n">spds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">F4</span><span class="p">,</span> <span class="n">D65</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]))</span>
     
     <span class="n">cpi1</span> <span class="o">=</span> <span class="n">spd_to_thornton_cpi</span><span class="p">(</span><span class="n">F4</span><span class="p">)</span>
@@ -178,7 +179,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

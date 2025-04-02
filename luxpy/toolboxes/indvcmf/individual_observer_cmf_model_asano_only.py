@@ -143,7 +143,8 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
                   var_od_lens = 0, var_od_macula = 0, \
                   var_od_L = 0, var_od_M = 0, var_od_S = 0,\
                   var_shft_L = 0, var_shft_M = 0, var_shft_S = 0,\
-                  out = 'LMS', allow_negative_values = False):
+                  out = 'LMS', allow_negative_values = False,
+                  interp_settings = None):
     """
     Generate Individual Observer CMFs (cone fundamentals) 
     based on CIE2006 cone fundamentals and published literature 
@@ -301,11 +302,7 @@ def cie2006cmfsEx(age = 32,fieldsize = 10, wl = None,\
         out = out.replace('lms','LMS')
    
     # Interpolate/extrapolate:
-    if wl is None:
-        interpolation = None
-    else:
-        interpolation = 'cubic'
-    LMS = spd(LMS, wl = wl, interpolation = interpolation, norm_type = 'area')
+    LMS = spd(LMS, wl = wl, kind = 'cubic', norm_type = 'area', interp_settings = interp_settings) # if wl is None: no interpolation will be done
     
     if (out == 'LMS'):
         return LMS

@@ -39,7 +39,7 @@ def _get_BLH():
 _BLH = _get_BLH()
 
 
-def spd_to_blh_eff(spd, efficacy = True, cieobs = _CIEOBS, scr = 'dict', K = None):
+def spd_to_blh_eff(spd, efficacy = True, cieobs = _CIEOBS, src = 'dict', K = None):
     """
     Calculate Blue Light Hazard efficacy (K) or efficiency (eta) of radiation.
    
@@ -49,7 +49,7 @@ def spd_to_blh_eff(spd, efficacy = True, cieobs = _CIEOBS, scr = 'dict', K = Non
         :cieobs: 
             | str, optional
             | Sets the type of Vlambda function to obtain.
-        :scr: 
+        :src: 
             | 'dict' or array, optional
             | - 'dict': get from ybar from _CMF
             | - 'array': ndarray in :cieobs:
@@ -69,12 +69,12 @@ def spd_to_blh_eff(spd, efficacy = True, cieobs = _CIEOBS, scr = 'dict', K = Non
         1. IEC 62471:2006, 2006, Photobiological safety of lamps and lamp systems.
         2. IEC TR 62778, 2014, Application of IEC 62471 for the assessment of blue light hazard to light sources and luminaires.
     """
-    blh = cie_interp(_BLH, wl_new = spd[0], kind = 'linear')    
+    blh = cie_interp(_BLH, wl_new = spd[0], kind = 'linear', interp_settings = interp_settings)    
     dl = getwld(spd[0])
     if efficacy:
-        Vl = vlbar(cieobs = cieobs, scr = scr, wl_new = spd[0])
+        Vl = vlbar(cieobs = cieobs, src = src, wl_new = spd[0], interp_settings = interp_settings)
         if K is None:
-            if scr == 'dict':
+            if src == 'dict':
                 K = _CMF[cieobs]['K']
             else:
                 K = 683
@@ -87,9 +87,9 @@ if __name__ == '__main__':
     spd = np.vstack((lx._CIE_D65,lx._CIE_A[1:]))     
 
     K = spd_to_blh_eff(spd, efficacy = True, cieobs = '1931_2',
-                       scr = 'dict', K = None)
+                       src = 'dict', K = None)
     eta = spd_to_blh_eff(spd, efficacy = False, cieobs = '1931_2',
-                         scr = 'dict', K = None)
+                         src = 'dict', K = None)
     print('K: ', K)
     print('eta: ', eta)
 

@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Toolboxes &mdash; LuxPy 1.11.4 documentation</title>
+  <title>Toolboxes &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9080e127"></script>
+        <script src="_static/documentation_options.js?v=fe8e256b"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -36,7 +36,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.4
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -83,6 +83,9 @@
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.compute_cmfs"><code class="docutils literal notranslate"><span class="pre">compute_cmfs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.add_to_cmf_dict"><code class="docutils literal notranslate"><span class="pre">add_to_cmf_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.plot_cmfs"><code class="docutils literal notranslate"><span class="pre">plot_cmfs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.my_round"><code class="docutils literal notranslate"><span class="pre">my_round()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.chop"><code class="docutils literal notranslate"><span class="pre">chop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#luxpy.toolboxes.indvcmf.sign_figs"><code class="docutils literal notranslate"><span class="pre">sign_figs()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#spdbuild">spdbuild/</a><ul>
@@ -476,7 +479,7 @@ oxygenated blood</p>
 </section>
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_aopicE">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Eeas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicE" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicE</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Eeas'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicE"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicE" title="Link to this definition"></a></dt>
 <dd><p>Calculate alpha-opic irradiance (Ee,α) values (W/m²) for the l-cone, m-cone, 
 s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.</p>
 <dl>
@@ -527,7 +530,7 @@ s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.</p>
 </dd>
 <dt class="field-even">actionspectra<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘CIES026’, optional</div>
+<div class="line">‘CIE-S026’, optional</div>
 <div class="line">Actionspectra to use in calculation </div>
 <div class="line">options: </div>
 <div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
@@ -562,7 +565,7 @@ circadian and neurophysiological photometry, 2013
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_aopicEDI">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicEDI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'a_edi'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicEDI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicEDI" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicEDI</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ee</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">E</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'a_edi'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicEDI"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicEDI" title="Link to this definition"></a></dt>
 <dd><p>Calculate alpha-opic equivalent daylight (D65) illuminance (lux)
 for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 <dl>
@@ -606,7 +609,7 @@ for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 </dd>
 <dt class="field-odd">actionspectra<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">‘CIES026’, optional</div>
+<div class="line">‘CIE-S026’, optional</div>
 <div class="line">Actionspectra to use in calculation </div>
 <div class="line">options: </div>
 <div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
@@ -642,7 +645,7 @@ for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_aopicDER">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicDER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D65'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicDER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicDER" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicDER</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D65'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicDER"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicDER" title="Link to this definition"></a></dt>
 <dd><p>Calculate α-opic Daylight (D65) Efficacy Ratio (= α-opic Daylight (D65) Efficiency)
 for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 <dl>
@@ -667,7 +670,7 @@ for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 </dd>
 <dt class="field-even">actionspectra<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘CIES026’, optional</div>
+<div class="line">‘CIE-S026’, optional</div>
 <div class="line">Actionspectra to use in calculation </div>
 <div class="line">options: </div>
 <div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
@@ -697,7 +700,7 @@ for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_aopicELR">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicELR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'D65'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicELR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicELR" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_aopicELR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sid_units</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'W/m2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actionspectra</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'CIE-S026'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_settings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/alpha_opic_quantities_cie_s026_2018_cie_tn003_2015.html#spd_to_aopicELR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_aopicELR" title="Link to this definition"></a></dt>
 <dd><p>Calculate α-opic Efficacy of Luminous Radiation (W/lm)
 for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 <dl>
@@ -722,17 +725,11 @@ for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</p>
 </dd>
 <dt class="field-even">actionspectra<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘CIES026’, optional</div>
+<div class="line">‘CIE-S026’, optional</div>
 <div class="line">Actionspectra to use in calculation </div>
 <div class="line">options: </div>
 <div class="line">- ‘CIE-S026’: will use action spectra as defined in CIE S026 </div>
 <div class="line">- ‘CIE-TN003’: will use action spectra as defined in CIE TN003</div>
-</div>
-</dd>
-<dt class="field-odd">ref<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">‘D65’, optional</div>
-<div class="line">Reference (daylight) spectrum to use. (‘D65’ or ‘E’ or ndarray)</div>
 </div>
 </dd>
 </dl>
@@ -1040,7 +1037,7 @@ Frontiers in Neuroscience, 15, 44.</a></p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.photbiochem.spd_to_blh_eff">
-<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_blh_eff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficacy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/blue_light_hazard_IEC62471_IECTR62778.html#spd_to_blh_eff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_blh_eff" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.photbiochem.</span></span><span class="sig-name descname"><span class="pre">spd_to_blh_eff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">efficacy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cieobs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'1931_2'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dict'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/photbiochem/blue_light_hazard_IEC62471_IECTR62778.html#spd_to_blh_eff"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.photbiochem.spd_to_blh_eff" title="Link to this definition"></a></dt>
 <dd><p>Calculate Blue Light Hazard efficacy (K) or efficiency (eta) of radiation.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
@@ -1055,7 +1052,7 @@ Frontiers in Neuroscience, 15, 44.</a></p>
 <div class="line">Sets the type of Vlambda function to obtain.</div>
 </div>
 </dd>
-<dt class="field-odd">scr<span class="colon">:</span></dt>
+<dt class="field-odd">src<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">‘dict’ or array, optional</div>
 <div class="line">- ‘dict’: get from ybar from _CMF</div>
@@ -2019,6 +2016,103 @@ Fundamental Chromaticity Diagram with Physiological Axes - Part I
 <dt class="sig sig-object py" id="luxpy.toolboxes.indvcmf.plot_cmfs">
 <span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.indvcmf.</span></span><span class="sig-name descname"><span class="pre">plot_cmfs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cmf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axh</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#plot_cmfs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.plot_cmfs" title="Link to this definition"></a></dt>
 <dd><p>Plot cmf set.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.indvcmf.my_round">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.indvcmf.</span></span><span class="sig-name descname"><span class="pre">my_round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#my_round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.my_round" title="Link to this definition"></a></dt>
+<dd><p>Round array x to n decimal points using round half away from zero.
+This function is needed because the rounding specified in the CIE
+recommendation is different from the standard rounding scheme in python
+(which is following the IEEE recommendation).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">x<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray</div>
+<div class="line">Array to be rounded</div>
+</div>
+</dd>
+<dt class="field-even">n<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">int</div>
+<div class="line">Number of decimal points</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">y<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray</div>
+<div class="line">Rounded array</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.indvcmf.chop">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.indvcmf.</span></span><span class="sig-name descname"><span class="pre">chop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#chop"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.chop" title="Link to this definition"></a></dt>
+<dd><p>Chop values smaller than epsilon in absolute value to zero.
+Similar to Mathematica function.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">arr<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">float or ndarray</div>
+<div class="line">Array or number to be chopped.</div>
+</div>
+</dd>
+<dt class="field-even">epsilon<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">float</div>
+<div class="line">Minimum number.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">chopped<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">float or ndarray</div>
+<div class="line">Chopped numbers.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.toolboxes.indvcmf.sign_figs">
+<span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.indvcmf.</span></span><span class="sig-name descname"><span class="pre">sign_figs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/indvcmf/individual_observer_cmf_model.html#sign_figs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.indvcmf.sign_figs" title="Link to this definition"></a></dt>
+<dd><p>Round x to n significant figures (not decimal points).
+This function is needed because the rounding specified in the CIE
+recommendation is different from the standard rounding scheme in python
+(which is following the IEEE recommendation). Uses my_round (above).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">x<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">int, float or ndarray</div>
+<div class="line">Number or array to be rounded.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">t<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">float or ndarray</div>
+<div class="line">Rounded number or array.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 </section>
@@ -3590,10 +3684,10 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.dispcal.TR_gogo">
 <span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.dispcal.</span></span><span class="sig-name descname"><span class="pre">TR_gogo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#TR_gogo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.TR_gogo" title="Link to this definition"></a></dt>
-<dd><p>Forward GOGO tone response model (x = rgb; p = [gain,offset,gamma,offset_]).</p>
+<dd><p>Forward GOGO tone response model (x = rgb; p = [gain,offset,gamma,offset2]).</p>
 <dl class="simple">
 <dt>Notes:</dt><dd><ol class="arabic simple">
-<li><p>GOGO model: y = (gain*x + offset)**gamma + <a href="#id24"><span class="problematic" id="id25">offset_</span></a></p></li>
+<li><p>GOGO model: y = (gain*x + offset)**gamma + offset2</p></li>
 </ol>
 </dd>
 </dl>
@@ -3602,10 +3696,10 @@ or k nearest neighbour interpolation of samples from a standard reflectance set.
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.toolboxes.dispcal.TRi_gogo">
 <span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.dispcal.</span></span><span class="sig-name descname"><span class="pre">TRi_gogo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/dispcal/displaycalibration.html#TRi_gogo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.dispcal.TRi_gogo" title="Link to this definition"></a></dt>
-<dd><p>Inverse GOGO tone response model (x = xyz; p = [gain,offset,gamma,offset_]).</p>
+<dd><p>Inverse GOGO tone response model (x = xyz; p = [gain,offset,gamma,offset2]).</p>
 <dl class="simple">
 <dt>Notes:</dt><dd><ol class="arabic simple">
-<li><p>GOGO model: y = (gain*x + offset)**gamma + <a href="#id26"><span class="problematic" id="id27">offset_</span></a></p></li>
+<li><p>GOGO model: y = (gain*x + offset)**gamma + offset2</p></li>
 </ol>
 </dd>
 </dl>
@@ -4106,8 +4200,8 @@ are sampled (different increment) independently from the remainder of the cube.<
 <dt class="field-even">subscript<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">‘’, optional</div>
+<div class="line">subscript to add to the axis labels.</div>
 </div>
-<p><a href="#id21"><span class="problematic" id="id22">|</span></a>subscript to add to the axis labels.</p>
 </dd>
 <dt class="field-odd">data_contains<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
@@ -5042,8 +5136,8 @@ are sampled (different increment) independently from the remainder of the cube.<
 </dl>
 </div></blockquote>
 </section>
-<section id="id23">
-<h4>Notes<a class="headerlink" href="#id23" title="Link to this heading"></a></h4>
+<section id="id21">
+<h4>Notes<a class="headerlink" href="#id21" title="Link to this heading"></a></h4>
 <blockquote>
 <div><ol class="arabic simple">
 <li><p>For info on the input arguments of get_spd(), see help for each identically named function in each of the subpackages.</p></li>
@@ -5580,9 +5674,13 @@ To add new ones (or new lenses): edit the_CAMERAS dict</p>
 <dd><p>Initializes a connection to LMK LabSoft.</p>
 <blockquote>
 <div><dl class="simple">
-<dt>Input:</dt><dd><p>-objectiveCalibrationPath: path to calibration file</p>
+<dt>Input:</dt><dd><ul class="simple">
+<li><p>objectiveCalibrationPath: path to calibration file</p></li>
+</ul>
 </dd>
-<dt>Output:</dt><dd><p>-answer: 0=no error, other=error code</p>
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>answer: 0=no error, other=error code</p></li>
+</ul>
 </dd>
 </dl>
 </div></blockquote>
@@ -5595,19 +5693,23 @@ To add new ones (or new lenses): edit the_CAMERAS dict</p>
 <dl>
 <dt>Input:</dt><dd><ul>
 <li><dl>
-<dt>open_dialog:</dt><dd><p>If 0: No dialog window.
-Else: Opens a dialog window in the Labsoft application.</p>
+<dt>open_dialog:</dt><dd><p>If 0: | No dialog window.
+Else: | Opens a dialog window in the Labsoft application.</p>
 <blockquote>
-<div><p>The user can choose whether they wish to save 
-the current state or not or or cancel 
-the closing of LabSoft.</p>
+<div><div class="line-block">
+<div class="line">The user can choose whether they wish to save </div>
+<div class="line">the current state or not or or cancel </div>
+<div class="line">the closing of LabSoft.</div>
+</div>
 </div></blockquote>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
-<dt>Output:</dt><dd><p>-answer: 0=no error, other=error code</p>
+<dt>Output:</dt><dd><ul class="simple">
+<li><p>answer: 0=no error, other=error code</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -5687,41 +5789,29 @@ the closing of LabSoft.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.createEllips">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createEllips</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">centerPt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">width</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regionName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.createEllips"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.createEllips" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Create an ellips with a:</dt><dd><ul class="simple">
-<li><p>centerPoint defined by centerPt (contains x and y value)</p></li>
-<li><p>certain width (horizontal axis)</p></li>
-<li><p>certain height (vertical axis)</p></li>
-<li><p>give the ellips region a regionName (string)</p></li>
-</ul>
-</dd>
-</dl>
+<dd><p>Create an ellips with a:
+| - centerPoint defined by centerPt (contains x and y value)
+| - certain width (horizontal axis)
+| - certain height (vertical axis)
+| - give the ellips region a regionName (string)</p>
 <p>Function returns the regionIndex of the ellips</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.createPolygon">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createPolygon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pointsXY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regionName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.createPolygon"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.createPolygon" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Create a polygon with:</dt><dd><ul class="simple">
-<li><p>vertices specified in pointsXY (x-&gt;width, y-&gt;height)</p></li>
-<li><p>give the polygon region a regionName (string)</p></li>
-</ul>
-</dd>
-</dl>
+<dd><p>Create a polygon with:
+| - vertices specified in pointsXY (x-&gt;width, y-&gt;height)
+| - give the polygon region a regionName (string)</p>
 <p>Function returns the regionIndex of the polygon</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.createRectangle">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createRectangle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">topleftXY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bottomrightXY</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regionName</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.createRectangle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.createRectangle" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Create a Rectangle spanning:</dt><dd><ul class="simple">
-<li><p>the top-left and bottom-right vertices</p></li>
-<li><p>give the rectangle region a regionName (string)</p></li>
-</ul>
-</dd>
-</dl>
+<dd><p>Create a Rectangle spanning:
+| - the top-left and bottom-right vertices 
+| - give the rectangle region a regionName (string)</p>
 <p>Function returns the regionIndex of the rectangle</p>
 </dd></dl>
 
@@ -5740,11 +5830,8 @@ the closing of LabSoft.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.createStatisticObjectOfRegion">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">createStatisticObjectOfRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regionName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">statisticType</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.createStatisticObjectOfRegion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.createStatisticObjectOfRegion" title="Link to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Create a color statistic object</dt><dd><p>call as follows:
-createStatisticObjectOfRegion(‘regionTestName’,statisticType[‘standardColor’])</p>
-</dd>
-</dl>
+<dd><p>Create a color statistic object
+| call as follows: createStatisticObjectOfRegion(‘regionTestName’,statisticType[‘standardColor’])</p>
 </dd></dl>
 
 <dl class="py method">
@@ -5762,39 +5849,48 @@ createStatisticObjectOfRegion(‘regionTestName’,statisticType[‘standardColo
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.setIntegrationTime">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">setIntegrationTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wishedTime</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.setIntegrationTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.setIntegrationTime" title="Link to this definition"></a></dt>
-<dd><p>Set integration time.</p>
-<blockquote>
-<div><p>[int32, double] LMKAxServer::iSetIntegrationTime      (double _dWishedTime, double &amp; _drRealizedTime)
-Parameters</p>
-<blockquote>
-<div><p>_dWishedTime    Wished integration time
-_drRealizedTime Realized integration time</p>
-</div></blockquote>
-</div></blockquote>
+<dd><p>Set integration time.
+|  [int32, double] LMKAxServer::iSetIntegrationTime     (double _dWishedTime, double &amp; _drRealizedTime)</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">_dWishedTime<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Wished integration time
+:_drRealizedTime: Realized integration time</p>
+</dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.getIntegrationTime">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">getIntegrationTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.getIntegrationTime"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.getIntegrationTime" title="Link to this definition"></a></dt>
-<dd><p>Get integration time.</p>
-<blockquote>
-<div><dl class="simple">
-<dt>[int32, double, double, double, double, double]       LMKAxServer::iGetIntegrationTime</dt><dd><dl class="simple">
-<dt>(handle, double _drCurrentTime, double &amp; _drPreviousTime,</dt><dd><p>double &amp; _drNextTime, double &amp; _drMinTime, double &amp; _drMaxTime )</p>
+<dd><p>Get integration time.
+|  [int32, double, double, double, double, double]      LMKAxServer::iGetIntegrationTime
+|       (handle, double _drCurrentTime, double &amp; _drPreviousTime,
+|               double &amp; _drNextTime, double &amp; _drMinTime, double &amp; _drMaxTime )
+|
+|  Determine current exposure time and other time parameters.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">_drCurrentTime<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current integration time</p>
+</dd>
+<dt class="field-even">_drPreviousTime<span class="colon">:</span></dt>
+<dd class="field-even"><p>Next smaller (proposed) time</p>
+</dd>
+<dt class="field-odd">_drNextTime<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Next larger (proposed) time</p>
+</dd>
+<dt class="field-even">_drMinTime<span class="colon">:</span></dt>
+<dd class="field-even"><p>Minimal possible time</p>
+</dd>
+<dt class="field-odd">_drMaxTime<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Maximal possible time</p>
 </dd>
 </dl>
 </dd>
 </dl>
-<p>Determine current exposure time and other time parameters.
-Parameters</p>
-<blockquote>
-<div><p>_drCurrentTime  Current integration time
-_drPreviousTime Next smaller (proposed) time
-_drNextTime     Next larger (proposed) time
-_drMinTime      Minimal possible time
-_drMaxTime      Maximal possible time</p>
-</div></blockquote>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -5841,20 +5937,18 @@ adjusted if camera exposure time is reduced or enlarged.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.set_max_exposure_time">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_max_exposure_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxtime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.set_max_exposure_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_max_exposure_time" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>Set the maximum possible exposure time.</dt><dd><blockquote>
-<div><blockquote>
-<div><p>int LMKAxServer::iSetMaxCameraTime  (       double  _dMaxCameraTime )</p>
-</div></blockquote>
-<p>The maximum values is of course restricted by camera properties.
-But you can use an even smaller time to avoid to long meausrement times.</p>
-</div></blockquote>
+<dd><p>Set the maximum possible exposure time.
+|  int LMKAxServer::iSetMaxCameraTime   (       double  _dMaxCameraTime )
+| 
+|  The maximum values is of course restricted by camera properties.
+|  But you can use an even smaller time to avoid to long meausrement times.</p>
 <dl class="simple">
-<dt>Parameters</dt><dd><dl class="simple">
-<dt>_dMaxCameraTime     Wished value</dt><dd><p>maxCameraTime</p>
+<dt>Parameters:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">_dMaxCameraTime<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Wished value</p>
 </dd>
-</dl>
-</dd>
+<dt class="field-even">maxCameraTime<span class="colon">:</span></dt>
+<dd class="field-even"><p></p></dd>
 </dl>
 </dd>
 </dl>
@@ -5869,19 +5963,18 @@ But you can use an even smaller time to avoid to long meausrement times.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="luxpy.toolboxes.technoteamlmk.lmkActiveX.set_mod_frequency">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">set_mod_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">modfrequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/technoteamlmk/TechnoTeamLMK.html#lmkActiveX.set_mod_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_mod_frequency" title="Link to this definition"></a></dt>
-<dd><dl>
-<dt>Set the frequency of modulated light.</dt><dd><blockquote>
-<div><p>int LMKAxServer::iSetModulationFrequency    (       double  _dModFrequency  )</p>
-</div></blockquote>
-<p>If the light source is driven by alternating current,
-there are some restriction for the exposure times.
-Please inform the program about the modulation frequency.</p>
-<blockquote>
-<div><dl class="simple">
-<dt>Parameters</dt><dd><p>_dModFrequency     Frequency of light source. 0 if no modulation is to be concerend</p>
+<dd><p>Set the frequency of modulated light.
+|  int LMKAxServer::iSetModulationFrequency     (       double  _dModFrequency  )
+|
+|  If the light source is driven by alternating current,
+|  there are some restriction for the exposure times.
+|  Please inform the program about the modulation frequency.</p>
+<dl class="simple">
+<dt>Parameters:</dt><dd><dl class="field-list simple">
+<dt class="field-odd">_dModFrequency<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Frequency of light source. 0 if no modulation is to be concerend</p>
 </dd>
 </dl>
-</div></blockquote>
 </dd>
 </dl>
 </dd></dl>
@@ -6194,8 +6287,7 @@ format: circular, fullframe</p>
 <span class="sig-prename descclassname"><span class="pre">luxpy.toolboxes.stereoscopicviewer.</span></span><span class="sig-name descname"><span class="pre">update_material_texture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">res</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mat_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'uSelfMap'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">texListPreloaded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/toolboxes/stereoscopicviewer/harfang/harfang_viewer.html#update_material_texture"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.toolboxes.stereoscopicviewer.update_material_texture" title="Link to this definition"></a></dt>
 <dd><p>Update the texture of a Harfang material.</p>
 <dl>
-<dt>Args:</dt><dd><blockquote>
-<div><dl class="field-list">
+<dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">node<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">Node to which material belongs</div>
@@ -6223,17 +6315,14 @@ format: circular, fullframe</p>
 <div class="line">name of material type (depends on shader used; the default is for the pbr shader)</div>
 </div>
 </dd>
-</dl>
-</div></blockquote>
-<dl class="field-list">
-<dt class="field-odd">stage<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
+<dt class="field-even">stage<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">4, optional</div>
 <div class="line">Render stage: depends on features, shader, … (see “writing a pipeline shader” in Harfang documentation)</div>
 </div>
 </dd>
-<dt class="field-even">texListPreloaded<span class="colon">:</span></dt>
-<dd class="field-even"><div class="line-block">
+<dt class="field-odd">texListPreloaded<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
 <div class="line">None, optional </div>
 <div class="line">List with preloaded textures (to speed up texture update as it doesn’t need to be read from file anymore while looping over frames)</div>
 </div>
@@ -6244,9 +6333,7 @@ format: circular, fullframe</p>
 <dt class="field-odd">mat<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">Harfang material (note that material program variant has been updated</div>
-<div class="line-block">
 <div class="line">accordingly; see: hg.UpdateMaterialPipelineProgramVariant)</div>
-</div>
 </div>
 </dd>
 </dl>
@@ -6810,7 +6897,7 @@ Args:</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

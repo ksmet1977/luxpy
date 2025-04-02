@@ -372,8 +372,8 @@ def savetxt(filename, X, header = None, sep = ',', fmt = ':1.18f', aw = 'w'):
         :X:
             | ndarray with data
         :header:
-            | None, optional
-            | None: no header present, 'infer' get from file.
+            | None or list, optional
+            | None: no header present.
         :sep:
             | ',', optional
             | Delimiter (',' -> csv file)
@@ -388,8 +388,8 @@ def savetxt(filename, X, header = None, sep = ',', fmt = ':1.18f', aw = 'w'):
 
     if isinstance(header,list):
         header = sep.join(header)
+    if fmt is None: fmt = ':g'
     if X.dtype == object:    
-        if fmt is None: fmt = ':g'
         lines  = [] if header is None else [header + '\n']
         for i in range(X.shape[0]):
             line = ''
@@ -688,7 +688,7 @@ def read_excel(filename, sheet_name = None, cell_range = None, dtype = float,
                force_dictoutput = False, out = 'X'):
     """
     Read excel file using openpyxl.
-    
+
     Args:
         :filename:
             | string with [path/]filename of Excel file.
@@ -709,7 +709,7 @@ def read_excel(filename, sheet_name = None, cell_range = None, dtype = float,
             | False, optional
             | If True: output will always be a dictionary (sheet_names are keys) 
             |          with the requested data arrays.
-            |If False: in case only a single sheet_name is supplied or only a single
+            | If False: in case only a single sheet_name is supplied or only a single
             |          sheet is present, then the output will be an ndarray!
         :out:
             | 'X', optional
@@ -722,6 +722,7 @@ def read_excel(filename, sheet_name = None, cell_range = None, dtype = float,
         :wb:
             | If in :out: the loaded workbook is also output.
     """
+    
     success = is_importable('openpyxl')
     if success:
         try:

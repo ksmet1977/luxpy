@@ -24,26 +24,30 @@ utils/init_cri_defaults_database.py
 
  :_CRI_TYPE_DEFAULT: Default cri_type.
 
- :_CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-                 (major dict has 9 keys (04-Jul-2017): 
-                 sampleset [str/dict], 
-                 ref_type [str], 
-                 cieobs [str], 
-                 avg [fcn handle], 
-                 scale [dict], 
-                 cspace [dict], 
-                 catf [dict], 
-                 rg_pars [dict], 
-                 cri_specific_pars [dict])
-                 
-                * Supported cri-types:
-                    * 'ciera','ciera-8','ciera-14','cierf',
-                    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20',
-                    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
-                    * 'mcri',
-                    * 'cqs-v7.5','cqs-v9.0'
-                    * 'fci'
-                    * 'thornton_cpi'
+ :_CRI_DEFAULTS: | default parameters for color fidelity and gamut area metrics 
+                 | (major dict has 13 keys (04 Mar, 2025): 
+                 |  - sampleset [str/dict], 
+                 |  - ref_type [str], 
+                 |  - calculation_wavelength_range [list],
+                 |  - cieobs [Dict], 
+                 |  - cct_mode [str],
+                 |  - avg [fcn handle], 
+                 |  - rf_from_avg_rounded_rfi [bool],
+                 |  - round_daylightphase_Mi_to_cie_recommended [bool],
+                 |  - scale [dict], 
+                 |  - cspace [dict], 
+                 |  - catf [dict], 
+                 |  - rg_pars [dict], 
+                 |  - cri_specific_pars [dict])
+                 |  
+                 | Supported cri-types:
+                 | * 'ciera','ciera-8','ciera-14','cierf',
+                 | * 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','iesrf-tm30-24'
+                 | * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
+                 | * 'mcri',
+                 | * 'cqs-v7.5','cqs-v9.0'
+                 | * 'fci'
+                 | * 'thornton_cpi'
 
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.
@@ -151,9 +155,9 @@ iestm30/graphics.py
                        
  :spd_to_ies_tm30_metrics(): Calculates IES TM30 metrics from spectral data
  
- :plot_cri_graphics(): Plots graphical information on color rendition 
-                       properties based on spectral data input or dict with 
-                       pre-calculated measures.
+ :plot_cri_graphics(): | Plots graphical information on color rendition 
+                       | properties based on spectral data input or dict with 
+                       | pre-calculated measures.
                        
  :_tm30_process_spd(): Calculate all required parameters for plotting from spd using cri.spd_to_cri()
 
@@ -174,11 +178,11 @@ iestm30/graphics.py
  :plot_tm30_report(): Plot a figure with an ANSI/IES-TM30 color rendition report.
  
  
- :plot_cri_graphics(): Plots graphical information on color rendition 
-                       properties based on spectral data input or dict with 
-                       pre-calculated measures (cusom design). 
-                       Includes Metameric uncertainty index Rt and vector-fields
-                       of color rendition shifts.
+ :plot_cri_graphics(): | Plots graphical information on color rendition 
+                       | properties based on spectral data input or dict with 
+                       | pre-calculated measures (cusom design). 
+                       | Includes Metameric uncertainty index Rt and vector-fields
+                       | of color rendition shifts.
 
 
 iestm30/metrics.py

@@ -104,6 +104,8 @@ __all__ += ['load_database','init','query_state']
 __all__ += ['cie2006cmfsEx','getMonteCarloParam','genMonteCarloObs','getCatObs']
 __all__ += ['compute_cmfs','add_to_cmf_dict','plot_cmfs']
 
+__all__ += ['_USE_MY_ROUND','my_round','_USE_CHOP','chop','_USE_SIGN_FIGS','sign_figs']
+
 
 _DATA_PATH = _PKG_PATH + _SEP + 'toolboxes' + _SEP + 'indvcmf' + _SEP + 'data' + _SEP  
 #_DATA_PATH = './data/' # for testing
@@ -136,6 +138,7 @@ def my_round(x, n=0):
     This function is needed because the rounding specified in the CIE
     recommendation is different from the standard rounding scheme in python
     (which is following the IEEE recommendation).
+
     Args:
         :x: 
             | ndarray
@@ -160,11 +163,12 @@ def sign_figs(x, n=0):
     This function is needed because the rounding specified in the CIE
     recommendation is different from the standard rounding scheme in python
     (which is following the IEEE recommendation). Uses my_round (above).
+
     Args:
         :x: 
             | int, float or ndarray
             | Number or array to be rounded.
-    Returns;
+    Returns:
         :t:
             | float or ndarray
             | Rounded number or array.
@@ -188,6 +192,7 @@ def chop(arr, epsilon=1e-14):
     """
     Chop values smaller than epsilon in absolute value to zero.
     Similar to Mathematica function.
+
     Args:
         :arr:
             | float or ndarray

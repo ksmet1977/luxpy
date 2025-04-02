@@ -454,7 +454,7 @@ def spd_to_CS_CLa_lrc(El = None, version = 'CLa2.0', E = None,
     if interpolate_sources is False:
         cs_cl_lrs = interpolate_efficiency_functions(El[0], cs_cl_lrs)
     else:
-        El = cie_interp(El, cs_cl_lrs['WL'], kind = 'spd')
+        El = cie_interp(El, cs_cl_lrs['WL'], datatype = 'spd')
     
     # Get wavelength spacing:
     dl = getwld(El[0])  

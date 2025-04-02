@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cct.cct &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.cct.cct &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -166,14 +166,25 @@
 <span class="sd">                              Optik, 193, 163018. </span>
 <span class="sd">                              &lt;https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018&gt;`_</span>
 <span class="sd">                 </span>
-<span class="sd"> :xyz_to_cct_robertson1968(): | Calculates CCT, Duv from XYZ using a Robertson&#39;s 1968 search method.</span>
+<span class="sd"> :xyz_to_cct_robertson1968(): | Calculates CCT, Duv from XYZ using a Robertson&#39;s 1968 search method with original LUT as default.</span>
 <span class="sd">                              | `Robertson, A. R. (1968). </span>
 <span class="sd">                                Computation of Correlated Color Temperature and Distribution Temperature. </span>
 <span class="sd">                                Journal of the Optical Society of America,  58(11), 1528–1535. </span>
 <span class="sd">                                &lt;https://doi.org/10.1364/JOSA.58.001528&gt;`_</span>
-<span class="sd">                              | Baxter D., Royer M., Smet K.A.G. (2022)</span>
-<span class="sd">                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed</span>
-<span class="sd">                                (in preparation, LEUKOS?)</span>
+<span class="sd">                              | `Baxter, D., Royer, M., &amp; Smet, K. (2023). </span>
+<span class="sd">                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. </span>
+<span class="sd">                                LEUKOS, 20(1), 55–66. &lt;https://doi.org/10.1080/15502724.2023.2166060&gt;`_</span>
+<span class="sd">:xyz_to_cct_robertson2023(): | Calculates CCT, Duv from XYZ using a Robertson&#39;s 1968 search method with new (1000 K to 41000 K, 1%) LUT as default.</span>
+<span class="sd">                             | `Robertson, A. R. (1968). </span>
+<span class="sd">                                Computation of Correlated Color Temperature and Distribution Temperature. </span>
+<span class="sd">                                Journal of the Optical Society of America,  58(11), 1528–1535. </span>
+<span class="sd">                                &lt;https://doi.org/10.1364/JOSA.58.001528&gt;`_</span>
+<span class="sd">                             | `Baxter, D., Royer, M., &amp; Smet, K. (2023). </span>
+<span class="sd">                               Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. </span>
+<span class="sd">                               LEUKOS, 20(1), 55–66. &lt;https://doi.org/10.1080/15502724.2023.2166060&gt;`_</span>
+<span class="sd">                             | `Smet, K., Royer, M., Baxter, D., Bretschneider, E., Esposito, T., Houser, K., … Ohno, Y. (2023). </span>
+<span class="sd">                               Recommended Method for Determining the Correlated Color Temperature and Distance from the Planckian Locus of a Light Source. </span>
+<span class="sd">                               LEUKOS, 20(2), 223–237. &lt;https://doi.org/10.1080/15502724.2023.2248397&gt;`_</span>
 <span class="sd">  </span>
 <span class="sd"> :xyz_to_cct_li2016(): | Calculates CCT, Duv from XYZ using Li&#39;s 2016 Newton-Raphson method.</span>
 <span class="sd">                       | `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., &amp; Luo, M. R. (2016).</span>
@@ -215,7 +226,8 @@
            <span class="s1">&#39;xyz_to_cct_zhang2019&#39;</span><span class="p">,</span> <span class="s1">&#39;xyz_to_cct_fibonacci&#39;</span><span class="p">,</span>
            <span class="s1">&#39;xyz_to_cct&#39;</span><span class="p">,</span><span class="s1">&#39;cct_to_xyz&#39;</span><span class="p">,</span> <span class="s1">&#39;calculate_lut&#39;</span><span class="p">,</span> <span class="s1">&#39;generate_luts&#39;</span><span class="p">,</span> <span class="s1">&#39;get_tcs4&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_get_lut&#39;</span><span class="p">,</span> <span class="s1">&#39;_generate_tcs&#39;</span><span class="p">,</span> <span class="s1">&#39;_generate_lut&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;_generate_lut_ohno2014&#39;</span><span class="p">,</span><span class="s1">&#39;_generate_lut_li2022&#39;</span><span class="p">]</span>
+           <span class="s1">&#39;_generate_lut_ohno2014&#39;</span><span class="p">,</span><span class="s1">&#39;_generate_lut_li2022&#39;</span><span class="p">,</span>
+           <span class="s1">&#39;calculate_cct_luts&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#==============================================================================</span>
@@ -249,7 +261,7 @@
 
 <span class="c1"># flow control parameters:</span>
 <span class="c1">#-------------------------</span>
-<span class="n">_CCT_LIST_OF_MODE_LUTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">,</span><span class="s1">&#39;zhang2019&#39;</span><span class="p">,</span><span class="s1">&#39;fibonacci&#39;</span><span class="p">,</span><span class="s1">&#39;li2022&#39;</span><span class="p">]</span> <span class="c1"># only for the ones in this list are LUTS pre-generated (-&gt;_CCT_LUT)</span>
+<span class="n">_CCT_LIST_OF_MODE_LUTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">,</span><span class="s1">&#39;zhang2019&#39;</span><span class="p">,</span><span class="s1">&#39;fibonacci&#39;</span><span class="p">,</span><span class="s1">&#39;li2022&#39;</span><span class="p">]</span> <span class="c1"># only for the ones in this list are LUTS pre-generated (-&gt;_CCT_LUT)</span>
 <span class="n">_CCT_LIST_OF_CIEOBS_LUTS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">,</span> <span class="s1">&#39;2015_2&#39;</span><span class="p">,</span> <span class="s1">&#39;2015_10&#39;</span><span class="p">]</span> <span class="c1"># only for the ones in this list are LUTS pre-generated (-&gt;_CCT_LUT)</span>
 
 <span class="n">_CCT_LUT_MIN</span><span class="p">,</span> <span class="n">_CCT_LUT_MAX</span> <span class="o">=</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mi">41000</span>
@@ -336,16 +348,13 @@
 <span class="sd">    wavelengths and an ndarray with the wavelength differences.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get requested cmf set:</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-        <span class="n">cmf</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">cmf</span> <span class="o">=</span> <span class="n">cieobs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">_process_cieobs_type</span><span class="p">(</span><span class="n">cieobs</span><span class="p">)</span>
     <span class="n">wl</span> <span class="o">=</span> <span class="n">cmf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span><span class="o">*</span><span class="mf">1.0</span>
-    <span class="n">cmf</span> <span class="o">=</span>  <span class="n">cie_interp</span><span class="p">(</span><span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">cmf</span> <span class="o">=</span>  <span class="n">cie_interp</span><span class="p">(</span><span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
     <span class="n">c</span> <span class="o">=</span> <span class="o">~</span><span class="p">(((</span><span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">==</span><span class="mi">3</span><span class="p">))</span>
     <span class="n">cmf</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="n">_CCT_AVOID_ZERO_DIV</span> <span class="c1"># avoid nan&#39;s in uvwvbar</span>
-    <span class="k">return</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span>
+    <span class="k">return</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">cmf_name</span>
 
 
 
@@ -825,7 +834,7 @@
 <span class="sd">            | list of ccts for which to (re-)calculate the LUTs.</span>
 <span class="sd">            | If str, ccts contains path/filename.dat to list.</span>
 <span class="sd">        :cieobs: </span>
-<span class="sd">            | None or str, optional</span>
+<span class="sd">            | None or str or ndrarray, optional</span>
 <span class="sd">            | str specifying cmf set.</span>
 <span class="sd">        :wl: </span>
 <span class="sd">            | None, optional</span>
@@ -866,7 +875,7 @@
 
 
     <span class="c1"># get requested cmf set:</span>
-    <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
     
     <span class="c1"># process cspace input:</span>
     <span class="n">cspace_dict</span><span class="p">,</span> <span class="n">cspace_str</span> <span class="o">=</span> <span class="n">_process_cspace</span><span class="p">(</span><span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_kwargs</span><span class="p">)</span>
@@ -1005,7 +1014,7 @@
 <span class="sd">            | Wavelength for Planckian spectrum generation.</span>
 <span class="sd">            | If None: use same wavelengths as CMFs in :cieobs:.</span>
 <span class="sd">        :cieobs:</span>
-<span class="sd">            | [_CIEOBS] or list, optional</span>
+<span class="sd">            | [_CIEOBS] or list of str or ndarrays, optional</span>
 <span class="sd">            | Generate a LUT for each one in the list.</span>
 <span class="sd">            | If None: generate for all cmfs in _CMF.</span>
 <span class="sd">        :lut_vars:</span>
@@ -1142,7 +1151,7 @@
 <span class="sd">            | Wavelength for Planckian spectrum generation.</span>
 <span class="sd">            | If None: use same wavelengths as CMFs in :cieobs:.</span>
 <span class="sd">        :cieobs:</span>
-<span class="sd">            | _CIEOBS, optional</span>
+<span class="sd">            | _CIEOBS or str or ndarray, optional</span>
 <span class="sd">            | CMF set used to convert Planckian spectra to chromaticity coordinates</span>
 <span class="sd">        :lut_type_def:</span>
 <span class="sd">            | None, placeholder</span>
@@ -1227,24 +1236,23 @@
 
     <span class="c1"># print(luts_dict[cspace_str][cieobs].keys(),lut)</span>
     <span class="k">if</span> <span class="n">lut</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">lut</span> <span class="o">=</span> <span class="n">lut_type_def</span> <span class="c1"># use default type in luts_dict</span>
+    <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">_process_cieobs_type</span><span class="p">(</span><span class="n">cieobs</span><span class="p">)</span>
  
     <span class="c1"># further process lut (1st element of input lut): </span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lut</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span><span class="nb">str</span><span class="p">)):</span> <span class="c1"># lut is key in luts_dict, if not generate new lut from scratch</span>
         <span class="n">lut_from_tuple</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">lut_tuple</span> <span class="o">=</span> <span class="n">lut</span> <span class="c1"># keep copy to use later as key</span>
-
         <span class="k">if</span> <span class="n">luts_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># luts_dict is None: generate a new lut from scratch</span>
             <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;wl&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">):</span> 
                 <span class="n">luts_dict_empty</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># if not present luts_dict must be empty </span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">cmf_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]:</span>
                     <span class="n">luts_dict_empty</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># is empty for this cieobs</span>
-                    
-            <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">]:</span>
-                <span class="k">if</span> <span class="n">lut</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cieobs</span><span class="p">]:</span> <span class="c1"># read from luts_dict</span>
-                    <span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cieobs</span><span class="p">][</span><span class="n">lut</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">cmf_name</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">lut</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">]:</span> <span class="c1"># read from luts_dict</span>
+                    <span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">][</span><span class="n">lut</span><span class="p">])</span>
                     <span class="n">lut_from_tuple</span> <span class="o">=</span> <span class="kc">False</span>
-    
+                
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lut</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span> <span class="c1"># lut is either pre-calculated lut or a list with Tcs for which a lut needs to be generated</span>
         <span class="n">lut_from_array</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">lut</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -1257,17 +1265,21 @@
     <span class="c1"># When directly entered as ndarray there is no way to check, </span>
     <span class="c1"># so assume unequal_wl==False:</span>
     <span class="k">if</span> <span class="n">ignore_unequal_wl</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">luts_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">luts_dict_empty</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cieobs</span><span class="p">],</span> <span class="n">wl</span><span class="p">):</span>
-                <span class="n">unequal_wl</span> <span class="o">=</span> <span class="kc">True</span>    
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">luts_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">luts_dict_empty</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">],</span> <span class="n">wl</span><span class="p">):</span>
+                    <span class="n">unequal_wl</span> <span class="o">=</span> <span class="kc">True</span> 
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># if cieobs is ndarray check if wavelengths match wl</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">cmf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wl</span><span class="p">):</span>
+                <span class="n">unequal_wl</span> <span class="o">=</span> <span class="kc">True</span> 
 
+    
     <span class="k">if</span> <span class="p">(</span><span class="n">unequal_wl</span>  <span class="o">|</span> <span class="n">luts_dict_empty</span><span class="o">|</span> <span class="n">lut_from_tuple</span> <span class="o">|</span> <span class="n">lut_from_Tcs</span> <span class="o">|</span> <span class="n">resample_ndarray</span><span class="p">):</span>
     
         <span class="k">if</span> <span class="n">cspace_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;No cspace dict or other given !&#39;</span><span class="p">)</span>
     
     
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">lut_from_array</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">resample_ndarray</span><span class="p">):</span>
-
             <span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span> <span class="o">=</span> <span class="n">lut_generator_fcn</span><span class="p">(</span><span class="n">lut</span><span class="p">,</span> 
                                                 <span class="n">uin</span> <span class="o">=</span> <span class="n">uin</span><span class="p">,</span>
                                                 <span class="n">seamless_stitch</span> <span class="o">=</span> <span class="n">seamless_stitch</span><span class="p">,</span>
@@ -1278,18 +1290,18 @@
                                                 <span class="n">cct_min</span> <span class="o">=</span> <span class="n">cct_min</span><span class="p">,</span>
                                                 <span class="n">lut_vars</span> <span class="o">=</span> <span class="n">lut_vars</span><span class="p">,</span>
                                                 <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> 
-                                                <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> 
+                                                <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cmf</span><span class="p">,</span> 
                                                 <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace_dict</span><span class="p">,</span>
                                                 <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                                 <span class="o">**</span><span class="n">lut_kwargs</span><span class="p">)</span>
             
             <span class="k">if</span> <span class="n">luts_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]:</span>
-                    <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cieobs</span><span class="p">]</span> <span class="o">=</span> <span class="n">wl</span>
-                <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">]:</span>
-                    <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cieobs</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># create empty dict for new cieobs</span>
+                <span class="k">if</span> <span class="n">cmf_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">]:</span>
+                    <span class="n">luts_dict</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">wl</span>
+                <span class="k">if</span> <span class="n">cmf_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">]:</span>
+                    <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># create empty dict for new cieobs</span>
                 <span class="k">if</span> <span class="n">lut_tuple</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> 
-                    <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cieobs</span><span class="p">][</span><span class="n">lut_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span><span class="p">]</span> <span class="c1"># store for later use</span>
+                    <span class="n">luts_dict</span><span class="p">[</span><span class="n">cspace_str</span><span class="p">][</span><span class="n">cmf_name</span><span class="p">][</span><span class="n">lut_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span><span class="p">]</span> <span class="c1"># store for later use</span>
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lut</span> <span class="o">=</span> <span class="n">lut</span><span class="p">[(</span><span class="n">lut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">cct_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lut</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;=</span><span class="n">cct_max</span><span class="p">),:]</span>
@@ -1425,25 +1437,36 @@
             
             <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
             
-            <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">cieobs_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cieobs</span><span class="p">):</span>
-                
-                <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cieobs_j</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs_j</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> <span class="c1"># store wavelengths</span>
-                
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">cieobs_j</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cieobs</span><span class="p">):</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs_j</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+                    <span class="n">cmf_j</span><span class="p">,</span> <span class="n">cmf_j_name</span> <span class="o">=</span> <span class="n">cieobs_j</span><span class="p">,</span> <span class="n">cieobs_j</span> 
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs_j</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">cmf_j</span><span class="p">,</span> <span class="n">cmf_j_name</span> <span class="o">=</span> <span class="n">cieobs_j</span>
+                <span class="k">else</span><span class="p">:</span> 
+                    <span class="n">cmf_j</span><span class="p">,</span> <span class="n">cmf_j_name</span> <span class="o">=</span> <span class="n">cieobs_j</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;cmf_</span><span class="si">{</span><span class="n">j</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                <span class="k">if</span> <span class="n">cmf_j_name</span> <span class="ow">in</span> <span class="n">_CMF</span><span class="p">:</span>
+                    <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cmf_j_name</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> <span class="c1"># store wavelengths</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">cmf_j</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">wl</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="k">else</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> <span class="c1"># store wavelengths</span>
+
                 <span class="n">ftmp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">lut</span><span class="p">:</span> <span class="n">lut_generator_fcn</span><span class="p">(</span><span class="n">lut</span><span class="p">,</span> 
                                                      <span class="n">seamless_stitch</span> <span class="o">=</span> <span class="n">seamless_stitch</span><span class="p">,</span> 
                                                      <span class="n">fallback_unit</span> <span class="o">=</span> <span class="n">fallback_unit</span><span class="p">,</span> 
                                                      <span class="n">fallback_n</span> <span class="o">=</span> <span class="n">fallback_n</span><span class="p">,</span>
                                                      <span class="n">cct_max</span> <span class="o">=</span> <span class="n">cct_max</span><span class="p">,</span> 
                                                      <span class="n">cct_min</span> <span class="o">=</span> <span class="n">cct_min</span><span class="p">,</span>
-                                                     <span class="n">wl</span> <span class="o">=</span> <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cieobs_j</span><span class="p">],</span> 
+                                                     <span class="n">wl</span> <span class="o">=</span> <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">],</span> 
                                                      <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_j</span><span class="p">,</span> 
                                                      <span class="n">cspace</span> <span class="o">=</span>  <span class="n">cspace_dict_i</span><span class="p">,</span> 
                                                      <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                                      <span class="n">lut_vars</span> <span class="o">=</span> <span class="n">lut_vars</span><span class="p">,</span>
                                                      <span class="o">**</span><span class="n">lut_generator_kwargs</span><span class="p">)</span>
-                <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cieobs_j</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
                 
                 <span class="k">for</span> <span class="n">type_k</span> <span class="ow">in</span> <span class="n">types</span><span class="p">:</span>
+
                     <span class="c1"># ensure full tuple depth for use as key:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_k</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="nb">str</span><span class="p">):</span> <span class="c1"># at least depth 2 (&lt;--last element is str for depth 1)</span>
                         <span class="n">tmp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">((</span><span class="nb">tuple</span><span class="p">(</span><span class="n">type_kl</span><span class="p">)</span> <span class="k">for</span> <span class="n">type_kl</span> <span class="ow">in</span> <span class="n">type_k</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">type_kl</span><span class="p">,</span><span class="nb">bool</span><span class="p">)))</span>
@@ -1452,12 +1475,14 @@
 
                     <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span>
                     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating lut with type = </span><span class="si">{}</span><span class="s1"> in cspace = </span><span class="si">{:s}</span><span class="s1"> for cieobs = </span><span class="si">{:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">type_k</span><span class="p">,</span><span class="n">cspace_str_i</span><span class="p">,</span><span class="n">cieobs_j</span><span class="p">))</span>
-                    
-                    <span class="k">if</span> <span class="p">(</span><span class="n">cieobs_j</span> <span class="o">!=</span> <span class="s1">&#39;cie_std_dev_obs_f1&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs_j</span> <span class="o">!=</span> <span class="s1">&#39;1951_20_scotopic&#39;</span><span class="p">):</span>
-                        <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cieobs_j</span><span class="p">][</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ftmp</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span>
+                        <span class="n">wl_</span> <span class="o">=</span> <span class="n">luts</span><span class="p">[</span><span class="s1">&#39;wl&#39;</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">]</span>
+                        <span class="n">wl0_</span><span class="p">,</span> <span class="n">wln_</span><span class="p">,</span> <span class="n">dwl_</span> <span class="o">=</span> <span class="n">wl_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">wl_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">wl_</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wl_</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Generating lut with type = </span><span class="si">{</span><span class="n">type_k</span><span class="si">}</span><span class="s1"> in cspace = </span><span class="si">{</span><span class="n">cspace_str_i</span><span class="si">}</span><span class="s1"> for cieobs = </span><span class="si">{</span><span class="n">cmf_j_name</span><span class="si">}</span><span class="s1"> for wavelength range: [</span><span class="si">{</span><span class="n">wl0_</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">wln_</span><span class="si">}</span><span class="s1">, </span><span class="si">{</span><span class="n">dwl_</span><span class="si">}</span><span class="s1">]&#39;</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="n">cmf_j_name</span> <span class="o">!=</span> <span class="s1">&#39;cie_std_dev_obs_f1&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cmf_j_name</span> <span class="o">!=</span> <span class="s1">&#39;1951_20_scotopic&#39;</span><span class="p">):</span>
+                        <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">][</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">ftmp</span><span class="p">(</span><span class="n">tmp</span><span class="p">))</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cieobs_j</span><span class="p">][</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                        <span class="n">luts</span><span class="p">[</span><span class="n">cspace_i</span><span class="p">][</span><span class="n">cmf_j_name</span><span class="p">][</span><span class="n">tmp</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
                     
 
                 <span class="c1"># save to disk (do intermediate saves):</span>
@@ -1469,7 +1494,8 @@
                     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Saving dict with luts in </span><span class="si">{:s}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_path</span><span class="p">))</span>                                                 
                     <span class="n">save_pkl</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span><span class="n">luts</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="n">_CCT_PKL_COMPRESSLEVEL</span><span class="p">)</span>
-        <span class="n">luts</span> <span class="o">=</span> <span class="n">load_pkl</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">gzipped</span> <span class="o">=</span> <span class="n">_CCT_PKL_COMPRESSLEVEL</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">lut_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">save_luts</span> <span class="o">==</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">luts</span> <span class="o">=</span> <span class="n">load_pkl</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">gzipped</span> <span class="o">=</span> <span class="n">_CCT_PKL_COMPRESSLEVEL</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">lut_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lut_path</span><span class="p">,</span> <span class="n">lut_file</span><span class="p">)</span>
@@ -1595,6 +1621,46 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Replicates endpoints of lut to avoid out-of-bounds issues &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">x</span><span class="p">[:</span><span class="mi">1</span><span class="p">],</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]))</span>
 
+<span class="k">def</span> <span class="nf">_process_cieobs_type</span><span class="p">(</span><span class="n">cieobs</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="n">cieobs</span><span class="p">][</span><span class="s1">&#39;bar&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cieobs</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">cieobs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="s2">&quot;cmf_0&quot;</span>
+    <span class="k">return</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span>
+
+<div class="viewcode-block" id="calculate_cct_luts">
+<a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.calculate_cct_luts">[docs]</a>
+<span class="k">def</span> <span class="nf">calculate_cct_luts</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">cmf_list</span> <span class="o">=</span> <span class="n">_CCT_LIST_OF_CIEOBS_LUTS</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span> 
+                 <span class="n">lut_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lut_generator_kwargs</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">luts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">load</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">save_luts</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">lut_path</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+                 <span class="n">cspace</span> <span class="o">=</span> <span class="p">[</span><span class="n">_CCT_CSPACE</span><span class="p">],</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_CCT_CSPACE_KWARGS</span><span class="p">],</span>
+                 <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate a lut dictionary for a specified wl and list of color matching functions&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">luts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="n">luts</span> <span class="o">=</span> <span class="p">{</span><span class="n">mode</span> <span class="p">:</span> <span class="p">{}}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">luts</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">lut_type</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">lut_type</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]</span>
+    <span class="n">cmf_list_</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cieobs</span> <span class="ow">in</span> <span class="n">cmf_list</span><span class="p">:</span> 
+        <span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">_process_cieobs_type</span><span class="p">(</span><span class="n">cieobs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">cmf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">cmf_name</span> <span class="ow">in</span> <span class="n">_CMF</span><span class="p">:</span>
+                <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">cmf_name</span> <span class="o">+</span> <span class="s1">&#39;_0&#39;</span>
+        <span class="n">cmf_list_</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cmf</span><span class="p">,</span> <span class="n">cmf_name</span><span class="p">))</span>
+    <span class="n">luts</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">generate_luts</span><span class="p">(</span><span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">lut_type</span><span class="p">],</span>
+                                        <span class="n">lut_file</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{:s}</span><span class="s1">_luts_custom.pkl&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mode</span><span class="p">),</span> 
+                                        <span class="n">load</span> <span class="o">=</span>  <span class="n">load</span><span class="p">,</span> <span class="n">save_luts</span> <span class="o">=</span> <span class="n">save_luts</span><span class="p">,</span>
+                                        <span class="n">lut_path</span> <span class="o">=</span> <span class="n">lut_path</span><span class="p">,</span> 
+                                        <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cmf_list_</span><span class="p">,</span>
+                                        <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">cspace_kwargs</span><span class="p">,</span>
+                                        <span class="n">lut_vars</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span>
+                                        <span class="n">verbosity</span> <span class="o">=</span> <span class="n">verbosity</span><span class="p">,</span>
+                                        <span class="n">lut_generator_fcn</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;_generate_lut&#39;</span><span class="p">],</span>
+                                        <span class="n">lut_generator_kwargs</span> <span class="o">=</span> <span class="n">lut_generator_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">luts</span></div>
 
     
 
@@ -1631,7 +1697,6 @@
             <span class="n">uvBB</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">UVWBB</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">BB</span> <span class="o">=</span> <span class="n">_get_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB&#39;</span><span class="p">)</span>
-            <span class="c1"># BB = cri_ref(T, ref_type = [&#39;BB&#39;], wl3 = wl)</span>
             <span class="n">xyzBB</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">BB</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
             <span class="n">uvBB</span> <span class="o">=</span> <span class="n">cspace_dict</span><span class="p">[</span><span class="s1">&#39;fwtf&#39;</span><span class="p">](</span><span class="n">xyzBB</span><span class="p">)[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:]</span>
         <span class="n">uBB</span><span class="p">,</span> <span class="n">vBB</span> <span class="o">=</span> <span class="n">uvBB</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">1</span><span class="p">],</span> <span class="n">uvBB</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
@@ -1797,7 +1862,7 @@
     <span class="k">if</span> <span class="n">cspace_dict</span><span class="p">[</span><span class="s1">&#39;bwtf&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;cct_to_xyz_fast requires the backward cspace transform to be defined !!!&#39;</span><span class="p">)</span>
 
-    <span class="n">xyzbar</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span> <span class="n">dl</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="n">xyzbar</span><span class="p">,</span><span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">cct_offset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># estimate iso-T-line from estimated slope using small cct offset:</span>
         <span class="c1">#-----------------------------------------------------------------</span>
@@ -2114,7 +2179,7 @@
     <span class="k">if</span> <span class="n">uvwbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">cspace_dict</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">xyzbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
+                <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">xyzbar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
                 <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Must supply xyzbar or cieobs or uvwbar !!!&#39;</span><span class="p">)</span>
             <span class="n">uvwbar</span> <span class="o">=</span> <span class="n">_convert_xyzbar_to_uvwbar</span><span class="p">(</span><span class="n">xyzbar</span><span class="p">,</span> <span class="n">cspace_dict</span><span class="p">)</span>
@@ -2297,7 +2362,7 @@
                 <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="n">_CCT_SPLIT_CALC_AT_N</span><span class="p">,</span> <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</span><span class="p">,</span>
                 <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CCT_CSPACE</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">_CCT_CSPACE_KWARGS</span><span class="p">,</span>
                 <span class="n">duv_triangular_threshold</span> <span class="o">=</span> <span class="mf">0.002</span><span class="p">,</span> 
-                <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span>
+                <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span>
                 <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
@@ -2305,7 +2370,7 @@
 <span class="sd">    Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) using a number</span>
 <span class="sd">    of modes (methods). </span>
 <span class="sd">    </span>
-<span class="sd">    General fucntion for calculation of &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;li2016&#39; and &#39;zhang2019&#39;</span>
+<span class="sd">    General function for calculation of &#39;robertson2023&#39;, &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;li2016&#39; and &#39;zhang2019&#39;</span>
 <span class="sd">    (for info on arguments, see docstring of xyz_to_cct)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
@@ -2329,7 +2394,7 @@
     <span class="n">uvw</span> <span class="o">=</span> <span class="n">cspace_dict</span><span class="p">[</span><span class="s1">&#39;fwtf&#39;</span><span class="p">](</span><span class="n">xyzw</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span>  <span class="k">if</span> <span class="n">is_uv_input</span> <span class="o">==</span> <span class="kc">False</span> <span class="k">else</span> <span class="n">xyzw</span><span class="p">[:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="c1"># xyz contained uv !!! (needed to efficiently determine f_corr)</span>
     
     <span class="c1"># pre-calculate wl,dl,uvwbar for later use (will also determine wl if None !):</span>
-    <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
+    <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">cmf_name</span> <span class="o">=</span> <span class="n">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="n">wl</span><span class="p">)</span>
     <span class="n">uvwbar</span> <span class="o">=</span> <span class="n">_convert_xyzbar_to_uvwbar</span><span class="p">(</span><span class="n">xyzbar</span><span class="p">,</span> <span class="n">cspace_dict</span><span class="p">)</span>
     
     <span class="c1"># Get or generate requested lut</span>
@@ -2337,6 +2402,7 @@
     <span class="c1"># a new recalculated lut will be generated):</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">luts_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> 
         <span class="n">luts_dict</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span>
+      
 
     <span class="n">lut</span><span class="p">,</span> <span class="n">lut_kwargs</span> <span class="o">=</span> <span class="n">_get_lut</span><span class="p">(</span><span class="n">lut</span><span class="p">,</span> 
                                <span class="n">fallback_unit</span> <span class="o">=</span> <span class="n">_CCT_FALLBACK_UNIT</span><span class="p">,</span> 
@@ -2371,6 +2437,7 @@
     <span class="n">lut_vars</span> <span class="o">=</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="n">mode</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">]</span>  <span class="k">if</span> <span class="s1">&#39;lut_vars&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="k">else</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">]</span> 
     <span class="c1"># prepare mode_kwargs (i.e. extra kwargs for _uv_to_Tx_mode() required by specific modes):</span>
     <span class="n">mode_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">:</span> <span class="p">{},</span>
+                   <span class="s1">&#39;robertson2023&#39;</span><span class="p">:</span> <span class="p">{},</span>
                    <span class="s1">&#39;zhang2019&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;uvwbar&#39;</span> <span class="p">:</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="s1">&#39;wl&#39;</span> <span class="p">:</span> <span class="n">wl</span><span class="p">,</span> <span class="s1">&#39;dl&#39;</span> <span class="p">:</span> <span class="n">dl</span><span class="p">,</span> <span class="s1">&#39;lut_vars&#39;</span> <span class="p">:</span> <span class="n">lut_vars</span><span class="p">,</span>
                                   <span class="s1">&#39;max_iter&#39;</span> <span class="p">:</span> <span class="n">max_iter</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;atol&#39;</span> <span class="p">:</span> <span class="n">atol</span><span class="p">,</span> <span class="s1">&#39;rtol&#39;</span> <span class="p">:</span> <span class="n">rtol</span><span class="p">},</span>
                    <span class="s1">&#39;ohno2014&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="o">**</span><span class="n">lut_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;duv_triangular_threshold&#39;</span> <span class="p">:</span> <span class="n">duv_triangular_threshold</span><span class="p">}},</span>
@@ -2395,7 +2462,6 @@
                                                                         <span class="n">out_of_lut</span> <span class="o">=</span> <span class="n">out_of_lut</span><span class="p">,</span>
                                                                         <span class="n">fast_duv</span> <span class="o">=</span> <span class="n">use_fast_duv</span><span class="p">,</span>
                                                                         <span class="o">**</span><span class="n">mode_kwargs</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>  
-
         <span class="k">if</span> <span class="n">force_tolerance</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">tol_method</span> <span class="o">==</span> <span class="s1">&#39;cascading-lut&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">tol_method</span> <span class="o">==</span> <span class="s1">&#39;cl&#39;</span><span class="p">):</span> 
 
@@ -2426,7 +2492,7 @@
         <span class="k">else</span><span class="p">:</span> 
             <span class="n">ccts</span><span class="p">[</span><span class="n">n_ii</span><span class="o">*</span><span class="n">ii</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Tx</span>
             <span class="n">duvs</span><span class="p">[</span><span class="n">n_ii</span><span class="o">*</span><span class="n">ii</span><span class="p">:]</span> <span class="o">=</span> <span class="n">Duvx</span>
-   
+
     <span class="c1"># Regulate output:</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;cct&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">out</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ccts</span>
@@ -2442,18 +2508,23 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="c1"># Robertson 1968:</span>
+<span class="c1"># Robertson 1968 &amp; 2023:</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">_CCT_LUT_MIN</span><span class="p">,</span> <span class="n">_CCT_LUT_MAX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">),)</span> <span class="c1"># default LUT, must be in all_modes</span>
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span> 
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;K-1&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">625</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="s1">&#39;K-1&#39;</span><span class="p">),</span> <span class="kc">True</span><span class="p">)</span> <span class="c1"># default LUT, must be in all_modes</span>
 <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span><span class="s1">&#39;iso-T-slope&#39;</span><span class="p">]</span>
 <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;_generate_lut&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_lut</span> 
+
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">((</span><span class="n">_CCT_LUT_MIN</span><span class="p">,</span> <span class="n">_CCT_LUT_MAX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">),)</span> <span class="c1"># default LUT, must be in all_modes</span>
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span><span class="s1">&#39;iso-T-slope&#39;</span><span class="p">]</span>
+<span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;_generate_lut&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_lut</span> 
 
 <span class="k">def</span> <span class="nf">_uv_to_Tx_robertson1968</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">lut</span><span class="p">,</span> <span class="n">lut_n_cols</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Calculate Tx from u,v and lut using Robertson 1968.</span>
-<span class="sd">    (lut_n_cols specifies the number of columns in the lut for &#39;robertson1968&#39;)</span>
+<span class="sd">    Calculate Tx from u,v and lut using Robertson 1968 with a 2023 modification for CCTs &lt; 1667 K.</span>
+<span class="sd">    (lut_n_cols specifies the number of columns in the lut for &#39;robertson1968&#39; / &#39;robertson2023&#39;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">Duvx</span> <span class="o">=</span> <span class="kc">None</span> 
     <span class="n">idx_sources</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span> <span class="c1"># source/conversion index</span>
@@ -2495,6 +2566,7 @@
     <span class="k">return</span> <span class="n">Tx</span><span class="p">,</span> <span class="n">Duvx</span><span class="p">,</span> <span class="n">out_of_lut</span><span class="p">,</span> <span class="p">(</span><span class="n">TBB_m1</span><span class="p">,</span> <span class="n">TBB_p1</span><span class="p">)</span>
 
 <span class="n">_CCT_UV_TO_TX_FCNS</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_uv_to_Tx_robertson1968</span>
+<span class="n">_CCT_UV_TO_TX_FCNS</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_uv_to_Tx_robertson1968</span>
 
 <div class="viewcode-block" id="xyz_to_cct_robertson1968">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct_robertson1968">[docs]</a>
@@ -2509,7 +2581,7 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values to correlated color temperature (CCT) and </span>
 <span class="sd">    Duv(distance above (&gt; 0) or below ( &lt; 0) the Planckian locus) using  </span>
-<span class="sd">    Robertson&#39;s 1968 search method.</span>
+<span class="sd">    Robertson&#39;s 1968 search method (with a 2023 modification to allow for CCTs &lt; 1667 K).</span>
 <span class="sd">        </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :xyzw: </span>
@@ -2587,7 +2659,7 @@
 <span class="sd">            |   lut part of a two-element list [lut, lut_kwargs]. It must contain</span>
 <span class="sd">            |   at the top-level a key &#39;wl&#39; containing the wavelengths of the </span>
 <span class="sd">            |   Planckians used to generate the luts in this dictionary.</span>
-<span class="sd">            | If None: luts_dict defaults to _CCT_LUT[&#39;robertson1968&#39;][&#39;luts&#39;]   </span>
+<span class="sd">            | If None: luts_dict defaults to _CCT_LUT[&#39;robertson1968&#39;][&#39;luts&#39;].  </span>
 <span class="sd">        :cspace:</span>
 <span class="sd">            | _CCT_SPACE, optional</span>
 <span class="sd">            | Color space to do calculations in. </span>
@@ -2635,14 +2707,14 @@
 <span class="sd">        Journal of the Optical Society of America,  58(11), 1528–1535. </span>
 <span class="sd">        &lt;https://doi.org/10.1364/JOSA.58.001528&gt;` </span>
 <span class="sd">        </span>
-<span class="sd">        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),</span>
-<span class="sd">        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source</span>
-<span class="sd">        (in preparation, LEUKOS?)</span>
+<span class="sd">        2. `Baxter, D., Royer, M., &amp; Smet, K. (2023). </span>
+<span class="sd">        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. </span>
+<span class="sd">        LEUKOS, 20(1), 55–66. &lt;https://doi.org/10.1080/15502724.2023.2166060&gt;`_</span>
 <span class="sd">        </span>
-<span class="sd">        3. Baxter D., Royer M., Smet K.A.G. (2022)</span>
-<span class="sd">        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed</span>
-<span class="sd">        (in preparation, LEUKOS?)</span>
-<span class="sd">         </span>
+<span class="sd">        3. `Smet, K., Royer, M., Baxter, D., Bretschneider, E., Esposito, T., Houser, K., … Ohno, Y. (2023). </span>
+<span class="sd">        Recommended Method for Determining the Correlated Color Temperature and Distance from the Planckian Locus of a Light Source. </span>
+<span class="sd">        LEUKOS, 20(2), 223–237. &lt;https://doi.org/10.1080/15502724.2023.2248397&gt;`_</span>
+
 <span class="sd">        4. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., &amp; Luo, M. R. (2016).</span>
 <span class="sd">        Accurate method for computing correlated color temperature. </span>
 <span class="sd">        Optics Express, 24(13), 14066–14078. </span>
@@ -2662,8 +2734,31 @@
                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
+<span class="k">def</span> <span class="nf">xyz_to_cct_robertson2023</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+                            <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tol_method</span> <span class="o">=</span> <span class="s1">&#39;newton-raphson&#39;</span><span class="p">,</span> 
+                            <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</span><span class="p">,</span>
+                            <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="n">_CCT_SPLIT_CALC_AT_N</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="n">_CCT_MAX_ITER</span><span class="p">,</span>
+                            <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CCT_CSPACE</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">_CCT_CSPACE_KWARGS</span><span class="p">,</span>
+                            <span class="n">lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">luts_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_wl_diff</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span>
+                            <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">_xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span>
+                       <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="n">is_uv_input</span><span class="p">,</span> 
+                       <span class="n">cspace</span> <span class="o">=</span> <span class="n">cspace</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">cspace_kwargs</span><span class="p">,</span>
+                       <span class="n">atol</span> <span class="o">=</span> <span class="n">atol</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="n">force_tolerance</span><span class="p">,</span>
+                       <span class="n">tol_method</span> <span class="o">=</span> <span class="n">tol_method</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="n">max_iter</span><span class="p">,</span>  
+                       <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">lut_resolution_reduction_factor</span><span class="p">,</span>
+                       <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="n">split_calculation_at_N</span><span class="p">,</span> 
+                       <span class="n">lut</span> <span class="o">=</span> <span class="n">lut</span><span class="p">,</span> <span class="n">luts_dict</span> <span class="o">=</span> <span class="n">luts_dict</span><span class="p">,</span> 
+                       <span class="n">ignore_wl_diff</span> <span class="o">=</span> <span class="n">ignore_wl_diff</span><span class="p">,</span> 
+                       <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">use_fast_duv</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">xyz_to_cct_robertson2023</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">xyz_to_cct_robertson1968</span><span class="o">.</span><span class="vm">__doc__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;robertson1968&quot;</span><span class="p">,</span><span class="s2">&quot;robertson2023&quot;</span><span class="p">)</span>
+
 <span class="c1"># pre-generate / load from disk / load from github some LUTs for Robertson1968:</span>
-<span class="n">_initialize_lut</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span><span class="n">lut_types</span> <span class="o">=</span> <span class="n">_unique_types</span><span class="p">([</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">],((</span><span class="mi">10</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="s1">&#39;K-1&#39;</span><span class="p">),(</span><span class="mi">100</span><span class="p">,</span><span class="mi">625</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="s1">&#39;K-1&#39;</span><span class="p">),</span><span class="kc">True</span><span class="p">)]</span> <span class="o">+</span> <span class="n">_CCT_SHARED_LUT_TYPES</span><span class="p">))</span>
+<span class="n">_initialize_lut</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span><span class="n">lut_types</span> <span class="o">=</span> <span class="n">_unique_types</span><span class="p">([</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">],</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="n">_CCT_SHARED_LUT_TYPES</span><span class="p">))</span>
+<span class="c1"># pre-generate / load from disk / load from github some LUTs for Robertson2023:</span>
+<span class="n">_initialize_lut</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span><span class="n">lut_types</span> <span class="o">=</span> <span class="n">_unique_types</span><span class="p">([</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">],</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">]]</span> <span class="o">+</span> <span class="n">_CCT_SHARED_LUT_TYPES</span><span class="p">))</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -3206,14 +3301,16 @@
 
     <span class="n">Duvxp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">vTx</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">Txp</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">Txp</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span>
 
+    <span class="c1"># Shifted Triangular Solution:</span>
+    <span class="n">Txt_shift</span> <span class="o">=</span> <span class="n">Txt</span> <span class="o">+</span> <span class="p">(</span><span class="n">Txp</span> <span class="o">-</span> <span class="n">Txt</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Duvxt</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">duv_triangular_threshold</span><span class="p">)</span>
+    
     <span class="c1"># Select triangular (threshold=0), parabolic (threshold=inf) or </span>
     <span class="c1"># combined solution:</span>
-    <span class="n">Tx</span><span class="p">,</span> <span class="n">Duvx</span> <span class="o">=</span> <span class="n">Txt</span><span class="p">,</span> <span class="n">Duvxt</span> 
+    <span class="n">Tx</span><span class="p">,</span> <span class="n">Duvx</span> <span class="o">=</span> <span class="n">Txt_shift</span><span class="p">,</span> <span class="n">Duvxt</span> 
     <span class="n">cnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Duvx</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">duv_triangular_threshold</span>
     <span class="n">Tx</span><span class="p">[</span><span class="n">cnd</span><span class="p">],</span> <span class="n">Duvx</span><span class="p">[</span><span class="n">cnd</span><span class="p">]</span><span class="o">=</span> <span class="n">Txp</span><span class="p">[</span><span class="n">cnd</span><span class="p">],</span> <span class="n">Duvxp</span><span class="p">[</span><span class="n">cnd</span><span class="p">]</span>
     
     <span class="n">Tx</span> <span class="o">=</span> <span class="n">Tx</span> <span class="o">*</span> <span class="n">f_corr</span>  <span class="c1"># correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)</span>
-
             
     <span class="k">return</span> <span class="n">Tx</span><span class="p">,</span> <span class="n">Duvx</span><span class="p">,</span> <span class="n">out_of_lut</span><span class="p">,</span> <span class="p">(</span><span class="n">TBB_m1</span><span class="p">,</span><span class="n">TBB_p1</span><span class="p">)</span>
 
@@ -3384,6 +3481,15 @@
 <span class="c1"># pre-generate / load from disk / load from github some LUTs for Ohno2014:</span>
 <span class="n">_initialize_lut</span><span class="p">(</span><span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;ohno2014&#39;</span><span class="p">,</span> <span class="n">lut_types</span> <span class="o">=</span> <span class="n">_unique_types</span><span class="p">([</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;lut_type_def&#39;</span><span class="p">],</span> <span class="p">((</span><span class="n">_CCT_LUT_MIN</span><span class="p">,</span> <span class="n">_CCT_LUT_MAX</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;%&#39;</span><span class="p">),)]</span> <span class="o">+</span> <span class="n">_CCT_SHARED_LUT_TYPES</span><span class="p">))</span>
 
+<span class="c1"># Use f_corr only for LUTs with larger (&gt;= 1%) spacings:</span>
+<span class="k">for</span> <span class="n">_cspace</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="p">:</span>
+    <span class="k">if</span> <span class="n">_cspace</span> <span class="ow">not</span> <span class="ow">in</span>  <span class="p">[</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">,</span> <span class="s1">&#39;wl&#39;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">_cieobs</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">][</span><span class="n">_cspace</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">_cieobs</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cspace&#39;</span><span class="p">,</span> <span class="s1">&#39;cspace_kwargs&#39;</span><span class="p">,</span> <span class="s1">&#39;cspace_dict&#39;</span><span class="p">]):</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">][</span><span class="n">_cspace</span><span class="p">][</span><span class="n">_cieobs</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">],</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">key</span><span class="p">))</span> <span class="k">if</span> <span class="p">((</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;%&#39;</span><span class="p">))]</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">][</span><span class="n">_cspace</span><span class="p">][</span><span class="n">_cieobs</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;f_corr&#39;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span> <span class="s1">&#39;ignore_f_corr_is_None&#39;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Li 2022 (i.e. update of Ohno 2014) related functions:</span>
@@ -3880,7 +3986,7 @@
                       <span class="n">lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">luts_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_wl_diff</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                       <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</span><span class="p">,</span>
                       <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CCT_CSPACE</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">_CCT_CSPACE_KWARGS</span><span class="p">,</span>
-                      <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span> <span class="n">fgm_kwargs</span> <span class="o">=</span> <span class="p">{},</span> 
+                      <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span> <span class="n">fgm_kwargs</span> <span class="o">=</span> <span class="p">{},</span> 
                       <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span>
                       <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -3967,10 +4073,10 @@
 <span class="sd">            | plankcians then a new lut should be generated. Seting this to True ignores</span>
 <span class="sd">            | these differences and proceeds anyway.</span>
 <span class="sd">        :first_guess_mode:</span>
-<span class="sd">            | &#39;robertson1968&#39;, optional</span>
+<span class="sd">            | &#39;robertson2023&#39;, optional</span>
 <span class="sd">            | Method used to get an approximate (first guess) estimate of the cct,</span>
 <span class="sd">            | after which the newton-raphson method is started.</span>
-<span class="sd">            | Options: &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;zhang2019&#39;</span>
+<span class="sd">            | Options: &#39;robertson2023&#39;, &#39;ohno2014&#39;, &#39;zhang2019&#39;</span>
 <span class="sd">        :fgm_kwargs:</span>
 <span class="sd">            | Dict with keyword arguments for the selected first_guess_mode.</span>
 <span class="sd">        :use_fast_duv:</span>
@@ -4326,8 +4432,8 @@
 
 <span class="n">_CCT_UV_TO_TX_FCNS</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_uv_to_Tx_none</span>
 
-<span class="k">if</span> <span class="p">(</span><span class="s1">&#39;robertson1968&#39;</span> <span class="ow">in</span> <span class="n">_CCT_LIST_OF_MODE_LUTS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">_CCT_LUT_ONE_NPY_PER_MODE</span><span class="p">:</span>
-    <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
+<span class="k">if</span> <span class="p">(</span><span class="s1">&#39;robertson2023&#39;</span> <span class="ow">in</span> <span class="n">_CCT_LIST_OF_MODE_LUTS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">_CCT_LUT_ONE_NPY_PER_MODE</span><span class="p">:</span>
+    <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
     
 
 <span class="k">if</span> <span class="n">_CCT_LUT_ONE_NPY_PER_MODE</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
@@ -4367,6 +4473,7 @@
     <span class="c1"># Sample requested lut_vars from general &#39;all_modes&#39; luts for each mode:</span>
     <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;none&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
     <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
+    <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
     <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;zhang2019&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;zhang2019&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
     <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;ohno2014&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
     <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;li2022&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_sample_lut_vars</span><span class="p">(</span><span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;li2022&#39;</span><span class="p">][</span><span class="s1">&#39;lut_vars&#39;</span><span class="p">],</span> <span class="n">_CCT_LUT</span><span class="p">[</span><span class="s1">&#39;all_modes&#39;</span><span class="p">][</span><span class="s1">&#39;luts&#39;</span><span class="p">])</span>
@@ -4380,7 +4487,7 @@
 
 <div class="viewcode-block" id="xyz_to_cct">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cct.xyz_to_cct">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span>
+<span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span>
                <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="n">force_tolerance</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">tol_method</span> <span class="o">=</span> <span class="s1">&#39;newton-raphson&#39;</span><span class="p">,</span> 
                <span class="n">lut_resolution_reduction_factor</span> <span class="o">=</span> <span class="n">_CCT_LUT_RESOLUTION_REDUCTION_FACTOR</span><span class="p">,</span>
@@ -4388,7 +4495,7 @@
                <span class="n">cspace</span> <span class="o">=</span> <span class="n">_CCT_CSPACE</span><span class="p">,</span> <span class="n">cspace_kwargs</span> <span class="o">=</span> <span class="n">_CCT_CSPACE_KWARGS</span><span class="p">,</span>
                <span class="n">lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">luts_dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_wl_diff</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="n">duv_triangular_threshold</span> <span class="o">=</span> <span class="mf">0.002</span><span class="p">,</span>
-               <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson1968&#39;</span><span class="p">,</span> <span class="n">fgm_kwargs</span> <span class="o">=</span> <span class="p">{},</span>
+               <span class="n">first_guess_mode</span> <span class="o">=</span> <span class="s1">&#39;robertson2023&#39;</span><span class="p">,</span> <span class="n">fgm_kwargs</span> <span class="o">=</span> <span class="p">{},</span>
                <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span>
                <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -4400,9 +4507,9 @@
 <span class="sd">        :xyzw: </span>
 <span class="sd">            | ndarray of tristimulus values</span>
 <span class="sd">        :mode:</span>
-<span class="sd">            | &#39;robertson1968&#39;, optional</span>
+<span class="sd">            | &#39;robertson2023&#39;, optional</span>
 <span class="sd">            | String with name of method to use.</span>
-<span class="sd">            | Options: &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;li2016&#39;, &#39;li2022&#39;,&#39;zhang2019&#39;, &#39;fibonacci&#39;,</span>
+<span class="sd">            | Options: &#39;robertson2023&#39;, &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;li2016&#39;, &#39;li2022&#39;,&#39;zhang2019&#39;, &#39;fibonacci&#39;,</span>
 <span class="sd">            |       (also, but see note below: &#39;mcamy1992&#39;, &#39;hernandez1999&#39;)</span>
 <span class="sd">            | Note: first_guess_mode for li2016 can also be specified using a &#39;:&#39; separator,</span>
 <span class="sd">            |        e.g. &#39;li2016:robertson1968&#39;</span>
@@ -4507,10 +4614,10 @@
 <span class="sd">            |  (if smaller use triangular solution, else use the non-triangular one:  </span>
 <span class="sd">            |     If mode == &#39;ohno2014&#39; -&gt; parabolic, if mode == &#39;li2022&#39; -&gt; 3e-order poly)</span>
 <span class="sd">        :first_guess_mode:</span>
-<span class="sd">            | &#39;robertson1968&#39;, optional (cfr. mode == &#39;li2016&#39;)</span>
+<span class="sd">            | &#39;robertson2023&#39;, optional (cfr. mode == &#39;li2016&#39;)</span>
 <span class="sd">            | Method used to get an approximate (first guess) estimate of the cct,</span>
 <span class="sd">            | after which the newton-raphson method is started.</span>
-<span class="sd">            | Options: &#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;zhang2019&#39;,&#39;li2022&#39;</span>
+<span class="sd">            | Options: &#39;robertson2023&#39;,&#39;robertson1968&#39;, &#39;ohno2014&#39;, &#39;zhang2019&#39;,&#39;li2022&#39;</span>
 <span class="sd">        :use_fast_duv:</span>
 <span class="sd">            | _CCT_FAST_DUV, optional</span>
 <span class="sd">            | If True: use a fast estimator of the Duv </span>
@@ -4699,10 +4806,10 @@
     
     <span class="c1">#--------------------------------</span>
     <span class="c1"># Forward transform from xyz to CCT,Duv using Robertson 1968 or several other methods:</span>
-    <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;robertson1968&#39;</span><span class="p">]</span> <span class="c1">#[&#39;robertson1968&#39;,&#39;ohno2014&#39;,&#39;zhang2019&#39;,&#39;fibonacci&#39;]</span>
+    <span class="n">modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;robertson2023&#39;</span><span class="p">]</span> <span class="c1">#[&#39;robertson1968&#39;,&#39;ohno2014&#39;,&#39;zhang2019&#39;,&#39;fibonacci&#39;]</span>
     <span class="n">lut</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1000.0</span><span class="p">,</span><span class="mf">41000.0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;%&#39;</span><span class="p">),)</span> <span class="c1">#_CCT_LUT[modes[0]][&#39;lut_type_def&#39;]</span>
     <span class="c1"># lut = ((1000.0,41000.0,1,&#39;%&#39;),) #_CCT_LUT[modes[0]][&#39;lut_type_def&#39;]</span>
-    <span class="c1"># lut_m = _CCT_LUT[&#39;robertson1968&#39;][&#39;luts&#39;][&#39;Yuv60&#39;][&#39;1931_2&#39;][((1000.0,41000.0,1,&#39;%&#39;),)]</span>
+    <span class="c1"># lut_m = _CCT_LUT[&#39;robertson2023&#39;][&#39;luts&#39;][&#39;Yuv60&#39;][&#39;1931_2&#39;][((1000.0,41000.0,1,&#39;%&#39;),)]</span>
     <span class="k">for</span> <span class="n">mode</span> <span class="ow">in</span> <span class="n">modes</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mode:&#39;</span><span class="p">,</span><span class="n">mode</span><span class="p">)</span>
         <span class="n">cctsduvs</span> <span class="o">=</span> <span class="n">xyz_to_cct</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;[cct,duv]&#39;</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> 
@@ -4751,7 +4858,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

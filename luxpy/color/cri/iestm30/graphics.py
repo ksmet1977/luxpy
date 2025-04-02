@@ -916,7 +916,7 @@ def _plot_tm30_report_top(axh, source = '', manufacturer = '', date = '', model 
     axh.text(5,0, 'Model: ' + model, fontsize = 10, horizontalalignment='left',verticalalignment='center',color = 'k')
     return axh
 
-def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
+def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40, interp_settings = None):
     """
     Print some notes, the CIE x, y, u',v' and Ra, R9 values of the source in some empty axes.
     
@@ -937,8 +937,8 @@ def _plot_tm30_report_bottom(axh, spd, notes = '', max_len_notes_line = 40):
         :axh:
             | handle to figure axes.    
     """
-    ciera = spd_to_cri(spd, cri_type = 'ciera', out = 'Rf')
-    cierai = spd_to_cri(spd, cri_type = 'ciera-14', out = 'Rfi')
+    ciera = spd_to_cri(spd, cri_type = 'ciera', out = 'Rf', interp_settings = interp_settings)
+    cierai = spd_to_cri(spd, cri_type = 'ciera-14', out = 'Rfi', interp_settings = interp_settings)
     xyzw = spd_to_xyz(spd, cieobs = '1931_2', relative = True)
     Yxyw = xyz_to_Yxy(xyzw)
     Yuvw = xyz_to_Yuv(xyzw)
@@ -980,7 +980,7 @@ def _plot_tm30_report_full(spd, cri_type = 'ies-tm30',
                          save_fig_name = None, dpi = 300,
                          plot_report_top = True, plot_report_bottom = True,
                          show_annexE_priority = True, show_Rcsh1_Rfh1 = True,
-                         suptitle = 'ANSI/IES TM-30-18 Color Rendition Report',
+                         suptitle = 'ANSI/IES TM-30-24 Color Rendition Report',
                          font_size = _TM30_FONT_SIZE_FULLREPORT, **kwargs):
     """ Create TM30 Color Rendition Report ('full'). """
     import matplotlib.pyplot as plt # lazy import

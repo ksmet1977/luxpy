@@ -57,14 +57,14 @@ def _get_rgb_tristim_matrix(cmf, R = None, G = None, B = None, wl = None):
     if wl is None:
         wl = cmf[0] # set to the ones of the cmf set
     else:
-        cmf = cie_interp(cmf, wl_new = wl, kind = 'cmf') # interp cmfset to desired wl
+        cmf = cie_interp(cmf, wl_new = wl, datatype = 'cmf') # interp cmfset to desired wl
     
     # Get smooth primaries (use input or generate from scratch):
     if (R is None) | (G is None) | (B is None):
         R_, G_, B_ = get_rgb_smooth_prims(wl = wl) # generate smooth primaries
-    R = cie_interp(R, wl, kind = 'spd') if (R is not None) else R_ # set to input R and interp to desired wl, else use generated one
-    G = cie_interp(G, wl, kind = 'spd') if (G is not None) else G_ # set to input G and interp to desired wl, else use generated one
-    B = cie_interp(B, wl, kind = 'spd') if (B is not None) else B_ # set to input B and interp to desired wl, else use generated one
+    R = cie_interp(R, wl, datatype = 'spd') if (R is not None) else R_ # set to input R and interp to desired wl, else use generated one
+    G = cie_interp(G, wl, datatype = 'spd') if (G is not None) else G_ # set to input G and interp to desired wl, else use generated one
+    B = cie_interp(B, wl, datatype = 'spd') if (B is not None) else B_ # set to input B and interp to desired wl, else use generated one
     
     # get tristimulus values of primaries:
     xyz_R = spd_to_xyz(R, relative = False, K = 1, cieobs = cmf)
@@ -270,7 +270,7 @@ if __name__ == '__main__':
     # get some stimulus data:
     relative = False
     spd = _CIE_D65.copy()
-    spd = cie_interp(spd,getwlr([380,780,1]))
+    spd = cie_interp(spd,getwlr([380,780,1]),kind = 'linear')
     spd = spd_normalize(spd,norm_type='pu', norm_f = 100, cieobs = cieobs)
     xyzI_10 = spd_to_xyz(spd, relative = relative, cieobs = cieobs)
     print('Test translator with spectral and xyz input:')

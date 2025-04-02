@@ -3,6 +3,8 @@
 Module for fast ANSI/IES-TM30 calculations
 ==========================================
 
+(Max error )
+
  :_cri_ref(): Calculate multiple reference illuminant spectra based on ccts for color rendering index calculations.
 
  :_xyz_to_jab_cam02ucs(): Calculate CAM02-UCS J'a'b' coordinates from xyz tristimulus values of sample and white point.
@@ -35,29 +37,36 @@ _TM30_SAMPLE_SET = _CRI_RFL['ies-tm30-18']['99']['{:1.0f}nm'.format(_DL)]
 # Ensure all elements in array are not-NaN:
 _CMF_ = copy.deepcopy(_CMF)
 for cmf_str in _CMF_['types']:
-    _CMF_[cmf_str]['bar'] = cie_interp(_CMF[cmf_str]['bar'],wl_new = _WL3, kind = 'cmf')
+    _CMF_[cmf_str]['bar'] = cie_interp(_CMF[cmf_str]['bar'],wl_new = _WL3, datatype = 'cmf')
 
 def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
             cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
-            daylight_locus = None):
+            daylight_locus = None, round_daylightphase_Mi_to_cie_recommended = None, 
+            interp_settings = None):
     """
     Calculates a reference illuminant spectrum based on cct 
     for color rendering index calculations.
     """   
     if mix_range is None:
         mix_range =  _CRI_REF_TYPES[ref_type]['mix_range']
+
+    if cieobs_Y_normalization is None:
+        cieobs_Y_normalization = _CRI_REF_TYPES[ref_type]['cieobs_Y_normalization']
         
     if (cct < mix_range[0]) | (ref_type == 'BB'):
         return blackbody(cct, wl3, n = n)
     elif (cct > mix_range[1]) | (ref_type == 'DL'):
-        return daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
+        return daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
+                             round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended, 
+                             interp_settings = interp_settings)
     else:
         SrBB = blackbody(cct, wl3, n = n)
-        SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
-        cmf = _CMF_[cieobs_Y_normalization]['bar'] if isinstance(cieobs_Y_normalization,str) else cieobs_Y_normalization 
+        SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
+                             round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended, 
+                             interp_settings = interp_settings)
+        cmf = cie_interp(_CMF_[cieobs_Y_normalization]['bar'], wl3, kind = 'cmf', interp_settings = interp_settings) if isinstance(cieobs_Y_normalization,str) else cieobs_Y_normalization 
         wl = SrBB[0]
         ld = getwld(wl)
-
         SrBB = 100.0*SrBB[1]/np.array(np.sum(SrBB[1]*cmf[2]*ld))
         SrDL = 100.0*SrDL[1]/np.array(np.sum(SrDL[1]*cmf[2]*ld))
         Tb, Te = float(mix_range[0]), float(mix_range[1])
@@ -79,23 +88,28 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     
 def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
              cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
-             daylight_locus = None, wl = [360,830,1]):
+             daylight_locus = None, round_daylightphase_Mi_to_cie_recommended = None,
+             interp_settings = None):
     """
     Calculates multiple reference illuminant spectra based on ccts 
     for color rendering index calculations.
     """  
     if mix_range is None:
         mix_range =  _CRI_REF_TYPES[ref_type]['mix_range']
+    if cieobs_Y_normalization is None:
+        cieobs_Y_normalization = _CRI_REF_TYPES[ref_type]['cieobs_Y_normalization']
     if isinstance(ccts,float): ccts = [ccts]
     wlr = getwlr(wl3)
     Srs = np.zeros((len(ccts)+1,len(wlr)))
     Srs[0] = wlr
     for i,cct in enumerate(ccts):
-        Srs[i+1,:] = _cri_ref_i(cct, wl3 = wl3, ref_type = ref_type, 
+        Srs[i+1,:] = _cri_ref_i(cct, wl3 = wlr, ref_type = ref_type, 
                       mix_range = mix_range, cieobs = cieobs, 
                       cieobs_Y_normalization = cieobs_Y_normalization,
                       force_daylight_below4000K = force_daylight_below4000K, n = n,
-                      daylight_locus = daylight_locus)[1:]
+                      daylight_locus = daylight_locus,
+                      round_daylightphase_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
+                      interp_settings = interp_settings)[1:]
     
     return Srs  
 
@@ -295,23 +309,27 @@ def _hue_bin_data_to_ellipsefit(hue_bin_data):
     return {'v':v, 'a/b':ecc,'thetad': theta}
  
 
-def spd_to_tm30(St):
+def spd_to_tm30(St, interp_settings = None):
     """
     Calculate tm30 measures from spd.
     """    
+    # Drop all wavelengths outside [380,780] range:
+    St = St[:,(St[0]>=380) & (St[0]<=780)]
+
     # calculate CIE 1931 2° white point xyz:
-    xyzw_cct, _ = spd_to_xyz(St, cieobs = '1931_2', relative = True, out = 2)
+    xyzw_cct, _ = spd_to_xyz(St, cieobs = '1931_2', relative = True, out = 2, interp_settings = interp_settings)
     
     # calculate cct, duv:
-    cct, duv = xyz_to_cct(xyzw_cct, cieobs = '1931_2', out = 'cct,duv')
+    cct, duv = xyz_to_cct(xyzw_cct, cieobs = '1931_2', out = 'cct,duv', mode = 'ohno2014', interp_settings = interp_settings, force_tolerance = False, f_corr = 1.0)
     cct = np.abs(cct) # out-of-lut ccts are encoded as negative
-    
+   
     # calculate ref illuminant:
-    Sr = _cri_ref(cct, mix_range = [4000, 5000], cieobs = '1931_2', wl3 = St[0])
+    Sr = _cri_ref(cct, mix_range = [4000, 5000], cieobs = '1931_2', wl3 = St[0], cieobs_Y_normalization = '1964_10', round_daylightphase_Mi_to_cie_recommended = False)
 
     # calculate CIE 1964 10° sample and white point xyz under test and ref. illuminants:
     xyz, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = '1964_10', 
-                           rfl = _TM30_SAMPLE_SET, relative = True, out = 2)
+                           rfl = _TM30_SAMPLE_SET, relative = True, out = 2,
+                           interp_settings = interp_settings)
     N = St.shape[0]-1
     
     xyzt, xyzr =  xyz[:,:N,:], xyz[:,N:,:]
@@ -346,7 +364,7 @@ def spd_to_tm30(St):
     # Fit ellipse to gamut shape of samples under test source:
     gamut_ellipse_fit = _hue_bin_data_to_ellipsefit(hue_bin_data)
     hue_bin_data['gamut_ellipse_fit'] = gamut_ellipse_fit
-    
+
     # return output dict:
     return {'St' : St, 'Sr' : Sr, 
             'xyzw_cct' : xyzw_cct, 'xyzwt' : xyzwt, 'xyzwr' : xyzwr,
@@ -390,7 +408,7 @@ if __name__ == '__main__':
         return data
     
     spds = lx._IESTM3018['S']['data'].copy()
-    # spds = lx.cie_interp(spds,wl_new = _WL,kind='spd')
+    # spds = lx.cie_interp(spds,wl_new = _WL,datatype='spd')
     spds = spds[:202,:]
     data = spd_to_tm30(spds[[0,104],:])
     # data = spd_to_tm30(lx._CIE_F4)

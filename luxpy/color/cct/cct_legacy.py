@@ -360,7 +360,7 @@ def calculate_lut(lut_mode, ccts = None, cieobs = None, add_to_lut = False, wl =
     else:
         cmf = cieobs.copy()
     wl = getwlr(wl)
-    cmf = cie_interp(cmf, wl, kind = 'cmf', negative_values_allowed=False)
+    cmf = cie_interp(cmf, wl, datatype = 'cmf', negative_values_allowed=False)
     
     # process cspace input:
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs = cspace_kwargs)
@@ -1685,7 +1685,7 @@ def xyz_to_cct_search_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_i
         cmf = _CMF[cieobs]['bar'].copy()
     else:
         cmf = cieobs.copy()
-    cmf = cie_interp(cmf, wl, kind = 'cmf', negative_values_allowed=True)
+    cmf = cie_interp(cmf, wl, datatype = 'cmf', negative_values_allowed=True)
     
     # process cspace input:
     cspace_dict = _process_cspace_input(cspace, cspace_kwargs = cspace_kwargs)

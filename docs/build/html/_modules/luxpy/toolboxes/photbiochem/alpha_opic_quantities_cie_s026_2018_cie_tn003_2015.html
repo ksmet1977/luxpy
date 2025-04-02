@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.photbiochem.alpha_opic_quantities_cie_s026_2018_cie_tn003_2015 &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.toolboxes.photbiochem.alpha_opic_quantities_cie_s026_2018_cie_tn003_2015 &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -147,10 +147,10 @@
 <span class="sd">               |  &#39;melanopic&#39;] </span>
 <span class="sd"> </span>
 <span class="sd"> :_ACTIONSPECTRA: | ndarray with default CIE-S026:2018 alpha-actinic action spectra. (stored in file:</span>
-<span class="sd">                  | &#39;./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat&#39;)</span>
+<span class="sd">                  | &#39;./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049a_20_11.csv&#39;, last downloaded from cie.at.co/data-tables/ on Dec 18, 2024)</span>
 <span class="sd">     </span>
 <span class="sd"> :_ACTIONSPECTRA_CIES026: | ndarray with alpha-actinic action spectra. (stored in file:</span>
-<span class="sd">                          | &#39;./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat&#39;)</span>
+<span class="sd">                          | &#39;./data/cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049a_20_11.csv&#39;, last downloaded from cie.at.co/data-tables/ on Dec 18, 2024)</span>
 
 <span class="sd"> :_ACTIONSPECTRA_CIETN003: | ndarray with CIE-TN003:2015 alpha-actinic action spectra. (stored in file:</span>
 <span class="sd">                           | &#39;./data/cie_tn003_2015_SI_action_spectra.dat&#39;)</span>
@@ -210,7 +210,8 @@
 <span class="n">_Q_UNITS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;photons/m2/s&#39;</span><span class="p">,</span> <span class="s1">&#39;photons/m2/s&#39;</span><span class="p">,</span> <span class="s1">&#39;photons/m2/s&#39;</span><span class="p">,</span> <span class="s1">&#39;photons/m2/s&#39;</span><span class="p">,</span> <span class="s1">&#39;photons/m2/s&#39;</span><span class="p">]</span> 
 <span class="n">_QUANTITIES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;erythropic&#39;</span><span class="p">,</span> <span class="s1">&#39;chloropic&#39;</span><span class="p">,</span><span class="s1">&#39;cyanopic&#39;</span><span class="p">,</span><span class="s1">&#39;rhodopic&#39;</span><span class="p">,</span><span class="s1">&#39;melanopic&#39;</span><span class="p">]</span> <span class="c1">#irradiance, illuminance</span>
 
-<span class="n">_ACTIONSPECTRA_CIES026</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;photbiochem&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">_ACTIONSPECTRA_CIES026</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;photbiochem&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049a_20_11.csv&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">]]</span> <span class="c1"># [[0,3,2,1,4,5]]-&gt; put in l,m,s order</span>
+<span class="n">_ACTIONSPECTRA_CIES026</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">_ACTIONSPECTRA_CIES026</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="c1"># unknown data stored as NaN,-&gt; convert to 0.0 so summing does not add any contribution</span>
 <span class="n">_ACTIONSPECTRA_CIETN003</span> <span class="o">=</span> <span class="n">getdata</span><span class="p">(</span><span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;photbiochem&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;cie_tn003_2015_SI_action_spectra.dat&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;infer&#39;</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 <span class="n">_ACTIONSPECTRA</span> <span class="o">=</span> <span class="n">_ACTIONSPECTRA_CIES026</span>
 
@@ -223,7 +224,9 @@
 
 <div class="viewcode-block" id="spd_to_aopicE">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicE">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">Ee</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">Ee</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span>
+                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate alpha-opic irradiance (Ee,α) values (W/m²) for the l-cone, m-cone, </span>
 <span class="sd">    s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.</span>
@@ -253,7 +256,7 @@
 <span class="sd">            | Determines values to return. </span>
 <span class="sd">            | (to get also get equivalent illuminance Eα set :out: to &#39;Eeas,Eas&#39;)</span>
 <span class="sd">        :actionspectra:</span>
-<span class="sd">            | &#39;CIES026&#39;, optional</span>
+<span class="sd">            | &#39;CIE-S026&#39;, optional</span>
 <span class="sd">            | Actionspectra to use in calculation </span>
 <span class="sd">            | options: </span>
 <span class="sd">            | - &#39;CIE-S026&#39;: will use action spectra as defined in CIE S026 </span>
@@ -294,33 +297,45 @@
     
     <span class="c1"># Normalize sid to Ee:</span>
     <span class="k">if</span> <span class="n">Ee</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">Ee</span><span class="p">)</span>  
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">Ee</span><span class="p">,</span>
+                            <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span>
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>  
     <span class="k">elif</span> <span class="n">E</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;pusa&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">E</span><span class="p">)</span> 
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;pusa&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> 
+                            <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span>
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> 
     <span class="k">elif</span> <span class="n">Q</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;qu&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">Q</span><span class="p">)</span> 
+        <span class="n">sid</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="n">sid</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;qu&#39;</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span>
+                            <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> 
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> 
         
     
     <span class="c1"># Get sid irradiance (W/m²):</span>
     <span class="k">if</span> <span class="s1">&#39;Ee&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">:</span>
-        <span class="n">Ee</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">)</span>
+        <span class="n">Ee</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span> 
+                          <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     
     <span class="c1"># Get sid illuminance (lx):</span>
     <span class="k">if</span> <span class="s1">&#39;E&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">:</span>
-        <span class="n">E</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;pusa&#39;</span><span class="p">)</span> <span class="c1">#photometric units (Km corrected to standard air)</span>
+        <span class="n">E</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;pusa&#39;</span><span class="p">,</span>
+                         <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1">#photometric units (Km corrected to standard air)</span>
     
     <span class="c1"># Get sid quantal energy (photons/m²/s):</span>
     <span class="k">if</span> <span class="s1">&#39;Q&#39;</span> <span class="ow">in</span> <span class="n">outlist</span><span class="p">:</span>
-        <span class="n">Q</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;qu&#39;</span><span class="p">)</span>
+        <span class="n">Q</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span>  <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;qu&#39;</span><span class="p">,</span>
+                         <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
 
     <span class="c1"># select requested actionspectra:</span>
     <span class="k">if</span> <span class="n">actionspectra</span> <span class="o">==</span> <span class="s1">&#39;CIE-TN003&#39;</span><span class="p">:</span>
         <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">_ACTIONSPECTRA_CIETN003</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">actionspectra</span> <span class="o">==</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">:</span>
         <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">_ACTIONSPECTRA_CIES026</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c1"># must be numpy array !</span>
 
     <span class="c1"># get SI actinic action spectra, sa:</span>
-    <span class="n">sa</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">actionspectra</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">interpolation</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">)</span>
+    <span class="n">sa</span> <span class="o">=</span> <span class="n">spd</span><span class="p">(</span><span class="n">actionspectra</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> <span class="c1">#norm_type = &#39;max&#39;, </span>
+             <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     
     <span class="c1"># get wavelength spacing:</span>
     <span class="n">dl</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
@@ -329,8 +344,16 @@
     <span class="n">Eeas</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">sa</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">dl</span><span class="p">),</span><span class="n">sid</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
 
     <span class="c1"># Calculate equivalent alpha-opic E&#39;s:</span>
-    <span class="n">Vl</span><span class="p">,</span> <span class="n">Km</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
-    <span class="n">Eas</span> <span class="o">=</span> <span class="n">Km</span><span class="o">*</span><span class="n">Km_correction_factor</span><span class="o">*</span><span class="n">Eeas</span><span class="o">*</span><span class="p">(</span><span class="n">Vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">sa</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span> 
+        <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;vltype&#39;</span> <span class="c1"># if str -&gt; cieobs is an array</span>
+        <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;If cieobs is an array, Km must be explicitely supplied&#39;</span><span class="p">)</span>
+    
+    <span class="n">Vl</span><span class="p">,</span> <span class="n">Km</span> <span class="o">=</span> <span class="n">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="n">src</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+                   <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">K</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">K</span> <span class="o">=</span> <span class="n">Km</span>
+    <span class="n">Eas</span> <span class="o">=</span> <span class="n">K</span><span class="o">*</span><span class="n">Km_correction_factor</span><span class="o">*</span><span class="n">Eeas</span><span class="o">*</span><span class="p">(</span><span class="n">Vl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">sa</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span>
 
     <span class="c1">#Prepare output:</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;Eeas&#39;</span><span class="p">:</span>
@@ -353,9 +376,10 @@
 <div class="viewcode-block" id="spd_to_aopicEDI">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicEDI">[docs]</a>
 <span class="k">def</span> <span class="nf">spd_to_aopicEDI</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">Ee</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                    <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
+                    <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
                     <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">,</span> 
-                    <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;a_edi&#39;</span><span class="p">):</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;a_edi&#39;</span><span class="p">,</span>
+                    <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate alpha-opic equivalent daylight (D65) illuminance (lux)</span>
 <span class="sd">    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</span>
@@ -381,7 +405,7 @@
 <span class="sd">            | &#39;W/m2&#39;, optional</span>
 <span class="sd">            | Other option &#39;uW/m2&#39;, input units of :sid:</span>
 <span class="sd">        :actionspectra:</span>
-<span class="sd">            | &#39;CIES026&#39;, optional</span>
+<span class="sd">            | &#39;CIE-S026&#39;, optional</span>
 <span class="sd">            | Actionspectra to use in calculation </span>
 <span class="sd">            | options: </span>
 <span class="sd">            | - &#39;CIE-S026&#39;: will use action spectra as defined in CIE S026 </span>
@@ -399,13 +423,16 @@
 <span class="sd">            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</span>
 <span class="sd">            | of all spectra in :sid: in SI-units. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Eeas</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">Ee</span> <span class="o">=</span> <span class="n">Ee</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas,E&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">)</span> <span class="c1"># calculate all alpha-opic values </span>
+    <span class="n">Eeas</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">Ee</span> <span class="o">=</span> <span class="n">Ee</span><span class="p">,</span> <span class="n">E</span> <span class="o">=</span> <span class="n">E</span><span class="p">,</span> <span class="n">Q</span> <span class="o">=</span> <span class="n">Q</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas,E&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">,</span>
+                             <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># calculate all alpha-opic values </span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
         <span class="n">ref</span> <span class="o">=</span> <span class="n">_CIE_D65</span> <span class="k">if</span> <span class="p">(</span><span class="n">ref</span> <span class="o">==</span> <span class="s1">&#39;D65&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">_CIE_E</span>
-    <span class="n">ref</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">)</span>
-    <span class="n">Eeas_ref</span> <span class="o">=</span> <span class="n">spd_to_aopicE</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">)</span> <span class="c1"># calculate all alpha-opic values for  ref spectrum (= D65 for CIE S026) </span>
-    <span class="n">Ev_ref</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;pusa&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)[:,</span><span class="mi">0</span><span class="p">]</span> <span class="c1"># calculate photometric (illuminance) value for ref spectrum (= D65 for CIE S026)</span>
-    <span class="n">a_edi</span> <span class="o">=</span> <span class="n">Eeas</span> <span class="o">*</span> <span class="p">(</span><span class="n">Ev_ref</span><span class="o">/</span><span class="n">Eeas_ref</span><span class="p">)</span> <span class="c1"># calculate MEDI</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">sid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># make ref same wavelength range as spd!</span>
+    <span class="c1">#Eeas_ref, Ev_ref = spd_to_aopicE(ref, cieobs = cieobs, K = K,  out = &#39;Eeas,E&#39;, actionspectra = actionspectra, interp_settings = interp_settings) # calculate all alpha-opic Irradiance and illuminance values for  ref spectrum (= D65 for CIE S026) </span>
+    <span class="c1">#Ev_ref = spd_to_power(ref, ptype = &#39;pusa&#39;, cieobs = cieobs, K = K, interp_settings = interp_settings)[:,0] # calculate photometric (illuminance) value for ref spectrum (= D65 for CIE S026)</span>
+    <span class="c1">#a_edi = Eeas * (Ev_ref/Eeas_ref) # calculate MEDI</span>
+    <span class="n">ELR_ref</span> <span class="o">=</span> <span class="n">spd_to_aopicELR</span><span class="p">(</span><span class="n">ref</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
+    <span class="n">a_edi</span> <span class="o">=</span> <span class="n">Eeas</span> <span class="o">/</span> <span class="n">ELR_ref</span>
     <span class="k">if</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;a_edi&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">a_edi</span>
     <span class="k">elif</span> <span class="n">out</span> <span class="o">==</span> <span class="s1">&#39;a_edi,Ev&#39;</span><span class="p">:</span>
@@ -416,8 +443,9 @@
 
 <div class="viewcode-block" id="spd_to_aopicDER">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicDER">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_aopicDER</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
-                    <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">spd_to_aopicDER</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
+                    <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">,</span>
+                    <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate α-opic Daylight (D65) Efficacy Ratio (= α-opic Daylight (D65) Efficiency)</span>
 <span class="sd">    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</span>
@@ -433,7 +461,7 @@
 <span class="sd">            | &#39;W/m2&#39;, optional</span>
 <span class="sd">            | Other option &#39;uW/m2&#39;, input units of :sid:</span>
 <span class="sd">        :actionspectra:</span>
-<span class="sd">            | &#39;CIES026&#39;, optional</span>
+<span class="sd">            | &#39;CIE-S026&#39;, optional</span>
 <span class="sd">            | Actionspectra to use in calculation </span>
 <span class="sd">            | options: </span>
 <span class="sd">            | - &#39;CIE-S026&#39;: will use action spectra as defined in CIE S026 </span>
@@ -448,17 +476,18 @@
 <span class="sd">            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</span>
 <span class="sd">            | of all spectra in :sid: in SI-units. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">a_edi</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicEDI</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span>
+    <span class="n">a_edi</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicEDI</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span>
                                 <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">,</span>
-                                <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;a_edi,Ev&#39;</span><span class="p">)</span>   
+                                <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;a_edi,Ev&#39;</span><span class="p">,</span> 
+                                <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>   
     <span class="n">a_der</span> <span class="o">=</span> <span class="n">a_edi</span> <span class="o">/</span> <span class="n">Ev</span> <span class="c1"># calculate alpha-DER </span>
     <span class="k">return</span> <span class="n">a_der</span></div>
 
 
 <div class="viewcode-block" id="spd_to_aopicELR">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicELR">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_aopicELR</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
-                    <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span> <span class="n">ref</span> <span class="o">=</span> <span class="s1">&#39;D65&#39;</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">spd_to_aopicELR</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="s1">&#39;W/m2&#39;</span><span class="p">,</span>
+                    <span class="n">actionspectra</span> <span class="o">=</span> <span class="s1">&#39;CIE-S026&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate α-opic Efficacy of Luminous Radiation (W/lm)</span>
 <span class="sd">    for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.</span>
@@ -474,14 +503,11 @@
 <span class="sd">            | &#39;W/m2&#39;, optional</span>
 <span class="sd">            | Other option &#39;uW/m2&#39;, input units of :sid:</span>
 <span class="sd">        :actionspectra:</span>
-<span class="sd">            | &#39;CIES026&#39;, optional</span>
+<span class="sd">            | &#39;CIE-S026&#39;, optional</span>
 <span class="sd">            | Actionspectra to use in calculation </span>
 <span class="sd">            | options: </span>
 <span class="sd">            | - &#39;CIE-S026&#39;: will use action spectra as defined in CIE S026 </span>
 <span class="sd">            | - &#39;CIE-TN003&#39;: will use action spectra as defined in CIE TN003</span>
-<span class="sd">        :ref:</span>
-<span class="sd">            | &#39;D65&#39;, optional</span>
-<span class="sd">            | Reference (daylight) spectrum to use. (&#39;D65&#39; or &#39;E&#39; or ndarray)</span>
 <span class="sd">            </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -489,7 +515,8 @@
 <span class="sd">            | for the l-cone, m-cone, s-cone, rod and iprgc photoreceptors</span>
 <span class="sd">            | of all spectra in :sid: in SI-units. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Eeas</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas,E&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">)</span> <span class="c1"># calculate all alpha-opic values </span>
+    <span class="n">Eeas</span><span class="p">,</span> <span class="n">Ev</span> <span class="o">=</span> <span class="n">spd_to_aopicE</span><span class="p">(</span><span class="n">sid</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">sid_units</span> <span class="o">=</span> <span class="n">sid_units</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Eeas,E&#39;</span><span class="p">,</span> <span class="n">actionspectra</span> <span class="o">=</span> <span class="n">actionspectra</span><span class="p">,</span>
+                             <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> <span class="c1"># calculate all alpha-opic values </span>
     <span class="k">return</span> <span class="n">Eeas</span> <span class="o">/</span> <span class="n">Ev</span> <span class="c1"># calculate alpha-ELR </span></div>
 
 
@@ -506,7 +533,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

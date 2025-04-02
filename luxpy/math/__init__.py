@@ -93,7 +93,12 @@ Module with useful math functions
  
  :fit_cov_ellipse(): Fit an covariance ellipse to supplied data points.
  
- :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+ :interp1_sprague5(): Perform a 1-dimensional 5th order Sprague interpolation.
+ 
+ :linterp():  Perform a 1-dimensional linear interpolation (wrapper around numpy.interp1 with added linear extrapolation).
+ 
+ :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy based linterp).
+
  
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
  

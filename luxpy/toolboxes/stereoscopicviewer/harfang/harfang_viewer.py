@@ -255,18 +255,17 @@ def update_material_texture(node, res, tex, mat_idx = 0, name = "uSelfMap", stag
         :name:
             | "uSelfMap", optional
             | name of material type (depends on shader used; the default is for the pbr shader)
-       :stage:
+        :stage:
             | 4, optional
             | Render stage: depends on features, shader, ... (see "writing a pipeline shader" in Harfang documentation)
-       :texListPreloaded:
+        :texListPreloaded:
             | None, optional 
             | List with preloaded textures (to speed up texture update as it doesn't need to be read from file anymore while looping over frames)
                                             
     Returns:
         :mat:
             | Harfang material (note that material program variant has been updated
-            |                   accordingly; see: hg.UpdateMaterialPipelineProgramVariant)
-
+            | accordingly; see: hg.UpdateMaterialPipelineProgramVariant)
     """
     if isinstance(tex, str) & ((texListPreloaded is None) | (isinstance(texListPreloaded, list))):
         tex = hg.LoadTextureFromFile(tex, _TEXTURE_FLAGS, res)

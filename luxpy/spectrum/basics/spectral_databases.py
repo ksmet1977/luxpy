@@ -47,9 +47,9 @@ Module for loading light source (spd) and reflectance (rfl) spectra databases
  :_CRI_RFL: | Database with spectral reflectance functions for various 
               color rendition calculators:
             | * `CIE 13.3-1995 (8, 14 & 15 munsell samples) <http://www.cie.co.at/index.php/index.php?i_ca_id=303>`_
-            | * `CIE 224:2015 (99 set) <http://www.cie.co.at/index.php?i_ca_id=1027>`_
+            | * `CIE 224:2017 (99 set) <http://www.cie.co.at/index.php?i_ca_id=1027>`_
             | * `CRI2012 (HL17 & HL1000 spectrally uniform and 210 real samples) <http://journals.sagepub.com/doi/abs/10.1177/1477153513481375>`_
-            | * `IES TM30 (99, 4880 sepctrally uniform samples) <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition>`_
+            | * `IES TM30 (99, 4880, 2696 spectrally uniform samples) <https://www.ies.org/store/technical-memoranda/ies-method-for-evaluating-light-source-color-rendition>`_
             | * `MCRI (10 familiar object set) <http://www.sciencedirect.com/science/article/pii/S0378778812000837>`_
             | * `CQS (v7.5 and v9.0 sets) <http://spie.org/Publications/Journal/10.1117/1.3360335>`_
 
@@ -144,6 +144,8 @@ _IESTM3018['S']['info'] = getdata(_S_PATH + 'IESTM30_15_Sinfo.txt',header='infer
 _IESTM3018_S = _IESTM3018['S']
 _IESTM3020 = _IESTM3018
 _IESTM3020_S = _IESTM3020['S']
+_IESTM3024 = _IESTM3018
+_IESTM3024_S = _IESTM3024['S']
     
 ###############################################################################
 # spectral reflectance/transmission functions:
@@ -160,6 +162,7 @@ _CIE133_1995['15'] = np.vstack((_CIE133_1995['14'].copy(),_JISZ8726_R15[1:]))
    
 #------------------------------------------------------------------------------  
 # IES TM30-15 color fidelity and color gamut indices:
+# (note that wavelength range of rfls has been extended from [380-780] nm using flat-extrapolation to [360-830] nm.)
 _IESTM3015['R'] = {'4880' : {'1nm': np.load(_R_PATH + 'IESTM30_15_R4880.npz')['_IESTM30_R4880']}}
 # _IESTM3015['R'] = {'4880' : {'1nm': getdata(_R_PATH + 'IESTM30_15_R4880.csv',kind='np')}}
 _IESTM3015['R']['99'] = {'1nm' : getdata(_R_PATH + 'IESTM30_15_R99_1nm.dat').T}
@@ -168,21 +171,31 @@ temp = getdata(_R_PATH + 'IESTM30_15_R99info.dat')[0]
 ies99categories = ['nature','skin','textiles','paints','plastic','printed','color system']
 _IESTM3015['R']['99']['info'] = [ies99categories[int(i-1)] for i in temp]
 
+# selection from TM30 (2015) 4880 set by removing duplicate rfls:
+rfl4880 = _IESTM3015['R']['4880']['1nm']
+unique_rfls_idxs = np.asarray(getdata(_R_PATH + 'IESTM30-R4880-subset-with-unique-rfls--2696.dat'),dtype = int)[:,0] # Jan 2025: selection from 4880 set by removing duplicate rfls (duplicate if DEjab == 0)!
+_IESTM3015['R']['2696'] = {'1nm': np.vstack((rfl4880[0],rfl4880[1:][unique_rfls_idxs]))}
+
 
 #------------------------------------------------------------------------------
 # cie 224:2017 (color fidelity index based on IES TM-30-15):
-_CIE224_2017 = {'99': {'1nm' : getdata(_R_PATH + 'CIE224_2017_R99_1nm.dat').T}}
-_CIE224_2017['99']['5nm'] = getdata(_R_PATH + 'CIE224_2017_R99_5nm.dat').T
+# (note that wavelength range of rfls has been extended from [380-780] nm using flat-extrapolation to [360-830] nm.)
+_CIE224_2017 = {'99': {'1nm' : getdata(_R_PATH + 'CIE224_2017_R99_1nm.dat').T}} # 25/02/25: same as 1 nm data from TM30-18 (used to be from calculator [see '...-from excelcalculator.dat' file], but doesn't match linear, cubic, sprague5, spragie_CIE224_2017 interpolation, although cubic is closed)
+_CIE224_2017['99']['5nm'] = getdata(_R_PATH + 'CIE224_2017_R99_5nm.dat').T # from 5 nm calculator (luxpy.math.interp1_sprague_cie224_2017 to 1 nm has max diff of order 1e-16 with TM30-24 1 nm data! )
 _CIE224_2017['99']['info'] = _IESTM3015['R']['99']['info']
 
 
 #------------------------------------------------------------------------------  
-# IES TM30-18 and TM30-20 color fidelity and color gamut indices:
+# IES TM30-18 and TM30-20 and TM30-24 color fidelity and color gamut indices:
+# (note that wavelength range of rfls has been extended from [380-780] nm using flat-extrapolation to [360-830] nm.)
 _IESTM3018['R'] = copy.deepcopy(_IESTM3015['R'])
-_IESTM3018['R']['99']['1nm'] = _CIE224_2017['99']['1nm']
-_IESTM3018['R']['99']['5nm'] = _CIE224_2017['99']['5nm']
+_IESTM3018['R']['99']['1nm'] = getdata(_R_PATH + 'IESTM30_18_R99_1nm.dat').T
+_IESTM3018['R']['99']['5nm'] = _IESTM3018['R']['99']['1nm'][:,::5].copy() # [::5] is equivalent to linear or cubic interpolation as data points are kept on upsampling
 _IESTM3020['R']['99']['1nm'] = _IESTM3018['R']['99']['1nm']
 _IESTM3020['R']['99']['5nm'] = _IESTM3018['R']['99']['5nm'] 
+_IESTM3024['R']['99']['1nm'] = _IESTM3018['R']['99']['1nm']
+_IESTM3024['R']['99']['5nm'] = _IESTM3018['R']['99']['5nm'] 
+
 
 
 #------------------------------------------------------------------------------
@@ -217,7 +230,8 @@ _CRI_RFL['cri2012'] = _CRI2012
 _CRI_RFL['ies-tm30-15'] = _IESTM3015['R']
 _CRI_RFL['ies-tm30-18'] = _IESTM3018['R']
 _CRI_RFL['ies-tm30-20'] = _IESTM3020['R']
-_CRI_RFL['ies-tm30'] = _IESTM3020['R']
+_CRI_RFL['ies-tm30-24'] = _IESTM3024['R']
+_CRI_RFL['ies-tm30'] = _IESTM3024['R']
 _CRI_RFL['mcri'] = _MCRI['R']
 _CRI_RFL['cqs'] = _CQS
 _CRI_RFL['fci'] = _FCI['R']

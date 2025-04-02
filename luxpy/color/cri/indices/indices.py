@@ -25,11 +25,14 @@ utils/init_cri_defaults_database.py
  :_CRI_TYPE_DEFAULT: Default cri_type.
 
  :_CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-                 (major dict has 9 keys (04-Jul-2017): 
+                 (major dict has 12 keys (18-Dec-2024): 
                  sampleset [str/dict], 
                  ref_type [str], 
-                 cieobs [str], 
+                 calculation_wavelength_range [list],
+                 cieobs [Dict], 
+                 cct_mode [str],
                  avg [fcn handle], 
+                 rf_from_avg_rounded_rfi [bool],
                  scale [dict], 
                  cspace [dict], 
                  catf [dict], 

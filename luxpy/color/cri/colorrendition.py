@@ -24,25 +24,30 @@ utils/init_cri_defaults_database.py
 
  :_CRI_TYPE_DEFAULT: Default cri_type.
 
- :_CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-                 (major dict has 9 keys (04-Jul-2017): 
-                 sampleset [str/dict], 
-                 ref_type [str], 
-                 cieobs [str], 
-                 avg [fcn handle], 
-                 scale [dict], 
-                 cspace [dict], 
-                 catf [dict], 
-                 rg_pars [dict], 
-                 cri_specific_pars [dict])
-                 
-                * Supported cri-types:
-                    * 'ciera','ciera-8','ciera-14','cierf',
-                    * 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20',
-                    * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
-                    * 'mcri',
-                    * 'cqs-v7.5','cqs-v9.0',
-                    * 'fci'
+ :_CRI_DEFAULTS: | default parameters for color fidelity and gamut area metrics 
+                 | (major dict has 13 keys (04 Mar, 2025): 
+                 |  - sampleset [str/dict], 
+                 |  - ref_type [str], 
+                 |  - calculation_wavelength_range [list],
+                 |  - cieobs [Dict], 
+                 |  - cct_mode [str],
+                 |  - avg [fcn handle], 
+                 |  - rf_from_avg_rounded_rfi [bool],
+                 |  - round_daylightphase_Mi_to_cie_recommended [bool],
+                 |  - scale [dict], 
+                 |  - cspace [dict], 
+                 |  - catf [dict], 
+                 |  - rg_pars [dict], 
+                 |  - cri_specific_pars [dict])
+                 |  
+                 | Supported cri-types:
+                 | * 'ciera','ciera-8','ciera-14','cierf',
+                 | * 'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','iesrf-tm30-24'
+                 | * 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210',
+                 | * 'mcri',
+                 | * 'cqs-v7.5','cqs-v9.0'
+                 | * 'fci'
+                 | * 'thornton_cpi'
 
  :process_cri_type_input(): load a cri_type dict but overwrites any keys that 
                             have a non-None input in calling function.

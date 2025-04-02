@@ -289,7 +289,7 @@ def qabW_cam15u_to_xyz(qab, fov = 10.0, parameters = None, **kwargs):
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     C = _CIE_ILLUMINANTS['C'].copy()
-    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],datatype='spd')[1:]))
     M = _MUNSELL.copy()
     rflM = M['R']
     cieobs = '2006_10'

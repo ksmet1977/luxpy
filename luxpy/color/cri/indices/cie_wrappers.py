@@ -30,7 +30,7 @@ __all__ = ['spd_to_ciera', 'spd_to_cierf',
            'spd_to_ciera_133_1995','spd_to_cierf_224_2017']
 
 #------------------------------------------------------------------------------
-def spd_to_ciera(SPD, out = 'Rf', wl = None):
+def spd_to_ciera(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function the 'ciera' color rendition (fidelity) metric 
     (CIE 13.3-1995). 
@@ -59,10 +59,10 @@ def spd_to_ciera(SPD, out = 'Rf', wl = None):
         <http://www.cie.co.at/index.php/index.php?i_ca_id=303>`_
 
     """
-    return spd_to_cri(SPD, cri_type = 'ciera', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'ciera', out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_cierf(SPD, out = 'Rf', wl = None):
+def spd_to_cierf(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function the 'cierf' color rendition (fidelity) metric 
     (CIE224-2017). 
@@ -89,7 +89,7 @@ def spd_to_cierf(SPD, out = 'Rf', wl = None):
         <http://www.cie.co.at/index.php?i_ca_id=1027>`_
     
     """
-    return spd_to_cri(SPD, cri_type = 'cierf', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cierf', out = out, wl = wl, interp_settings = interp_settings)
 
 
 # Additional callers:

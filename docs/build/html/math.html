@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Math sub-package &mdash; LuxPy 1.11.4 documentation</title>
+  <title>Math sub-package &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9080e127"></script>
+        <script src="_static/documentation_options.js?v=fe8e256b"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.4
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -62,6 +62,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.normalize_3x3_matrix"><code class="docutils literal notranslate"><span class="pre">normalize_3x3_matrix()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.symmM_to_posdefM"><code class="docutils literal notranslate"><span class="pre">symmM_to_posdefM()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.check_symmetric"><code class="docutils literal notranslate"><span class="pre">check_symmetric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.in_hull"><code class="docutils literal notranslate"><span class="pre">in_hull()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.check_posdef"><code class="docutils literal notranslate"><span class="pre">check_posdef()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.positive_arctan"><code class="docutils literal notranslate"><span class="pre">positive_arctan()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.line_intersect"><code class="docutils literal notranslate"><span class="pre">line_intersect()</span></code></a></li>
@@ -86,8 +87,11 @@
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.remove_outliers"><code class="docutils literal notranslate"><span class="pre">remove_outliers()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.fit_ellipse"><code class="docutils literal notranslate"><span class="pre">fit_ellipse()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.fit_cov_ellipse"><code class="docutils literal notranslate"><span class="pre">fit_cov_ellipse()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.in_hull"><code class="docutils literal notranslate"><span class="pre">in_hull()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.linterp"><code class="docutils literal notranslate"><span class="pre">linterp()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.interpolatedunivariatespline"><code class="docutils literal notranslate"><span class="pre">interpolatedunivariatespline()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.interp1_sprague5"><code class="docutils literal notranslate"><span class="pre">interp1_sprague5()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.interp1_sprague_cie224_2017"><code class="docutils literal notranslate"><span class="pre">interp1_sprague_cie224_2017()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.interp1_lagrange"><code class="docutils literal notranslate"><span class="pre">interp1_lagrange()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.interp1"><code class="docutils literal notranslate"><span class="pre">interp1()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.ndinterp1"><code class="docutils literal notranslate"><span class="pre">ndinterp1()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.ndinterp1_scipy"><code class="docutils literal notranslate"><span class="pre">ndinterp1_scipy()</span></code></a></li>
@@ -96,6 +100,9 @@
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.stress"><code class="docutils literal notranslate"><span class="pre">stress()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.stress_F_test"><code class="docutils literal notranslate"><span class="pre">stress_F_test()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.mean_distance_weighted"><code class="docutils literal notranslate"><span class="pre">mean_distance_weighted()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math.round"><code class="docutils literal notranslate"><span class="pre">round()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math._interpolate_with_nans"><code class="docutils literal notranslate"><span class="pre">_interpolate_with_nans()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#luxpy.math._extrap_y"><code class="docutils literal notranslate"><span class="pre">_extrap_y()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#luxpy.math.minimizebnd"><code class="docutils literal notranslate"><span class="pre">minimizebnd()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#vec3">vec3/</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#demo">DEMO/</a></li>
@@ -275,8 +282,14 @@ as a dict.</p>
 <dt class="field-even">fit_cov_ellipse()<span class="colon">:</span></dt>
 <dd class="field-even"><p>Fit an covariance ellipse to supplied data points.</p>
 </dd>
+<dt class="field-odd">interp1_sprague5()<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Perform a 1-dimensional 5th order Sprague interpolation.</p>
+</dd>
+<dt class="field-even">linterp()<span class="colon">:</span></dt>
+<dd class="field-even"><p>Perform a 1-dimensional linear interpolation (wrapper around numpy.interp1 with added linear extrapolation).</p>
+</dd>
 <dt class="field-odd">interp1()<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
+<dd class="field-odd"><p>Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy based linterp).</p>
 </dd>
 <dt class="field-even">ndinterp1()<span class="colon">:</span></dt>
 <dd class="field-even"><p>Perform n-dimensional interpolation using Delaunay triangulation.</p>
@@ -428,6 +441,37 @@ MATLAB code.
 <dd class="field-odd"><div class="line-block">
 <div class="line">Bool</div>
 <div class="line">True: the array is symmetric within the given tolerance</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.in_hull">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">in_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Link to this definition"></a></dt>
+<dd><p>Test if points in <cite>p</cite> are in <cite>hull</cite></p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">p<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">NxK coordinates of N points in K dimensions</div>
+</div>
+</dd>
+<dt class="field-even">hull<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Either a scipy.spatial.Delaunay object or the MxK array of the </div>
+<div class="line">coordinates of M points in K dimensions for which Delaunay </div>
+<div class="line">triangulation will be computed</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">bool<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">boolean ndarray with True for in-gamut and False for out-of-gamut points</div>
 </div>
 </dd>
 </dl>
@@ -1378,29 +1422,57 @@ pp 253–257, Vienna, 1996.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.in_hull">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">in_hull</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hull</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#in_hull"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.in_hull" title="Link to this definition"></a></dt>
-<dd><p>Test if points in <cite>p</cite> are in <cite>hull</cite></p>
+<dt class="sig sig-object py" id="luxpy.math.linterp">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">linterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ext'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ext'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#linterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.linterp" title="Link to this definition"></a></dt>
+<dd><p>Perform linear 1-D interpolation (with linear or constant extrapolation).
+(wrapper around np.interp)</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">p<span class="colon">:</span></dt>
+<dt class="field-odd">X<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">NxK coordinates of N points in K dimensions</div>
+<div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
 </div>
 </dd>
-<dt class="field-even">hull<span class="colon">:</span></dt>
+<dt class="field-even">Y<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">Either a scipy.spatial.Delaunay object or the MxK array of the </div>
-<div class="line">coordinates of M points in K dimensions for which Delaunay </div>
-<div class="line">triangulation will be computed</div>
+<div class="line">ndarray with values at coordinates in X</div>
+</div>
+</dd>
+<dt class="field-odd">Xnew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of new coordinates (last axis represents dimension)</div>
+</div>
+</dd>
+<dt class="field-even">left<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘ext’, optional float corresponding to Y.</div>
+<div class="line">Value to return for <cite>Xnew &lt; X[0]</cite>, None is <cite>Y[0]</cite>.</div>
+<div class="line">If ‘ext’: perform linear extrapolation</div>
+</div>
+</dd>
+<dt class="field-odd">right<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘ext’, optional float corresponding to Y.</div>
+<div class="line">Value to return for <cite>Xnew &gt; X[-1]</cite>, None is <cite>Y[-1]</cite>.</div>
+<div class="line">If ‘ext’: perform linear extrapolation</div>
+</div>
+</dd>
+<dt class="field-even">interp_log<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Perform interpolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
+</div>
+</dd>
+<dt class="field-odd">extrap_log<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Perform extrapolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
 </div>
 </dd>
 </dl>
 </dd>
 <dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">bool<span class="colon">:</span></dt>
+<dt class="field-odd">Ynew<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">boolean ndarray with True for in-gamut and False for out-of-gamut points</div>
+<div class="line">ndarray with new values at coordinates in Xnew</div>
 </div>
 </dd>
 </dl>
@@ -1409,54 +1481,10 @@ pp 253–257, Vienna, 1996.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.interp1_sprague5">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1_sprague5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(nan,</span> <span class="pre">nan)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'interp1d'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_sprague5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1_sprague5" title="Link to this definition"></a></dt>
-<dd><p>Perform a 1-dimensional 5th order Sprague interpolation.</p>
-<dl>
-<dt>Args:</dt><dd><dl class="field-list">
-<dt class="field-odd">x<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with n-dimensional coordinates.</div>
-</div>
-</dd>
-<dt class="field-even">y<span class="colon">:</span></dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">ndarray with values at coordinates in x.</div>
-</div>
-</dd>
-<dt class="field-odd">xn<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray of new coordinates.</div>
-</div>
-</dd>
-<dt class="field-even">extrap<span class="colon">:</span></dt>
-<dd class="field-even"><div class="line-block">
-<div class="line">(np.nan, np.nan) or string, optional</div>
-<div class="line">If tuple: fill with values in tuple (&lt;x[0],&gt;x[-1])</div>
-<div class="line">If string:  (‘zeros’,’linear’, ‘nearest’, ‘nearest-up’, ‘zero’, ‘slinear’, ‘quadratic’, ‘cubic’, ‘previous’,’next’)</div>
-<div class="line-block">
-<div class="line">for more info on the other options see: scipy.interpolate.interp1d?</div>
-</div>
-</div>
-</dd>
-</dl>
-</dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">yn<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">ndarray with values at new coordinates in xn.</div>
-</div>
-</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="luxpy.math.interp1">
-<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'interp1d'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_finite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1" title="Link to this definition"></a></dt>
-<dd><p>Perform a 1-dimensional interpolation 
-(wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).</p>
+<dt class="sig sig-object py" id="luxpy.math.interpolatedunivariatespline">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interpolatedunivariatespline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_finite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interpolatedunivariatespline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interpolatedunivariatespline" title="Link to this definition"></a></dt>
+<dd><p>Perform a 1-dimensional interpolation (with extrapolation)
+(wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">X<span class="colon">:</span></dt>
@@ -1476,7 +1504,7 @@ pp 253–257, Vienna, 1996.</p>
 </dd>
 <dt class="field-even">kind<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">str or int,  optional</div>
+<div class="line">str,  optional</div>
 <div class="line">supported options for str: ‘linear’, ‘quadratic’, ‘cubic’</div>
 </div>
 </dd>
@@ -1494,25 +1522,299 @@ pp 253–257, Vienna, 1996.</p>
 </dd>
 <dt class="field-even">fill_value<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘extrpolate’ or float or int or tupple, optional</div>
+<div class="line">‘extrapolate’ or float or int or tupple, optional</div>
+<div class="line">If ext == ‘fill_value’: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</div>
+</div>
+</dd>
+<dt class="field-odd">w,bbox,check_finite<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">see scipy.interpolate.InterpolatedUnivariateSpline()</div>
+</div>
+</dd>
+<dt class="field-even">interp_log<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Perform interpolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
+</div>
+</dd>
+<dt class="field-odd">extrap_log<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Perform extrapolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Ynew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with new values at coordinates in Xnew</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.interp1_sprague5">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1_sprague5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'InterpolatedUnivariateSpline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_most_efficient_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_sprague5"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1_sprague5" title="Link to this definition"></a></dt>
+<dd><p>Perform a 1-dimensional 5th order Sprague interpolation.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with n-dimensional coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">Y<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with values at coordinates in X.</div>
+</div>
+</dd>
+<dt class="field-odd">Xnew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of new coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">extrap<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(np.nan, np.nan) or string, optional</div>
+<div class="line">If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</div>
+<div class="line">If string:  (‘linear’, ‘quadratic’, ‘cubic’, ‘zeros’, ‘const’)</div>
+</div>
+</dd>
+<dt class="field-odd">force_scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </div>
+</div>
+</dd>
+<dt class="field-even">scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘InterpolatedUnivariateSpline’, optional</div>
+<div class="line">options: ‘InterpolatedUnivariateSpline’, ‘interp1d’</div>
+</div>
+</dd>
+<dt class="field-odd">delete_nans<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If NaNs are present, remove them and (and try to) interpolate without them.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yn<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with values at new coordinates in Xnew.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.interp1_sprague_cie224_2017">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1_sprague_cie224_2017</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'InterpolatedUnivariateSpline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_most_efficient_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_sprague_cie224_2017"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1_sprague_cie224_2017" title="Link to this definition"></a></dt>
+<dd><p>Perform a 1-dimensional Sprague interpolation according to CIE-224-2017.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with n-dimensional coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">Y<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with values at coordinates in X.</div>
+</div>
+</dd>
+<dt class="field-odd">Xnew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of new coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">extrap<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">(np.nan, np.nan) or string, optional</div>
+<div class="line">If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</div>
+<div class="line">If string:  (‘linear’, ‘quadratic’, ‘cubic’, ‘zeros’, ‘const’)</div>
+</div>
+</dd>
+<dt class="field-odd">force_scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </div>
+</div>
+</dd>
+<dt class="field-even">scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘InterpolatedUnivariateSpline’, optional</div>
+<div class="line">options: ‘InterpolatedUnivariateSpline’, ‘interp1d’</div>
+</div>
+</dd>
+<dt class="field-odd">delete_nans<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If NaNs are present, remove them and (and try to) interpolate without them.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yn<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with values at new coordinates in Xnew.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.interp1_lagrange">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1_lagrange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'InterpolatedUnivariateSpline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_most_efficient_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1_lagrange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1_lagrange" title="Link to this definition"></a></dt>
+<dd><p>Perform a 1-dimensional k-th order Lagrange interpolation.</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with n-dimensional coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">Y<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with values at coordinates in X.</div>
+</div>
+</dd>
+<dt class="field-odd">Xnew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of new coordinates.</div>
+</div>
+</dd>
+<dt class="field-even">k<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">5 or int, optional</div>
+<div class="line">Order of Lagrange interpolation</div>
+</div>
+</dd>
+<dt class="field-odd">extrap<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">(np.nan, np.nan) or string, optional</div>
+<div class="line">If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</div>
+<div class="line">If string:  (‘linear’, ‘quadratic’, ‘cubic’, ‘zeros’, ‘const’)</div>
+</div>
+</dd>
+<dt class="field-even">force_scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">False, optional</div>
+<div class="line">If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </div>
+</div>
+</dd>
+<dt class="field-odd">scipy_interpolator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘InterpolatedUnivariateSpline’, optional</div>
+<div class="line">options: ‘InterpolatedUnivariateSpline’, ‘interp1d’</div>
+</div>
+</dd>
+<dt class="field-even">delete_nans<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If NaNs are present, remove them and (and try to) interpolate without them.</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">Yn<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with values at new coordinates in Xnew.</div>
+</div>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.interp1">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">interp1</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kind</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ext</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'extrapolate'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'InterpolatedUnivariateSpline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bbox</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[None,</span> <span class="pre">None]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_finite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap_log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_most_efficient_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbosity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#interp1"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.interp1" title="Link to this definition"></a></dt>
+<dd><p>Perform a 1-dimensional interpolation 
+(wrapper around linterp, interpolatedunivariatespline, interp1d).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">X<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray with n-dimensional coordinates (last axis represents dimension)</div>
+</div>
+</dd>
+<dt class="field-even">Y<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">ndarray with values at coordinates in X</div>
+</div>
+</dd>
+<dt class="field-odd">Xnew<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">ndarray of new coordinates (last axis represents dimension)</div>
+</div>
+</dd>
+<dt class="field-even">kind<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">str,  optional</div>
+<div class="line">supported options for str: ‘linear’, ‘quadratic’, ‘cubic’</div>
+</div>
+</dd>
+<dt class="field-odd">ext<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘extrapolate’, optional</div>
+<div class="line">options: </div>
+<div class="line-block">
+<div class="line">- ‘extrapolate’, ‘ext’: use method specified in :kind: to extrapolate.</div>
+<div class="line">- ‘linear’, ‘quadratic’, ‘cubic’ extrapolation</div>
+<div class="line">- ‘zeros’: out-of-bounds values are filled with zeros</div>
+<div class="line">- ‘const’,’flat’,’nearest’: out-of-bounds values are filled with nearest value</div>
+<div class="line">- ‘fill_value’: value of tuple (2,) of values is used to fill out-of-bounds values</div>
+</div>
+</div>
+</dd>
+<dt class="field-even">fill_value<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">‘extrapolate’ or float or int or tupple, optional</div>
 <div class="line">If ext == ‘fill_value’: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</div>
 </div>
 </dd>
 <dt class="field-odd">force_scipy_interpolator<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
 <div class="line">False, optional</div>
-<div class="line">If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). </div>
+<div class="line">If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </div>
 </div>
 </dd>
 <dt class="field-even">scipy_interpolator<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">‘interp1d’, optional</div>
-<div class="line">options: [‘InterpolatedUnivariateSpline’, ‘interp1d’] (or 0 or 1)</div>
+<div class="line">‘InterpolatedUnivariateSpline’, optional</div>
+<div class="line">options: ‘InterpolatedUnivariateSpline’, ‘interp1d’</div>
 </div>
 </dd>
-<dt class="field-odd">other args<span class="colon">:</span></dt>
+<dt class="field-odd">delete_nans<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
+<div class="line">True, optional</div>
+<div class="line">If NaNs are present, remove them and (and try to) interpolate without them.</div>
+</div>
+</dd>
+<dt class="field-even">w,bbox,check_finite<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
 <div class="line">see scipy.interpolate.InterpolatedUnivariateSpline()</div>
+</div>
+</dd>
+<dt class="field-odd">interp_log<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">Perform interpolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
+</div>
+</dd>
+<dt class="field-even">extrap_log<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">Perform extrapolation method (‘linear’, ‘quadratic’, or ‘cubic’) in log space.</div>
 </div>
 </dd>
 </dl>
@@ -1526,7 +1828,7 @@ pp 253–257, Vienna, 1996.</p>
 </dl>
 </dd>
 <dt>Note:</dt><dd><ol class="arabic simple">
-<li><p>‘numpy.interp’ is fastest (but only works for linear interpolation without extrapolation)</p></li>
+<li><p>‘numpy.interp’ is fastest (but only works for linear interpolation and linear or no extrapolation)</p></li>
 <li><p>For linear interpolation: ‘interp1d’ is faster for Y (N,…) with N &gt; 1, else ‘InterpolatedUnivariateSpline’ is faster</p></li>
 <li><p>For ‘cubic’ interpolation: ‘InterpolatedUnivariateSpline’ is faster for Y (N,…) with N &gt; 1, else ‘interp1d’ is faster</p></li>
 </ol>
@@ -1882,6 +2184,60 @@ Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math.round">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">round</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#round"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.round" title="Link to this definition"></a></dt>
+<dd><p>Round x (int, float, ndarray or tuple) to n significant digits, or n decimals (‘to nearest even’ or ‘halfway from zero’).</p>
+<dl>
+<dt>Args:</dt><dd><dl class="field-list">
+<dt class="field-odd">x<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">int, float, ndarray or tuple to be rounded.</div>
+</div>
+</dd>
+<dt class="field-even">n<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">int or tuple</div>
+<div class="line">Number of significant digits, or n decimals.</div>
+<div class="line">If int: round to nearest even using numpy’s round() function</div>
+<div class="line">if Tuple: first element specifies the number of digits, the second element is a string specifying the method:</div>
+<div class="line-block">
+<div class="line">- ‘sigfig’: round to n significant digits (uses luxpy.math.round_sigfig function).</div>
+<div class="line">- ‘dec’ or ‘nearesteven’ or ‘numpy’ or ‘np’: round to nearest even using numpy’s round function.</div>
+<div class="line">- ‘halfwayfromzero’: rounds halfway from zero (uses luxpy.math.round_awayfromzero function).</div>
+</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><dl class="field-list">
+<dt class="field-odd">y<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">rounded value(s).</div>
+</div>
+</dd>
+</dl>
+</dd>
+<dt>Notes:</dt><dd><ol class="arabic simple">
+<li><p>‘sigfig’ from: <a class="reference external" href="https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy">https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy</a></p></li>
+<li><p>‘halfwayfromzero’ from: CIETC1-97: <a class="reference external" href="https://github.com/ifarup/ciefunctions">https://github.com/ifarup/ciefunctions</a></p></li>
+</ol>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math._interpolate_with_nans">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">_interpolate_with_nans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fintp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">X</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Xnew</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nan_indices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#_interpolate_with_nans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math._interpolate_with_nans" title="Link to this definition"></a></dt>
+<dd><p>Deal with possible NaNs in Y</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="luxpy.math._extrap_y">
+<span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">_extrap_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scipy_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'InterpolatedUnivariateSpline'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delete_nans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">choose_most_efficient_interpolator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/basics.html#_extrap_y"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math._extrap_y" title="Link to this definition"></a></dt>
+<dd><p>Extrapolate y if needed</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="luxpy.math.minimizebnd">
 <span class="sig-prename descclassname"><span class="pre">luxpy.math.</span></span><span class="sig-name descname"><span class="pre">minimizebnd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Nelder-Mead'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use_bnd</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">None)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/math/minimizebnd.html#minimizebnd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.math.minimizebnd" title="Link to this definition"></a></dt>
 <dd><div class="line-block">
@@ -1984,7 +2340,7 @@ Journal of the Optical Society of America A, 28(5), 949–953.</a></p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

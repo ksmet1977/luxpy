@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cam.ciecam16 &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.cam.ciecam16 &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -610,11 +610,11 @@
     <span class="c1"># Prepare some illuminant data:</span>
     <span class="n">C</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;C&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">Ill1</span> <span class="o">=</span> <span class="n">C</span>
-    <span class="n">Ill2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">kind</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">Ill2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">C</span><span class="p">,</span><span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;D65&#39;</span><span class="p">],</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;spd&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:],</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span><span class="o">*</span><span class="mi">3</span><span class="p">))</span>
     
     <span class="c1"># Prepare some sample data:</span>
     <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_MUNSELL</span><span class="p">[</span><span class="s1">&#39;R&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">rflM</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
+    <span class="n">rflM</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">rflM</span><span class="p">,</span><span class="n">C</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">datatype</span><span class="o">=</span><span class="s1">&#39;rfl&#39;</span><span class="p">)</span>
     
     <span class="c1"># Setup some model parameters:</span>
     <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span>
@@ -689,7 +689,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

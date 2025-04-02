@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.spectrum.basics.illuminants &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.spectrum.basics.illuminants &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -83,7 +83,7 @@
 <span class="sd">============================</span>
 
 <span class="sd"> :_BB: Dict with constants for blackbody radiator calculation </span>
-<span class="sd">       constant are (c1, c2, n, na, c, h, k). </span>
+<span class="sd">       constant are (c1, c2, n, na, c, h, k, e). </span>
 
 <span class="sd"> :_S012_DAYLIGHTPHASE: ndarray with CIE S0,S1, S2 curves for daylight </span>
 <span class="sd">        phase calculation (linearly interpolated to 1 nm).</span>
@@ -166,7 +166,8 @@
 <span class="p">])</span>  
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<span class="c1"># reference illuminant default and mixing range settings, and cieobs, cieobs_Y_normalization settings:</span>
+<span class="c1"># reference illuminant default and mixing range settings, cieobs, </span>
+<span class="c1"># and cieobs_Y_normalization (for mixed illuminants) settings:</span>
 <span class="n">_CRI_REF_TYPE</span> <span class="o">=</span> <span class="s1">&#39;ciera&#39;</span>
 <span class="n">_CRI_REF_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ciera&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">5000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span> 
                   <span class="s1">&#39;cierf&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span> 
@@ -175,6 +176,9 @@
                   <span class="s1">&#39;iesrf-tm30-15&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4500.0</span> <span class="p">,</span> <span class="mf">5500.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
                   <span class="s1">&#39;iesrf-tm30-18&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">},</span>
                   <span class="s1">&#39;iesrf-tm30-20&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">},</span>
+                  <span class="s1">&#39;iesrf-tm30-24&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">},</span>
+                  <span class="s1">&#39;iesrf-tm30&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">},</span>
+                  <span class="s1">&#39;ies-tm30&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">4000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">},</span>
                   <span class="s1">&#39;BB&#39;</span><span class="p">:{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">5000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">},</span>
                   <span class="s1">&#39;DL&#39;</span><span class="p">:{</span><span class="s1">&#39;mix_range&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">5000.0</span> <span class="p">,</span> <span class="mf">5000.0</span><span class="p">],</span> <span class="s1">&#39;cieobs&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;cieobs_Y_normalization&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">}</span>
                   <span class="p">}</span> <span class="c1">#mixing ranges, cieobs (for DL), cieobs_Y_normalization (for normalization of mixed illuminants) for various cri_reference_illuminant types</span>
@@ -230,7 +234,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_get_daylightlocus_parameters</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_daylightlocus_parameters</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get daylight locus parameters for a single cieobs from daylight phase spectra</span>
 <span class="sd">    determined based on parameters for &#39;1931_2&#39; as reported in CIE15-20xx.</span>
@@ -240,7 +244,7 @@
     <span class="c1"># Get locus parameters:</span>
     <span class="c1">#======================</span>
     <span class="c1"># get xy coordinates for new cieobs:</span>
-    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)</span>
+    <span class="n">xyz_</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     <span class="n">xy</span> <span class="o">=</span> <span class="n">xyz_</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">xyz_</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     
     <span class="c1"># Fit 3e order polynomal xD(1/T) [4000 K &lt; T &lt;= 7000 K]:</span>
@@ -261,7 +265,8 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="daylightlocus">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.daylightlocus">[docs]</a>
-<span class="k">def</span> <span class="nf">daylightlocus</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">daylightlocus</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                 <span class="n">use_published_daylightlocus_coeffs_when_cieobs_is_1931_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Calculates daylight chromaticity (xD,yD) from correlated color temperature (cct).</span>
 <span class="sd">    </span>
@@ -283,6 +288,9 @@
 <span class="sd">            | for specified cieobs.</span>
 <span class="sd">            | If None: use pre-calculated values.</span>
 <span class="sd">            | If &#39;calc&#39;: calculate them on the fly.</span>
+<span class="sd">        :use_published_daylightlocus_coeffs_when_cieobs_is_1931_2:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | Use published coefficients for CIE 1931 2° CMFs (see CIE015 colorimetry)</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :(xD, yD): </span>
@@ -294,12 +302,13 @@
     <span class="n">cct</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">cct</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">((</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="mf">4000.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_daylight_below4000K</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K&#39;</span><span class="p">)</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="c1"># use default values for &#39;1931_2&#39; reported in CIE15-20xx</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">use_published_daylightlocus_coeffs_when_cieobs_is_1931_2</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="o">==</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)):</span> <span class="c1"># use default values for &#39;1931_2&#39; reported in CIE15-20xx</span>
         <span class="n">xD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.607</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span><span class="o">+</span><span class="mf">2.9678</span><span class="o">*</span><span class="p">((</span><span class="mf">1e3</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.09911</span><span class="o">*</span><span class="p">(</span><span class="mf">1000.0</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span><span class="o">+</span><span class="mf">0.244063</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">cct</span><span class="o">&gt;=</span><span class="mf">7000.0</span>
         <span class="n">xD</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0064</span><span class="o">*</span><span class="p">((</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">**</span><span class="mf">3.0</span><span class="p">)</span><span class="o">+</span><span class="mf">1.9018</span><span class="o">*</span><span class="p">((</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span><span class="o">+</span><span class="mf">0.24748</span><span class="o">*</span><span class="p">(</span><span class="mf">1.0e3</span><span class="o">/</span><span class="n">cct</span><span class="p">[</span><span class="n">p</span><span class="p">])</span><span class="o">+</span><span class="mf">0.23704</span>
         <span class="n">yD</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.0</span><span class="o">*</span><span class="n">xD</span><span class="o">**</span><span class="mf">2.0</span><span class="o">+</span><span class="mf">2.87</span><span class="o">*</span><span class="n">xD</span><span class="o">-</span><span class="mf">0.275</span>
+
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">daylight_locus</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -307,9 +316,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">daylight_locus</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">daylight_locus</span> <span class="o">==</span> <span class="s1">&#39;calc&#39;</span><span class="p">:</span>
-                        <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">cieobs</span><span class="p">])[</span><span class="n">cieobs</span><span class="p">]</span>
+                        <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">cieobs</span><span class="p">],</span> 
+                                                                     <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)[</span><span class="n">cieobs</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)[</span><span class="s1">&#39;cmf_0&#39;</span><span class="p">]</span>
+            <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span>
+                                                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)[</span><span class="s1">&#39;cmf_0&#39;</span><span class="p">]</span>
         <span class="n">pxy</span><span class="p">,</span> <span class="n">pxT_l7</span><span class="p">,</span> <span class="n">pxT_L7</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">[</span><span class="s1">&#39;pxy&#39;</span><span class="p">],</span> <span class="n">daylight_locus</span><span class="p">[</span><span class="s1">&#39;pxT_l7k&#39;</span><span class="p">],</span> <span class="n">daylight_locus</span><span class="p">[</span><span class="s1">&#39;pxT_L7k&#39;</span><span class="p">]</span>
         <span class="n">xD</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">pxT_l7</span><span class="p">,</span> <span class="mi">1000</span><span class="o">/</span><span class="n">cct</span><span class="p">)</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">cct</span><span class="o">&gt;=</span><span class="mf">7000.0</span>
@@ -321,7 +332,9 @@
 
 <div class="viewcode-block" id="get_daylightphase_Mi_coeffs">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.get_daylightphase_Mi_coeffs">[docs]</a>
-<span class="k">def</span> <span class="nf">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                <span class="n">use_1931_2_published_Mcoeffs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get coefficients of Mi weights of daylight phase for specific cieobs</span>
 <span class="sd">    </span>
@@ -337,7 +350,10 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Daylight phase component functions.</span>
 <span class="sd">            | If None: use _S012_DAYLIGHTPHASE</span>
-<span class="sd">    </span>
+<span class="sd">        :use_1931_2_published_Mcoeffs:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Use published coefficients of CIE 1931 2° CMFs (see CIE015 colorimetry), even when cieobs is not &#39;1931_2&#39;!</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :Mcoeffs:</span>
 <span class="sd">            | Dictionary with i,j,k,i1,j1,k1,i2,j2,k2 for each cieobs in :cieobs:</span>
@@ -351,7 +367,8 @@
     <span class="k">if</span> <span class="n">S012_daylightphase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">_S012_DAYLIGHTPHASE</span>
     <span class="k">if</span> <span class="n">wl3</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">,</span><span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">,</span><span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CMF</span><span class="p">[</span><span class="s1">&#39;types&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -367,8 +384,15 @@
             <span class="n">key</span> <span class="o">=</span> <span class="n">cieobs_</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;cmf_</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-        
-        <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">use_1931_2_published_Mcoeffs</span><span class="p">:</span>
+            <span class="n">Mcoeffs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span><span class="mf">0.0241</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">:</span><span class="mf">0.2562</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">0.7341</span><span class="p">,</span>
+                            <span class="s1">&#39;i1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.3515</span><span class="p">,</span><span class="s1">&#39;j1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.7703</span><span class="p">,</span><span class="s1">&#39;k1&#39;</span><span class="p">:</span><span class="mf">5.9114</span><span class="p">,</span>
+                            <span class="s1">&#39;i2&#39;</span><span class="p">:</span><span class="mf">0.0300</span><span class="p">,</span><span class="s1">&#39;j2&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">31.4424</span><span class="p">,</span><span class="s1">&#39;k2&#39;</span><span class="p">:</span><span class="mf">30.0717</span><span class="p">}</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># Get tristimulus values of daylight phase component functions:</span>
+        <span class="n">xyz</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">S012_daylightphase</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
     
         <span class="c1"># Get coefficients in Mi:</span>
@@ -389,7 +413,10 @@
 
 
 
-<span class="k">def</span> <span class="nf">_get_daylightphase_Mi_values</span><span class="p">(</span><span class="n">xD</span><span class="p">,</span><span class="n">yD</span><span class="p">,</span> <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_get_daylightphase_Mi_values</span><span class="p">(</span><span class="n">xD</span><span class="p">,</span><span class="n">yD</span><span class="p">,</span> <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                                 <span class="n">use_1931_2_published_Mcoeffs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                                 <span class="n">round_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get daylight phase coefficients M1, M2 following Judd et al. (1964)</span>
 <span class="sd">    </span>
@@ -404,7 +431,19 @@
 <span class="sd">            | If None: Mcoeffs must be supplied.</span>
 <span class="sd">        :S012_daylightphase: </span>
 <span class="sd">            | ndarray with CIE S0, S1, S2 daylight phase component functions</span>
-<span class="sd">    </span>
+<span class="sd">        :use_1931_2_published_Mcoeffs:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Use published coefficients of CIE 1931 2° CMFs (see CIE015 colorimetry), even when cieobs is not &#39;1931_2&#39;!</span>
+<span class="sd">        :interp_settings:</span>
+<span class="sd">            | None, optional    </span>
+<span class="sd">            | Interpolation settings for spd_to_xyz() and cie_interp()</span>
+<span class="sd">            | None: use default settings.</span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
+<span class="sd">            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!</span>
+<span class="sd">            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        :M1,M2:</span>
 <span class="sd">            | daylight phase coefficients M1, M2</span>
@@ -414,13 +453,18 @@
 <span class="sd">        Function of Correlated Color Temperature. </span>
 <span class="sd">        JOSA A, 54(8), pp. 1031-1040 (1964) &lt;https://doi.org/10.1364/JOSA.54.001031&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">use_1931_2_published_Mcoeffs</span><span class="p">:</span>
+        <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span><span class="mf">0.0241</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">:</span><span class="mf">0.2562</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">0.7341</span><span class="p">,</span>
+            <span class="s1">&#39;i1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.3515</span><span class="p">,</span><span class="s1">&#39;j1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.7703</span><span class="p">,</span><span class="s1">&#39;k1&#39;</span><span class="p">:</span><span class="mf">5.9114</span><span class="p">,</span>
+            <span class="s1">&#39;i2&#39;</span><span class="p">:</span><span class="mf">0.0300</span><span class="p">,</span><span class="s1">&#39;j2&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">31.4424</span><span class="p">,</span><span class="s1">&#39;k2&#39;</span><span class="p">:</span><span class="mf">30.0717</span><span class="p">}</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">Mcoeffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span>  <span class="kc">None</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;_get_daylightphase_Mi_values(): Mcoeffs and cieobs can&#39;t both be None&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">Mcoeffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> <span class="c1"># use pre-calculated coeffs.</span>
         <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">_DAYLIGHT_M12_COEFFS</span><span class="p">[</span><span class="n">cieobs</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">Mcoeffs</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span> <span class="c1"># calculate coeffs.</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">Mcoeffs</span> <span class="o">==</span> <span class="s1">&#39;calc&#39;</span><span class="p">):</span>
-            <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">)</span>
+            <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">,</span>
+                                                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
             <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">Mcoeffs</span><span class="p">[</span><span class="n">cieobs</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cieobs</span><span class="p">,</span><span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">Mcoeffs</span><span class="p">[</span><span class="s1">&#39;cmf_0&#39;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Mcoeffs is a string, but not &#39;calc&#39;: unknown option.&quot;</span><span class="p">)</span>
@@ -429,14 +473,13 @@
 
     <span class="c1"># Calculate M1, M2 and round to 3 decimals (CIE recommendation):</span>
     <span class="n">denom</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;i&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;j&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">xD</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">yD</span>
-    <span class="n">rr</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># rounding of Mi</span>
-    <span class="n">M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;i1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;j1&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">xD</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
-    <span class="n">M2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">((</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;i2&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;j2&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">xD</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;k2&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
-    
-    <span class="c1"># denom = (xyz[2,0]*xyz[1,1] - xyz[1,0]*xyz[2,1]) + (xyz[2,1]*S[1] - xyz[1,1]*S[2])*xD + (xyz[1,0]*S[2] - xyz[2,0]*S[1])*yD</span>
-    <span class="c1"># M1 = np.round(((xyz[0,0]*xyz[2,1] - xyz[2,0]*xyz[0,1]) + (xyz[0,1]*S[2] - xyz[2,1]*S[0])*xD + (xyz[2,0]*S[0] - xyz[0,0]*S[2])*yD) / denom, 3)</span>
-    <span class="c1"># M2 = np.round(((xyz[1,0]*xyz[0,1] - xyz[0,0]*xyz[1,1]) + (xyz[1,1]*S[0] - xyz[0,1]*S[1])*xD + (xyz[0,0]*S[1] - xyz[1,0]*S[0])*yD) / denom, 3)</span>
-              
+    <span class="n">M1</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;i1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;j1&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">xD</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;k1&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
+    <span class="n">M2</span> <span class="o">=</span> <span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;i2&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;j2&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">xD</span> <span class="o">+</span> <span class="n">c</span><span class="p">[</span><span class="s1">&#39;k2&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">yD</span><span class="p">)</span> <span class="o">/</span> <span class="n">denom</span>
+    <span class="k">if</span> <span class="n">round_Mi_to_cie_recommended</span><span class="p">:</span>
+        <span class="n">rr</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># rounding of Mi</span>
+        <span class="n">M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">M1</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
+        <span class="n">M2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">M2</span><span class="p">,</span> <span class="n">rr</span><span class="p">)</span>
+                  
     <span class="k">return</span> <span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">,</span> <span class="n">c</span> 
     
     
@@ -445,7 +488,10 @@
 <div class="viewcode-block" id="daylightphase">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.daylightphase">[docs]</a>
 <span class="k">def</span> <span class="nf">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nominal_cct</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
-                  <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_Mi_coeffs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+                  <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">daylight_Mi_coeffs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">force_tabulated_xyD_Mi_when_cieobs_is_1931_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                  <span class="n">round_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate daylight phase spectrum for correlated color temperature (cct).</span>
 <span class="sd">        </span>
@@ -489,7 +535,14 @@
 <span class="sd">            | dict with coefficients for M1 &amp; M2 weights for specified cieobs.</span>
 <span class="sd">            | If None: use pre-calculated values.</span>
 <span class="sd">            | If &#39;calc&#39;: calculate them on the fly.</span>
-
+<span class="sd">        :force_tabulated_xyD_Mi_when_cieobs_is_1931_2:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If cieobs is &#39;1931_2&#39;, then use tabulated values for xD, yD and Mi coefficients.</span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
+<span class="sd">            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!</span>
+<span class="sd">            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with daylight phase spectrum</span>
@@ -516,22 +569,27 @@
         
         <span class="c1">#interpolate _S012_DAYLIGHTPHASE first to wl range:</span>
         <span class="k">if</span>  <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">_S012_DAYLIGHTPHASE</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">wl</span><span class="p">):</span>
-            <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">_S012_DAYLIGHTPHASE</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">_S012_DAYLIGHTPHASE</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">_S012_DAYLIGHTPHASE</span>
 
         <span class="c1"># Get coordinates of daylight locus corresponding to cct:</span>
-        <span class="n">xD</span><span class="p">,</span> <span class="n">yD</span> <span class="o">=</span> <span class="n">daylightlocus</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">)</span>
+        <span class="n">xD</span><span class="p">,</span> <span class="n">yD</span> <span class="o">=</span> <span class="n">daylightlocus</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">,</span>
+                               <span class="n">use_published_daylightlocus_coeffs_when_cieobs_is_1931_2</span> <span class="o">=</span> <span class="n">force_tabulated_xyD_Mi_when_cieobs_is_1931_2</span><span class="p">,</span> 
+                               <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
         
         <span class="c1"># Get M1 &amp; M2 component weights:</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="c1"># original M1,M2 for Si at 10 nm spacing and CIE 1931 xy</span>
-            <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;i&#39;</span><span class="p">:</span><span class="mf">0.0241</span><span class="p">,</span><span class="s1">&#39;j&#39;</span><span class="p">:</span><span class="mf">0.2562</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">0.7341</span><span class="p">,</span>
-            <span class="s1">&#39;i1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.3515</span><span class="p">,</span><span class="s1">&#39;j1&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">1.7703</span><span class="p">,</span><span class="s1">&#39;k1&#39;</span><span class="p">:</span><span class="mf">5.9114</span><span class="p">,</span>
-            <span class="s1">&#39;i2&#39;</span><span class="p">:</span><span class="mf">0.0300</span><span class="p">,</span><span class="s1">&#39;j2&#39;</span><span class="p">:</span><span class="o">-</span><span class="mf">31.4424</span><span class="p">,</span><span class="s1">&#39;k2&#39;</span><span class="p">:</span><span class="mf">30.0717</span><span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">cieobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">force_tabulated_xyD_Mi_when_cieobs_is_1931_2</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">cieobs</span> <span class="o">==</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)):</span> <span class="c1"># original M1,M2 for Si at 10 nm spacing and CIE 1931 xy</span>
+            <span class="n">use_1931_2_published_Mcoeffs</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">daylight_Mi_coeffs</span>
-        <span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_daylightphase_Mi_values</span><span class="p">(</span><span class="n">xD</span><span class="p">,</span> <span class="n">yD</span><span class="p">,</span> <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">Mcoeffs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">)</span> 
-        
+        <span class="n">M1</span><span class="p">,</span> <span class="n">M2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_get_daylightphase_Mi_values</span><span class="p">(</span><span class="n">xD</span><span class="p">,</span> <span class="n">yD</span><span class="p">,</span> <span class="n">Mcoeffs</span> <span class="o">=</span> <span class="n">Mcoeffs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">S012_daylightphase</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">,</span>
+                                                 <span class="n">use_1931_2_published_Mcoeffs</span> <span class="o">=</span> <span class="n">use_1931_2_published_Mcoeffs</span><span class="p">,</span> 
+                                                 <span class="n">round_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="n">round_Mi_to_cie_recommended</span><span class="p">,</span>
+                                                 <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span> 
+
         <span class="c1"># Calculate weigthed combination of S0, S1 &amp; S2 components:</span>
         <span class="n">Sr</span> <span class="o">=</span> <span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">M1</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">M2</span><span class="o">*</span><span class="n">S012_daylightphase</span><span class="p">[</span><span class="mi">3</span><span class="p">,:]</span>
         
@@ -544,7 +602,8 @@
 
 <div class="viewcode-block" id="get_daylightloci_parameters">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.get_daylightloci_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">get_daylightloci_parameters</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_daylightloci_parameters</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                <span class="n">use_1931_2_published_daylightlocus_coeffs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get parameters for the daylight loci functions xD(1000/CCT) and yD(xD).</span>
 <span class="sd">    </span>
@@ -561,6 +620,9 @@
 <span class="sd">            | Wavelength range and spacing of daylight phases to be determined</span>
 <span class="sd">            | from &#39;1931_2&#39;. The default setting results in parameters very close</span>
 <span class="sd">            | to that in CIE15-2004/2018.</span>
+<span class="sd">        :use_1931_2_published_daylightlocus_coeffs:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | Use published coefficients for CIE 1931 2° CMFs (see CIE015 colorimetry)</span>
 <span class="sd">        :verbosity:</span>
 <span class="sd">            | 0, optional</span>
 <span class="sd">            | print parameters and make plots.</span>
@@ -577,7 +639,9 @@
     <span class="c1"># Get daylight phase spds using cieobs &#39;1931_2&#39;:</span>
     <span class="c1"># wl3 = [300,830,10] # results in Judd&#39;s (1964) coefficients for the function yD(xD)x; other show slight deviations</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">cct</span>  <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ccts</span><span class="p">):</span>
-        <span class="n">spd</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                            <span class="n">force_tabulated_xyD_Mi_when_cieobs_is_1931_2</span> <span class="o">=</span> <span class="n">use_1931_2_published_daylightlocus_coeffs</span><span class="p">,</span> 
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">spds</span> <span class="o">=</span> <span class="n">spd</span>
         <span class="k">else</span><span class="p">:</span>
@@ -603,7 +667,7 @@
             <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;cmf_</span><span class="si">{:1.0f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
         
         <span class="c1"># get parameters for cieobs:</span>
-        <span class="n">xy</span><span class="p">,</span> <span class="n">pxy</span><span class="p">,</span> <span class="n">pxT_l7</span><span class="p">,</span> <span class="n">pxT_L7</span><span class="p">,</span> <span class="n">l7</span><span class="p">,</span> <span class="n">L7</span> <span class="o">=</span> <span class="n">_get_daylightlocus_parameters</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">spds</span><span class="p">,</span> <span class="n">cieobs_</span><span class="p">)</span>
+        <span class="n">xy</span><span class="p">,</span> <span class="n">pxy</span><span class="p">,</span> <span class="n">pxT_l7</span><span class="p">,</span> <span class="n">pxT_L7</span><span class="p">,</span> <span class="n">l7</span><span class="p">,</span> <span class="n">L7</span> <span class="o">=</span> <span class="n">_get_daylightlocus_parameters</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">spds</span><span class="p">,</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
         <span class="n">dayloci</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pxT_l7k&#39;</span><span class="p">:</span><span class="n">pxT_l7</span><span class="p">,</span> <span class="s1">&#39;pxT_L7k&#39;</span><span class="p">:</span><span class="n">pxT_L7</span><span class="p">,</span> <span class="s1">&#39;pxy&#39;</span><span class="p">:</span><span class="n">pxy</span><span class="p">}</span>
         
         <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -637,8 +701,8 @@
 <span class="c1"># Pre-calculate daylight loci parameters and Mi coefficients for each CMF in _CMF</span>
 <span class="c1"># (except &#39;scotopic&#39; and &#39;cie_std_dev_...&#39;):</span>
 <span class="n">wl3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">360</span><span class="p">,</span><span class="mi">830</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">_DAYLIGHT_LOCI_PARAMETERS</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">_DAYLIGHT_M12_COEFFS</span> <span class="o">=</span> <span class="n">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">)</span>
+<span class="n">_DAYLIGHT_LOCI_PARAMETERS</span> <span class="o">=</span> <span class="n">get_daylightloci_parameters</span><span class="p">(</span><span class="n">ccts</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">use_1931_2_published_daylightlocus_coeffs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">_DAYLIGHT_M12_COEFFS</span> <span class="o">=</span> <span class="n">get_daylightphase_Mi_coeffs</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl3</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">use_1931_2_published_Mcoeffs</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cri_ref">
@@ -647,7 +711,9 @@
             <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs_Y_normalization</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
             <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
             <span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">daylight_locus</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">round_daylightphase_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+            <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates a reference illuminant spectrum based on cct </span>
 <span class="sd">    for color rendering index calculations .</span>
@@ -719,6 +785,11 @@
 <span class="sd">            | for specified cieobs.</span>
 <span class="sd">            | If None: use pre-calculated values.</span>
 <span class="sd">            | If &#39;calc&#39;: calculate them on the fly.</span>
+<span class="sd">        :round_daylightphase_Mi_to_cie_recommended:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))</span>
+<span class="sd">            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!</span>
+<span class="sd">            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! </span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
@@ -730,10 +801,11 @@
 <span class="sd">        for ref_type. This way other reference illuminants can be specified </span>
 <span class="sd">        than the ones in _CRI_REF_TYPES. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">if</span> <span class="n">ref_type</span> <span class="o">==</span> <span class="s1">&#39;spd&#39;</span><span class="p">:</span>
         
         <span class="c1"># ccts already contains spectrum of reference:</span>
-        <span class="k">return</span> <span class="n">spd</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">spd</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">mix_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">mix_range</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">(</span><span class="n">mix_range</span><span class="p">)</span>
@@ -774,14 +846,20 @@
                 <span class="k">if</span> <span class="p">((</span><span class="n">cct</span> <span class="o">&lt;</span> <span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DL&#39;</span><span class="p">)))</span> <span class="o">|</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BB&#39;</span><span class="p">):</span>
                     <span class="n">Sr</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="p">)</span>
                 <span class="k">elif</span> <span class="p">((</span><span class="n">cct</span> <span class="o">&gt;=</span> <span class="n">mix_range_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BB&#39;</span><span class="p">)))</span> <span class="o">|</span> <span class="p">(</span><span class="n">ref_type_</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;DL&#39;</span><span class="p">)</span> <span class="p">:</span>
-                    <span class="n">Sr</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">,</span><span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">)</span>
+                    <span class="n">Sr</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">,</span><span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">,</span>
+                                       <span class="n">round_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span><span class="p">,</span>
+                                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">SrBB</span> <span class="o">=</span> <span class="n">blackbody</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">wl3</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="p">)</span>
-                <span class="n">SrDL</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">)</span>
+                <span class="n">SrDL</span> <span class="o">=</span> <span class="n">daylightphase</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span><span class="n">wl3</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span><span class="n">force_daylight_below4000K</span> <span class="o">=</span> <span class="n">force_daylight_below4000K</span><span class="p">,</span> 
+                                     <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_</span><span class="p">,</span> <span class="n">daylight_locus</span> <span class="o">=</span> <span class="n">daylight_locus</span><span class="p">,</span>
+                                    <span class="n">round_Mi_to_cie_recommended</span> <span class="o">=</span> <span class="n">round_daylightphase_Mi_to_cie_recommended</span><span class="p">,</span>
+                                    <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
                 
                 <span class="c1">#cieobs_ = _CIEOBS if cieobs_ is None else cieobs_ # cieobs_ might still be None as that results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.</span>
                 
-                <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_Y_normalization_</span><span class="p">,</span> <span class="n">scr</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">)</span>
+                <span class="n">cmf</span> <span class="o">=</span> <span class="n">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs_Y_normalization_</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="n">wl3</span><span class="p">,</span> 
+                            <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
                 <span class="n">wl</span> <span class="o">=</span> <span class="n">SrBB</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">ld</span> <span class="o">=</span> <span class="n">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
 
@@ -810,17 +888,19 @@
                     
         <span class="n">Srs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">Sr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">Srs</span><span class="p">))</span>
 
-        <span class="k">return</span>  <span class="n">spd</span><span class="p">(</span><span class="n">Srs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span></div>
+        <span class="k">return</span>  <span class="n">spd</span><span class="p">(</span><span class="n">Srs</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">,</span>
+                    <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_indoor">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_indoor">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_indoor</span><span class="p">(</span><span class="n">spd</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">spd_to_indoor</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Tglass</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_GLASS_ID</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:,:]</span>
+    <span class="n">Tglass</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="n">_CIE_GLASS_ID</span><span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span> 
+                        <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)[</span><span class="mi">1</span><span class="p">:,:]</span>
     <span class="n">spd_</span> <span class="o">=</span> <span class="n">spd</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">spd_</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">*=</span> <span class="n">Tglass</span>
     <span class="k">return</span> <span class="n">spd_</span></div>
@@ -834,7 +914,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

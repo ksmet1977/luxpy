@@ -6,12 +6,15 @@ Module with color fidelity and color gamut area parameter dicts
  :_CRI_TYPE_DEFAULT: Default cri_type.
 
  :CRI_DEFAULTS: default parameters for color fidelity and gamut area metrics 
-               (major dict has 10 keys (2022): 
+               (major dict has 13 keys (04 Mar, 2025): 
                sampleset [str/dict], 
-               ref_type [str], 
-               cieobs [str], 
+               ref_type [str], # specified in luxpy.spectrum.basics.illuminants.py
+               calculation_wavelength_range [list],
+               cieobs [Dict], 
+               cct_mode [str],
                avg [fcn handle], 
                rf_from_avg_rounded_rfi [bool],
+               round_daylightphase_Mi_to_cie_recommended [bool],
                scale [dict], 
                cspace [dict], 
                catf [dict], 
@@ -38,14 +41,17 @@ __all__ = ['_CRI_TYPE_DEFAULT', '_CRI_DEFAULTS', 'process_cri_type_input']
 _CRI_TYPE_DEFAULT = 'ies-tm30'
 
 _CRI_DEFAULTS = {'cri_types' : ['ciera','ciera-8','ciera-14','ciera-15','cierf-224-2017','cierf',
-                                'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','ies-tm30',
+                                'iesrf','iesrf-tm30-15','iesrf-tm30-18','iesrf-tm30-20','iesrf-tm30-24','ies-tm30',
                                 'cri2012','cri2012-hl17','cri2012-hl1000','cri2012-real210']}
 
 _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']", 
                          'ref_type' : 'ciera', 
+                         'calculation_wavelength_range' : None,
                          'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
+                         'cct_mode' : ('robertson2023',{}),
                          'avg' : np.mean, 
                          'rf_from_avg_rounded_rfi' : True,
+                         'round_daylightphase_Mi_to_cie_recommended' : True,
                          'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 
                          'cspace' : {'type':'wuv', 'xyzw' : None}, 
                          'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 
@@ -62,11 +68,14 @@ _CRI_DEFAULTS['ciera-15']['sampleset'] = "_CRI_RFL['cie-13.3-1995']['15']"
 
 
 
-_CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['5nm']", 
+_CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']['1nm']", # 1 nm is used in TM30, and CIE recommends 1 nm (these are interpolated from 5 nm using Sprague or some sorts)
                                  'ref_type' : 'cierf', 
+                                 'calculation_wavelength_range' : [380,780],
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
+                                 'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                                  'avg' : np.mean, 
                                  'rf_from_avg_rounded_rfi' : False,
+                                 'round_daylightphase_Mi_to_cie_recommended' : False,
                                  'scale' : {'fcn' : log_scale, 'cfactor' : [6.73]}, 
                                  'cspace' : {'type' : 'jab_cam02ucs' , 'xyzw': None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
@@ -77,11 +86,14 @@ _CRI_DEFAULTS['cierf-224-2017'] = {'sampleset' : "_CRI_RFL['cie-224-2017']['99']
 _CRI_DEFAULTS['cierf'] = copy.deepcopy(_CRI_DEFAULTS['cierf-224-2017'])
 
 
-_CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['5nm']", 
+_CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['1nm']", 
                                  'ref_type' : 'iesrf-tm30-15', 
+                                 'calculation_wavelength_range' : [380,780],
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
+                                 'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                                  'avg' : np.mean, 
                                  'rf_from_avg_rounded_rfi' : False,
+                                 'round_daylightphase_Mi_to_cie_recommended' : False,
                                  'scale' :{'fcn' : log_scale, 'cfactor' : [7.54]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
@@ -89,11 +101,14 @@ _CRI_DEFAULTS['iesrf-tm30-15'] = {'sampleset' : "_CRI_RFL['ies-tm30-15']['99']['
                                  'cri_specific_pars' : None
                                  }
 
-_CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['5nm']", 
-                                 'ref_type' : 'iesrf-tm30-18', 
+_CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['1nm']", 
+                                 'ref_type' : 'iesrf-tm30-18',
+                                 'calculation_wavelength_range' : [380,780], 
                                  'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
+                                 'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                                  'avg' : np.mean, 
                                  'rf_from_avg_rounded_rfi' : False,
+                                 'round_daylightphase_Mi_to_cie_recommended' : False,
                                  'scale' :{'fcn' : log_scale, 'cfactor' : [6.73]}, 
                                  'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : None},
                                  'catf': None, 
@@ -102,20 +117,25 @@ _CRI_DEFAULTS['iesrf-tm30-18'] = {'sampleset' : "_CRI_RFL['ies-tm30-18']['99']['
                                  }
 
 _CRI_DEFAULTS['iesrf-tm30-20'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-18'])
-_CRI_DEFAULTS['iesrf-tm30-20']['sampleset'] = "_CRI_RFL['ies-tm30-20']['99']['5nm']"
+_CRI_DEFAULTS['iesrf-tm30-20']['sampleset'] = "_CRI_RFL['ies-tm30-20']['99']['1nm']"
+_CRI_DEFAULTS['iesrf-tm30-24'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-18'])
+_CRI_DEFAULTS['iesrf-tm30-24']['sampleset'] = "_CRI_RFL['ies-tm30-24']['99']['1nm']"
 
-_CRI_DEFAULTS['iesrf'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
+_CRI_DEFAULTS['iesrf'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-24'])
 
-_CRI_DEFAULTS['iesrf-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
+_CRI_DEFAULTS['iesrf-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-24'])
 
-_CRI_DEFAULTS['ies-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-20'])
+_CRI_DEFAULTS['ies-tm30'] = copy.deepcopy(_CRI_DEFAULTS['iesrf-tm30-24'])
 
 
 _CRI_DEFAULTS['cri2012-hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']", 
                              'ref_type' : 'ciera', 
+                             'calculation_wavelength_range' : None,
                              'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
+                             'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                              'avg' : math.rms, 
                              'rf_from_avg_rounded_rfi' : False,
+                             'round_daylightphase_Mi_to_cie_recommended' : False,
                              'scale' : {'fcn': psy_scale, 'cfactor' : [1/55, 3/2, 2]}, 
                              'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},
                              'catf': None, 
@@ -125,9 +145,12 @@ _CRI_DEFAULTS['cri2012-hl17'] = {'sampleset' : "_CRI_RFL['cri2012']['HL17']",
 
 _CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']", 
                                    'ref_type' : 'ciera',
+                                   'calculation_wavelength_range' : None,
                                    'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'}, 
+                                   'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                                    'avg' : math.rms, 
                                    'rf_from_avg_rounded_rfi' : False,
+                                   'round_daylightphase_Mi_to_cie_recommended' : False,
                                    'scale': {'fcn' : psy_scale, 'cfactor' : [1/50, 3/2, 2]}, 
                                    'cspace' : {'type' : 'jab_cam02ucs','xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'},
                                    'catf': None, 
@@ -137,9 +160,12 @@ _CRI_DEFAULTS['cri2012-hl1000'] = {'sampleset' : "_CRI_RFL['cri2012']['HL1000']"
 
 _CRI_DEFAULTS['cri2012-real210'] = {'sampleset' : "_CRI_RFL['cri2012']['Real210']",
                                     'ref_type' : 'ciera', 
+                                    'calculation_wavelength_range' : None,
                                     'cieobs' : {'xyz': '1964_10', 'cct' : '1931_2'},
+                                    'cct_mode' : ('ohno2014', {'f_corr' : 1.0, 'force_tolerance' : False}),
                                     'avg' : math.rms, 
                                     'rf_from_avg_rounded_rfi' : False,
+                                    'round_daylightphase_Mi_to_cie_recommended' : False,
                                     'scale' : {'fcn' : psy_scale, 'cfactor' : [2/45, 3/2, 2]},
                                     'cspace' : {'type': 'jab_cam02ucs', 'xyzw':None, 'mcat':'cat02', 'Yw':None, 'conditions' :{'La':100.0,'surround':'avg','D':1.0,'Yb':20.0,'Dtype':None},'yellowbluepurplecorrect' : 'brill-suss'}, 
                                     'catf': None, 

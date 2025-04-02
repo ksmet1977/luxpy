@@ -674,11 +674,11 @@ if __name__ == '__main__':
     # Prepare some illuminant data:
     C = lx._CIE_ILLUMINANTS['C'].copy()
     Ill1 = C
-    Ill2 = np.vstack((C,lx.cie_interp(lx._CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:],C[1:,:]*2,C[1:,:]*3))
+    Ill2 = np.vstack((C,lx.cie_interp(lx._CIE_ILLUMINANTS['D65'],C[0],datatype='spd')[1:],C[1:,:]*2,C[1:,:]*3))
     
     # Prepare some sample data:
     rflM = lx._MUNSELL['R'].copy()
-    rflM = lx.cie_interp(rflM,C[0], kind='rfl')
+    rflM = lx.cie_interp(rflM,C[0], datatype='rfl')
     
     # Setup some model parameters:
     cieobs = '2006_10'

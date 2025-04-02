@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luxpy package structure &mdash; LuxPy 1.11.4 documentation</title>
+  <title>Luxpy package structure &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -15,7 +15,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=9080e127"></script>
+        <script src="_static/documentation_options.js?v=fe8e256b"></script>
         <script src="_static/doctools.js?v=9a2dae69"></script>
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -37,7 +37,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.4
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.normalize_3x3_matrix"><code class="docutils literal notranslate"><span class="pre">normalize_3x3_matrix()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.symmM_to_posdefM"><code class="docutils literal notranslate"><span class="pre">symmM_to_posdefM()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.check_symmetric"><code class="docutils literal notranslate"><span class="pre">check_symmetric()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.in_hull"><code class="docutils literal notranslate"><span class="pre">in_hull()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.check_posdef"><code class="docutils literal notranslate"><span class="pre">check_posdef()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.positive_arctan"><code class="docutils literal notranslate"><span class="pre">positive_arctan()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.line_intersect"><code class="docutils literal notranslate"><span class="pre">line_intersect()</span></code></a></li>
@@ -155,8 +156,11 @@
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.remove_outliers"><code class="docutils literal notranslate"><span class="pre">remove_outliers()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.fit_ellipse"><code class="docutils literal notranslate"><span class="pre">fit_ellipse()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.fit_cov_ellipse"><code class="docutils literal notranslate"><span class="pre">fit_cov_ellipse()</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.in_hull"><code class="docutils literal notranslate"><span class="pre">in_hull()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.linterp"><code class="docutils literal notranslate"><span class="pre">linterp()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.interpolatedunivariatespline"><code class="docutils literal notranslate"><span class="pre">interpolatedunivariatespline()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.interp1_sprague5"><code class="docutils literal notranslate"><span class="pre">interp1_sprague5()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.interp1_sprague_cie224_2017"><code class="docutils literal notranslate"><span class="pre">interp1_sprague_cie224_2017()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.interp1_lagrange"><code class="docutils literal notranslate"><span class="pre">interp1_lagrange()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.interp1"><code class="docutils literal notranslate"><span class="pre">interp1()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.ndinterp1"><code class="docutils literal notranslate"><span class="pre">ndinterp1()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.ndinterp1_scipy"><code class="docutils literal notranslate"><span class="pre">ndinterp1_scipy()</span></code></a></li>
@@ -165,6 +169,9 @@
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.stress"><code class="docutils literal notranslate"><span class="pre">stress()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.stress_F_test"><code class="docutils literal notranslate"><span class="pre">stress_F_test()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.mean_distance_weighted"><code class="docutils literal notranslate"><span class="pre">mean_distance_weighted()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.round"><code class="docutils literal notranslate"><span class="pre">round()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math._interpolate_with_nans"><code class="docutils literal notranslate"><span class="pre">_interpolate_with_nans()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math._extrap_y"><code class="docutils literal notranslate"><span class="pre">_extrap_y()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#luxpy.math.minimizebnd"><code class="docutils literal notranslate"><span class="pre">minimizebnd()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#vec3">vec3/</a></li>
 <li class="toctree-l2"><a class="reference internal" href="math.html#demo">DEMO/</a></li>
@@ -183,6 +190,7 @@
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.getwlr"><code class="docutils literal notranslate"><span class="pre">getwlr()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.getwld"><code class="docutils literal notranslate"><span class="pre">getwld()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_normalize"><code class="docutils literal notranslate"><span class="pre">spd_normalize()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spectral_interp"><code class="docutils literal notranslate"><span class="pre">spectral_interp()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.cie_interp"><code class="docutils literal notranslate"><span class="pre">cie_interp()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd"><code class="docutils literal notranslate"><span class="pre">spd()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.xyzbar"><code class="docutils literal notranslate"><span class="pre">xyzbar()</span></code></a></li>
@@ -190,11 +198,13 @@
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.vlbar_cie_mesopic"><code class="docutils literal notranslate"><span class="pre">vlbar_cie_mesopic()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.get_cie_mesopic_adaptation"><code class="docutils literal notranslate"><span class="pre">get_cie_mesopic_adaptation()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_xyz"><code class="docutils literal notranslate"><span class="pre">spd_to_xyz()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_xyz_barebones"><code class="docutils literal notranslate"><span class="pre">spd_to_xyz_barebones()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_ler"><code class="docutils literal notranslate"><span class="pre">spd_to_ler()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_power"><code class="docutils literal notranslate"><span class="pre">spd_to_power()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.detect_peakwl"><code class="docutils literal notranslate"><span class="pre">detect_peakwl()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.create_spectral_interpolator"><code class="docutils literal notranslate"><span class="pre">create_spectral_interpolator()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.wls_shift"><code class="docutils literal notranslate"><span class="pre">wls_shift()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_xyz_legacy"><code class="docutils literal notranslate"><span class="pre">spd_to_xyz_legacy()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.cri_ref"><code class="docutils literal notranslate"><span class="pre">cri_ref()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.blackbody"><code class="docutils literal notranslate"><span class="pre">blackbody()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="spectrum.html#luxpy.spectrum.spd_to_indoor"><code class="docutils literal notranslate"><span class="pre">spd_to_indoor()</span></code></a></li>
@@ -282,7 +292,11 @@
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct._generate_lut"><code class="docutils literal notranslate"><span class="pre">_generate_lut()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct._generate_lut_ohno2014"><code class="docutils literal notranslate"><span class="pre">_generate_lut_ohno2014()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct._generate_lut_li2022"><code class="docutils literal notranslate"><span class="pre">_generate_lut_li2022()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.calculate_cct_luts"><code class="docutils literal notranslate"><span class="pre">calculate_cct_luts()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_ohno2011"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_ohno2011()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct._get_ccts_for_lut_bf"><code class="docutils literal notranslate"><span class="pre">_get_ccts_for_lut_bf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.generate_lut_bf"><code class="docutils literal notranslate"><span class="pre">generate_lut_bf()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_bruteforce"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_bruteforce()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="color.html#cct-robertson1968">cct/robertson1968</a><ul>
@@ -495,6 +509,9 @@
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.compute_cmfs"><code class="docutils literal notranslate"><span class="pre">compute_cmfs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.add_to_cmf_dict"><code class="docutils literal notranslate"><span class="pre">add_to_cmf_dict()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.plot_cmfs"><code class="docutils literal notranslate"><span class="pre">plot_cmfs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.my_round"><code class="docutils literal notranslate"><span class="pre">my_round()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.chop"><code class="docutils literal notranslate"><span class="pre">chop()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.indvcmf.sign_figs"><code class="docutils literal notranslate"><span class="pre">sign_figs()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="toolboxes.html#spdbuild">spdbuild/</a><ul>
@@ -638,7 +655,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

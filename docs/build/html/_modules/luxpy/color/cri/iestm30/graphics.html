@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
@@ -1019,7 +1019,7 @@
     <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Model: &#39;</span> <span class="o">+</span> <span class="n">model</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">axh</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_bottom</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_plot_tm30_report_bottom</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print some notes, the CIE x, y, u&#39;,v&#39; and Ra, R9 values of the source in some empty axes.</span>
 <span class="sd">    </span>
@@ -1040,8 +1040,8 @@
 <span class="sd">        :axh:</span>
 <span class="sd">            | handle to figure axes.    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ciera</span> <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ciera&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf&#39;</span><span class="p">)</span>
-    <span class="n">cierai</span> <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ciera-14&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rfi&#39;</span><span class="p">)</span>
+    <span class="n">ciera</span> <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ciera&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rf&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
+    <span class="n">cierai</span> <span class="o">=</span> <span class="n">spd_to_cri</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ciera-14&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;Rfi&#39;</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
     <span class="n">xyzw</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">Yxyw</span> <span class="o">=</span> <span class="n">xyz_to_Yxy</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
     <span class="n">Yuvw</span> <span class="o">=</span> <span class="n">xyz_to_Yuv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">)</span>
@@ -1083,7 +1083,7 @@
                          <span class="n">save_fig_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
                          <span class="n">plot_report_top</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">plot_report_bottom</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                          <span class="n">show_annexE_priority</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_Rcsh1_Rfh1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-                         <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-18 Color Rendition Report&#39;</span><span class="p">,</span>
+                         <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-24 Color Rendition Report&#39;</span><span class="p">,</span>
                          <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE_FULLREPORT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create TM30 Color Rendition Report (&#39;full&#39;). &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
@@ -1752,7 +1752,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

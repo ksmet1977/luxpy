@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -183,6 +183,8 @@
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;cie2006cmfsEx&#39;</span><span class="p">,</span><span class="s1">&#39;getMonteCarloParam&#39;</span><span class="p">,</span><span class="s1">&#39;genMonteCarloObs&#39;</span><span class="p">,</span><span class="s1">&#39;getCatObs&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;compute_cmfs&#39;</span><span class="p">,</span><span class="s1">&#39;add_to_cmf_dict&#39;</span><span class="p">,</span><span class="s1">&#39;plot_cmfs&#39;</span><span class="p">]</span>
 
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_USE_MY_ROUND&#39;</span><span class="p">,</span><span class="s1">&#39;my_round&#39;</span><span class="p">,</span><span class="s1">&#39;_USE_CHOP&#39;</span><span class="p">,</span><span class="s1">&#39;chop&#39;</span><span class="p">,</span><span class="s1">&#39;_USE_SIGN_FIGS&#39;</span><span class="p">,</span><span class="s1">&#39;sign_figs&#39;</span><span class="p">]</span>
+
 
 <span class="n">_DATA_PATH</span> <span class="o">=</span> <span class="n">_PKG_PATH</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;toolboxes&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;indvcmf&#39;</span> <span class="o">+</span> <span class="n">_SEP</span> <span class="o">+</span> <span class="s1">&#39;data&#39;</span> <span class="o">+</span> <span class="n">_SEP</span>  
 <span class="c1">#_DATA_PATH = &#39;./data/&#39; # for testing</span>
@@ -209,12 +211,15 @@
 <span class="n">_USE_SIGN_FIGS</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="n">_USE_CHOP</span> <span class="o">=</span> <span class="kc">True</span>
 
+<div class="viewcode-block" id="my_round">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.my_round">[docs]</a>
 <span class="k">def</span> <span class="nf">my_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round array x to n decimal points using round half away from zero.</span>
 <span class="sd">    This function is needed because the rounding specified in the CIE</span>
 <span class="sd">    recommendation is different from the standard rounding scheme in python</span>
 <span class="sd">    (which is following the IEEE recommendation).</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        :x: </span>
 <span class="sd">            | ndarray</span>
@@ -231,19 +236,23 @@
         <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">x</span></div>
 
+
+<div class="viewcode-block" id="sign_figs">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.sign_figs">[docs]</a>
 <span class="k">def</span> <span class="nf">sign_figs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round x to n significant figures (not decimal points).</span>
 <span class="sd">    This function is needed because the rounding specified in the CIE</span>
 <span class="sd">    recommendation is different from the standard rounding scheme in python</span>
 <span class="sd">    (which is following the IEEE recommendation). Uses my_round (above).</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        :x: </span>
 <span class="sd">            | int, float or ndarray</span>
 <span class="sd">            | Number or array to be rounded.</span>
-<span class="sd">    Returns;</span>
+<span class="sd">    Returns:</span>
 <span class="sd">        :t:</span>
 <span class="sd">            | float or ndarray</span>
 <span class="sd">            | Rounded number or array.</span>
@@ -260,13 +269,17 @@
         <span class="n">exponent</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])))</span>
         <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">exponent</span> <span class="o">*</span> <span class="n">my_round</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">10</span><span class="o">**</span><span class="n">exponent</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="n">x</span></div>
 
 
+
+<div class="viewcode-block" id="chop">
+<a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.chop">[docs]</a>
 <span class="k">def</span> <span class="nf">chop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Chop values smaller than epsilon in absolute value to zero.</span>
 <span class="sd">    Similar to Mathematica function.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        :arr:</span>
 <span class="sd">            | float or ndarray</span>
@@ -289,7 +302,8 @@
         <span class="n">chopped</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">chopped</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># set too low values to zero</span>
         <span class="k">return</span> <span class="n">chopped</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">arr</span>
+        <span class="k">return</span> <span class="n">arr</span></div>
+
 
 <span class="c1">#=============================================================================  </span>
 <span class="c1">#  Function/class determining/constituting the database</span>
@@ -2606,7 +2620,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

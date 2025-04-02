@@ -111,7 +111,8 @@ __all__ +=['calculate_VF_PX_models','subsample_RFL_set','plot_VF_PX_models']
 def calculate_VF_PX_models(S, cri_type = _VF_CRI_DEFAULT, sampleset = None, pool = False, \
                            pcolorshift = {'href': np.arange(np.pi/10,2*np.pi,2*np.pi/10),\
                                           'Cref' : _VF_MAXR, 'sig' : _VF_SIG, 'labels' : '#'},\
-                           vfcolor = 'k', verbosity = 0):
+                           vfcolor = 'k', verbosity = 0,
+                           interp_settings = None):
     """
     Calculate Vector Field and Pixel color shift models.
     
@@ -154,7 +155,8 @@ def calculate_VF_PX_models(S, cri_type = _VF_CRI_DEFAULT, sampleset = None, pool
             | luxpy.cri.VF_colorshift_model() and luxpy.cri.PX_colorshift_model()
     """
     # calculate VectorField cri_color_shift model:
-    dataVF = VF_colorshift_model(S, cri_type = cri_type, sampleset = sampleset, vfcolor = vfcolor, pcolorshift = pcolorshift, pool = pool, verbosity = verbosity)
+    dataVF = VF_colorshift_model(S, cri_type = cri_type, sampleset = sampleset, vfcolor = vfcolor, pcolorshift = pcolorshift, pool = pool, verbosity = verbosity,
+                                interp_settings = interp_settings)
     
     # Set jab_ranges and _deltas for PX-model pixel calculations:
     PX_jab_deltas = np.array([_VF_DELTAR,_VF_DELTAR,_VF_DELTAR]) #set same as for vectorfield generation

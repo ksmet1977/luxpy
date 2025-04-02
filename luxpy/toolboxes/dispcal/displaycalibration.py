@@ -135,10 +135,10 @@ def TRi_gog(x,*p):
 
 def TR_gogo(x,*p):
     """ 
-    Forward GOGO tone response model (x = rgb; p = [gain,offset,gamma,offset_]).
+    Forward GOGO tone response model (x = rgb; p = [gain,offset,gamma,offset2]).
     
     Notes:
-        1. GOGO model: y = (gain*x + offset)**gamma + offset_
+        1. GOGO model: y = (gain*x + offset)**gamma + offset2
     """
     tmp = (p[1] + p[0]*x).astype(complex) 
     # tmp[tmp<0] = 0
@@ -146,10 +146,10 @@ def TR_gogo(x,*p):
 
 def TRi_gogo(x,*p):
     """ 
-    Inverse GOGO tone response model (x = xyz; p = [gain,offset,gamma,offset_]).
+    Inverse GOGO tone response model (x = xyz; p = [gain,offset,gamma,offset2]).
     
     Notes:
-        1. GOGO model: y = (gain*x + offset)**gamma + offset_
+        1. GOGO model: y = (gain*x + offset)**gamma + offset2
     """
     tmp = (x.T - p[3]).astype(complex)
     # tmp[tmp<0] = 0

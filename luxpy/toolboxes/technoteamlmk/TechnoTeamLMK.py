@@ -344,9 +344,9 @@ class lmkActiveX:
         Initializes a connection to LMK LabSoft.
 
           Input:
-            -objectiveCalibrationPath: path to calibration file
+            - objectiveCalibrationPath: path to calibration file
           Output:
-            -answer: 0=no error, other=error code
+            - answer: 0=no error, other=error code
         """
         if objectiveCalibrationPath is not None: cls.objectiveCalibrationPath = objectiveCalibrationPath
         if cls.objectiveCalibrationPath is None:
@@ -392,14 +392,16 @@ class lmkActiveX:
 
         Input:
           - open_dialog:
-                If 0: No dialog window.
-                Else: Opens a dialog window in the Labsoft application.
-                      The user can choose whether they wish to save 
-                      the current state or not or or cancel 
-                      the closing of LabSoft.
+                If 0: | No dialog window.
+                Else: | Opens a dialog window in the Labsoft application.
+                      | The user can choose whether they wish to save 
+                      | the current state or not or or cancel 
+                      | the closing of LabSoft.
+                      
         Output:
-          -answer: 0=no error, other=error code
+          - answer: 0=no error, other=error code
         """
+
         if cls.lmk is None:
             if cls.verbosity > 1: print('close_lmk_labsoft_connection(): lmk is closed.\n')
             return None
@@ -690,12 +692,14 @@ class lmkActiveX:
     def createEllips(cls, centerPt, width, height, regionName):
         """ 
         Create an ellips with a:
-            - centerPoint defined by centerPt (contains x and y value)
-            - certain width (horizontal axis)
-            - certain height (vertical axis)
-            - give the ellips region a regionName (string)
+        | - centerPoint defined by centerPt (contains x and y value)
+        | - certain width (horizontal axis)
+        | - certain height (vertical axis)
+        | - give the ellips region a regionName (string)
+
         Function returns the regionIndex of the ellips
         """
+
         listXpts = ['{:1.0f}'.format(x) for x in [centerPt[0], centerPt[0], int(centerPt[0] + width)]]
         listYpts = ['{:1.0f}'.format(x) for x in [centerPt[1], int(centerPt[1] + height), centerPt[1]]]
         
@@ -720,10 +724,12 @@ class lmkActiveX:
     def createPolygon(cls, pointsXY, regionName):
         """ 
         Create a polygon with:
-            - vertices specified in pointsXY (x->width, y->height)
-            - give the polygon region a regionName (string)
+        | - vertices specified in pointsXY (x->width, y->height)
+        | - give the polygon region a regionName (string)
+
         Function returns the regionIndex of the polygon
         """
+
         listXpts = ['{:1.0f}'.format(x) for x in pointsXY[0]]
         listYpts = ['{:1.0f}'.format(x) for x in pointsXY[1]]
         
@@ -749,10 +755,12 @@ class lmkActiveX:
     def createRectangle(cls, topleftXY, bottomrightXY, regionName):
         """ 
         Create a Rectangle spanning:
-            - the top-left and bottom-right vertices 
-            - give the rectangle region a regionName (string)
+        | - the top-left and bottom-right vertices 
+        | - give the rectangle region a regionName (string)
+        
         Function returns the regionIndex of the rectangle
         """
+
         listXpts = ['{:1.0f}'.format(x) for x in [topleftXY[0],bottomrightXY[0]]]
         listYpts = ['{:1.0f}'.format(x) for x in [topleftXY[1],bottomrightXY[1]]]
         
@@ -795,8 +803,7 @@ class lmkActiveX:
     def createStatisticObjectOfRegion(cls, regionName, statisticType):
         """ 
         Create a color statistic object
-            call as follows:
-            createStatisticObjectOfRegion('regionTestName',statisticType['standardColor'])
+        | call as follows: createStatisticObjectOfRegion('regionTestName',statisticType['standardColor'])
         """
         cls.lmk.iCreateStatistic(statisticType,cls.workingImage,cls.getRegionIndexByName(regionName),1,['1'])
         
@@ -829,12 +836,13 @@ class lmkActiveX:
     def setIntegrationTime(cls, wishedTime):
         """
         Set integration time.
-        
-          [int32, double] LMKAxServer::iSetIntegrationTime	(double _dWishedTime, double & _drRealizedTime)
-          Parameters
-         	_dWishedTime	Wished integration time
-         	_drRealizedTime	Realized integration time
+        |  [int32, double] LMKAxServer::iSetIntegrationTime	(double _dWishedTime, double & _drRealizedTime)
+
+        Parameters:
+            :_dWishedTime: Wished integration time
+         	:_drRealizedTime: Realized integration time
         """
+
         tempFlag, realizedTime = cls.lmk.iSetIntegrationTime(wishedTime,0)
         
         if tempFlag == 0:
@@ -848,18 +856,18 @@ class lmkActiveX:
     def getIntegrationTime(cls):
         """
         Get integration time.
+        |  [int32, double, double, double, double, double]	LMKAxServer::iGetIntegrationTime
+        | 	(handle, double _drCurrentTime, double & _drPreviousTime,
+        |		double & _drNextTime, double & _drMinTime, double & _drMaxTime )
+        |
+        |  Determine current exposure time and other time parameters.
         
-          [int32, double, double, double, double, double]	LMKAxServer::iGetIntegrationTime
-         	(handle, double _drCurrentTime, double & _drPreviousTime,
-        		double & _drNextTime, double & _drMinTime, double & _drMaxTime )
-        
-          Determine current exposure time and other time parameters.
-          Parameters
-         	_drCurrentTime	Current integration time
-         	_drPreviousTime	Next smaller (proposed) time
-         	_drNextTime	Next larger (proposed) time
-         	_drMinTime	Minimal possible time
-         	_drMaxTime	Maximal possible time
+        Parameters:
+         	:_drCurrentTime: Current integration time
+         	:_drPreviousTime: Next smaller (proposed) time
+         	:_drNextTime: Next larger (proposed) time
+         	:_drMinTime: Minimal possible time
+         	:_drMaxTime: Maximal possible time
         """
         tempFlag, currInt, prevInt, nextInt, minInt, maxInt = cls.lmk.iGetIntegrationTime(0,0,0,0,0)
         
@@ -881,6 +889,7 @@ class lmkActiveX:
         determined before each capture by the autoscan algorithm. In the case of a
         color capture the autoscan algorithm is applied to each color filter separately.
         """ 
+
         if autoscan is not None: cls.autoscan = autoscan
         # if cls.autoscan == 1:
         tempFlag = cls.lmk.iSetAutoscan(int(1*cls.autoscan))
@@ -896,6 +905,7 @@ class lmkActiveX:
         """ 
         Get auto scan. 
         """ 
+
         tempFlag, autoscan = cls.lmk.iGetAutoscan(0)
         if tempFlag == 0:
             if cls.verbosity > 1: print('iGetAutoscan: AutoScan {:s}\n'.format(cls.boolStr[autoscan]))
@@ -913,6 +923,7 @@ class lmkActiveX:
         If this flag is set, all exposure times will automatically 
         adjusted if camera exposure time is reduced or enlarged.
         """
+
         if autoexposure is not None: cls.autoexposure = autoexposure
         # if cls.autoexposure == 1:
         tempFlag = cls.lmk.iSetAutomatic(int(1*cls.autoexposure))
@@ -973,14 +984,14 @@ class lmkActiveX:
     def set_max_exposure_time(cls, maxtime = None):
         """ 
         Set the maximum possible exposure time.
-            int LMKAxServer::iSetMaxCameraTime	(	double 	_dMaxCameraTime	)
+        |  int LMKAxServer::iSetMaxCameraTime	(	double 	_dMaxCameraTime	)
+        | 
+        |  The maximum values is of course restricted by camera properties.
+        |  But you can use an even smaller time to avoid to long meausrement times.
          
-          The maximum values is of course restricted by camera properties.
-          But you can use an even smaller time to avoid to long meausrement times.
-         
-         Parameters
-           _dMaxCameraTime     Wished value
-            maxCameraTime
+        Parameters:
+            :_dMaxCameraTime: Wished value
+            :maxCameraTime:
         """
         if maxtime is not None: cls.maxtime = maxtime
         if cls.maxtime is not None:
@@ -1010,15 +1021,15 @@ class lmkActiveX:
     @classmethod 
     def set_mod_frequency(cls, modfrequency = None):
         """ 
-         Set the frequency of modulated light.
-            int LMKAxServer::iSetModulationFrequency	(	double 	_dModFrequency	)
+        Set the frequency of modulated light.
+        |  int LMKAxServer::iSetModulationFrequency	(	double 	_dModFrequency	)
+        |
+        |  If the light source is driven by alternating current,
+        |  there are some restriction for the exposure times.
+        |  Please inform the program about the modulation frequency.
         
-          If the light source is driven by alternating current,
-          there are some restriction for the exposure times.
-          Please inform the program about the modulation frequency.
-        
-           Parameters
-             _dModFrequency	Frequency of light source. 0 if no modulation is to be concerend
+        Parameters:
+            :_dModFrequency:	Frequency of light source. 0 if no modulation is to be concerend
         """
         if modfrequency is not None: cls.modfrequency = modfrequency
         if (cls.modfrequency is not None) and not (np.isnan(cls.modfrequency).any()):

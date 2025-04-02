@@ -834,7 +834,7 @@ if __name__ == '__main__':
         F4 = lx._CIE_ILLUMINANTS['F4'].copy() 
         M = lx._MUNSELL.copy()
         rflM = M['R']
-        rflM = lx.cie_interp(rflM,F4[0],kind='rfl')
+        rflM = lx.cie_interp(rflM,F4[0],datatype='rfl')
         xyz31, xyzw31 = lx.spd_to_xyz(F4, cieobs = '1931_2', relative = True, rfl = rflM, out = 2)
         xyz06, xyzw06 = lx.spd_to_xyz(F4, cieobs = '2006_2', relative = True, rfl = rflM, out = 2)
         

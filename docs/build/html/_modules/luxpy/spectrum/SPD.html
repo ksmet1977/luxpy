@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -105,7 +105,7 @@
 <span class="sd">    </span>
 <span class="sd"> :self.value: values of spectral data</span>
 <span class="sd">    </span>
-<span class="sd"> :self.dtype: spectral data type (&#39;S&#39; light source, or &#39;R&#39;, reflectance, ...),</span>
+<span class="sd"> :self.dtype: spectral data type (&#39;spd&#39; light source, or &#39;rfl&#39;, reflectance, ...),</span>
 <span class="sd">              used to determine interpolation method following CIE15-2017.</span>
 <span class="sd">    </span>
 <span class="sd"> :self.shape: self.value.shape</span>
@@ -161,7 +161,7 @@
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD">[docs]</a>
 <span class="k">class</span> <span class="nc">SPD</span><span class="p">:</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax0iswl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> \
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax0iswl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> \
                  <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_method</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span>\
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>\
                  <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">):</span>
@@ -184,12 +184,11 @@
 <span class="sd">                | True, optional</span>
 <span class="sd">                | Signals that first axis of :spd: contains wavelengths.</span>
 <span class="sd">            :dtype:</span>
-<span class="sd">                | &#39;S&#39;, optional</span>
-<span class="sd">                | Type of spectral object (e.g. &#39;S&#39; for source spectrum, &#39;R&#39; for</span>
+<span class="sd">                | &#39;spd&#39;, optional</span>
+<span class="sd">                | Type of spectral object (e.g. &#39;spd&#39; for source spectrum, &#39;rfl&#39; for</span>
 <span class="sd">                  reflectance spectra, etc.)</span>
-<span class="sd">                | See SPD._INTERP_TYPES for more options. </span>
 <span class="sd">                | This is used to automatically determine the correct kind of</span>
-<span class="sd">                  interpolation method according to CIE15-2018.</span>
+<span class="sd">                  interpolation method according to CIE15-20xx.</span>
 <span class="sd">            :wl_new: </span>
 <span class="sd">                | None or ndarray with wavelength range, optional</span>
 <span class="sd">                | If None: don&#39;t interpolate, else perform interpolation.</span>
@@ -247,7 +246,7 @@
         <span class="k">if</span> <span class="n">wl_new</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">interp_method</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
                 <span class="n">interp_method</span> <span class="o">=</span> <span class="n">dtype</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">interp_method</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">negative_values_allowed</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cie_interp</span><span class="p">(</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">negative_values_allowed</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">norm_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">)</span>
     
@@ -429,7 +428,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="SPD.normalize">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.normalize">[docs]</a>
-    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalize spectral power distributions in SPD instance.</span>
 <span class="sd">        </span>
@@ -453,14 +452,14 @@
 <span class="sd">                | Type of cmf set to use for normalization using photometric </span>
 <span class="sd">                  units (norm_type == &#39;pu&#39;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">spd_normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="n">norm_f</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 
     <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="SPD.cie_interp">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.cie_interp">[docs]</a>
-    <span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">sprague5_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+    <span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">sprague_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sprague_method</span> <span class="o">=</span> <span class="s1">&#39;sprague_cie224_2017&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                    <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interpolate / extrapolate spectral data following standard CIE15-2018.</span>
@@ -473,21 +472,26 @@
 <span class="sd">            :kind:</span>
 <span class="sd">                | &#39;auto&#39;, optional</span>
 <span class="sd">                | If :kind: is None, return original data.</span>
-<span class="sd">                | If :kind: is a spectrum type (see _INTERP_TYPES), the correct </span>
+<span class="sd">                | If :kind: is a spectrum type, the correct </span>
 <span class="sd">                |     interpolation type if automatically chosen.</span>
-<span class="sd">                |       (The use of the slow(er) &#39;sprague5&#39; can be toggled on using :sprague5_allowed:).</span>
+<span class="sd">                |       (The use of the slow(er) &#39;sprague5&#39; can be toggled on using :sprague_allowed:).</span>
 <span class="sd">                | If kind = &#39;auto&#39;: use self.dtype</span>
 <span class="sd">                | Or :kind: can be any interpolation type supported by </span>
 <span class="sd">                |     luxpy.math.interp1</span>
-<span class="sd">                |     or can be &#39;sprague5&#39; (uses luxpy.math.interp1_sprague5). </span>
-<span class="sd">            :sprague5_allowed:</span>
-<span class="sd">                | False, optional</span>
-<span class="sd">                | If True: When kind is a spectral data type from _INTERP_TYPES[&#39;cubic&#39;],</span>
+<span class="sd">                |     or can be &#39;sprague&#39; (uses luxpy.math.interp1_sprague5) or &#39;sprague_cie224_2017&#39; (uses luxpy.math.interp1_sprague_cie224_2017). </span>
+<span class="sd">            :sprague_allowed:</span>
+<span class="sd">                | None, optional</span>
+<span class="sd">                | If None: the value from interp_settings is used.</span>
+<span class="sd">                | If True: When kind is a spectral data type that corresponds to &#39;cubic&#39; interpolation,</span>
 <span class="sd">                |    then a cubic spline interpolation will be used in case of </span>
-<span class="sd">                |    unequal wavelength spacings, otherwise a 5th order Sprague will be used.</span>
-<span class="sd">                | If False: always use &#39;cubic&#39;, don&#39;t use &#39;sprague5&#39;. </span>
+<span class="sd">                |    unequal wavelength spacings, otherwise a 5th order Sprague or Sprague as defined in CIE224-2017 will be used.</span>
+<span class="sd">                | If False: always use &#39;cubic&#39;, don&#39;t use &#39;sprague5&#39; or &#39;sprague_cie224_2017&#39;. </span>
 <span class="sd">                |           This is the default, as differences are minimal and </span>
-<span class="sd">                |           use of the &#39;sprague5&#39; function is a lot slower!</span>
+<span class="sd">                |           use of the &#39;sprague&#39; functions is a lot slower (&#39;sprague5&#39; = slowest )!</span>
+<span class="sd">            :sprague_method:</span>
+<span class="sd">                | &#39;sprague_cie224_2017&#39;, optional</span>
+<span class="sd">                | Specific sprague method used for interpolation. (Only for equal spacings, &#39;sprague_cie224_2017&#39; also on for 5 nm -&gt; 1nm)</span>
+<span class="sd">                | - options: &#39;sprague5&#39; (use luxpy.math.interp1_sprague5), &#39;sprague_cie224_2017&#39; (use luxpy.interp1_sprague_cie224_2017)</span>
 <span class="sd">            :negative_values_allowed:</span>
 <span class="sd">                | False, optional</span>
 <span class="sd">                | If False: negative values are clipped to zero</span>
@@ -534,8 +538,10 @@
 <span class="sd">            |       remains the &#39;best&#39;. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
-            <span class="n">kind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="n">spd</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">sprague5_allowed</span> <span class="o">=</span> <span class="n">sprague5_allowed</span><span class="p">,</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">spd</span> <span class="o">=</span> <span class="n">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_</span><span class="p">(),</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> 
+                         <span class="n">sprague_allowed</span> <span class="o">=</span> <span class="n">sprague_allowed</span><span class="p">,</span> <span class="n">sprague_method</span> <span class="o">=</span> <span class="n">sprague_method</span><span class="p">,</span>
                          <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">negative_values_allowed</span><span class="p">,</span> 
                          <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">extrap_values</span><span class="p">,</span>
                          <span class="n">extrap_kind</span> <span class="o">=</span> <span class="n">extrap_kind</span><span class="p">,</span>
@@ -618,7 +624,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

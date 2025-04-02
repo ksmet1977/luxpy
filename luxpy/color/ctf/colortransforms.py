@@ -799,7 +799,7 @@ def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fl
 
     # get spectrum locus Y,x,y and wavelengths:
     SL = _CMF[cieobs]['bar']
-    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],kind = 'cmf')
+    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
@@ -938,7 +938,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
 
     # get spectrum locus Y,x,y and wavelengths:
     SL = _CMF[cieobs]['bar']
-    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],kind = 'cmf')
+    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
@@ -1077,7 +1077,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
 
     # get spectrum locus Y,x,y and wavelengths:
     SL = _CMF[cieobs]['bar']
-    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],kind = 'cmf')
+    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0,None].T
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]

@@ -4,7 +4,7 @@ Module for (CIE) illuminants
 ============================
 
  :_BB: Dict with constants for blackbody radiator calculation 
-       constant are (c1, c2, n, na, c, h, k). 
+       constant are (c1, c2, n, na, c, h, k, e). 
 
  :_S012_DAYLIGHTPHASE: ndarray with CIE S0,S1, S2 curves for daylight 
         phase calculation (linearly interpolated to 1 nm).
@@ -87,7 +87,8 @@ _S012_DAYLIGHTPHASE=np.array([[360.000,361.000,362.000,363.000,364.000,365.000,3
 ])  
 
 #--------------------------------------------------------------------------------------------------
-# reference illuminant default and mixing range settings, and cieobs, cieobs_Y_normalization settings:
+# reference illuminant default and mixing range settings, cieobs, 
+# and cieobs_Y_normalization (for mixed illuminants) settings:
 _CRI_REF_TYPE = 'ciera'
 _CRI_REF_TYPES = {'ciera': {'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}, 
                   'cierf': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}, 
@@ -96,6 +97,9 @@ _CRI_REF_TYPES = {'ciera': {'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'c
                   'iesrf-tm30-15': {'mix_range' : [4500.0 , 5500.0], 'cieobs' : None, 'cieobs_Y_normalization' : None},
                   'iesrf-tm30-18': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
                   'iesrf-tm30-20': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'iesrf-tm30-24': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'iesrf-tm30': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
+                  'ies-tm30': {'mix_range' : [4000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : '1964_10'},
                   'BB':{'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None},
                   'DL':{'mix_range' : [5000.0 , 5000.0], 'cieobs' : None, 'cieobs_Y_normalization' : None}
                   } #mixing ranges, cieobs (for DL), cieobs_Y_normalization (for normalization of mixed illuminants) for various cri_reference_illuminant types
@@ -148,7 +152,7 @@ def blackbody(cct, wl3 = None, n = None, relative = True):
         return np.vstack((wl,fSr(wl)))
 
 #------------------------------------------------------------------------------
-def _get_daylightlocus_parameters(ccts, spds, cieobs):
+def _get_daylightlocus_parameters(ccts, spds, cieobs, interp_settings = None):
     """
     Get daylight locus parameters for a single cieobs from daylight phase spectra
     determined based on parameters for '1931_2' as reported in CIE15-20xx.
@@ -158,7 +162,7 @@ def _get_daylightlocus_parameters(ccts, spds, cieobs):
     # Get locus parameters:
     #======================
     # get xy coordinates for new cieobs:
-    xyz_ = spd_to_xyz(spds, cieobs = cieobs)
+    xyz_ = spd_to_xyz(spds, cieobs = cieobs, interp_settings = interp_settings)
     xy = xyz_[...,:2]/xyz_.sum(axis=-1,keepdims=True)
     
     # Fit 3e order polynomal xD(1/T) [4000 K < T <= 7000 K]:
@@ -177,7 +181,8 @@ def _get_daylightlocus_parameters(ccts, spds, cieobs):
 
 
 #------------------------------------------------------------------------------
-def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, daylight_locus = None):
+def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, daylight_locus = None,
+                 use_published_daylightlocus_coeffs_when_cieobs_is_1931_2 = True, interp_settings = None):
     """ 
     Calculates daylight chromaticity (xD,yD) from correlated color temperature (cct).
     
@@ -199,6 +204,9 @@ def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, dayligh
             | for specified cieobs.
             | If None: use pre-calculated values.
             | If 'calc': calculate them on the fly.
+        :use_published_daylightlocus_coeffs_when_cieobs_is_1931_2:
+            | True, optional
+            | Use published coefficients for CIE 1931 2° CMFs (see CIE015 colorimetry)
     
     Returns:
         :(xD, yD): 
@@ -210,12 +218,13 @@ def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, dayligh
     cct = np2d(cct)
     if np.any((cct < 4000.0) & (force_daylight_below4000K == False)):
         raise Exception('spectral.daylightlocus(): Daylight locus approximation not defined below 4000 K')
-    
-    if (cieobs is None): # use default values for '1931_2' reported in CIE15-20xx
+
+    if (cieobs is None) | (use_published_daylightlocus_coeffs_when_cieobs_is_1931_2 & (cieobs == '1931_2')): # use default values for '1931_2' reported in CIE15-20xx
         xD = -4.607*((1e3/cct)**3.0)+2.9678*((1e3/cct)**2.0)+0.09911*(1000.0/cct)+0.244063
         p = cct>=7000.0
         xD[p] = -2.0064*((1.0e3/cct[p])**3.0)+1.9018*((1.0e3/cct[p])**2.0)+0.24748*(1.0e3/cct[p])+0.23704
         yD = -3.0*xD**2.0+2.87*xD-0.275
+
     else:
         if isinstance(cieobs, str):
             if daylight_locus is None:
@@ -223,9 +232,11 @@ def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, dayligh
             else:
                 if isinstance(daylight_locus,str):
                     if daylight_locus == 'calc':
-                        daylight_locus = get_daylightloci_parameters(cieobs = [cieobs])[cieobs]
+                        daylight_locus = get_daylightloci_parameters(cieobs = [cieobs], 
+                                                                     interp_settings = interp_settings)[cieobs]
         else:
-            daylight_locus = get_daylightloci_parameters(cieobs = cieobs)['cmf_0']
+            daylight_locus = get_daylightloci_parameters(cieobs = cieobs,
+                                                        interp_settings = interp_settings)['cmf_0']
         pxy, pxT_l7, pxT_L7 = daylight_locus['pxy'], daylight_locus['pxT_l7k'], daylight_locus['pxT_L7k']
         xD = np.polyval(pxT_l7, 1000/cct)
         p = cct>=7000.0
@@ -234,7 +245,9 @@ def daylightlocus(cct, force_daylight_below4000K = False, cieobs = None, dayligh
         
     return xD,yD
 
-def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = None):
+def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = None,
+                                use_1931_2_published_Mcoeffs = False, 
+                                interp_settings = None):
     """
     Get coefficients of Mi weights of daylight phase for specific cieobs
     
@@ -250,7 +263,10 @@ def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = 
             | None, optional
             | Daylight phase component functions.
             | If None: use _S012_DAYLIGHTPHASE
-    
+        :use_1931_2_published_Mcoeffs:
+            | False, optional
+            | Use published coefficients of CIE 1931 2° CMFs (see CIE015 colorimetry), even when cieobs is not '1931_2'!
+
     Returns:
         :Mcoeffs:
             | Dictionary with i,j,k,i1,j1,k1,i2,j2,k2 for each cieobs in :cieobs:
@@ -264,7 +280,8 @@ def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = 
     if S012_daylightphase is None:
         S012_daylightphase = _S012_DAYLIGHTPHASE
     if wl3 is not None:
-        S012_daylightphase = cie_interp(S012_daylightphase,wl_new = wl3, kind='linear',negative_values_allowed = True)
+        S012_daylightphase = cie_interp(S012_daylightphase,wl_new = wl3, kind='linear',negative_values_allowed = True,
+                                        interp_settings = interp_settings)
     
     if cieobs is None: cieobs = _CMF['types']
     if not isinstance(cieobs, list):
@@ -280,8 +297,15 @@ def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = 
             key = cieobs_
         else:
             key = 'cmf_{:1.0f}'.format(i)
-        
-        xyz = spd_to_xyz(S012_daylightphase, cieobs = cieobs_, relative = False, K = 1)
+        if use_1931_2_published_Mcoeffs:
+            Mcoeffs[key] = {'i':0.0241,'j':0.2562,'k':-0.7341,
+                            'i1':-1.3515,'j1':-1.7703,'k1':5.9114,
+                            'i2':0.0300,'j2':-31.4424,'k2':30.0717}
+            continue
+
+        # Get tristimulus values of daylight phase component functions:
+        xyz = spd_to_xyz(S012_daylightphase, cieobs = cieobs_, relative = False, K = 1, 
+                        interp_settings = interp_settings)
         S = xyz.sum(axis=-1)
     
         # Get coefficients in Mi:
@@ -301,7 +325,10 @@ def get_daylightphase_Mi_coeffs(cieobs = None, wl3 = None, S012_daylightphase = 
     return Mcoeffs
 
 
-def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_daylightphase = None):
+def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_daylightphase = None,
+                                 use_1931_2_published_Mcoeffs = False, 
+                                 round_Mi_to_cie_recommended = False,
+                                 interp_settings = None):
     """
     Get daylight phase coefficients M1, M2 following Judd et al. (1964)
     
@@ -316,7 +343,19 @@ def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_dayl
             | If None: Mcoeffs must be supplied.
         :S012_daylightphase: 
             | ndarray with CIE S0, S1, S2 daylight phase component functions
-    
+        :use_1931_2_published_Mcoeffs:
+            | False, optional
+            | Use published coefficients of CIE 1931 2° CMFs (see CIE015 colorimetry), even when cieobs is not '1931_2'!
+        :interp_settings:
+            | None, optional    
+            | Interpolation settings for spd_to_xyz() and cie_interp()
+            | None: use default settings.
+        :round_daylightphase_Mi_to_cie_recommended:
+            | False, optional
+            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!
+            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! 
+
     Returns:
         :M1,M2:
             | daylight phase coefficients M1, M2
@@ -326,13 +365,18 @@ def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_dayl
         Function of Correlated Color Temperature. 
         JOSA A, 54(8), pp. 1031-1040 (1964) <https://doi.org/10.1364/JOSA.54.001031>`_
     """
+    if use_1931_2_published_Mcoeffs:
+        Mcoeffs = {'i':0.0241,'j':0.2562,'k':-0.7341,
+            'i1':-1.3515,'j1':-1.7703,'k1':5.9114,
+            'i2':0.0300,'j2':-31.4424,'k2':30.0717}
     if (Mcoeffs is None) & (cieobs is  None):
         raise Exception("_get_daylightphase_Mi_values(): Mcoeffs and cieobs can't both be None")
     if (Mcoeffs is None) & isinstance(cieobs,str): # use pre-calculated coeffs.
         Mcoeffs = _DAYLIGHT_M12_COEFFS[cieobs]
     if isinstance(Mcoeffs,str) & (cieobs is not None): # calculate coeffs.
         if (Mcoeffs == 'calc'):
-            Mcoeffs = get_daylightphase_Mi_coeffs(cieobs = cieobs, S012_daylightphase = S012_daylightphase)
+            Mcoeffs = get_daylightphase_Mi_coeffs(cieobs = cieobs, S012_daylightphase = S012_daylightphase,
+                                                  interp_settings = interp_settings)
             Mcoeffs = Mcoeffs[cieobs] if isinstance(cieobs,str) else Mcoeffs['cmf_0']
         else:
             raise Exception("Mcoeffs is a string, but not 'calc': unknown option.")
@@ -341,21 +385,23 @@ def _get_daylightphase_Mi_values(xD,yD, Mcoeffs = None, cieobs = None, S012_dayl
 
     # Calculate M1, M2 and round to 3 decimals (CIE recommendation):
     denom = c['i'] + c['j']*xD + c['k']*yD
-    rr = 3 # rounding of Mi
-    M1 = np.round((c['i1'] + c['j1']*xD + c['k1']*yD) / denom, rr)
-    M2 = np.round((c['i2'] + c['j2']*xD + c['k2']*yD) / denom, rr)
-    
-    # denom = (xyz[2,0]*xyz[1,1] - xyz[1,0]*xyz[2,1]) + (xyz[2,1]*S[1] - xyz[1,1]*S[2])*xD + (xyz[1,0]*S[2] - xyz[2,0]*S[1])*yD
-    # M1 = np.round(((xyz[0,0]*xyz[2,1] - xyz[2,0]*xyz[0,1]) + (xyz[0,1]*S[2] - xyz[2,1]*S[0])*xD + (xyz[2,0]*S[0] - xyz[0,0]*S[2])*yD) / denom, 3)
-    # M2 = np.round(((xyz[1,0]*xyz[0,1] - xyz[0,0]*xyz[1,1]) + (xyz[1,1]*S[0] - xyz[0,1]*S[1])*xD + (xyz[0,0]*S[1] - xyz[1,0]*S[0])*yD) / denom, 3)
-              
+    M1 = (c['i1'] + c['j1']*xD + c['k1']*yD) / denom
+    M2 = (c['i2'] + c['j2']*xD + c['k2']*yD) / denom
+    if round_Mi_to_cie_recommended:
+        rr = 3 # rounding of Mi
+        M1 = np.round(M1, rr)
+        M2 = np.round(M2, rr)
+                  
     return M1, M2, c 
     
     
    
 #------------------------------------------------------------------------------
 def daylightphase(cct, wl3 = None, nominal_cct = False, force_daylight_below4000K = False, verbosity = None, 
-                  n = None, cieobs = None, daylight_locus = None, daylight_Mi_coeffs = None):
+                  n = None, cieobs = None, daylight_locus = None, daylight_Mi_coeffs = None,
+                  force_tabulated_xyD_Mi_when_cieobs_is_1931_2 = True,
+                  round_Mi_to_cie_recommended = False, 
+                  interp_settings = None):
     """
     Calculate daylight phase spectrum for correlated color temperature (cct).
         
@@ -399,7 +445,14 @@ def daylightphase(cct, wl3 = None, nominal_cct = False, force_daylight_below4000
             | dict with coefficients for M1 & M2 weights for specified cieobs.
             | If None: use pre-calculated values.
             | If 'calc': calculate them on the fly.
-
+        :force_tabulated_xyD_Mi_when_cieobs_is_1931_2:
+            | True, optional
+            | If cieobs is '1931_2', then use tabulated values for xD, yD and Mi coefficients.
+        :round_daylightphase_Mi_to_cie_recommended:
+            | False, optional
+            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!
+            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! 
     Returns:
         :returns: 
             | ndarray with daylight phase spectrum
@@ -426,22 +479,27 @@ def daylightphase(cct, wl3 = None, nominal_cct = False, force_daylight_below4000
         
         #interpolate _S012_DAYLIGHTPHASE first to wl range:
         if  not np.array_equal(_S012_DAYLIGHTPHASE[0],wl):
-            S012_daylightphase = cie_interp(data = _S012_DAYLIGHTPHASE, wl_new = wl, kind = 'linear',negative_values_allowed = True)
+            S012_daylightphase = cie_interp(data = _S012_DAYLIGHTPHASE, wl_new = wl, kind = 'linear',negative_values_allowed = True,
+                                            interp_settings = interp_settings)
         else:
             S012_daylightphase = _S012_DAYLIGHTPHASE
 
         # Get coordinates of daylight locus corresponding to cct:
-        xD, yD = daylightlocus(cct, force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus)
+        xD, yD = daylightlocus(cct, force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
+                               use_published_daylightlocus_coeffs_when_cieobs_is_1931_2 = force_tabulated_xyD_Mi_when_cieobs_is_1931_2, 
+                               interp_settings = interp_settings)
         
         # Get M1 & M2 component weights:
-        if (cieobs is None): # original M1,M2 for Si at 10 nm spacing and CIE 1931 xy
-            Mcoeffs = {'i':0.0241,'j':0.2562,'k':-0.7341,
-            'i1':-1.3515,'j1':-1.7703,'k1':5.9114,
-            'i2':0.0300,'j2':-31.4424,'k2':30.0717}
+        if (cieobs is None) | (force_tabulated_xyD_Mi_when_cieobs_is_1931_2 & (cieobs == '1931_2')): # original M1,M2 for Si at 10 nm spacing and CIE 1931 xy
+            use_1931_2_published_Mcoeffs = True
+            Mcoeffs = None
         else:
             Mcoeffs = daylight_Mi_coeffs
-        M1, M2, _ = _get_daylightphase_Mi_values(xD, yD, Mcoeffs = Mcoeffs, cieobs = cieobs, S012_daylightphase = S012_daylightphase) 
-        
+        M1, M2, _ = _get_daylightphase_Mi_values(xD, yD, Mcoeffs = Mcoeffs, cieobs = cieobs, S012_daylightphase = S012_daylightphase,
+                                                 use_1931_2_published_Mcoeffs = use_1931_2_published_Mcoeffs, 
+                                                 round_Mi_to_cie_recommended = round_Mi_to_cie_recommended,
+                                                 interp_settings = interp_settings) 
+
         # Calculate weigthed combination of S0, S1 & S2 components:
         Sr = S012_daylightphase[1,:] + M1*S012_daylightphase[2,:] + M2*S012_daylightphase[3,:]
         
@@ -451,7 +509,8 @@ def daylightphase(cct, wl3 = None, nominal_cct = False, force_daylight_below4000
         Sr[Sr==float('NaN')] = 0
         return np.vstack((wl,Sr))
 
-def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], verbosity = 0):
+def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], verbosity = 0,
+                                use_1931_2_published_daylightlocus_coeffs = False, interp_settings = None):
     """
     Get parameters for the daylight loci functions xD(1000/CCT) and yD(xD).
     
@@ -468,6 +527,9 @@ def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], 
             | Wavelength range and spacing of daylight phases to be determined
             | from '1931_2'. The default setting results in parameters very close
             | to that in CIE15-2004/2018.
+        :use_1931_2_published_daylightlocus_coeffs:
+            | False, optional
+            | Use published coefficients for CIE 1931 2° CMFs (see CIE015 colorimetry)
         :verbosity:
             | 0, optional
             | print parameters and make plots.
@@ -484,7 +546,9 @@ def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], 
     # Get daylight phase spds using cieobs '1931_2':
     # wl3 = [300,830,10] # results in Judd's (1964) coefficients for the function yD(xD)x; other show slight deviations
     for i, cct  in enumerate(ccts):
-        spd = daylightphase(cct, cieobs = None, wl3 = wl3, force_daylight_below4000K = False)
+        spd = daylightphase(cct, cieobs = None, wl3 = wl3, force_daylight_below4000K = False,
+                            force_tabulated_xyD_Mi_when_cieobs_is_1931_2 = use_1931_2_published_daylightlocus_coeffs, 
+                            interp_settings = interp_settings)
         if i == 0:
             spds = spd
         else:
@@ -510,7 +574,7 @@ def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], 
             key = 'cmf_{:1.0f}'.format(i)
         
         # get parameters for cieobs:
-        xy, pxy, pxT_l7, pxT_L7, l7, L7 = _get_daylightlocus_parameters(ccts, spds, cieobs_)
+        xy, pxy, pxT_l7, pxT_L7, l7, L7 = _get_daylightlocus_parameters(ccts, spds, cieobs_, interp_settings = interp_settings)
         dayloci[key] = {'pxT_l7k':pxT_l7, 'pxT_L7k':pxT_L7, 'pxy':pxy}
         
         if verbosity > 0:
@@ -543,15 +607,17 @@ def get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = [300,830,10], 
 # Pre-calculate daylight loci parameters and Mi coefficients for each CMF in _CMF
 # (except 'scotopic' and 'cie_std_dev_...'):
 wl3 = [360,830,1]
-_DAYLIGHT_LOCI_PARAMETERS = get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = wl3, verbosity = 0)
-_DAYLIGHT_M12_COEFFS = get_daylightphase_Mi_coeffs(cieobs = None, wl3 = wl3)
+_DAYLIGHT_LOCI_PARAMETERS = get_daylightloci_parameters(ccts = None, cieobs = None, wl3 = wl3, use_1931_2_published_daylightlocus_coeffs = False, verbosity = 0)
+_DAYLIGHT_M12_COEFFS = get_daylightphase_Mi_coeffs(cieobs = None, wl3 = wl3, use_1931_2_published_Mcoeffs = False)
 
 #------------------------------------------------------------------------------
 def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None, 
             cieobs = None, cieobs_Y_normalization = None, 
             norm_type = None, norm_f = None, 
             force_daylight_below4000K = False, n = None,
-            daylight_locus = None):
+            daylight_locus = None, 
+            round_daylightphase_Mi_to_cie_recommended = False, 
+            interp_settings = None):
     """
     Calculates a reference illuminant spectrum based on cct 
     for color rendering index calculations .
@@ -623,6 +689,11 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             | for specified cieobs.
             | If None: use pre-calculated values.
             | If 'calc': calculate them on the fly.
+        :round_daylightphase_Mi_to_cie_recommended:
+            | False, optional
+            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!
+            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! 
     
     Returns:
         :returns: 
@@ -634,10 +705,11 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
         for ref_type. This way other reference illuminants can be specified 
         than the ones in _CRI_REF_TYPES. 
     """
+
     if ref_type == 'spd':
         
         # ccts already contains spectrum of reference:
-        return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f)
+        return spd(ccts, wl = wl3, norm_type = norm_type, norm_f = norm_f, interp_settings = interp_settings)
 
     else:
         if mix_range is not None: mix_range = np2d(mix_range)
@@ -678,14 +750,20 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
                 if ((cct < mix_range_[0]) & (not (ref_type_[0:2] == 'DL'))) | (ref_type_[0:2] == 'BB'):
                     Sr = blackbody(cct, wl3, n = n)
                 elif ((cct >= mix_range_[0]) & (not (ref_type_[0:2] == 'BB'))) | (ref_type_[0:2] == 'DL') :
-                    Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus)
+                    Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus,
+                                       round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
+                                        interp_settings = interp_settings)
             else:
                 SrBB = blackbody(cct, wl3, n = n)
-                SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus)
+                SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, 
+                                     cieobs = cieobs_, daylight_locus = daylight_locus,
+                                    round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
+                                    interp_settings = interp_settings)
                 
                 #cieobs_ = _CIEOBS if cieobs_ is None else cieobs_ # cieobs_ might still be None as that results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.
                 
-                cmf = xyzbar(cieobs = cieobs_Y_normalization_, scr = 'dict', wl_new = wl3)
+                cmf = xyzbar(cieobs = cieobs_Y_normalization_, src = 'dict', wl_new = wl3, 
+                            interp_settings = interp_settings)
                 wl = SrBB[0]
                 ld = getwld(wl)
 
@@ -714,14 +792,16 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
                     
         Srs = np.vstack((Sr[0],Srs))
 
-        return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f)
+        return  spd(Srs, wl = None, norm_type = norm_type, norm_f = norm_f,
+                    interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_indoor(spd):
+def spd_to_indoor(spd, interp_settings = None):
     """
     Convert spd to indoor variant by multiplying it with the CIE spectral transmission for glass.
     """
-    Tglass = cie_interp(_CIE_GLASS_ID['T'].copy(), spd[0,:], kind = 'rfl')[1:,:]
+    Tglass = cie_interp(_CIE_GLASS_ID['T'].copy(), spd[0,:], datatype = 'rfl', 
+                        interp_settings = interp_settings)[1:,:]
     spd_ = spd.copy()
     spd_[1:,:] *= Tglass
     return spd_

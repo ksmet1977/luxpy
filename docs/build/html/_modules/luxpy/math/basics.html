@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.math.basics &mdash; LuxPy 1.11.4 documentation</title>
+  <title>luxpy.math.basics &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=9080e127"></script>
+        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.4
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -166,7 +166,13 @@
 <span class="sd"> </span>
 <span class="sd"> :interp1_sprague5(): Perform a 1-dimensional 5th order Sprague interpolation.</span>
 <span class="sd"> </span>
-<span class="sd"> :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</span>
+<span class="sd"> :interp1_sprague_cie224_2017(): Perform a 1-dimensional Sprague interpolation according to CIE-224-2017 (Rf calculation).</span>
+
+<span class="sd"> :interp1_lagrange(): Perform a 1-dimensional k-th order Lagrange interpolation.</span>
+<span class="sd"> </span>
+<span class="sd"> :linterp():  Perform a 1-dimensional linear interpolation (wrapper around numpy.interp1 with added linear extrapolation).</span>
+<span class="sd"> </span>
+<span class="sd"> :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy based linterp).</span>
 <span class="sd"> </span>
 <span class="sd"> :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.</span>
 <span class="sd"> </span>
@@ -182,6 +188,8 @@
 <span class="sd"> </span>
 <span class="sd"> :mean_distance_weighted(): Recursively calculates distance weighted mean.</span>
 <span class="sd"> </span>
+<span class="sd"> :round(): Round x (int, float, ndarray or tuple) to n significant digits, or n decimals (&#39;to nearest even&#39; or &#39;halfway from zero&#39;).</span>
+<span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -190,14 +198,15 @@
 <span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="c1"># from scipy import stats # has become a lazy import</span>
 
-<span class="n">__all__</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normalize_3x3_matrix&#39;</span><span class="p">,</span><span class="s1">&#39;symmM_to_posdefM&#39;</span><span class="p">,</span><span class="s1">&#39;check_symmetric&#39;</span><span class="p">,</span>
+<span class="n">__all__</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normalize_3x3_matrix&#39;</span><span class="p">,</span><span class="s1">&#39;symmM_to_posdefM&#39;</span><span class="p">,</span><span class="s1">&#39;check_symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;in_hull&#39;</span><span class="p">,</span>
             <span class="s1">&#39;check_posdef&#39;</span><span class="p">,</span><span class="s1">&#39;positive_arctan&#39;</span><span class="p">,</span><span class="s1">&#39;line_intersect&#39;</span><span class="p">,</span><span class="s1">&#39;erf&#39;</span><span class="p">,</span> <span class="s1">&#39;erfinv&#39;</span><span class="p">,</span> 
             <span class="s1">&#39;histogram&#39;</span><span class="p">,</span> <span class="s1">&#39;pol2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2pol&#39;</span><span class="p">,</span> <span class="s1">&#39;spher2cart&#39;</span><span class="p">,</span> <span class="s1">&#39;cart2spher&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;bvgpdf&#39;</span><span class="p">,</span><span class="s1">&#39;mahalanobis2&#39;</span><span class="p">,</span><span class="s1">&#39;dot23&#39;</span><span class="p">,</span> <span class="s1">&#39;rms&#39;</span><span class="p">,</span><span class="s1">&#39;geomean&#39;</span><span class="p">,</span><span class="s1">&#39;polyarea&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;magnitude_v&#39;</span><span class="p">,</span><span class="s1">&#39;angle_v1v2&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;v_to_cik&#39;</span><span class="p">,</span> <span class="s1">&#39;cik_to_v&#39;</span><span class="p">,</span> <span class="s1">&#39;fmod&#39;</span><span class="p">,</span> <span class="s1">&#39;remove_outliers&#39;</span><span class="p">,</span><span class="s1">&#39;fit_ellipse&#39;</span><span class="p">,</span><span class="s1">&#39;fit_cov_ellipse&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;in_hull&#39;</span><span class="p">,</span><span class="s1">&#39;interp1_sprague5&#39;</span><span class="p">,</span><span class="s1">&#39;interp1&#39;</span><span class="p">,</span> <span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
-<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span><span class="s1">&#39;stress_F_test&#39;</span><span class="p">,</span><span class="s1">&#39;mean_distance_weighted&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;linterp&#39;</span><span class="p">,</span><span class="s1">&#39;interpolatedunivariatespline&#39;</span><span class="p">,</span> <span class="s1">&#39;interp1_sprague5&#39;</span><span class="p">,</span><span class="s1">&#39;interp1_sprague_cie224_2017&#39;</span><span class="p">,</span><span class="s1">&#39;interp1_lagrange&#39;</span><span class="p">,</span> <span class="s1">&#39;interp1&#39;</span><span class="p">,</span> <span class="s1">&#39;ndinterp1&#39;</span><span class="p">,</span><span class="s1">&#39;ndinterp1_scipy&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;box_m&#39;</span><span class="p">,</span><span class="s1">&#39;pitman_morgan&#39;</span><span class="p">,</span> <span class="s1">&#39;stress&#39;</span><span class="p">,</span><span class="s1">&#39;stress_F_test&#39;</span><span class="p">,</span><span class="s1">&#39;mean_distance_weighted&#39;</span><span class="p">,</span><span class="s1">&#39;round&#39;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;_interpolate_with_nans&#39;</span><span class="p">,</span> <span class="s1">&#39;_extrap_y&#39;</span><span class="p">]</span>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -1301,6 +1310,550 @@
     <span class="k">return</span> <span class="n">hull</span><span class="o">.</span><span class="n">find_simplex</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span></div>
 
 
+<span class="c1"># #------------------------------------------------------------------------------</span>
+<span class="c1"># _SPRAGUE_COEFFICIENTS = np.array([</span>
+                                 <span class="c1"># [884, -1960, 3033, -2648, 1080, -180],</span>
+                                 <span class="c1"># [508, -540, 488, -367, 144, -24],</span>
+                                 <span class="c1"># [-24, 144, -367, 488, -540, 508],</span>
+                                 <span class="c1"># [-180, 1080, -2648, 3033, -1960, 884],</span>
+                                 <span class="c1"># ]).T / 209.0</span>
+<span class="c1"># def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = &#39;interp1d&#39;):</span>
+    <span class="c1"># &quot;&quot;&quot; </span>
+    <span class="c1"># Perform a 1-dimensional 5th order Sprague interpolation.</span>
+    
+    <span class="c1"># Args:</span>
+        <span class="c1"># :x:</span>
+            <span class="c1"># | ndarray with n-dimensional coordinates.</span>
+        <span class="c1"># :y: </span>
+            <span class="c1"># | ndarray with values at coordinates in x.</span>
+        <span class="c1"># :xn:</span>
+            <span class="c1"># | ndarray of new coordinates.</span>
+        <span class="c1"># :extrap:</span>
+            <span class="c1"># | (np.nan, np.nan) or string, optional</span>
+            <span class="c1"># | If tuple: fill with values in tuple (&lt;x[0],&gt;x[-1])</span>
+            <span class="c1"># | If string:  (&#39;zeros&#39;,&#39;linear&#39;, &#39;nearest&#39;, &#39;nearest-up&#39;, &#39;zero&#39;, &#39;slinear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;previous&#39;,&#39;next&#39;)</span>
+            <span class="c1"># |           for more info on the other options see: scipy.interpolate.interp1d?</span>
+    <span class="c1"># Returns:</span>
+        <span class="c1"># :yn:</span>
+            <span class="c1"># | ndarray with values at new coordinates in xn.</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># # Do extrapolation:</span>
+    <span class="c1"># if ((xn&lt;x[0]) | (xn&gt;x[-1])).any(): # extrapolation needed !</span>
+        <span class="c1"># if isinstance(extrap,tuple):</span>
+            <span class="c1"># if extrap[0] == extrap[1]: </span>
+                <span class="c1"># yne = np.ones((y.shape[0],len(xn)))*extrap[0]</span>
+            <span class="c1"># else:</span>
+                <span class="c1"># yne = np.zeros((y.shape[0],len(xn)))</span>
+                <span class="c1"># yne[:,(xn&lt;x[0])] = extrap[0]</span>
+                <span class="c1"># yne[:,(xn&gt;x[-1])] = extrap[1]</span>
+        <span class="c1"># elif isinstance(extrap,str):</span>
+            <span class="c1"># #from scipy.interpolate import interp1d # lazy import</span>
+            <span class="c1"># #yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = &#39;extrapolate&#39;)(xn)</span>
+            <span class="c1"># yne = interp1(x, y, xn, kind = extrap, ext = &#39;extrapolate&#39;, scipy_interpolator = scipy_interpolator)</span>
+        <span class="c1"># else:</span>
+            <span class="c1"># raise Exception(&#39;Invalid option for extrap argument. Only tuple and string allowed.&#39;)</span>
+        <span class="c1"># xn_x = xn[(xn&gt;=x[0]) &amp; (xn&lt;=x[-1])]</span>
+    <span class="c1"># else:</span>
+        <span class="c1"># xn_x = xn</span>
+        <span class="c1"># yne = None</span>
+     
+    <span class="c1"># # Check equal x-spacing:</span>
+    <span class="c1"># dx = np.diff(x)</span>
+    <span class="c1"># if np.all(dx == dx[0]):</span>
+        <span class="c1"># dx = dx[0] </span>
+    <span class="c1"># else:</span>
+        <span class="c1"># raise Exception(&#39;Elements in x are not equally spaced!&#39;)</span>
+        
+    <span class="c1"># # Extrapolate x, y with required additional elements for Sprague to work:</span>
+    <span class="c1"># xe = np.hstack((x[0] - 2*dx, x[0] - dx, x, x[-1] + dx, x[-1] + 2*dx))</span>
+    
+    <span class="c1"># y = np.atleast_2d(y)</span>
+    <span class="c1"># ye1 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,0])[:,None]</span>
+    <span class="c1"># ye2 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,1])[:,None]</span>
+    <span class="c1"># ye3 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,2])[:,None]</span>
+    <span class="c1"># ye4 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,3])[:,None]</span>
+    <span class="c1"># ye = np.hstack((ye1,ye2,y,ye3,ye4)).T</span>
+    
+    
+    <span class="c1"># # Evaluate at xn_x (no extrapolation!!):</span>
+    <span class="c1"># i = np.searchsorted(xe, xn_x) - 1</span>
+    <span class="c1"># X = np.atleast_2d((xn_x - xe[i]) / (xe[i + 1] - xe[i])).T</span>
+
+    <span class="c1"># a0 = ye[i]</span>
+    <span class="c1"># a1 = ((2 * ye[i - 2] - 16 * ye[i - 1] + 16 * ye[i + 1] - 2 * ye[i + 2]) / 24)  </span>
+    <span class="c1"># a2 = ((-ye[i - 2] + 16 * ye[i - 1] - 30 * ye[i] + 16 * ye[i + 1] - ye[i + 2]) / 24) </span>
+    <span class="c1"># a3 = ((-9 * ye[i - 2] + 39 * ye[i - 1] - 70 * ye[i] + 66 * ye[i + 1] - 33 * ye[i + 2] + 7 * ye[i + 3]) / 24)</span>
+    <span class="c1"># a4 = ((13 * ye[i - 2] - 64 * ye[i - 1] + 126 * ye[i] - 124 * ye[i + 1] + 61 * ye[i + 2] - 12 * ye[i + 3]) / 24)</span>
+    <span class="c1"># a5 = ((-5 * ye[i - 2] + 25 * ye[i - 1] - 50 * ye[i] + 50 * ye[i + 1] - 25 * ye[i + 2] + 5 * ye[i + 3]) / 24)</span>
+
+    <span class="c1"># yn = (a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5).T</span>
+    
+    <span class="c1"># if yne is None:</span>
+        <span class="c1"># return yn</span>
+    <span class="c1"># else:</span>
+        <span class="c1"># yne[:,(xn&gt;=x[0]) &amp; (xn&lt;=x[-1])] = yn</span>
+        <span class="c1"># return yne</span>
+
+<span class="c1"># #------------------------------------------------------------------------------</span>
+<span class="c1"># def interp1(X,Y,Xnew, kind = &#39;linear&#39;, ext = &#39;extrapolate&#39;, fill_value = &#39;extrapolate&#39;, </span>
+            <span class="c1"># force_scipy_interpolator = False, scipy_interpolator = &#39;interp1d&#39;,</span>
+            <span class="c1"># w = None, bbox=[None, None], check_finite = False):</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># Perform a 1-dimensional interpolation </span>
+    <span class="c1"># (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).</span>
+    
+    <span class="c1"># Args:</span>
+        <span class="c1"># :X: </span>
+            <span class="c1"># | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+        <span class="c1"># :Y: </span>
+            <span class="c1"># | ndarray with values at coordinates in X</span>
+        <span class="c1"># :Xnew: </span>
+            <span class="c1"># | ndarray of new coordinates (last axis represents dimension)</span>
+        <span class="c1"># :kind:</span>
+            <span class="c1"># | str or int,  optional</span>
+            <span class="c1"># | supported options for str: &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;</span>
+        <span class="c1"># :ext:</span>
+            <span class="c1"># | &#39;extrapolate&#39;, optional</span>
+            <span class="c1"># | options: </span>
+            <span class="c1"># |   - &#39;extrapolate&#39;</span>
+            <span class="c1"># |   - &#39;zeros&#39;: out-of-bounds values are filled with zeros</span>
+            <span class="c1"># |   - &#39;const&#39;: out-of-bounds values are filled with nearest value</span>
+            <span class="c1"># |   - &#39;fill_value&#39;: value of tuple (2,) of values is used to fill out-of-bounds values</span>
+        <span class="c1"># :fill_value:</span>
+            <span class="c1"># | &#39;extrpolate&#39; or float or int or tupple, optional</span>
+            <span class="c1"># | If ext == &#39;fill_value&#39;: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</span>
+        <span class="c1"># :force_scipy_interpolator:</span>
+            <span class="c1"># | False, optional</span>
+            <span class="c1"># | If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). </span>
+        <span class="c1"># :scipy_interpolator:</span>
+            <span class="c1"># | &#39;interp1d&#39;, optional</span>
+            <span class="c1"># | options: [&#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;] (or 0 or 1)</span>
+        <span class="c1"># :other args:</span>
+            <span class="c1"># | see scipy.interpolate.InterpolatedUnivariateSpline()</span>
+        
+    <span class="c1"># Returns:</span>
+        <span class="c1"># :Ynew:</span>
+            <span class="c1"># | ndarray with new values at coordinates in Xnew</span>
+    
+    <span class="c1"># Note:</span>
+        <span class="c1"># 1. &#39;numpy.interp&#39; is fastest (but only works for linear interpolation without extrapolation)</span>
+        <span class="c1"># 2. For linear interpolation: &#39;interp1d&#39; is faster for Y (N,...) with N &gt; 1, else &#39;InterpolatedUnivariateSpline&#39; is faster</span>
+        <span class="c1"># 3. For &#39;cubic&#39; interpolation: &#39;InterpolatedUnivariateSpline&#39; is faster for Y (N,...) with N &gt; 1, else &#39;interp1d&#39; is faster</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    
+    <span class="c1"># if X.ndim == 2: X = X[0]</span>
+    <span class="c1"># if Xnew.ndim == 2: Xnew = Xnew[0]</span>
+    
+    <span class="c1"># # avoid interpolation/extrapolation if none is needed:</span>
+    <span class="c1"># if np.array_equal(X,Xnew): return Y</span>
+    
+    <span class="c1"># if isinstance(scipy_interpolator,int): scipy_interpolator = [&#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;][scipy_interpolator]</span>
+    <span class="c1"># if isinstance(kind,str):</span>
+        <span class="c1"># if kind == &#39;nearest&#39;: kind, ext = &#39;linear&#39;, &#39;const&#39;</span>
+        <span class="c1"># if scipy_interpolator == &#39;InterpolatedUnivariateSpline&#39;: </span>
+            <span class="c1"># k = [&#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;quartic&#39;, &#39;quintic&#39;].index(kind) + 1</span>
+        <span class="c1"># else:</span>
+            <span class="c1"># k = [&#39;zero&#39;, &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;].index(kind) </span>
+    <span class="c1"># else:</span>
+        <span class="c1"># k = kind</span>
+    <span class="c1"># if ext == &#39;nearest&#39;: ext = &#39;const&#39;</span>
+    
+    <span class="c1"># if (k == 1) &amp; (force_scipy_interpolator == False):</span>
+        <span class="c1"># if (((((ext == &#39;const&#39;) | (ext == 3) | (ext == &#39;zeros&#39;) | (ext == 1))) | </span>
+            <span class="c1"># ((ext == &#39;fill_value&#39;) &amp; (not (fill_value == &#39;extrapolate&#39;)))) |</span>
+            <span class="c1"># ((Xnew[0] &gt;= X[0]) &amp; (Xnew[-1] &lt;= (X[-1])))):</span>
+            <span class="c1"># if ((ext == &#39;zeros&#39;) | (ext == 1)):</span>
+                <span class="c1"># (left, right) = (0.0,0.0) </span>
+            <span class="c1"># elif ((ext == &#39;const&#39;) | (ext == 3)): </span>
+                <span class="c1"># (left, right) = (None, None)</span>
+            <span class="c1"># elif ((ext == &#39;fill_value&#39;)):</span>
+                <span class="c1"># if isinstance(fill_value, (float,int)): </span>
+                    <span class="c1"># fill_value = (fill_value, fill_value) </span>
+                <span class="c1"># (left,right) = fill_value</span>
+            <span class="c1"># else:</span>
+                <span class="c1"># (left, right) = (None, None)</span>
+
+            <span class="c1"># if Y.ndim == 1:</span>
+                <span class="c1"># return np.interp(Xnew, X, Y, left = left, right = right)</span>
+            <span class="c1"># else:</span>
+                <span class="c1"># return np.array([np.interp(Xnew, X, Y[i], left = left, right = right) for i in range(Y.shape[0])])</span>
+    
+    <span class="c1"># from scipy import interpolate # lazy import</span>
+    <span class="c1"># if scipy_interpolator == &#39;InterpolatedUnivariateSpline&#39;:</span>
+        <span class="c1"># ext_original = ext</span>
+        <span class="c1"># if ext == &#39;fill_value&#39;:</span>
+            <span class="c1"># ext = &#39;extrapolate&#39;</span>
+        <span class="c1"># if Y.ndim == 1:</span>
+            <span class="c1"># Yn = interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)</span>
+        <span class="c1"># else:</span>
+           <span class="c1"># Yn = np.array([interpolate.InterpolatedUnivariateSpline(X,Y[i], ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew) for i in range(Y.shape[0])])</span>
+        <span class="c1"># if (ext_original == &#39;fill_value&#39;) &amp; (not (fill_value == &#39;extrapolate&#39;)):</span>
+            <span class="c1"># if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value)</span>
+            <span class="c1"># Yn[:,Xnew &lt; X[0]] = fill_value[0]</span>
+            <span class="c1"># Yn[:,Xnew &gt; X[-1]] = fill_value[1]</span>
+        <span class="c1"># return Yn</span>
+            
+    <span class="c1"># else:</span>
+        <span class="c1"># if ((ext == &#39;extrapolate&#39;) | (ext == 0)): </span>
+            <span class="c1"># fill_value = &#39;extrapolate&#39;</span>
+        <span class="c1"># elif ((ext == &#39;zeros&#39;) | (ext == 1)):</span>
+            <span class="c1"># fill_value = (0.0,0.0) </span>
+        <span class="c1"># elif ((ext == &#39;const&#39;) | (ext == 3)):</span>
+            <span class="c1"># fill_value = (Y[...,0], Y[...,-1])</span>
+        <span class="c1"># elif ((ext == &#39;fill_value&#39;)):</span>
+            <span class="c1"># if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value) </span>
+        <span class="c1"># return interpolate.interp1d(X, Y, kind = k, bounds_error = False, fill_value = fill_value)(Xnew)</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+
+<span class="c1">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">use_log</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">Y</span><span class="p">,</span><span class="n">Yi</span><span class="p">:</span> <span class="n">Yi</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">,</span><span class="n">f</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span>  <span class="k">lambda</span> <span class="n">Y</span><span class="p">,</span><span class="n">Yi</span><span class="p">:</span> <span class="n">Yi</span> <span class="k">if</span> <span class="p">(</span><span class="n">Y</span><span class="o">&lt;=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Yi</span><span class="p">)</span>
+        <span class="n">fi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">Y</span><span class="p">,</span><span class="n">Yi</span><span class="p">:</span> <span class="n">Yi</span> <span class="k">if</span> <span class="p">(</span><span class="n">Y</span><span class="o">&lt;=</span><span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">Yi</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">f</span><span class="p">,</span> <span class="n">fi</span>
+
+<div class="viewcode-block" id="linterp">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.linterp">[docs]</a>
+<span class="k">def</span> <span class="nf">linterp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> 
+             <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span>
+             <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform linear 1-D interpolation (with linear or constant extrapolation).</span>
+<span class="sd">    (wrapper around np.interp)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X</span>
+<span class="sd">        :Xnew: </span>
+<span class="sd">            | ndarray of new coordinates (last axis represents dimension)</span>
+<span class="sd">        :left: </span>
+<span class="sd">            | &#39;ext&#39;, optional float corresponding to Y.</span>
+<span class="sd">            | Value to return for `Xnew &lt; X[0]`, None is `Y[0]`.</span>
+<span class="sd">            | If &#39;ext&#39;: perform linear extrapolation</span>
+<span class="sd">        :right:</span>
+<span class="sd">            | &#39;ext&#39;, optional float corresponding to Y.</span>
+<span class="sd">            | Value to return for `Xnew &gt; X[-1]`, None is `Y[-1]`.</span>
+<span class="sd">            | If &#39;ext&#39;: perform linear extrapolation</span>
+<span class="sd">        :interp_log:</span>
+<span class="sd">            | Perform interpolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+<span class="sd">        :extrap_log:</span>
+<span class="sd">            | Perform extrapolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :Ynew:</span>
+<span class="sd">            | ndarray with new values at coordinates in Xnew</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_left</span><span class="p">,</span> <span class="n">_right</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+        <span class="n">_left</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="kc">None</span> 
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span> 
+        <span class="n">_right</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">fi</span><span class="p">,</span><span class="n">fii</span> <span class="o">=</span> <span class="n">_use_log</span><span class="p">(</span><span class="n">interp_log</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> 
+        <span class="n">Ynew</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">fii</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">Xnew</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Ynew</span> <span class="o">=</span> <span class="n">fii</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">Xnew</span><span class="p">,</span><span class="n">X</span><span class="p">,</span><span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_left</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">_right</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">):</span>
+        <span class="n">fe</span><span class="p">,</span><span class="n">fei</span> <span class="o">=</span> <span class="n">_use_log</span><span class="p">(</span><span class="n">extrap_log</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_left</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">):</span> <span class="n">Ynew</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">Xnew</span> <span class="o">&lt;</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fei</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">2</span><span class="p">],(</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="p">((</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">1</span><span class="p">])</span><span class="o">-</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]))</span><span class="o">*</span><span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="n">Xnew</span><span class="o">&lt;</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">/</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">])))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">_right</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">):</span> <span class="n">Ynew</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">Xnew</span> <span class="o">&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">=</span> <span class="n">fei</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">:],(</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span> <span class="o">+</span> <span class="p">((</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">:])</span><span class="o">-</span><span class="n">fe</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">*</span><span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="n">Xnew</span><span class="o">&gt;</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">/</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])))</span>
+    <span class="k">return</span> <span class="n">Ynew</span></div>
+
+
+<div class="viewcode-block" id="interpolatedunivariatespline">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.interpolatedunivariatespline">[docs]</a>
+<span class="k">def</span> <span class="nf">interpolatedunivariatespline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                                 <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
+                                 <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span>
+                                 <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> 
+                                 <span class="n">check_finite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                 <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span>
+                                 <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional interpolation (with extrapolation)</span>
+<span class="sd">    (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X</span>
+<span class="sd">        :Xnew: </span>
+<span class="sd">            | ndarray of new coordinates (last axis represents dimension)</span>
+<span class="sd">        :kind:</span>
+<span class="sd">            | str,  optional</span>
+<span class="sd">            | supported options for str: &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;</span>
+<span class="sd">        :ext:</span>
+<span class="sd">            | &#39;extrapolate&#39;, optional</span>
+<span class="sd">            | options: </span>
+<span class="sd">            |   - &#39;extrapolate&#39;</span>
+<span class="sd">            |   - &#39;zeros&#39;: out-of-bounds values are filled with zeros</span>
+<span class="sd">            |   - &#39;const&#39;: out-of-bounds values are filled with nearest value</span>
+<span class="sd">            |   - &#39;fill_value&#39;: value of tuple (2,) of values is used to fill out-of-bounds values</span>
+<span class="sd">        :fill_value:</span>
+<span class="sd">            | &#39;extrapolate&#39; or float or int or tupple, optional</span>
+<span class="sd">            | If ext == &#39;fill_value&#39;: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</span>
+<span class="sd">        :w,bbox,check_finite:</span>
+<span class="sd">            | see scipy.interpolate.InterpolatedUnivariateSpline()</span>
+<span class="sd">        :interp_log:</span>
+<span class="sd">            | Perform interpolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+<span class="sd">        :extrap_log:</span>
+<span class="sd">            | Perform extrapolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :Ynew:</span>
+<span class="sd">            | ndarray with new values at coordinates in Xnew</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import </span>
+
+    <span class="c1"># get interpolator type index:</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span> <span class="s1">&#39;quartic&#39;</span><span class="p">,</span> <span class="s1">&#39;quintic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">ext_original</span> <span class="o">=</span> <span class="n">ext</span>
+    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">:</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+    <span class="n">fi</span><span class="p">,</span><span class="n">fii</span> <span class="o">=</span> <span class="n">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">Yn</span> <span class="o">=</span> <span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Yn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">ext_original</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">fill_value</span> <span class="o">==</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span> <span class="n">Yn</span><span class="p">[:,</span><span class="n">Xnew</span> <span class="o">&lt;</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span> <span class="n">Yn</span><span class="p">[:,</span><span class="n">Xnew</span> <span class="o">&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Yn</span></div>
+
+
+<div class="viewcode-block" id="_interpolate_with_nans">
+<a class="viewcode-back" href="../../../math.html#luxpy.math._interpolate_with_nans">[docs]</a>
+<span class="k">def</span> <span class="nf">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                           <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deal with possible NaNs in Y&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">delete_nans</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="c1"># interpolate with potential NaNs present</span>
+        <span class="n">Yn</span> <span class="o">=</span> <span class="n">fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">)</span> 
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># deal with NaNs by deleting them and then interpolating</span>
+        <span class="k">if</span> <span class="n">nan_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">nan_indices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="c1"># NaNs are present</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">all_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">rows_with_nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nan_indices</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">rows_with_no_nans</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">setdiff1d</span><span class="p">(</span><span class="n">all_rows</span><span class="p">,</span><span class="n">rows_with_nans</span><span class="p">)</span>
+            <span class="n">Yn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">N</span><span class="p">,</span><span class="n">Xnew</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]])</span>
+            <span class="n">Yn</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+            <span class="c1"># Interpolate part not containing any NaNs</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">rows_with_no_nans</span><span class="o">.</span><span class="n">size</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">):</span> 
+                <span class="n">Y_no_nans</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">rows_with_no_nans</span><span class="p">]</span>
+                <span class="n">N_no_nans</span> <span class="o">=</span> <span class="n">Y_no_nans</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">Yn_no_nans</span> <span class="o">=</span> <span class="n">fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_no_nans</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">)</span>
+                <span class="n">Yn</span><span class="p">[</span><span class="n">rows_with_no_nans</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yn_no_nans</span>
+
+            <span class="c1"># In case there are NaN&#39;s:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">rows_with_nans</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+
+                <span class="c1"># looping required as some values are NaN&#39;s:</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rows_with_nans</span><span class="p">:</span>
+                    <span class="n">nonan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">nan_indices</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                    <span class="n">Xi_no_nans</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">nonan_indices</span><span class="p">]</span>
+                    <span class="n">Yi_no_nans</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">nonan_indices</span><span class="p">]</span>
+                    <span class="n">Yni_no_nans</span> <span class="o">=</span> <span class="n">fintp</span><span class="p">(</span><span class="n">Xi_no_nans</span><span class="p">,</span> <span class="n">Yi_no_nans</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">)</span>
+                    <span class="n">Yn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yni_no_nans</span>  
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Yn</span> <span class="o">=</span> <span class="n">fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">Yn</span></div>
+
+
+<span class="k">def</span> <span class="nf">_interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> 
+              <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform 1-D interpolation using scipy.interpolate.interp1d().</span>
+<span class="sd">    (Private: for use with interp1 function)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">ext</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span><span class="c1"># | (ext in (&#39;linear&#39;,&#39;quadratic&#39;,&#39;cubic&#39;)): </span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+    <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">fi</span><span class="p">,</span><span class="n">fii</span> <span class="o">=</span> <span class="n">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fii</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">))</span>
+ 
+<span class="k">def</span> <span class="nf">_get_fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span><span class="n">kind</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="n">fill_value</span><span class="p">,</span>
+               <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">scipy_interpolator</span><span class="p">,</span>
+               <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span><span class="p">,</span>
+               <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_scipy_interpolator</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolation/Extrapolation: using linterp() numpy wrapper&#39;</span><span class="p">)</span>
+        <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span>  <span class="n">linterp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">right</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                                         <span class="n">interp_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="n">extrap_log</span><span class="p">)</span>
+    
+    <span class="k">elif</span> <span class="p">(</span><span class="n">force_scipy_interpolator</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">kind</span> <span class="o">!=</span> <span class="s1">&#39;linear&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">scipy_interpolator</span> <span class="o">==</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolation/Extrapolation: using interpolatedunivariatespline() scipy wrapper&#39;</span><span class="p">)</span>
+            <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span> <span class="n">interpolatedunivariatespline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> 
+                                                                    <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">,</span>
+                                                                    <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">,</span>
+                                                                    <span class="n">interp_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="n">extrap_log</span><span class="p">)</span>    
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolation/Extrapolation: using scipy.interpolate.interp1d()&#39;</span><span class="p">)</span>
+            <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span> <span class="n">_interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> <span class="n">interp_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="n">extrap_log</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">fintp</span>
+
+<span class="k">def</span> <span class="nf">_get_most_time_efficient_interpolator</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">extrap_required</span><span class="p">):</span>
+    <span class="c1"># Use most time-efficient interpolator:</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">scipy_interpolator_int</span> <span class="o">=</span> <span class="s1">&#39;interp1d&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span> <span class="c1"># &#39;interp1d&#39; faster than &#39;InterpolatedUnivariateSpline&#39; for Y(N,...) with N == 1 and kind == &#39;linear&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scipy_interpolator_int</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;interp1d&#39;</span> <span class="c1"># &#39;InterpolatedUnivariateSpline&#39; faster than &#39;interp1d&#39; for Y(N,...) with N == 1 and kind == &#39;cubic&#39;</span>
+    <span class="k">if</span> <span class="n">extrap_required</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">):</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="n">kind</span> <span class="c1"># because ext is &#39;ext&#39;, &#39;zeros&#39;, &#39;flat&#39;, &#39;nearest&#39;, &#39;const&#39; or &#39;fill_value&#39;</span>
+        <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+            <span class="n">scipy_interpolator_ext</span> <span class="o">=</span> <span class="s1">&#39;interp1d&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span> <span class="c1"># &#39;interp1d&#39; faster than &#39;InterpolatedUnivariateSpline&#39; for Y(N,...) with N == 1 and kind == &#39;linear&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scipy_interpolator_ext</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span> <span class="k">if</span> <span class="p">(</span><span class="n">N</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="s1">&#39;interp1d&#39;</span> <span class="c1"># &#39;InterpolatedUnivariateSpline&#39; faster than &#39;interp1d&#39; for Y(N,...) with N == 1 and kind == &#39;cubic&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scipy_interpolator_ext</span> <span class="o">=</span> <span class="n">scipy_interpolator_int</span>
+    <span class="k">return</span> <span class="n">scipy_interpolator_int</span><span class="p">,</span> <span class="n">scipy_interpolator_ext</span>
+
+<div class="viewcode-block" id="interp1">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1">[docs]</a>
+<span class="k">def</span> <span class="nf">interp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
+            <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+            <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># scipy.interpolate.InterpolatedUnivariateSpline kwargs</span>
+            <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># perform interpolation method (and/or extrapolation method in log space)</span>
+            <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a 1-dimensional interpolation </span>
+<span class="sd">    (wrapper around linterp, interpolatedunivariatespline, interp1d).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X: </span>
+<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X</span>
+<span class="sd">        :Xnew: </span>
+<span class="sd">            | ndarray of new coordinates (last axis represents dimension)</span>
+<span class="sd">        :kind:</span>
+<span class="sd">            | str,  optional</span>
+<span class="sd">            | supported options for str: &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;</span>
+<span class="sd">        :ext:</span>
+<span class="sd">            | &#39;extrapolate&#39;, optional</span>
+<span class="sd">            | options: </span>
+<span class="sd">            |   - &#39;extrapolate&#39;, &#39;ext&#39;: use method specified in :kind: to extrapolate.</span>
+<span class="sd">            |   - &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39; extrapolation</span>
+<span class="sd">            |   - &#39;zeros&#39;: out-of-bounds values are filled with zeros</span>
+<span class="sd">            |   - &#39;const&#39;,&#39;flat&#39;,&#39;nearest&#39;: out-of-bounds values are filled with nearest value</span>
+<span class="sd">            |   - &#39;fill_value&#39;: value of tuple (2,) of values is used to fill out-of-bounds values</span>
+<span class="sd">        :fill_value:</span>
+<span class="sd">            | &#39;extrapolate&#39; or float or int or tupple, optional</span>
+<span class="sd">            | If ext == &#39;fill_value&#39;: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</span>
+<span class="sd">        :force_scipy_interpolator:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </span>
+<span class="sd">        :scipy_interpolator:</span>
+<span class="sd">            | &#39;InterpolatedUnivariateSpline&#39;, optional</span>
+<span class="sd">            | options: &#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;</span>
+<span class="sd">        :delete_nans:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If NaNs are present, remove them and (and try to) interpolate without them.</span>
+<span class="sd">        :w,bbox,check_finite:</span>
+<span class="sd">            | see scipy.interpolate.InterpolatedUnivariateSpline()</span>
+<span class="sd">        :interp_log:</span>
+<span class="sd">            | Perform interpolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+<span class="sd">        :extrap_log:</span>
+<span class="sd">            | Perform extrapolation method (&#39;linear&#39;, &#39;quadratic&#39;, or &#39;cubic&#39;) in log space.</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :Ynew:</span>
+<span class="sd">            | ndarray with new values at coordinates in Xnew</span>
+<span class="sd">    </span>
+<span class="sd">    Note:</span>
+<span class="sd">        1. &#39;numpy.interp&#39; is fastest (but only works for linear interpolation and linear or no extrapolation)</span>
+<span class="sd">        2. For linear interpolation: &#39;interp1d&#39; is faster for Y (N,...) with N &gt; 1, else &#39;InterpolatedUnivariateSpline&#39; is faster</span>
+<span class="sd">        3. For &#39;cubic&#39; interpolation: &#39;InterpolatedUnivariateSpline&#39; is faster for Y (N,...) with N &gt; 1, else &#39;interp1d&#39; is faster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">Xnew</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Xnew</span> <span class="o">=</span> <span class="n">Xnew</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="c1"># avoid interpolation/extrapolation if none is needed:</span>
+    <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Xnew</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="n">delete_nans</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="n">Y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># keep NaNs if any and return original Y as copy</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">nan_indices</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="k">return</span> <span class="n">Y</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="c1"># return original Y as copy (doesn&#39;t contain any NaNs)</span>
+    <span class="k">if</span> <span class="n">nan_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+    
+    <span class="c1"># setup extrapolation:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">extrap_required</span> <span class="o">=</span> <span class="kc">True</span> 
+        <span class="n">ext_is_lqc_method</span> <span class="o">=</span> <span class="n">ext</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">)</span> <span class="c1"># method for ext (&#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;) is same as in kind</span>
+        <span class="n">ext_original</span> <span class="o">=</span> <span class="n">ext</span>
+        <span class="k">if</span> <span class="n">ext_is_lqc_method</span><span class="p">:</span>
+            <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ext&#39;</span><span class="p">,</span><span class="s1">&#39;ext&#39;</span><span class="p">)</span>
+            <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">((</span><span class="n">ext</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span>
+                <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ext&#39;</span><span class="p">,</span><span class="s1">&#39;ext&#39;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> 
+            <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span> 
+                <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span> 
+                    <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span> 
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;ext&#39;</span><span class="p">,</span><span class="s1">&#39;ext&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">extrap_required</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">ext_is_lqc_method</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+
+    <span class="k">if</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">:</span>
+        <span class="n">scipy_interpolator_int</span><span class="p">,</span> <span class="n">scipy_interpolator_ext</span> <span class="o">=</span> <span class="n">_get_most_time_efficient_interpolator</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span> <span class="n">extrap_required</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">scipy_interpolator_int</span><span class="p">,</span> <span class="n">scipy_interpolator_ext</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span> <span class="n">scipy_interpolator</span>
+
+    <span class="n">fintp</span> <span class="o">=</span> <span class="n">_get_fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span><span class="n">kind</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="n">fill_value</span><span class="p">,</span>
+               <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">scipy_interpolator_int</span><span class="p">,</span>
+               <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span><span class="p">,</span>
+               <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span> 
+    
+    <span class="n">Yni</span> <span class="o">=</span> <span class="n">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                                  <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span> 
+                                  <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">nan_indices</span><span class="p">)</span> 
+    
+    <span class="c1"># Deal with request for different (from itype/kind) extrapolation method</span>
+    <span class="k">if</span> <span class="n">extrap_required</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ext_is_lqc_method</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ext_original</span> <span class="o">!=</span> <span class="n">kind</span><span class="p">:</span>
+                <span class="c1"># do extra interpolation to get the extrapolated values according to the desired extrap. method</span>
+                <span class="n">fextp</span> <span class="o">=</span> <span class="n">_get_fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span><span class="n">ext_original</span><span class="p">,</span><span class="s1">&#39;extrapolate&#39;</span><span class="p">,(</span><span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="s1">&#39;ext&#39;</span><span class="p">),</span>
+                                  <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">scipy_interpolator_ext</span><span class="p">,</span>
+                                  <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span><span class="p">,</span>
+                                  <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span><span class="p">,</span> <span class="n">verbosity</span><span class="p">)</span> 
+                <span class="n">Yne</span> <span class="o">=</span> <span class="n">_interpolate_with_nans</span><span class="p">(</span><span class="n">fextp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                                             <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span> 
+                                             <span class="n">nan_indices</span> <span class="o">=</span> <span class="n">nan_indices</span><span class="p">)</span> 
+                <span class="n">cnd</span> <span class="o">=</span> <span class="o">~</span><span class="p">((</span><span class="n">Xnew</span> <span class="o">&gt;=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Xnew</span> <span class="o">&lt;=</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+                <span class="n">Yni</span><span class="p">[:,</span><span class="n">cnd</span><span class="p">]</span> <span class="o">=</span> <span class="n">Yne</span><span class="p">[:,</span><span class="n">cnd</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">Yni</span></div>
+
+
+
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="n">_SPRAGUE_COEFFICIENTS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
                                  <span class="p">[</span><span class="mi">884</span><span class="p">,</span> <span class="o">-</span><span class="mi">1960</span><span class="p">,</span> <span class="mi">3033</span><span class="p">,</span> <span class="o">-</span><span class="mi">2648</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="o">-</span><span class="mi">180</span><span class="p">],</span>
@@ -1308,48 +1861,8 @@
                                  <span class="p">[</span><span class="o">-</span><span class="mi">24</span><span class="p">,</span> <span class="mi">144</span><span class="p">,</span> <span class="o">-</span><span class="mi">367</span><span class="p">,</span> <span class="mi">488</span><span class="p">,</span> <span class="o">-</span><span class="mi">540</span><span class="p">,</span> <span class="mi">508</span><span class="p">],</span>
                                  <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="o">-</span><span class="mi">2648</span><span class="p">,</span> <span class="mi">3033</span><span class="p">,</span> <span class="o">-</span><span class="mi">1960</span><span class="p">,</span> <span class="mi">884</span><span class="p">],</span>
                                  <span class="p">])</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="mf">209.0</span>
-<div class="viewcode-block" id="interp1_sprague5">
-<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_sprague5">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1_sprague5</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;interp1d&#39;</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Perform a 1-dimensional 5th order Sprague interpolation.</span>
-<span class="sd">    </span>
-<span class="sd">    Args:</span>
-<span class="sd">        :x:</span>
-<span class="sd">            | ndarray with n-dimensional coordinates.</span>
-<span class="sd">        :y: </span>
-<span class="sd">            | ndarray with values at coordinates in x.</span>
-<span class="sd">        :xn:</span>
-<span class="sd">            | ndarray of new coordinates.</span>
-<span class="sd">        :extrap:</span>
-<span class="sd">            | (np.nan, np.nan) or string, optional</span>
-<span class="sd">            | If tuple: fill with values in tuple (&lt;x[0],&gt;x[-1])</span>
-<span class="sd">            | If string:  (&#39;zeros&#39;,&#39;linear&#39;, &#39;nearest&#39;, &#39;nearest-up&#39;, &#39;zero&#39;, &#39;slinear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;previous&#39;,&#39;next&#39;)</span>
-<span class="sd">            |           for more info on the other options see: scipy.interpolate.interp1d?</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        :yn:</span>
-<span class="sd">            | ndarray with values at new coordinates in xn.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Do extrapolation:</span>
-    <span class="k">if</span> <span class="p">((</span><span class="n">xn</span><span class="o">&lt;</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">xn</span><span class="o">&gt;</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="c1"># extrapolation needed !</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrap</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> 
-                <span class="n">yne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">len</span><span class="p">(</span><span class="n">xn</span><span class="p">)))</span><span class="o">*</span><span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">yne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">len</span><span class="p">(</span><span class="n">xn</span><span class="p">)))</span>
-                <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&lt;</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&gt;</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrap</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-            <span class="c1">#from scipy.interpolate import interp1d # lazy import</span>
-            <span class="c1">#yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = &#39;extrapolate&#39;)(xn)</span>
-            <span class="n">yne</span> <span class="o">=</span> <span class="n">interp1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid option for extrap argument. Only tuple and string allowed.&#39;</span><span class="p">)</span>
-        <span class="n">xn_x</span> <span class="o">=</span> <span class="n">xn</span><span class="p">[(</span><span class="n">xn</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">xn_x</span> <span class="o">=</span> <span class="n">xn</span>
-        <span class="n">yne</span> <span class="o">=</span> <span class="kc">None</span>
-     
+
+<span class="k">def</span> <span class="nf">_pre_extrap_left_right_with_2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     <span class="c1"># Check equal x-spacing:</span>
     <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dx</span> <span class="o">==</span> <span class="n">dx</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -1365,13 +1878,81 @@
     <span class="n">ye2</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">@</span> <span class="n">_SPRAGUE_COEFFICIENTS</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])[:,</span><span class="kc">None</span><span class="p">]</span>
     <span class="n">ye3</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span> <span class="o">@</span> <span class="n">_SPRAGUE_COEFFICIENTS</span><span class="p">[:,</span><span class="mi">2</span><span class="p">])[:,</span><span class="kc">None</span><span class="p">]</span>
     <span class="n">ye4</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">6</span><span class="p">:]</span> <span class="o">@</span> <span class="n">_SPRAGUE_COEFFICIENTS</span><span class="p">[:,</span><span class="mi">3</span><span class="p">])[:,</span><span class="kc">None</span><span class="p">]</span>
-    <span class="n">ye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ye1</span><span class="p">,</span><span class="n">ye2</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">ye3</span><span class="p">,</span><span class="n">ye4</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
-    
+    <span class="n">ye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">ye1</span><span class="p">,</span><span class="n">ye2</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">ye3</span><span class="p">,</span><span class="n">ye4</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">xe</span><span class="p">,</span> <span class="n">ye</span>
+
+<div class="viewcode-block" id="_extrap_y">
+<a class="viewcode-back" href="../../../math.html#luxpy.math._extrap_y">[docs]</a>
+<span class="k">def</span> <span class="nf">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+            <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+            <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+            <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extrapolate y if needed&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">xn</span><span class="o">&lt;</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">|</span> <span class="p">(</span><span class="n">xn</span><span class="o">&gt;</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">any</span><span class="p">():</span> <span class="c1"># extrapolation needed !</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrap</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span> 
+                <span class="n">yne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">len</span><span class="p">(</span><span class="n">xn</span><span class="p">)))</span><span class="o">*</span><span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">yne</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="nb">len</span><span class="p">(</span><span class="n">xn</span><span class="p">)))</span>
+                <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&lt;</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&gt;</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrap</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">extrap</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">:</span> 
+                <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="n">extrap</span>
+            <span class="k">elif</span> <span class="n">extrap</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span><span class="s1">&#39;quadratic&#39;</span><span class="p">,</span><span class="s1">&#39;cubic&#39;</span><span class="p">):</span>
+                <span class="n">kind</span> <span class="o">=</span> <span class="n">extrap</span> 
+                <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+            <span class="k">elif</span> <span class="n">extrap</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;zeros&#39;</span><span class="p">,</span><span class="s1">&#39;flat&#39;</span><span class="p">,</span><span class="s1">&#39;const&#39;</span><span class="p">,</span> <span class="s1">&#39;nearest&#39;</span><span class="p">):</span>
+                <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="n">extrap</span>
+            <span class="k">elif</span> <span class="n">extrap</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;sprague5&#39;</span><span class="p">,</span> <span class="s1">&#39;sprague_cie224_2017&#39;</span><span class="p">,</span><span class="s1">&#39;lagrange5&#39;</span><span class="p">):</span>
+                <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span>
+                <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Unsupported extrapolation type: </span><span class="si">{</span><span class="n">extrap</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">yne</span> <span class="o">=</span> <span class="n">interp1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> 
+                            <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span> 
+                            <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span>
+                            <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                            <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid option for extrap argument. Only tuple and string allowed.&#39;</span><span class="p">)</span>
+        <span class="n">xn_x</span> <span class="o">=</span> <span class="n">xn</span><span class="p">[(</span><span class="n">xn</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">xn_x</span> <span class="o">=</span> <span class="n">xn</span>
+        <span class="n">yne</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">xn_x</span><span class="p">,</span> <span class="n">yne</span></div>
+
+
+<span class="k">def</span> <span class="nf">_interp1_sprague5</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                     <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                     <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional 5th order Sprague interpolation.</span>
+<span class="sd">    (Private: for use with interp1_sprague5 function)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Do extrapolation:</span>
+    <span class="n">xn_x</span><span class="p">,</span> <span class="n">yne</span> <span class="o">=</span> <span class="n">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                        <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                        <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span>
+     
+            
+    <span class="c1"># Extrapolate x, y with required additional elements for Sprague to work:</span>
+    <span class="n">xe</span><span class="p">,</span> <span class="n">ye</span> <span class="o">=</span> <span class="n">_pre_extrap_left_right_with_2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
     
     <span class="c1"># Evaluate at xn_x (no extrapolation!!):</span>
+    <span class="c1">#i = np.searchsorted(xe, xn_x, side = &#39;right&#39;) - 1</span>
+    <span class="c1">#i[i &gt; ye.shape[0] - 4] = ye.shape[0] - 4 # deal with end-point</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">xe</span><span class="p">,</span> <span class="n">xn_x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
     <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">((</span><span class="n">xn_x</span> <span class="o">-</span> <span class="n">xe</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">xe</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">xe</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span><span class="o">.</span><span class="n">T</span>
 
+    <span class="n">ye</span> <span class="o">=</span> <span class="n">ye</span><span class="o">.</span><span class="n">T</span>
     <span class="n">a0</span> <span class="o">=</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
     <span class="n">a1</span> <span class="o">=</span> <span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span>  
     <span class="n">a2</span> <span class="o">=</span> <span class="p">((</span><span class="o">-</span><span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="mi">16</span> <span class="o">*</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ye</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="mi">24</span><span class="p">)</span> 
@@ -1385,120 +1966,273 @@
         <span class="k">return</span> <span class="n">yn</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">yn</span>
-        <span class="k">return</span> <span class="n">yne</span></div>
-
-
-<span class="c1">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="interp1">
-<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
-            <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;interp1d&#39;</span><span class="p">,</span>
-            <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Perform a 1-dimensional interpolation </span>
-<span class="sd">    (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).</span>
+        <span class="k">return</span> <span class="n">yne</span>
+    
+<div class="viewcode-block" id="interp1_sprague5">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_sprague5">[docs]</a>
+<span class="k">def</span> <span class="nf">interp1_sprague5</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                     <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                     <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional 5th order Sprague interpolation.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
-<span class="sd">        :X: </span>
-<span class="sd">            | ndarray with n-dimensional coordinates (last axis represents dimension)</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | ndarray with n-dimensional coordinates.</span>
 <span class="sd">        :Y: </span>
-<span class="sd">            | ndarray with values at coordinates in X</span>
-<span class="sd">        :Xnew: </span>
-<span class="sd">            | ndarray of new coordinates (last axis represents dimension)</span>
-<span class="sd">        :kind:</span>
-<span class="sd">            | str or int,  optional</span>
-<span class="sd">            | supported options for str: &#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;</span>
-<span class="sd">        :ext:</span>
-<span class="sd">            | &#39;extrapolate&#39;, optional</span>
-<span class="sd">            | options: </span>
-<span class="sd">            |   - &#39;extrapolate&#39;</span>
-<span class="sd">            |   - &#39;zeros&#39;: out-of-bounds values are filled with zeros</span>
-<span class="sd">            |   - &#39;const&#39;: out-of-bounds values are filled with nearest value</span>
-<span class="sd">            |   - &#39;fill_value&#39;: value of tuple (2,) of values is used to fill out-of-bounds values</span>
-<span class="sd">        :fill_value:</span>
-<span class="sd">            | &#39;extrpolate&#39; or float or int or tupple, optional</span>
-<span class="sd">            | If ext == &#39;fill_value&#39;: use fill_value to set lower- and upper-out-of-bounds values when extrapolating</span>
+<span class="sd">            | ndarray with values at coordinates in X.</span>
+<span class="sd">        :Xnew:</span>
+<span class="sd">            | ndarray of new coordinates.</span>
+<span class="sd">        :extrap:</span>
+<span class="sd">            | (np.nan, np.nan) or string, optional</span>
+<span class="sd">            | If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</span>
+<span class="sd">            | If string:  (&#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;zeros&#39;, &#39;const&#39;)</span>
 <span class="sd">        :force_scipy_interpolator:</span>
 <span class="sd">            | False, optional</span>
-<span class="sd">            | If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). </span>
+<span class="sd">            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </span>
 <span class="sd">        :scipy_interpolator:</span>
-<span class="sd">            | &#39;interp1d&#39;, optional</span>
-<span class="sd">            | options: [&#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;] (or 0 or 1)</span>
-<span class="sd">        :other args:</span>
-<span class="sd">            | see scipy.interpolate.InterpolatedUnivariateSpline()</span>
-<span class="sd">        </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        :Ynew:</span>
-<span class="sd">            | ndarray with new values at coordinates in Xnew</span>
-<span class="sd">    </span>
-<span class="sd">    Note:</span>
-<span class="sd">        1. &#39;numpy.interp&#39; is fastest (but only works for linear interpolation without extrapolation)</span>
-<span class="sd">        2. For linear interpolation: &#39;interp1d&#39; is faster for Y (N,...) with N &gt; 1, else &#39;InterpolatedUnivariateSpline&#39; is faster</span>
-<span class="sd">        3. For &#39;cubic&#39; interpolation: &#39;InterpolatedUnivariateSpline&#39; is faster for Y (N,...) with N &gt; 1, else &#39;interp1d&#39; is faster</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    
-    <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">Xnew</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Xnew</span> <span class="o">=</span> <span class="n">Xnew</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    
-    <span class="c1"># avoid interpolation/extrapolation if none is needed:</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Xnew</span><span class="p">):</span> <span class="k">return</span> <span class="n">Y</span>
-    
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scipy_interpolator</span><span class="p">,</span><span class="nb">int</span><span class="p">):</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span> <span class="s1">&#39;interp1d&#39;</span><span class="p">][</span><span class="n">scipy_interpolator</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kind</span><span class="p">,</span><span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;const&#39;</span>
-        <span class="k">if</span> <span class="n">scipy_interpolator</span> <span class="o">==</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">:</span> 
-            <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span> <span class="s1">&#39;quartic&#39;</span><span class="p">,</span> <span class="s1">&#39;quintic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;zero&#39;</span><span class="p">,</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> 
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">k</span> <span class="o">=</span> <span class="n">kind</span>
-    <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;const&#39;</span>
-    
-    <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">force_scipy_interpolator</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="k">if</span> <span class="p">(((((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)))</span> <span class="o">|</span> 
-            <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">fill_value</span> <span class="o">==</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">))))</span> <span class="o">|</span>
-            <span class="p">((</span><span class="n">Xnew</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Xnew</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))):</span>
-            <span class="k">if</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
-                <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> 
-            <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span> 
-                <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)):</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span> 
-                    <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span> 
-                <span class="p">(</span><span class="n">left</span><span class="p">,</span><span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="n">fill_value</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="sd">            | &#39;InterpolatedUnivariateSpline&#39;, optional</span>
+<span class="sd">            | options: &#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;</span>
+<span class="sd">        :delete_nans:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If NaNs are present, remove them and (and try to) interpolate without them.</span>
 
-            <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">left</span> <span class="o">=</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
-    
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
-    <span class="k">if</span> <span class="n">scipy_interpolator</span> <span class="o">==</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">:</span>
-        <span class="n">ext_original</span> <span class="o">=</span> <span class="n">ext</span>
-        <span class="k">if</span> <span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">:</span>
-            <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
-        <span class="k">if</span> <span class="n">Y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">Yn</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-           <span class="n">Yn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ext</span> <span class="o">=</span> <span class="n">ext</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="n">check_finite</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])])</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ext_original</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">fill_value</span> <span class="o">==</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span>
-            <span class="n">Yn</span><span class="p">[:,</span><span class="n">Xnew</span> <span class="o">&lt;</span> <span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">Yn</span><span class="p">[:,</span><span class="n">Xnew</span> <span class="o">&gt;</span> <span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">Yn</span>
-            
+<span class="sd">    Returns:</span>
+<span class="sd">        :Yn:</span>
+<span class="sd">            | ndarray with values at new coordinates in Xnew.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolation: using luxpy interp1_sprague5&#39;</span><span class="p">)</span>
+    <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span> <span class="n">_interp1_sprague5</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                                                <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                                                <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span> 
+                                                <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                                                 <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                                <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span> 
+                                <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>  </div>
+
+
+<span class="c1">#----------------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xn</span><span class="p">,</span>
+                                <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                                <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                                <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                                <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                                <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional Sprague interpolation as defined in (CIE-224-2017).</span>
+<span class="sd">    (Private: for use with interp1_sprague_cie224_2017 function)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Use sprague interpolation as defined in CIE227-2017</span>
+
+
+    <span class="c1"># Do extrapolation:</span>
+    <span class="n">xn_x</span><span class="p">,</span> <span class="n">yne</span> <span class="o">=</span> <span class="n">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                        <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                        <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span>
+
+
+    <span class="c1"># Extrapolate 2 extra values beyond x-boundary:</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">],(</span><span class="n">d</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">d</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span><span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">dx</span> <span class="o">==</span> <span class="n">dx</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">():</span> <span class="n">dx</span> <span class="o">=</span> <span class="n">dx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span> <span class="o">|</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Sprague interpolation method only defined for equally spaced x!&#39;</span><span class="p">)</span>
+    <span class="n">xe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">dx</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">3</span><span class="o">*</span><span class="n">dx</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">ye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">y</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">],</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span> <span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:],</span><span class="n">y</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">:]))</span>
+
+    <span class="c1"># Sprague coefficients for spacing of 5 to 1:</span>
+    <span class="n">Smn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">1.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">,</span>  <span class="mf">0.0000</span><span class="p">,</span> <span class="mf">0.0000</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.0128</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0976</span><span class="p">,</span> <span class="mf">0.9344</span><span class="p">,</span> <span class="mf">0.1744</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0256</span><span class="p">,</span> <span class="mf">0.0016</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.0144</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1136</span><span class="p">,</span> <span class="mf">0.7264</span><span class="p">,</span> <span class="mf">0.4384</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0736</span><span class="p">,</span> <span class="mf">0.0080</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.0080</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0736</span><span class="p">,</span> <span class="mf">0.4384</span><span class="p">,</span> <span class="mf">0.7264</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1136</span><span class="p">,</span> <span class="mf">0.0144</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mf">0.0016</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0256</span><span class="p">,</span> <span class="mf">0.1744</span><span class="p">,</span> <span class="mf">0.9344</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0976</span><span class="p">,</span> <span class="mf">0.0128</span><span class="p">]</span>
+                    <span class="p">])</span>
+
+    <span class="c1"># Find indices of Smn for bulk processing:</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">xe</span><span class="p">,</span> <span class="n">xn</span><span class="p">)</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">i</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">Iu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">((</span><span class="n">I</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># process xe (as check):</span>
+    <span class="n">xe_</span> <span class="o">=</span> <span class="p">(</span><span class="n">Smn</span> <span class="nd">@xe</span><span class="p">[</span><span class="n">Iu</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">xe__</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">xe_</span><span class="p">,(</span><span class="mi">5</span><span class="o">*</span><span class="n">xe_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],))</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">xe__</span><span class="o">&gt;=</span><span class="n">xn</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xe__</span><span class="o">&lt;=</span><span class="n">xn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">xe__</span> <span class="o">=</span> <span class="n">xe__</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+
+    <span class="c1"># Process ye:</span>
+    <span class="n">ye</span> <span class="o">=</span> <span class="n">ye</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">ye_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">((</span><span class="n">Smn</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">ye</span><span class="p">[</span><span class="n">Iu</span><span class="p">],(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">ye__</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">ye_</span><span class="p">,(</span><span class="n">ye_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">5</span><span class="o">*</span><span class="n">xe_</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">ye__</span> <span class="o">=</span> <span class="n">ye__</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span>
+    <span class="n">yn</span> <span class="o">=</span> <span class="n">ye__</span>
+
+    <span class="k">if</span> <span class="n">yne</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">yn</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span> 
-            <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
-        <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;zeros&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">)</span> 
-        <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span>
-            <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">Y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;fill_value&#39;</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span><span class="nb">int</span><span class="p">)):</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">fill_value</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">)</span> 
-        <span class="k">return</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">)</span></div>
+        <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn_x</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn_x</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">yn</span>
+        <span class="k">return</span> <span class="n">yne</span>
+
+
+<div class="viewcode-block" id="interp1_sprague_cie224_2017">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_sprague_cie224_2017">[docs]</a>
+<span class="k">def</span> <span class="nf">interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                     <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                     <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional Sprague interpolation according to CIE-224-2017.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | ndarray with n-dimensional coordinates.</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X.</span>
+<span class="sd">        :Xnew:</span>
+<span class="sd">            | ndarray of new coordinates.</span>
+<span class="sd">        :extrap:</span>
+<span class="sd">            | (np.nan, np.nan) or string, optional</span>
+<span class="sd">            | If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</span>
+<span class="sd">            | If string:  (&#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;zeros&#39;, &#39;const&#39;)</span>
+<span class="sd">        :force_scipy_interpolator:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </span>
+<span class="sd">        :scipy_interpolator:</span>
+<span class="sd">            | &#39;InterpolatedUnivariateSpline&#39;, optional</span>
+<span class="sd">            | options: &#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;</span>
+<span class="sd">        :delete_nans:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If NaNs are present, remove them and (and try to) interpolate without them.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :Yn:</span>
+<span class="sd">            | ndarray with values at new coordinates in Xnew.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Interpolation: using luxpy interp1_sprague_cie227_2017&#39;</span><span class="p">)</span>
+    <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span> <span class="n">_interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                                                        <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                                                        <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span> 
+                                                        <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                                                        <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                                <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span> 
+                                <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> </div>
+
+<span class="c1">#----------------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_cardinal_lagrange</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cardinal(xdata, x):</span>
+<span class="sd">    In: xdata, array with the nodes x_i.</span>
+<span class="sd">    x, array or a scalar of values in which the cardinal functions are evaluated.</span>
+<span class="sd">    Return: l: a list of arrays of the cardinal functions evaluated in x.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">ydata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="n">_pre_extrap_left_right_with_2</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span><span class="n">ydata</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+    <span class="n">ks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">indices</span> <span class="o">+</span> <span class="n">ks</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">xdata</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="n">n</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">idx</span><span class="p">[:,</span><span class="n">idx</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="n">n</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">li</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">li</span> <span class="o">=</span> <span class="n">li</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">xdata</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span><span class="o">/</span><span class="p">(</span><span class="n">xdata</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">-</span><span class="n">xdata</span><span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">j</span><span class="p">]])</span>
+        <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">li</span><span class="p">)</span> <span class="c1"># Append the array to the list</span>
+    <span class="k">return</span> <span class="n">l</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
+  
+
+<span class="k">def</span> <span class="nf">_interp1_lagrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">pre_extrap</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                     <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                     <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span>
+                     <span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform k-th order Lagrange interpolation to new xn.</span>
+<span class="sd">    (Optionally pre-extrapolate data with additional 2 point to the left and 2 to the right)</span>
+<span class="sd">    (Private: for use with interp1_lagrange function)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Do extrapolation:</span>
+    <span class="n">xn_x</span><span class="p">,</span> <span class="n">yne</span> <span class="o">=</span> <span class="n">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                        <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span>
+                        <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                        <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span>
+
+    <span class="n">y_</span> <span class="o">=</span> <span class="n">y</span> <span class="k">if</span> <span class="n">pre_extrap</span> <span class="k">else</span> <span class="kc">None</span>
+    <span class="n">l</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">xdata</span><span class="p">,</span><span class="n">ydata</span><span class="p">)</span> <span class="o">=</span> <span class="n">_cardinal_lagrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="n">y_</span><span class="p">)</span> <span class="c1"># Find the cardinal functions evaluated in x</span>
+    <span class="k">if</span> <span class="n">ydata</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="n">y</span> <span class="o">=</span> <span class="n">ydata</span>
+    <span class="n">yn</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">idx</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">l</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">ndim</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">))</span> <span class="c1"># multiply yi (points corresponding to xi for each of the k+1 lagrange polynomials) with lagrange polymials and sum</span>
+    
+    <span class="k">if</span> <span class="n">yne</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">yn</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># copy lagrange interpolation part into full extrapolated result:</span>
+        <span class="n">yne</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span> <span class="o">=</span> <span class="n">yn</span><span class="p">[:,(</span><span class="n">xn</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">xn</span><span class="o">&lt;=</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">yne</span>
+
+<div class="viewcode-block" id="interp1_lagrange">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_lagrange">[docs]</a>
+<span class="k">def</span> <span class="nf">interp1_lagrange</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+                     <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+                     <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+                     <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
+                     <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                     <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Perform a 1-dimensional k-th order Lagrange interpolation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        :X:</span>
+<span class="sd">            | ndarray with n-dimensional coordinates.</span>
+<span class="sd">        :Y: </span>
+<span class="sd">            | ndarray with values at coordinates in X.</span>
+<span class="sd">        :Xnew:</span>
+<span class="sd">            | ndarray of new coordinates.</span>
+<span class="sd">        :k:</span>
+<span class="sd">            | 5 or int, optional</span>
+<span class="sd">            | Order of Lagrange interpolation</span>
+<span class="sd">        :extrap:</span>
+<span class="sd">            | (np.nan, np.nan) or string, optional</span>
+<span class="sd">            | If tuple: fill with values in tuple (&lt;X[0],&gt;X[-1])</span>
+<span class="sd">            | If string:  (&#39;linear&#39;, &#39;quadratic&#39;, &#39;cubic&#39;, &#39;zeros&#39;, &#39;const&#39;)</span>
+<span class="sd">        :force_scipy_interpolator:</span>
+<span class="sd">            | False, optional</span>
+<span class="sd">            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). </span>
+<span class="sd">        :scipy_interpolator:</span>
+<span class="sd">            | &#39;InterpolatedUnivariateSpline&#39;, optional</span>
+<span class="sd">            | options: &#39;InterpolatedUnivariateSpline&#39;, &#39;interp1d&#39;</span>
+<span class="sd">        :delete_nans:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If NaNs are present, remove them and (and try to) interpolate without them.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :Yn:</span>
+<span class="sd">            | ndarray with values at new coordinates in Xnew.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Interpolation: using luxpy interp1_lagrange</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">fintp</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">:</span> <span class="n">_interp1_lagrange</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span>  
+                                              <span class="n">extrap</span> <span class="o">=</span> <span class="n">extrap</span><span class="p">,</span> 
+                                              <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span>
+                                              <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">scipy_interpolator</span><span class="p">,</span> 
+                                              <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span>
+                                              <span class="n">choose_most_efficient_interpolator</span> <span class="o">=</span> <span class="n">choose_most_efficient_interpolator</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="n">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+                                <span class="n">delete_nans</span> <span class="o">=</span> <span class="n">delete_nans</span><span class="p">,</span> 
+                                <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>  </div>
+
+
+
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
@@ -1896,6 +2630,108 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">mu0</span> <span class="o">+</span> <span class="n">mu</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="n">axis</span><span class="p">)</span></div>
 
+            
+<span class="c1">#---------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">round_sigfig</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Round x (int, float, ndarray) to n significant digits.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :x: </span>
+<span class="sd">            | int, float, ndarray to be rounded</span>
+<span class="sd">        :n:</span>
+<span class="sd">            | int</span>
+<span class="sd">            | Number of significant digits</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :y: </span>
+<span class="sd">            | rounded value(s)</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. From: https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_positive</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">mags</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_positive</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">mags</span><span class="p">)</span> <span class="o">/</span> <span class="n">mags</span>
+
+<span class="k">def</span> <span class="nf">round_halfwayfromzero</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Round x to n decimal points using round half away from zero.</span>
+<span class="sd">    This function is needed because the rounding specified in the CIE</span>
+<span class="sd">    recommendation is different from the standard rounding scheme in python</span>
+<span class="sd">    (which is following the IEEE recommendation).</span>
+<span class="sd">    Args:</span>
+<span class="sd">        :x: </span>
+<span class="sd">            | int, float, ndarray to be rounded</span>
+<span class="sd">        :n:</span>
+<span class="sd">            | int</span>
+<span class="sd">            | Number of decimal points</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :y: </span>
+<span class="sd">            | rounded value(s)</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. From: CIETC1-97: https://github.com/ifarup/ciefunctions </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span>
+
+
+<span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Round helper function (private)&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
+        <span class="k">return</span> <span class="n">x</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;sigfig&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">round_sigfig</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;dec&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;nearesteven&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;numpy&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;np&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;halfwayfromzero&#39;</span><span class="p">):</span>
+              <span class="k">return</span> <span class="n">round_halfwayfromzero</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="round">
+<a class="viewcode-back" href="../../../math.html#luxpy.math.round">[docs]</a>
+<span class="k">def</span> <span class="nf">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Round x (int, float, ndarray or tuple) to n significant digits, or n decimals (&#39;to nearest even&#39; or &#39;halfway from zero&#39;).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        :x: </span>
+<span class="sd">            | int, float, ndarray or tuple to be rounded.</span>
+<span class="sd">        :n:</span>
+<span class="sd">            | int or tuple</span>
+<span class="sd">            | Number of significant digits, or n decimals.</span>
+<span class="sd">            | If int: round to nearest even using numpy&#39;s round() function</span>
+<span class="sd">            | if Tuple: first element specifies the number of digits, the second element is a string specifying the method:</span>
+<span class="sd">            |   - &#39;sigfig&#39;: round to n significant digits (uses luxpy.math.round_sigfig function).</span>
+<span class="sd">            |   - &#39;dec&#39; or &#39;nearesteven&#39; or &#39;numpy&#39; or &#39;np&#39;: round to nearest even using numpy&#39;s round function.</span>
+<span class="sd">            |   - &#39;halfwayfromzero&#39;: rounds halfway from zero (uses luxpy.math.round_awayfromzero function).</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        :y: </span>
+<span class="sd">            | rounded value(s).</span>
+<span class="sd">    </span>
+<span class="sd">    Notes:</span>
+<span class="sd">        1. &#39;sigfig&#39; from: https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy </span>
+<span class="sd">        2. &#39;halfwayfromzero&#39; from: CIETC1-97: https://github.com/ifarup/ciefunctions </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_round</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">)</span></div>
+
+
+        
+<span class="c1"># if __name__ == &#39;__main__&#39;:</span>
+<span class="c1">#     import luxpy as lx </span>
+<span class="c1">#     import matplotlib.pyplot as plt</span>
+<span class="c1">#     spd = lx._CIE_D65[:,::5]</span>
+<span class="c1">#     wln = lx.getwlr([380,830,1])</span>
+<span class="c1">#     spdi = interp1_sprague_cie224_2017(spd[0],spd[1:], wln)</span>
+<span class="c1">#     plt.plot(spd[0],spd[1],&#39;b-&#39;)</span>
+<span class="c1">#     plt.plot(wln,spdi[0],&#39;r:&#39;)</span>
+
 </pre></div>
 
            </div>
@@ -1905,7 +2741,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

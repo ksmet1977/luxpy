@@ -2,7 +2,8 @@
 # --> remove it temporarily from ./data/cctluts/ and disable internet !!
 
 # Clean __pycache__ :
-pyclean . #pip install pyclean
+#pip install pyclean
+pyclean . 
 
 # Make documentation:
 cd docs
@@ -14,7 +15,7 @@ pyclean . #pip install pyclean
 
 # Make source distribution and wheel:
 python setup.py sdist bdist_wheel
-twine upload dist/luxpy-1.11.4*
+twine upload dist/luxpy-1.12.*
 
 
 # Build conda version:

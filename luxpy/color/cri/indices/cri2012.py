@@ -29,7 +29,7 @@ from ..utils.helpers import spd_to_cri
 __all__ =['spd_to_cri2012', 'spd_to_cri2012_hl17', 'spd_to_cri2012_hl1000', 'spd_to_cri2012_real210']
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012(SPD, out = 'Rf', wl = None):
+def spd_to_cri2012(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function for the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
@@ -57,10 +57,10 @@ def spd_to_cri2012(SPD, out = 'Rf', wl = None):
             Lighting Research and Technology, 45, 689–709. 
             Retrieved from http://lrt.sagepub.com/content/45/6/689
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012', out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None):
+def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function for the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform HL17 mathematical sampleset.
@@ -88,10 +88,10 @@ def spd_to_cri2012_hl17(SPD, out = 'Rf', wl = None):
         Lighting Research and Technology, 45, 689–709. 
         <http://lrt.sagepub.com/content/45/6/689>`_
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-hl17', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-hl17', out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
+def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function for the 'cri2012' color rendition (fidelity) metric
     with the spectally uniform Hybrid HL1000 sampleset.
@@ -119,10 +119,10 @@ def spd_to_cri2012_hl1000(SPD, out = 'Rf', wl = None):
         Lighting Research and Technology, 45, 689–709. 
         <http://lrt.sagepub.com/content/45/6/689>`_
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-hl1000', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-hl1000', out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
+def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None, interp_settings = None):
     """
     Wrapper function the 'cri2012' color rendition (fidelity) metric 
     with the Real-210 sampleset (normally for special color rendering indices).
@@ -151,5 +151,5 @@ def spd_to_cri2012_real210(SPD, out = 'Rf', wl = None):
         <http://lrt.sagepub.com/content/45/6/689>`_
     
     """
-    return spd_to_cri(SPD, cri_type = 'cri2012-real210', out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = 'cri2012-real210', out = out, wl = wl, interp_settings = interp_settings)
 

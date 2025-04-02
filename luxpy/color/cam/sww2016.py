@@ -395,11 +395,11 @@ if __name__ == '__main__0':
         LMS10_ = YLMS10_[[0,2,3,4],:].copy()
         
         # Calculate lms:
-        Y10 = cie_interp(_CMF['1964_10']['bar'].copy(),getwlr([400,700,5]),kind='cmf')[[0,2],:]
+        Y10 = cie_interp(_CMF['1964_10']['bar'].copy(),getwlr([400,700,5]),datatype='cmf')[[0,2],:]
         XYZ10_lx = _CMF['2006_10']['bar'].copy()
-        XYZ10_lx = cie_interp(XYZ10_lx,getwlr([400,700,5]),kind='cmf')
+        XYZ10_lx = cie_interp(XYZ10_lx,getwlr([400,700,5]),datatype='cmf')
         LMS10_lx = np.vstack((XYZ10_lx[:1,:],np.dot(math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
-        LMS10 = cie_interp(LMS10_lx,getwlr([400,700,5]),kind='cmf')
+        LMS10 = cie_interp(LMS10_lx,getwlr([400,700,5]),datatype='cmf')
         
         #LMS10 = np.vstack((XYZ10[:1,:],np.dot(lx.math.normalize_3x3_matrix(_CMF['2006_10']['M'],np.array([[1,1,1]])),XYZ10_lx[1:,:])))
     
@@ -410,7 +410,7 @@ if __name__ == '__main__0':
             wl = getwlr(wl)
             dl = wl[1] - wl[0]
             spd = 2*np.pi*6.626068E-34*(299792458**2)/((wl*0.000000001)**5)/(np.exp(6.626068E-34*299792458/(wl*0.000000001)/1.3806503E-23/CCT)-1)
-            spd = Lw*spd/(dl*683*(spd*cie_interp(_CMF[cieobs]['bar'].copy(),wl,kind='cmf')[2,:]).sum())
+            spd = Lw*spd/(dl*683*(spd*cie_interp(_CMF[cieobs]['bar'].copy(),wl,datatype='cmf')[2,:]).sum())
             return np.vstack((wl,spd))
         
         # Create long term and applied spds:
@@ -467,10 +467,10 @@ if __name__ == '__main__0':
 if __name__ == '__main__':
     
     C = _CIE_ILLUMINANTS['C'].copy()
-    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:],C[1:,:]*2,C[1:,:]*3))
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],datatype='spd')[1:],C[1:,:]*2,C[1:,:]*3))
     M = _MUNSELL.copy()
     rflM = M['R']
-    rflM = cie_interp(rflM,C[0],kind='rfl')
+    rflM = cie_interp(rflM,C[0],datatype='rfl')
     cieobs = '2006_10'
     Lw = 400
     Yb = 20

@@ -312,7 +312,7 @@ def _convert_to_wlr(entries = rgb2spec_entries, wlr = _WL3):
         if entry != 'wlr':
             for (k,v) in entries[entry].items():
                 if k != 'scalefactor':
-                    entries[entry][k] = cie_interp(_addwlr(entries[entry][k]), wlr, kind = entry)[1]
+                    entries[entry][k] = cie_interp(_addwlr(entries[entry][k]), wlr, datatype = entry)[1]
     entries['wlr'] = wlr
     return entries
     

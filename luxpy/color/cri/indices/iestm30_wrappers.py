@@ -53,7 +53,7 @@ __all__ = ['spd_to_iesrf','spd_to_iesrg',
            'spd_to_iesrf_tm30_20','spd_to_iesrg_tm30_20']
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-15'):
+def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-15', interp_settings = None):
     """
     Wrapper function for the 'iesrf' color fidelity index (IES TM30-15). 
     
@@ -89,10 +89,10 @@ def spd_to_iesrf_tm30_15(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-15')
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
+def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15', interp_settings = None):
     """
     Wrapper function for the 'spd_to_rg' color gamut area index (IES TM30-15). 
     
@@ -128,10 +128,10 @@ def spd_to_iesrg_tm30_15(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-15'):
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18'):
+def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18', interp_settings = None):
     """
     Wrapper function for the 'iesrf' color fidelity index (IES TM30-18). 
     
@@ -167,10 +167,10 @@ def spd_to_iesrf_tm30_18(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-18')
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18'):
+def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18', interp_settings = None):
     """
     Wrapper function for the 'spd_to_rg' color gamut area index (IES TM30-18). 
     
@@ -206,10 +206,10 @@ def spd_to_iesrg_tm30_18(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-18'):
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrf_tm30_20(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-20'):
+def spd_to_iesrf_tm30_20(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-20', interp_settings = None):
     """
     Wrapper function for the 'iesrf' color fidelity index (IES TM30-20 = TM30-18). 
     
@@ -245,10 +245,10 @@ def spd_to_iesrf_tm30_20(SPD, out = 'Rf', wl = None, cri_type = 'iesrf-tm30-20')
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_cri(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 #------------------------------------------------------------------------------
-def spd_to_iesrg_tm30_20(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-20'):
+def spd_to_iesrg_tm30_20(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-20', interp_settings = None):
     """
     Wrapper function for the 'spd_to_rg' color gamut area index (IES TM30-18 = TM30-20). 
     
@@ -284,7 +284,7 @@ def spd_to_iesrg_tm30_20(SPD, out = 'Rg', wl = None, cri_type ='iesrf-tm30-20'):
         <http://www.tandfonline.com/doi/abs/10.1080/15502724.2015.1091356>`_ 
     
     """
-    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl)
+    return spd_to_rg(SPD, cri_type = cri_type, out = out, wl = wl, interp_settings = interp_settings)
 
 
 # additional (latest version) callers:

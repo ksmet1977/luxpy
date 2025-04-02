@@ -95,9 +95,9 @@ def spd_to_fci(spd, use_cielab = True):
 
 if __name__ == '__main__':
     import luxpy as lx
-    F6 = lx.cie_interp(lx._CIE_ILLUMINANTS['F6'], wl_new = lx.getwlr([360,830,1]), kind = 'spd')
-    F4 = lx.cie_interp(lx._CIE_F4, wl_new = lx.getwlr([360,830,1]), kind = 'spd')
-    D65 = lx.cie_interp(lx._CIE_D65, wl_new = lx.getwlr([360,830,1]), kind = 'spd')
+    F6 = lx.cie_interp(lx._CIE_ILLUMINANTS['F6'], wl_new = lx.getwlr([360,830,1]), datatype = 'spd')
+    F4 = lx.cie_interp(lx._CIE_F4, wl_new = lx.getwlr([360,830,1]), datatype = 'spd')
+    D65 = lx.cie_interp(lx._CIE_D65, wl_new = lx.getwlr([360,830,1]), datatype = 'spd')
     spds = np.vstack((F6,F4[1:,:], D65[1:,:]))
     
     fci1a = spd_to_fci(F6, True)

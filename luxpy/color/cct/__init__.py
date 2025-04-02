@@ -89,6 +89,11 @@ cct: Module with functions related to correlated color temperature calculations
  
  :xyz_to_cct_ohno2011(): Calculate cct and Duv from CIE 1931 2° xyz following Ohno (CORM 2011).
 
+ :_get_ccts_for_lut_bf(): Calculates CCTs for a LUT.
+
+ :generate_lut_bf(): Calculate a Look-Up-Table for CCT & Duv calculations.
+
+ :xyz_to_cct_bruteforce: Calculate CCT, Duv from XYZ using a brute-force technique.
 
  
 ===============================================================================
@@ -99,6 +104,9 @@ __all__ = cct.__all__
 
 from .cctduv_ohno_CORM2011 import *
 __all__ += cctduv_ohno_CORM2011.__all__
+
+from .cct_bruteforce import *
+__all__ += cct_bruteforce.__all__
 
 
 

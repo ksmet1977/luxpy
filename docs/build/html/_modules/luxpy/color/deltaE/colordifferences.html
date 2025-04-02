@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.11.2 documentation</title>
+  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.12.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
 
@@ -14,7 +14,7 @@
   
         <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
         <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=ff71f5f3"></script>
+        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
         <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
         <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
@@ -34,7 +34,7 @@
             LuxPy
           </a>
               <div class="version">
-                1.11.2
+                1.12.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
@@ -366,13 +366,14 @@
     <span class="n">hpr</span><span class="p">[(</span><span class="n">apr</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">br</span><span class="o">==</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
     
     <span class="c1"># Step 2:</span>
-    <span class="n">dL</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Lr</span> <span class="o">-</span> <span class="n">Lt</span><span class="p">)</span>
-    <span class="n">dCp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">Cpr</span> <span class="o">-</span> <span class="n">Cpt</span><span class="p">)</span>
+    <span class="n">dL</span> <span class="o">=</span> <span class="p">(</span><span class="n">Lr</span> <span class="o">-</span> <span class="n">Lt</span><span class="p">)</span>
+    <span class="n">dCp</span> <span class="o">=</span> <span class="p">(</span><span class="n">Cpr</span> <span class="o">-</span> <span class="n">Cpt</span><span class="p">)</span>
     <span class="n">dhp_</span> <span class="o">=</span> <span class="n">hpr</span> <span class="o">-</span> <span class="n">hpt</span>  
 
+
     <span class="n">dhp</span> <span class="o">=</span> <span class="n">dhp_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)]</span> <span class="o">-</span> <span class="mi">360</span>
-    <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">+</span> <span class="mi">360</span>
+    <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)]</span> <span class="o">-</span> <span class="mi">360</span>
+    <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">dhp_</span><span class="p">)</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">180</span><span class="p">)]</span> <span class="o">+</span> <span class="mi">360</span>
     <span class="n">dhp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Cpprod</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="c1">#dH = 2*np.sqrt(Cpprod)*np.sin(dhp/2*np.pi/180)</span>
@@ -396,11 +397,10 @@
     <span class="n">SC</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">0.045</span><span class="o">*</span><span class="n">Cp</span>
     <span class="n">SH</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="mf">0.015</span><span class="o">*</span><span class="n">Cp</span><span class="o">*</span><span class="n">T</span>
     <span class="n">RT</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">dtheta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span><span class="p">)</span><span class="o">*</span><span class="n">RC</span>
-
+   
     <span class="n">kL</span><span class="p">,</span> <span class="n">kC</span><span class="p">,</span> <span class="n">kH</span> <span class="o">=</span> <span class="n">KLCH</span>
     
     <span class="n">DEi</span> <span class="o">=</span> <span class="p">((</span><span class="n">dL</span><span class="o">/</span><span class="p">(</span><span class="n">kL</span><span class="o">*</span><span class="n">SL</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="p">,</span> <span class="p">(</span><span class="n">dCp</span><span class="o">/</span><span class="p">(</span><span class="n">kC</span><span class="o">*</span><span class="n">SC</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dH</span><span class="o">/</span><span class="p">(</span><span class="n">kH</span><span class="o">*</span><span class="n">SH</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">RT</span><span class="o">*</span><span class="p">(</span><span class="n">dCp</span><span class="o">/</span><span class="p">(</span><span class="n">kC</span><span class="o">*</span><span class="n">SC</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">dH</span><span class="o">/</span><span class="p">(</span><span class="n">kH</span><span class="o">*</span><span class="n">SH</span><span class="p">)))</span>
-    
 
     <span class="k">return</span> <span class="n">_process_DEi</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="n">DEtype</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="n">avg</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="n">avg_axis</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span></div>
 
@@ -574,7 +574,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Kevin A.G. Smet.</p>
+    <p>&#169; Copyright 2025, Kevin A.G. Smet.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -87,14 +87,25 @@ cct: Module with functions related to correlated color temperature calculations
                               Optik, 193, 163018. 
                               <https://doi.org/https://doi.org/10.1016/j.ijleo.2019.163018>`_
                  
- :xyz_to_cct_robertson1968(): | Calculates CCT, Duv from XYZ using a Robertson's 1968 search method.
+ :xyz_to_cct_robertson1968(): | Calculates CCT, Duv from XYZ using a Robertson's 1968 search method with original LUT as default.
                               | `Robertson, A. R. (1968). 
                                 Computation of Correlated Color Temperature and Distribution Temperature. 
                                 Journal of the Optical Society of America,  58(11), 1528–1535. 
                                 <https://doi.org/10.1364/JOSA.58.001528>`_
-                              | Baxter D., Royer M., Smet K.A.G. (2022)
-                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
-                                (in preparation, LEUKOS?)
+                              | `Baxter, D., Royer, M., & Smet, K. (2023). 
+                                Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. 
+                                LEUKOS, 20(1), 55–66. <https://doi.org/10.1080/15502724.2023.2166060>`_
+:xyz_to_cct_robertson2023(): | Calculates CCT, Duv from XYZ using a Robertson's 1968 search method with new (1000 K to 41000 K, 1%) LUT as default.
+                             | `Robertson, A. R. (1968). 
+                                Computation of Correlated Color Temperature and Distribution Temperature. 
+                                Journal of the Optical Society of America,  58(11), 1528–1535. 
+                                <https://doi.org/10.1364/JOSA.58.001528>`_
+                             | `Baxter, D., Royer, M., & Smet, K. (2023). 
+                               Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. 
+                               LEUKOS, 20(1), 55–66. <https://doi.org/10.1080/15502724.2023.2166060>`_
+                             | `Smet, K., Royer, M., Baxter, D., Bretschneider, E., Esposito, T., Houser, K., … Ohno, Y. (2023). 
+                               Recommended Method for Determining the Correlated Color Temperature and Distance from the Planckian Locus of a Light Source. 
+                               LEUKOS, 20(2), 223–237. <https://doi.org/10.1080/15502724.2023.2248397>`_
   
  :xyz_to_cct_li2016(): | Calculates CCT, Duv from XYZ using Li's 2016 Newton-Raphson method.
                        | `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
@@ -136,7 +147,8 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            'xyz_to_cct_zhang2019', 'xyz_to_cct_fibonacci',
            'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts', 'get_tcs4',
            '_get_lut', '_generate_tcs', '_generate_lut',
-           '_generate_lut_ohno2014','_generate_lut_li2022']
+           '_generate_lut_ohno2014','_generate_lut_li2022',
+           'calculate_cct_luts']
 
 
 #==============================================================================
@@ -170,7 +182,7 @@ _CCT_VERBOSITY_LUT_GENERATION = 1
 
 # flow control parameters:
 #-------------------------
-_CCT_LIST_OF_MODE_LUTS = ['robertson1968','ohno2014','zhang2019','fibonacci','li2022'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
+_CCT_LIST_OF_MODE_LUTS = ['robertson2023','robertson1968','ohno2014','zhang2019','fibonacci','li2022'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
 _CCT_LIST_OF_CIEOBS_LUTS = ['1931_2', '1964_10', '2015_2', '2015_10'] # only for the ones in this list are LUTS pre-generated (->_CCT_LUT)
 
 _CCT_LUT_MIN, _CCT_LUT_MAX = 1000.0, 41000
@@ -257,16 +269,13 @@ def _get_xyzbar_wl_dl(cieobs, wl = None):
     wavelengths and an ndarray with the wavelength differences.
     """
     # get requested cmf set:
-    if isinstance(cieobs,str):
-        cmf = _CMF[cieobs]['bar'].copy()
-    else:
-        cmf = cieobs.copy()
+    cmf, cmf_name = _process_cieobs_type(cieobs)
     wl = cmf[0] if wl is None else getwlr(wl)
     dl = getwld(wl)*1.0
-    cmf =  cie_interp(cmf, wl, kind = 'cmf', negative_values_allowed = False)[1:]
+    cmf =  cie_interp(cmf, wl, datatype = 'cmf', negative_values_allowed = False)[1:]
     c = ~(((cmf[1:]==0).sum(0)==3))
     cmf[:,c] += _CCT_AVOID_ZERO_DIV # avoid nan's in uvwvbar
-    return cmf, wl, dl
+    return cmf, wl, dl, cmf_name
 
 
 
@@ -738,7 +747,7 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
             | list of ccts for which to (re-)calculate the LUTs.
             | If str, ccts contains path/filename.dat to list.
         :cieobs: 
-            | None or str, optional
+            | None or str or ndrarray, optional
             | str specifying cmf set.
         :wl: 
             | None, optional
@@ -779,7 +788,7 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
 
 
     # get requested cmf set:
-    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
+    xyzbar, wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl)
     
     # process cspace input:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
@@ -915,7 +924,7 @@ def _generate_lut(tc4, uin = None, seamless_stitch = True,
             | Wavelength for Planckian spectrum generation.
             | If None: use same wavelengths as CMFs in :cieobs:.
         :cieobs:
-            | [_CIEOBS] or list, optional
+            | [_CIEOBS] or list of str or ndarrays, optional
             | Generate a LUT for each one in the list.
             | If None: generate for all cmfs in _CMF.
         :lut_vars:
@@ -1049,7 +1058,7 @@ def _get_lut(lut,
             | Wavelength for Planckian spectrum generation.
             | If None: use same wavelengths as CMFs in :cieobs:.
         :cieobs:
-            | _CIEOBS, optional
+            | _CIEOBS or str or ndarray, optional
             | CMF set used to convert Planckian spectra to chromaticity coordinates
         :lut_type_def:
             | None, placeholder
@@ -1134,24 +1143,23 @@ should be a dictionary 'lut_kwargs'.""")
 
     # print(luts_dict[cspace_str][cieobs].keys(),lut)
     if lut is None: lut = lut_type_def # use default type in luts_dict
+    cmf, cmf_name = _process_cieobs_type(cieobs)
  
     # further process lut (1st element of input lut): 
     if isinstance(lut, (tuple,str)): # lut is key in luts_dict, if not generate new lut from scratch
         lut_from_tuple = True
         lut_tuple = lut # keep copy to use later as key
-
         if luts_dict is not None: # luts_dict is None: generate a new lut from scratch
             if ('wl' not in luts_dict): 
                 luts_dict_empty = True # if not present luts_dict must be empty 
             else:
-                if cieobs not in luts_dict['wl']:
+                if cmf_name not in luts_dict['wl']:
                     luts_dict_empty = True # is empty for this cieobs
-                    
-            if cieobs in luts_dict[cspace_str]:
-                if lut in luts_dict[cspace_str][cieobs]: # read from luts_dict
-                    lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cieobs][lut])
+            if cmf_name in luts_dict[cspace_str]:
+                if lut in luts_dict[cspace_str][cmf_name]: # read from luts_dict
+                    lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cmf_name][lut])
                     lut_from_tuple = False
-    
+                
     elif isinstance(lut, np.ndarray): # lut is either pre-calculated lut or a list with Tcs for which a lut needs to be generated
         lut_from_array = True
         if lut.ndim == 1:
@@ -1164,17 +1172,21 @@ should be a dictionary 'lut_kwargs'.""")
     # When directly entered as ndarray there is no way to check, 
     # so assume unequal_wl==False:
     if ignore_unequal_wl == False:
-        if (luts_dict is not None) & (luts_dict_empty == False):
-            if not np.array_equal(luts_dict['wl'][cieobs], wl):
-                unequal_wl = True    
+        if isinstance(cieobs, str):
+            if (luts_dict is not None) & (luts_dict_empty == False):
+                if not np.array_equal(luts_dict['wl'][cmf_name], wl):
+                    unequal_wl = True 
+        else: # if cieobs is ndarray check if wavelengths match wl
+            if not np.array_equal(cmf[0], wl):
+                unequal_wl = True 
 
+    
     if (unequal_wl  | luts_dict_empty| lut_from_tuple | lut_from_Tcs | resample_ndarray):
     
         if cspace_dict is None: raise Exception('No cspace dict or other given !')
     
     
         if (not lut_from_array) | (resample_ndarray):
-
             lut, lut_kwargs = lut_generator_fcn(lut, 
                                                 uin = uin,
                                                 seamless_stitch = seamless_stitch,
@@ -1185,18 +1197,18 @@ should be a dictionary 'lut_kwargs'.""")
                                                 cct_min = cct_min,
                                                 lut_vars = lut_vars,
                                                 wl = wl, 
-                                                cieobs = cieobs, 
+                                                cieobs = cmf, 
                                                 cspace = cspace_dict,
                                                 cspace_kwargs = None,
                                                 **lut_kwargs)
             
             if luts_dict is not None:
-                if cieobs not in luts_dict['wl']:
-                    luts_dict['wl'][cieobs] = wl
-                if cieobs not in luts_dict[cspace_str]:
-                    luts_dict[cspace_str][cieobs] = {} # create empty dict for new cieobs
+                if cmf_name not in luts_dict['wl']:
+                    luts_dict['wl'][cmf_name] = wl
+                if cmf_name not in luts_dict[cspace_str]:
+                    luts_dict[cspace_str][cmf_name] = {} # create empty dict for new cieobs
                 if lut_tuple is not None: 
-                    luts_dict[cspace_str][cieobs][lut_tuple] = [lut, lut_kwargs] # store for later use
+                    luts_dict[cspace_str][cmf_name][lut_tuple] = [lut, lut_kwargs] # store for later use
 
         else:
             lut = lut[(lut[:,0]>=cct_min) & (lut[:,0]<=cct_max),:]
@@ -1329,25 +1341,36 @@ def generate_luts(types = [None], seamless_stitch = True,
             
             if cieobs is None: cieobs = _CMF['types']
             
-            for j,cieobs_j in enumerate(cieobs):
-                
-                luts['wl'][cieobs_j] = _CMF[cieobs_j]['bar'][0] if (wl is None) else getwlr(wl) # store wavelengths
-                
+            for j, cieobs_j in enumerate(cieobs):
+
+                if isinstance(cieobs_j,str):
+                    cmf_j, cmf_j_name = cieobs_j, cieobs_j 
+                elif isinstance(cieobs_j, tuple):
+                    cmf_j, cmf_j_name = cieobs_j
+                else: 
+                    cmf_j, cmf_j_name = cieobs_j, f"cmf_{j}"
+
+                if cmf_j_name in _CMF:
+                    luts['wl'][cmf_j_name] = _CMF[cmf_j_name]['bar'][0] if (wl is None) else getwlr(wl) # store wavelengths
+                else:
+                    luts['wl'][cmf_j_name] = cmf_j[0] if (wl is None) else getwlr(wl) # store wavelengths
+
                 ftmp = lambda lut: lut_generator_fcn(lut, 
                                                      seamless_stitch = seamless_stitch, 
                                                      fallback_unit = fallback_unit, 
                                                      fallback_n = fallback_n,
                                                      cct_max = cct_max, 
                                                      cct_min = cct_min,
-                                                     wl = luts['wl'][cieobs_j], 
+                                                     wl = luts['wl'][cmf_j_name], 
                                                      cieobs = cieobs_j, 
                                                      cspace =  cspace_dict_i, 
                                                      cspace_kwargs = None,
                                                      lut_vars = lut_vars,
                                                      **lut_generator_kwargs)
-                luts[cspace_i][cieobs_j] = {}
+                luts[cspace_i][cmf_j_name] = {}
                 
                 for type_k in types:
+
                     # ensure full tuple depth for use as key:
                     if not isinstance(type_k[-1],str): # at least depth 2 (<--last element is str for depth 1)
                         tmp = list((tuple(type_kl) for type_kl in type_k if not isinstance(type_kl,bool)))
@@ -1356,12 +1379,14 @@ def generate_luts(types = [None], seamless_stitch = True,
 
                     tmp = (tuple(tmp))
                     if verbosity > 0:
-                        print('Generating lut with type = {} in cspace = {:s} for cieobs = {:s}'.format(type_k,cspace_str_i,cieobs_j))
-                    
-                    if (cieobs_j != 'cie_std_dev_obs_f1') & (cieobs_j != '1951_20_scotopic'):
-                        luts[cspace_i][cieobs_j][tmp] = list(ftmp(tmp))
+                        wl_ = luts['wl'][cmf_j_name]
+                        wl0_, wln_, dwl_ = wl_[0], wl_[-1], wl_[1] - wl_[0]
+                        print(f'Generating lut with type = {type_k} in cspace = {cspace_str_i} for cieobs = {cmf_j_name} for wavelength range: [{wl0_}, {wln_}, {dwl_}]')
+
+                    if (cmf_j_name != 'cie_std_dev_obs_f1') & (cmf_j_name != '1951_20_scotopic'):
+                        luts[cspace_i][cmf_j_name][tmp] = list(ftmp(tmp))
                     else:
-                        luts[cspace_i][cieobs_j][tmp] = []
+                        luts[cspace_i][cmf_j_name][tmp] = []
                     
 
                 # save to disk (do intermediate saves):
@@ -1373,7 +1398,8 @@ def generate_luts(types = [None], seamless_stitch = True,
                     if verbosity > 0:
                         print('Saving dict with luts in {:s}'.format(file_path))                                                 
                     save_pkl(file_path,luts, compresslevel = _CCT_PKL_COMPRESSLEVEL)
-        luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
+        if (lut_file is not None) & (save_luts == True):
+            luts = load_pkl(file_path, gzipped = _CCT_PKL_COMPRESSLEVEL > 0)
     else:
         if lut_file is not None:
             file_path = os.path.join(lut_path, lut_file)
@@ -1498,7 +1524,44 @@ def _add_lut_endpoints(x):
     """ Replicates endpoints of lut to avoid out-of-bounds issues """
     return np.vstack((x[:1],x,x[-1:]))
 
+def _process_cieobs_type(cieobs):
+    if isinstance(cieobs, str):
+        cmf, cmf_name = _CMF[cieobs]['bar'].copy(), cieobs
+    elif isinstance(cieobs,tuple):
+        cmf, cmf_name = cieobs[0].copy(), cieobs[1] 
+    else:
+        cmf, cmf_name = cieobs, "cmf_0"
+    return cmf, cmf_name
 
+def calculate_cct_luts(wl, cmf_list = _CCT_LIST_OF_CIEOBS_LUTS, mode = 'robertson2023', 
+                 lut_type = None, lut_generator_kwargs = {}, luts = None, 
+                 load = False, save_luts = False, lut_path = "./",
+                 cspace = [_CCT_CSPACE], cspace_kwargs = [_CCT_CSPACE_KWARGS],
+                 verbosity = 1):
+    """Calculate a lut dictionary for a specified wl and list of color matching functions"""
+    if luts is None: 
+        luts = {mode : {}}
+    else:
+        luts[mode] = {}
+    if lut_type is None: lut_type = _CCT_LUT[mode]['lut_type_def']
+    cmf_list_ = []
+    for cieobs in cmf_list: 
+        cmf, cmf_name = _process_cieobs_type(cieobs)
+        if not np.array_equal(cmf[0],wl):
+            if cmf_name in _CMF:
+                cmf_name = cmf_name + '_0'
+        cmf_list_.append((cmf, cmf_name))
+    luts[mode]['luts'] = generate_luts(types = [lut_type],
+                                        lut_file = '{:s}_luts_custom.pkl'.format(mode), 
+                                        load =  load, save_luts = save_luts,
+                                        lut_path = lut_path, 
+                                        wl = wl, cieobs = cmf_list_,
+                                        cspace = cspace, cspace_kwargs = cspace_kwargs,
+                                        lut_vars = _CCT_LUT[mode]['lut_vars'],
+                                        verbosity = verbosity,
+                                        lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
+                                        lut_generator_kwargs = lut_generator_kwargs)
+    return luts
     
 
 #------------------------------------------------------------------------------
@@ -1534,7 +1597,6 @@ def _get_Duv_for_T(u,v, T, wl, cieobs, cspace_dict, uvwbar = None, dl = None,
             uvBB = xyz_to_Yxy(UVWBB)[...,1:]
         else:
             BB = _get_BB_BBp_BBpp(T, wl, out = 'BB')
-            # BB = cri_ref(T, ref_type = ['BB'], wl3 = wl)
             xyzBB = spd_to_xyz(BB, cieobs = cieobs, relative = True)
             uvBB = cspace_dict['fwtf'](xyzBB)[...,1:]
         uBB, vBB = uvBB[...,0:1], uvBB[...,1:2]
@@ -1698,7 +1760,7 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
     if cspace_dict['bwtf'] is None:
         raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
 
-    xyzbar,wl, dl = _get_xyzbar_wl_dl(cieobs, wl = wl)
+    xyzbar,wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl = wl)
     if cct_offset is not None:
         # estimate iso-T-line from estimated slope using small cct offset:
         #-----------------------------------------------------------------
@@ -2008,7 +2070,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
     if uvwbar is None:
         if (cspace_dict is not None):
             if (xyzbar is None) & (cieobs is not None):
-                xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
+                xyzbar, wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl)
             elif (xyzbar is None) & (cieobs is None):
                 raise Exception('Must supply xyzbar or cieobs or uvwbar !!!')
             uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
@@ -2191,7 +2253,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                 split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                 duv_triangular_threshold = 0.002, 
-                first_guess_mode = 'robertson1968',
+                first_guess_mode = 'robertson2023',
                 use_fast_duv = _CCT_FAST_DUV,
                 **kwargs):
     """ 
@@ -2199,7 +2261,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     Duv (distance above (>0) or below (<0) the Planckian locus) using a number
     of modes (methods). 
     
-    General fucntion for calculation of 'robertson1968', 'ohno2014', 'li2016' and 'zhang2019'
+    General function for calculation of 'robertson2023', 'robertson1968', 'ohno2014', 'li2016' and 'zhang2019'
     (for info on arguments, see docstring of xyz_to_cct)
     """
     
@@ -2223,7 +2285,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
     
     # pre-calculate wl,dl,uvwbar for later use (will also determine wl if None !):
-    xyzbar, wl, dl = _get_xyzbar_wl_dl(cieobs, wl)
+    xyzbar, wl, dl, cmf_name = _get_xyzbar_wl_dl(cieobs, wl)
     uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
     
     # Get or generate requested lut
@@ -2231,6 +2293,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     # a new recalculated lut will be generated):
     if (luts_dict is None): 
         luts_dict = _CCT_LUT[mode]['luts']
+      
 
     lut, lut_kwargs = _get_lut(lut, 
                                fallback_unit = _CCT_FALLBACK_UNIT, 
@@ -2265,6 +2328,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     lut_vars = _CCT_LUT[mode]['lut_vars']  if 'lut_vars' not in kwargs else kwargs['lut_vars'] 
     # prepare mode_kwargs (i.e. extra kwargs for _uv_to_Tx_mode() required by specific modes):
     mode_kwargs = {'robertson1968': {},
+                   'robertson2023': {},
                    'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
                    'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold}},
@@ -2289,7 +2353,6 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                                                         out_of_lut = out_of_lut,
                                                                         fast_duv = use_fast_duv,
                                                                         **mode_kwargs[mode])  
-
         if force_tolerance:
             if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
 
@@ -2320,7 +2383,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
         else: 
             ccts[n_ii*ii:] = Tx
             duvs[n_ii*ii:] = Duvx
-   
+
     # Regulate output:
     if (out == 'cct') | (out == 1):
         return ccts
@@ -2336,18 +2399,23 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
 
 
 #------------------------------------------------------------------------------
-# Robertson 1968:
+# Robertson 1968 & 2023:
 #------------------------------------------------------------------------------
-_CCT_LUT['robertson1968'] = {}
-_CCT_LUT['robertson1968']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),) # default LUT, must be in all_modes
+_CCT_LUT['robertson1968'] = {} 
+_CCT_LUT['robertson1968']['lut_type_def'] = ((10, 100, 10, 'K-1'), (100, 625, 25, 'K-1'), True) # default LUT, must be in all_modes
 _CCT_LUT['robertson1968']['lut_vars'] = ['T','uv','iso-T-slope']
 _CCT_LUT['robertson1968']['_generate_lut'] = _generate_lut 
+
+_CCT_LUT['robertson2023'] = {}
+_CCT_LUT['robertson2023']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1, '%'),) # default LUT, must be in all_modes
+_CCT_LUT['robertson2023']['lut_vars'] = ['T','uv','iso-T-slope']
+_CCT_LUT['robertson2023']['_generate_lut'] = _generate_lut 
 
 def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
                             fast_duv = _CCT_FAST_DUV, **kwargs):
     """ 
-    Calculate Tx from u,v and lut using Robertson 1968.
-    (lut_n_cols specifies the number of columns in the lut for 'robertson1968')
+    Calculate Tx from u,v and lut using Robertson 1968 with a 2023 modification for CCTs < 1667 K.
+    (lut_n_cols specifies the number of columns in the lut for 'robertson1968' / 'robertson2023')
     """
     Duvx = None 
     idx_sources = np.arange(u.shape[0], dtype = np.int32) # source/conversion index
@@ -2389,6 +2457,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
     return Tx, Duvx, out_of_lut, (TBB_m1, TBB_p1)
 
 _CCT_UV_TO_TX_FCNS['robertson1968'] = _uv_to_Tx_robertson1968
+_CCT_UV_TO_TX_FCNS['robertson2023'] = _uv_to_Tx_robertson1968
 
 def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                             atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
@@ -2401,7 +2470,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
     Duv(distance above (> 0) or below ( < 0) the Planckian locus) using  
-    Robertson's 1968 search method.
+    Robertson's 1968 search method (with a 2023 modification to allow for CCTs < 1667 K).
         
     Args:
         :xyzw: 
@@ -2479,7 +2548,7 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             |   lut part of a two-element list [lut, lut_kwargs]. It must contain
             |   at the top-level a key 'wl' containing the wavelengths of the 
             |   Planckians used to generate the luts in this dictionary.
-            | If None: luts_dict defaults to _CCT_LUT['robertson1968']['luts']   
+            | If None: luts_dict defaults to _CCT_LUT['robertson1968']['luts'].  
         :cspace:
             | _CCT_SPACE, optional
             | Color space to do calculations in. 
@@ -2527,14 +2596,14 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
         Journal of the Optical Society of America,  58(11), 1528–1535. 
         <https://doi.org/10.1364/JOSA.58.001528>` 
         
-        2. Smet K.A.G., Royer M., Baxter D., Bretschneider E., Esposito E., Houser K., Luedtke W., Man K., Ohno Y. (2022),
-        Recommended method for determining the correlated color temperature and distance from the Planckian Locus of a light source
-        (in preparation, LEUKOS?)
+        2. `Baxter, D., Royer, M., & Smet, K. (2023). 
+        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed. 
+        LEUKOS, 20(1), 55–66. <https://doi.org/10.1080/15502724.2023.2166060>`_
         
-        3. Baxter D., Royer M., Smet K.A.G. (2022)
-        Modifications of the Robertson Method for Calculating Correlated Color Temperature to Improve Accuracy and Speed
-        (in preparation, LEUKOS?)
-         
+        3. `Smet, K., Royer, M., Baxter, D., Bretschneider, E., Esposito, T., Houser, K., … Ohno, Y. (2023). 
+        Recommended Method for Determining the Correlated Color Temperature and Distance from the Planckian Locus of a Light Source. 
+        LEUKOS, 20(2), 223–237. <https://doi.org/10.1080/15502724.2023.2248397>`_
+
         4. `Li, C., Cui, G., Melgosa, M., Ruan, X., Zhang, Y., Ma, L., Xiao, K., & Luo, M. R. (2016).
         Accurate method for computing correlated color temperature. 
         Optics Express, 24(13), 14066–14078. 
@@ -2553,8 +2622,31 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
                        use_fast_duv = use_fast_duv,
                        **kwargs)
 
+def xyz_to_cct_robertson2023(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
+                            atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
+                            lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
+                            split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
+                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
+                            lut = None, luts_dict = None, ignore_wl_diff = False,
+                            use_fast_duv = _CCT_FAST_DUV,
+                            **kwargs):
+    return _xyz_to_cct(xyzw, mode = 'robertson2023',
+                       cieobs = cieobs, out = out, wl = wl, is_uv_input = is_uv_input, 
+                       cspace = cspace, cspace_kwargs = cspace_kwargs,
+                       atol = atol, rtol = rtol, force_tolerance = force_tolerance,
+                       tol_method = tol_method, max_iter = max_iter,  
+                       lut_resolution_reduction_factor = lut_resolution_reduction_factor,
+                       split_calculation_at_N = split_calculation_at_N, 
+                       lut = lut, luts_dict = luts_dict, 
+                       ignore_wl_diff = ignore_wl_diff, 
+                       use_fast_duv = use_fast_duv,
+                       **kwargs)
+xyz_to_cct_robertson2023.__doc__ = xyz_to_cct_robertson1968.__doc__.replace("robertson1968","robertson2023")
+
 # pre-generate / load from disk / load from github some LUTs for Robertson1968:
-_initialize_lut(mode = 'robertson1968',lut_types = _unique_types([_CCT_LUT['robertson1968']['lut_type_def'],((10,100,10,'K-1'),(100,625,25,'K-1'),True)] + _CCT_SHARED_LUT_TYPES))
+_initialize_lut(mode = 'robertson1968',lut_types = _unique_types([_CCT_LUT['robertson1968']['lut_type_def'],_CCT_LUT['robertson2023']['lut_type_def']] + _CCT_SHARED_LUT_TYPES))
+# pre-generate / load from disk / load from github some LUTs for Robertson2023:
+_initialize_lut(mode = 'robertson2023',lut_types = _unique_types([_CCT_LUT['robertson2023']['lut_type_def'],_CCT_LUT['robertson1968']['lut_type_def']] + _CCT_SHARED_LUT_TYPES))
 
 
 #------------------------------------------------------------------------------
@@ -3091,14 +3183,16 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
 
+    # Shifted Triangular Solution:
+    Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
+    
     # Select triangular (threshold=0), parabolic (threshold=inf) or 
     # combined solution:
-    Tx, Duvx = Txt, Duvxt 
+    Tx, Duvx = Txt_shift, Duvxt 
     cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
     
     Tx = Tx * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
-
             
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
 
@@ -3266,6 +3360,15 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
 # pre-generate / load from disk / load from github some LUTs for Ohno2014:
 _initialize_lut(mode = 'ohno2014', lut_types = _unique_types([_CCT_LUT['ohno2014']['lut_type_def'], ((_CCT_LUT_MIN, _CCT_LUT_MAX, 1.0, '%'),)] + _CCT_SHARED_LUT_TYPES))
 
+# Use f_corr only for LUTs with larger (>= 1%) spacings:
+for _cspace in list(_CCT_LUT['ohno2014']['luts'].keys()) :
+    if _cspace not in  ['lut_vars', 'wl']:
+        for _cieobs in list(_CCT_LUT['ohno2014']['luts'][_cspace].keys()):
+            if (_cieobs not in ['cspace', 'cspace_kwargs', 'cspace_dict']):
+                for key in list(_CCT_LUT['ohno2014']['luts'][_cspace][_cieobs].keys()):
+                    tmp = [(key[i][2],key[i][3]) for i in range(len(key)) if ((key[i][2] < 1) & (key[i][3] == '%'))]
+                    if len(tmp) > 0:
+                        _CCT_LUT['ohno2014']['luts'][_cspace][_cieobs][key][1] = {'f_corr': 1.0, 'ignore_f_corr_is_None': True}
 
 #------------------------------------------------------------------------------
 # Li 2022 (i.e. update of Ohno 2014) related functions:
@@ -3754,7 +3857,7 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
                       lut = None, luts_dict = None, ignore_wl_diff = False,
                       lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                       cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                      first_guess_mode = 'robertson1968', fgm_kwargs = {}, 
+                      first_guess_mode = 'robertson2023', fgm_kwargs = {}, 
                       use_fast_duv = _CCT_FAST_DUV,
                       **kwargs):
     """
@@ -3841,10 +3944,10 @@ def xyz_to_cct_li2016(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
             | plankcians then a new lut should be generated. Seting this to True ignores
             | these differences and proceeds anyway.
         :first_guess_mode:
-            | 'robertson1968', optional
+            | 'robertson2023', optional
             | Method used to get an approximate (first guess) estimate of the cct,
             | after which the newton-raphson method is started.
-            | Options: 'robertson1968', 'ohno2014', 'zhang2019'
+            | Options: 'robertson2023', 'ohno2014', 'zhang2019'
         :fgm_kwargs:
             | Dict with keyword arguments for the selected first_guess_mode.
         :use_fast_duv:
@@ -4196,8 +4299,8 @@ def _uv_to_Tx_none(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, **kwargs):
 
 _CCT_UV_TO_TX_FCNS['none'] = _uv_to_Tx_none
 
-if ('robertson1968' in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
-    _CCT_LUT['none']['luts'] = copy.deepcopy(_CCT_LUT['robertson1968']['luts'])
+if ('robertson2023' in _CCT_LIST_OF_MODE_LUTS) & _CCT_LUT_ONE_NPY_PER_MODE:
+    _CCT_LUT['none']['luts'] = copy.deepcopy(_CCT_LUT['robertson2023']['luts'])
     
 
 if _CCT_LUT_ONE_NPY_PER_MODE == False:
@@ -4237,6 +4340,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
     # Sample requested lut_vars from general 'all_modes' luts for each mode:
     _CCT_LUT['none']['luts'] = _sample_lut_vars(_CCT_LUT['none']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['robertson1968']['luts'] = _sample_lut_vars(_CCT_LUT['robertson1968']['lut_vars'], _CCT_LUT['all_modes']['luts'])
+    _CCT_LUT['robertson2023']['luts'] = _sample_lut_vars(_CCT_LUT['robertson2023']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['zhang2019']['luts'] = _sample_lut_vars(_CCT_LUT['zhang2019']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['ohno2014']['luts'] = _sample_lut_vars(_CCT_LUT['ohno2014']['lut_vars'], _CCT_LUT['all_modes']['luts'])
     _CCT_LUT['li2022']['luts'] = _sample_lut_vars(_CCT_LUT['li2022']['lut_vars'], _CCT_LUT['all_modes']['luts'])
@@ -4248,7 +4352,7 @@ if _CCT_LUT_ONE_NPY_PER_MODE == False:
 # General wrapper function for the various methods: xyz_to_cct()
 #==============================================================================
 
-def xyz_to_cct(xyzw, mode = 'robertson1968',
+def xyz_to_cct(xyzw, mode = 'robertson2023',
                cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
@@ -4256,7 +4360,7 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                lut = None, luts_dict = None, ignore_wl_diff = False,
                duv_triangular_threshold = 0.002,
-               first_guess_mode = 'robertson1968', fgm_kwargs = {},
+               first_guess_mode = 'robertson2023', fgm_kwargs = {},
                use_fast_duv = _CCT_FAST_DUV,
                **kwargs):
     """
@@ -4268,9 +4372,9 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
         :xyzw: 
             | ndarray of tristimulus values
         :mode:
-            | 'robertson1968', optional
+            | 'robertson2023', optional
             | String with name of method to use.
-            | Options: 'robertson1968', 'ohno2014', 'li2016', 'li2022','zhang2019', 'fibonacci',
+            | Options: 'robertson2023', 'robertson1968', 'ohno2014', 'li2016', 'li2022','zhang2019', 'fibonacci',
             |       (also, but see note below: 'mcamy1992', 'hernandez1999')
             | Note: first_guess_mode for li2016 can also be specified using a ':' separator,
             |        e.g. 'li2016:robertson1968'
@@ -4375,10 +4479,10 @@ def xyz_to_cct(xyzw, mode = 'robertson1968',
             |  (if smaller use triangular solution, else use the non-triangular one:  
             |     If mode == 'ohno2014' -> parabolic, if mode == 'li2022' -> 3e-order poly)
         :first_guess_mode:
-            | 'robertson1968', optional (cfr. mode == 'li2016')
+            | 'robertson2023', optional (cfr. mode == 'li2016')
             | Method used to get an approximate (first guess) estimate of the cct,
             | after which the newton-raphson method is started.
-            | Options: 'robertson1968', 'ohno2014', 'zhang2019','li2022'
+            | Options: 'robertson2023','robertson1968', 'ohno2014', 'zhang2019','li2022'
         :use_fast_duv:
             | _CCT_FAST_DUV, optional
             | If True: use a fast estimator of the Duv 
@@ -4563,10 +4667,10 @@ if __name__ == '__main__':
     
     #--------------------------------
     # Forward transform from xyz to CCT,Duv using Robertson 1968 or several other methods:
-    modes = ['robertson1968'] #['robertson1968','ohno2014','zhang2019','fibonacci']
+    modes = ['robertson2023'] #['robertson1968','ohno2014','zhang2019','fibonacci']
     lut = ((1000.0,41000.0,1,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
     # lut = ((1000.0,41000.0,1,'%'),) #_CCT_LUT[modes[0]]['lut_type_def']
-    # lut_m = _CCT_LUT['robertson1968']['luts']['Yuv60']['1931_2'][((1000.0,41000.0,1,'%'),)]
+    # lut_m = _CCT_LUT['robertson2023']['luts']['Yuv60']['1931_2'][((1000.0,41000.0,1,'%'),)]
     for mode in modes:
         print('mode:',mode)
         cctsduvs = xyz_to_cct(xyz, atol = 0.1, rtol = 1e-10,cieobs = cieobs, out = '[cct,duv]', wl = _WL3, 

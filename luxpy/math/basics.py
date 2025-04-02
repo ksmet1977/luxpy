@@ -87,7 +87,13 @@ Module with useful basic math functions
  
  :interp1_sprague5(): Perform a 1-dimensional 5th order Sprague interpolation.
  
- :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+ :interp1_sprague_cie224_2017(): Perform a 1-dimensional Sprague interpolation according to CIE-224-2017 (Rf calculation).
+
+ :interp1_lagrange(): Perform a 1-dimensional k-th order Lagrange interpolation.
+ 
+ :linterp():  Perform a 1-dimensional linear interpolation (wrapper around numpy.interp1 with added linear extrapolation).
+ 
+ :interp1(): Perform a 1-dimensional linear interpolation (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy based linterp).
  
  :ndinterp1(): Perform n-dimensional interpolation using Delaunay triangulation.
  
@@ -103,6 +109,8 @@ Module with useful basic math functions
  
  :mean_distance_weighted(): Recursively calculates distance weighted mean.
  
+ :round(): Round x (int, float, ndarray or tuple) to n significant digits, or n decimals ('to nearest even' or 'halfway from zero').
+ 
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 ===============================================================================
 """
@@ -111,14 +119,15 @@ import numpy as np
 from luxpy.utils import np2d, _EPS, asplit
 # from scipy import stats # has become a lazy import
 
-__all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric',
+__all__  = ['normalize_3x3_matrix','symmM_to_posdefM','check_symmetric', 'in_hull',
             'check_posdef','positive_arctan','line_intersect','erf', 'erfinv', 
             'histogram', 'pol2cart', 'cart2pol', 'spher2cart', 'cart2spher']
 __all__ += ['bvgpdf','mahalanobis2','dot23', 'rms','geomean','polyarea']
 __all__ += ['magnitude_v','angle_v1v2']
 __all__ += ['v_to_cik', 'cik_to_v', 'fmod', 'remove_outliers','fit_ellipse','fit_cov_ellipse']
-__all__ += ['in_hull','interp1_sprague5','interp1', 'ndinterp1','ndinterp1_scipy']
-__all__ += ['box_m','pitman_morgan', 'stress','stress_F_test','mean_distance_weighted']
+__all__ += ['linterp','interpolatedunivariatespline', 'interp1_sprague5','interp1_sprague_cie224_2017','interp1_lagrange', 'interp1', 'ndinterp1','ndinterp1_scipy']
+__all__ += ['box_m','pitman_morgan', 'stress','stress_F_test','mean_distance_weighted','round']
+__all__ += ['_interpolate_with_nans', '_extrap_y']
 
 
 #------------------------------------------------------------------------------
@@ -1138,6 +1147,538 @@ def in_hull(p, hull):
         hull = Delaunay(hull)
     return hull.find_simplex(p)>=0
 
+# #------------------------------------------------------------------------------
+# _SPRAGUE_COEFFICIENTS = np.array([
+                                 # [884, -1960, 3033, -2648, 1080, -180],
+                                 # [508, -540, 488, -367, 144, -24],
+                                 # [-24, 144, -367, 488, -540, 508],
+                                 # [-180, 1080, -2648, 3033, -1960, 884],
+                                 # ]).T / 209.0
+# def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = 'interp1d'):
+    # """ 
+    # Perform a 1-dimensional 5th order Sprague interpolation.
+    
+    # Args:
+        # :x:
+            # | ndarray with n-dimensional coordinates.
+        # :y: 
+            # | ndarray with values at coordinates in x.
+        # :xn:
+            # | ndarray of new coordinates.
+        # :extrap:
+            # | (np.nan, np.nan) or string, optional
+            # | If tuple: fill with values in tuple (<x[0],>x[-1])
+            # | If string:  ('zeros','linear', 'nearest', 'nearest-up', 'zero', 'slinear', 'quadratic', 'cubic', 'previous','next')
+            # |           for more info on the other options see: scipy.interpolate.interp1d?
+    # Returns:
+        # :yn:
+            # | ndarray with values at new coordinates in xn.
+    # """
+    # # Do extrapolation:
+    # if ((xn<x[0]) | (xn>x[-1])).any(): # extrapolation needed !
+        # if isinstance(extrap,tuple):
+            # if extrap[0] == extrap[1]: 
+                # yne = np.ones((y.shape[0],len(xn)))*extrap[0]
+            # else:
+                # yne = np.zeros((y.shape[0],len(xn)))
+                # yne[:,(xn<x[0])] = extrap[0]
+                # yne[:,(xn>x[-1])] = extrap[1]
+        # elif isinstance(extrap,str):
+            # #from scipy.interpolate import interp1d # lazy import
+            # #yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = 'extrapolate')(xn)
+            # yne = interp1(x, y, xn, kind = extrap, ext = 'extrapolate', scipy_interpolator = scipy_interpolator)
+        # else:
+            # raise Exception('Invalid option for extrap argument. Only tuple and string allowed.')
+        # xn_x = xn[(xn>=x[0]) & (xn<=x[-1])]
+    # else:
+        # xn_x = xn
+        # yne = None
+     
+    # # Check equal x-spacing:
+    # dx = np.diff(x)
+    # if np.all(dx == dx[0]):
+        # dx = dx[0] 
+    # else:
+        # raise Exception('Elements in x are not equally spaced!')
+        
+    # # Extrapolate x, y with required additional elements for Sprague to work:
+    # xe = np.hstack((x[0] - 2*dx, x[0] - dx, x, x[-1] + dx, x[-1] + 2*dx))
+    
+    # y = np.atleast_2d(y)
+    # ye1 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,0])[:,None]
+    # ye2 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,1])[:,None]
+    # ye3 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,2])[:,None]
+    # ye4 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,3])[:,None]
+    # ye = np.hstack((ye1,ye2,y,ye3,ye4)).T
+    
+    
+    # # Evaluate at xn_x (no extrapolation!!):
+    # i = np.searchsorted(xe, xn_x) - 1
+    # X = np.atleast_2d((xn_x - xe[i]) / (xe[i + 1] - xe[i])).T
+
+    # a0 = ye[i]
+    # a1 = ((2 * ye[i - 2] - 16 * ye[i - 1] + 16 * ye[i + 1] - 2 * ye[i + 2]) / 24)  
+    # a2 = ((-ye[i - 2] + 16 * ye[i - 1] - 30 * ye[i] + 16 * ye[i + 1] - ye[i + 2]) / 24) 
+    # a3 = ((-9 * ye[i - 2] + 39 * ye[i - 1] - 70 * ye[i] + 66 * ye[i + 1] - 33 * ye[i + 2] + 7 * ye[i + 3]) / 24)
+    # a4 = ((13 * ye[i - 2] - 64 * ye[i - 1] + 126 * ye[i] - 124 * ye[i + 1] + 61 * ye[i + 2] - 12 * ye[i + 3]) / 24)
+    # a5 = ((-5 * ye[i - 2] + 25 * ye[i - 1] - 50 * ye[i] + 50 * ye[i + 1] - 25 * ye[i + 2] + 5 * ye[i + 3]) / 24)
+
+    # yn = (a0 + a1*X + a2*X**2 + a3*X**3 + a4*X**4 + a5*X**5).T
+    
+    # if yne is None:
+        # return yn
+    # else:
+        # yne[:,(xn>=x[0]) & (xn<=x[-1])] = yn
+        # return yne
+
+# #------------------------------------------------------------------------------
+# def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', fill_value = 'extrapolate', 
+            # force_scipy_interpolator = False, scipy_interpolator = 'interp1d',
+            # w = None, bbox=[None, None], check_finite = False):
+    # """
+    # Perform a 1-dimensional interpolation 
+    # (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).
+    
+    # Args:
+        # :X: 
+            # | ndarray with n-dimensional coordinates (last axis represents dimension)
+        # :Y: 
+            # | ndarray with values at coordinates in X
+        # :Xnew: 
+            # | ndarray of new coordinates (last axis represents dimension)
+        # :kind:
+            # | str or int,  optional
+            # | supported options for str: 'linear', 'quadratic', 'cubic'
+        # :ext:
+            # | 'extrapolate', optional
+            # | options: 
+            # |   - 'extrapolate'
+            # |   - 'zeros': out-of-bounds values are filled with zeros
+            # |   - 'const': out-of-bounds values are filled with nearest value
+            # |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+        # :fill_value:
+            # | 'extrpolate' or float or int or tupple, optional
+            # | If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+        # :force_scipy_interpolator:
+            # | False, optional
+            # | If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). 
+        # :scipy_interpolator:
+            # | 'interp1d', optional
+            # | options: ['InterpolatedUnivariateSpline', 'interp1d'] (or 0 or 1)
+        # :other args:
+            # | see scipy.interpolate.InterpolatedUnivariateSpline()
+        
+    # Returns:
+        # :Ynew:
+            # | ndarray with new values at coordinates in Xnew
+    
+    # Note:
+        # 1. 'numpy.interp' is fastest (but only works for linear interpolation without extrapolation)
+        # 2. For linear interpolation: 'interp1d' is faster for Y (N,...) with N > 1, else 'InterpolatedUnivariateSpline' is faster
+        # 3. For 'cubic' interpolation: 'InterpolatedUnivariateSpline' is faster for Y (N,...) with N > 1, else 'interp1d' is faster
+    # """
+    
+    # if X.ndim == 2: X = X[0]
+    # if Xnew.ndim == 2: Xnew = Xnew[0]
+    
+    # # avoid interpolation/extrapolation if none is needed:
+    # if np.array_equal(X,Xnew): return Y
+    
+    # if isinstance(scipy_interpolator,int): scipy_interpolator = ['InterpolatedUnivariateSpline', 'interp1d'][scipy_interpolator]
+    # if isinstance(kind,str):
+        # if kind == 'nearest': kind, ext = 'linear', 'const'
+        # if scipy_interpolator == 'InterpolatedUnivariateSpline': 
+            # k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+        # else:
+            # k = ['zero', 'linear', 'quadratic', 'cubic'].index(kind) 
+    # else:
+        # k = kind
+    # if ext == 'nearest': ext = 'const'
+    
+    # if (k == 1) & (force_scipy_interpolator == False):
+        # if (((((ext == 'const') | (ext == 3) | (ext == 'zeros') | (ext == 1))) | 
+            # ((ext == 'fill_value') & (not (fill_value == 'extrapolate')))) |
+            # ((Xnew[0] >= X[0]) & (Xnew[-1] <= (X[-1])))):
+            # if ((ext == 'zeros') | (ext == 1)):
+                # (left, right) = (0.0,0.0) 
+            # elif ((ext == 'const') | (ext == 3)): 
+                # (left, right) = (None, None)
+            # elif ((ext == 'fill_value')):
+                # if isinstance(fill_value, (float,int)): 
+                    # fill_value = (fill_value, fill_value) 
+                # (left,right) = fill_value
+            # else:
+                # (left, right) = (None, None)
+
+            # if Y.ndim == 1:
+                # return np.interp(Xnew, X, Y, left = left, right = right)
+            # else:
+                # return np.array([np.interp(Xnew, X, Y[i], left = left, right = right) for i in range(Y.shape[0])])
+    
+    # from scipy import interpolate # lazy import
+    # if scipy_interpolator == 'InterpolatedUnivariateSpline':
+        # ext_original = ext
+        # if ext == 'fill_value':
+            # ext = 'extrapolate'
+        # if Y.ndim == 1:
+            # Yn = interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
+        # else:
+           # Yn = np.array([interpolate.InterpolatedUnivariateSpline(X,Y[i], ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew) for i in range(Y.shape[0])])
+        # if (ext_original == 'fill_value') & (not (fill_value == 'extrapolate')):
+            # if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value)
+            # Yn[:,Xnew < X[0]] = fill_value[0]
+            # Yn[:,Xnew > X[-1]] = fill_value[1]
+        # return Yn
+            
+    # else:
+        # if ((ext == 'extrapolate') | (ext == 0)): 
+            # fill_value = 'extrapolate'
+        # elif ((ext == 'zeros') | (ext == 1)):
+            # fill_value = (0.0,0.0) 
+        # elif ((ext == 'const') | (ext == 3)):
+            # fill_value = (Y[...,0], Y[...,-1])
+        # elif ((ext == 'fill_value')):
+            # if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value) 
+        # return interpolate.interp1d(X, Y, kind = k, bounds_error = False, fill_value = fill_value)(Xnew)
+
+#------------------------------------------------------------------------------
+
+#------------------------------------------------------------------------------
+def _use_log(use_log = False):
+    if use_log == False: 
+        f = lambda Y,Yi: Yi
+        return f,f
+    else:
+        f =  lambda Y,Yi: Yi if (Y<=0.0).any() else np.log(Yi)
+        fi = lambda Y,Yi: Yi if (Y<=0.0).any() else np.exp(Yi)
+        return f, fi
+
+def linterp(X, Y, Xnew, left = 'ext', right = 'ext', 
+             interp_log = False, extrap_log = False
+             ):
+    """
+    Perform linear 1-D interpolation (with linear or constant extrapolation).
+    (wrapper around np.interp)
+
+    Args:
+        :X: 
+            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :Y: 
+            | ndarray with values at coordinates in X
+        :Xnew: 
+            | ndarray of new coordinates (last axis represents dimension)
+        :left: 
+            | 'ext', optional float corresponding to Y.
+            | Value to return for `Xnew < X[0]`, None is `Y[0]`.
+            | If 'ext': perform linear extrapolation
+        :right:
+            | 'ext', optional float corresponding to Y.
+            | Value to return for `Xnew > X[-1]`, None is `Y[-1]`.
+            | If 'ext': perform linear extrapolation
+        :interp_log:
+            | Perform interpolation method ('linear', 'quadratic', or 'cubic') in log space.
+        :extrap_log:
+            | Perform extrapolation method ('linear', 'quadratic', or 'cubic') in log space.
+
+    Returns:
+        :Ynew:
+            | ndarray with new values at coordinates in Xnew
+    """
+    _left, _right = None, None
+    if isinstance(left,str): 
+        _left, left = left, None 
+    if isinstance(right,str): 
+        _right, right = right, None
+    fi,fii = _use_log(interp_log) 
+    if Y.ndim == 2: 
+        Ynew = np.array([fii(Y[i],np.interp(Xnew,X,fi(Y[i],Y[i]), left = left, right = right)) for i in range(int(Y.shape[0]))])
+    else:
+        Ynew = fii(Y,np.interp(Xnew,X,fi(Y,Y), left = left, right = right))
+    if (_left == 'ext') | (_right == 'ext'):
+        fe,fei = _use_log(extrap_log)
+    if (_left == 'ext'): Ynew[...,Xnew < X[0]] = fei(Y[...,:2],(fe(Y[...,:2],Y[...,:1]) + ((fe(Y[...,:2],Y[...,:1])-fe(Y[...,:2],Y[...,1:2]))*(Xnew[Xnew<X[0]]-X[0])) / (X[0]-X[1])))
+    if (_right == 'ext'): Ynew[...,Xnew > X[-1]]= fei(Y[...,-2:],(fe(Y[...,-2:],Y[...,-1:]) + ((fe(Y[...,-2:],Y[...,-1:])-fe(Y[...,-2:],Y[...,-2:-1]))*(Xnew[Xnew>X[-1]]-X[-1]))/(X[-1]-X[-2])))
+    return Ynew
+
+def interpolatedunivariatespline(X,Y, Xnew, kind = 'linear', 
+                                 ext = 'extrapolate', 
+                                 fill_value = 'extrapolate',
+                                 w = None, bbox = [None, None], 
+                                 check_finite = False,
+                                 interp_log = False, extrap_log = False
+                                 ):
+    """ 
+    Perform a 1-dimensional interpolation (with extrapolation)
+    (wrapper around scipy.interpolate.InterpolatedUnivariateSpline).
+    
+    Args:
+        :X: 
+            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :Y: 
+            | ndarray with values at coordinates in X
+        :Xnew: 
+            | ndarray of new coordinates (last axis represents dimension)
+        :kind:
+            | str,  optional
+            | supported options for str: 'linear', 'quadratic', 'cubic'
+        :ext:
+            | 'extrapolate', optional
+            | options: 
+            |   - 'extrapolate'
+            |   - 'zeros': out-of-bounds values are filled with zeros
+            |   - 'const': out-of-bounds values are filled with nearest value
+            |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+        :fill_value:
+            | 'extrapolate' or float or int or tupple, optional
+            | If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+        :w,bbox,check_finite:
+            | see scipy.interpolate.InterpolatedUnivariateSpline()
+        :interp_log:
+            | Perform interpolation method ('linear', 'quadratic', or 'cubic') in log space.
+        :extrap_log:
+            | Perform extrapolation method ('linear', 'quadratic', or 'cubic') in log space.
+
+    Returns:
+        :Ynew:
+            | ndarray with new values at coordinates in Xnew
+    """
+    
+    from scipy import interpolate # lazy import 
+
+    # get interpolator type index:
+    k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
+
+    ext_original = ext
+    if ext == 'fill_value': ext = 'extrapolate'
+    fi,fii = _use_log(use_log = interp_log) 
+    if Y.ndim == 1:
+        Yn = fi(Y,interpolate.InterpolatedUnivariateSpline(X,fi(Y,Y), ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew))
+    else:
+        Yn = np.array([fi(Y[i],interpolate.InterpolatedUnivariateSpline(X,fi(Y[i],Y[i]), ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)) for i in range(Y.shape[0])])
+    if (ext_original == 'fill_value') & (not (fill_value == 'extrapolate')):
+        if (fill_value[0] != 'ext') & (fill_value[0] is not None): Yn[:,Xnew < X[0]] = fill_value[0]
+        if (fill_value[1] != 'ext') & (fill_value[1] is not None): Yn[:,Xnew > X[-1]] = fill_value[1]
+    return Yn
+
+def _interpolate_with_nans(fintp, X, Y, Xnew, 
+                           delete_nans = True, nan_indices = None):
+    """Deal with possible NaNs in Y"""
+    if delete_nans == False: # interpolate with potential NaNs present
+        Yn = fintp(X,Y,Xnew) 
+    else: # deal with NaNs by deleting them and then interpolating
+        if nan_indices is None: nan_indices = np.isnan(Y)
+        if nan_indices.any(): # NaNs are present
+            N = Y.shape[0]
+            all_rows = np.arange(Y.shape[0])
+            rows_with_nans = np.where(nan_indices.sum(axis=1))[0]
+            rows_with_no_nans = np.setdiff1d(all_rows,rows_with_nans)
+            Yn = np.zeros([N,Xnew.shape[0]])
+            Yn.fill(np.nan)
+
+            # Interpolate part not containing any NaNs
+            if (rows_with_no_nans.size>0): 
+                Y_no_nans = Y[rows_with_no_nans]
+                N_no_nans = Y_no_nans.shape[0]
+                Yn_no_nans = fintp(X, Y_no_nans, Xnew)
+                Yn[rows_with_no_nans] = Yn_no_nans
+
+            # In case there are NaN's:
+            if (rows_with_nans.size > 0):
+
+                # looping required as some values are NaN's:
+                for i in rows_with_nans:
+                    nonan_indices = np.logical_not(nan_indices[i])
+                    Xi_no_nans = X[nonan_indices]
+                    Yi_no_nans = Y[i][nonan_indices]
+                    Yni_no_nans = fintp(Xi_no_nans, Yi_no_nans, Xnew)
+                    Yn[i] = Yni_no_nans  
+        else:
+            Yn = fintp(X,Y,Xnew)
+
+    return Yn
+
+def _interp1d(X, Y, Xnew, kind, ext, fill_value, 
+              interp_log = False, extrap_log = False):
+    """
+    Perform 1-D interpolation using scipy.interpolate.interp1d().
+    (Private: for use with interp1 function)
+    """
+    from scipy import interpolate
+    if ((ext[:3] == 'ext') | (ext == 0)):# | (ext in ('linear','quadratic','cubic')): 
+        fill_value = 'extrapolate'
+    elif ((ext == 'const') | (ext == 'flat') | (ext == 'nearest') | (ext == 3)):
+        fill_value = (Y[...,0], Y[...,-1])
+    fi,fii = _use_log(use_log = interp_log)
+    return fii(Y,interpolate.interp1d(X, fi(Y,Y), kind = kind, bounds_error = False, fill_value = fill_value)(Xnew))
+ 
+def _get_fintp(X,Y,Xnew,kind,ext,fill_value,
+               force_scipy_interpolator,scipy_interpolator,
+               w, bbox, check_finite,
+               interp_log, extrap_log, verbosity = 0):
+
+    if (kind == 'linear') & (force_scipy_interpolator == False):
+        if verbosity > 0: print('Interpolation/Extrapolation: using linterp() numpy wrapper')
+        fintp = lambda X,Y,Xnew:  linterp(X, Y, Xnew, left = fill_value[0], right = fill_value[1],
+                                         interp_log = interp_log, extrap_log = extrap_log)
+    
+    elif (force_scipy_interpolator) | (kind != 'linear'):
+        if scipy_interpolator == 'InterpolatedUnivariateSpline':
+            if verbosity > 0: print('Interpolation/Extrapolation: using interpolatedunivariatespline() scipy wrapper')
+            fintp = lambda X,Y,Xnew: interpolatedunivariatespline(X, Y, Xnew, kind = kind, 
+                                                                    ext = ext, fill_value = fill_value,
+                                                                    w = w, bbox = bbox, check_finite = check_finite,
+                                                                    interp_log = interp_log, extrap_log = extrap_log)    
+        else:
+            if verbosity > 0: print('Interpolation/Extrapolation: using scipy.interpolate.interp1d()')
+            fintp = lambda X,Y,Xnew: _interp1d(X, Y, Xnew, kind, ext, fill_value, interp_log = interp_log, extrap_log = extrap_log)
+    
+    return fintp
+
+def _get_most_time_efficient_interpolator(Y, kind, ext, force_scipy_interpolator,extrap_required):
+    # Use most time-efficient interpolator:
+    N = Y.shape[0]
+    if kind == 'linear':
+        scipy_interpolator_int = 'interp1d' if (N == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+    else:
+        scipy_interpolator_int = 'InterpolatedUnivariateSpline' if (N == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+    if extrap_required:
+        if ext not in ('linear', 'quadratic', 'cubic'):
+            ext = kind # because ext is 'ext', 'zeros', 'flat', 'nearest', 'const' or 'fill_value'
+        if ext == 'linear':
+            scipy_interpolator_ext = 'interp1d' if (N == 1) else 'InterpolatedUnivariateSpline' # 'interp1d' faster than 'InterpolatedUnivariateSpline' for Y(N,...) with N == 1 and kind == 'linear'
+        else:
+            scipy_interpolator_ext = 'InterpolatedUnivariateSpline' if (N == 1) else 'interp1d' # 'InterpolatedUnivariateSpline' faster than 'interp1d' for Y(N,...) with N == 1 and kind == 'cubic'
+    else:
+        scipy_interpolator_ext = scipy_interpolator_int
+    return scipy_interpolator_int, scipy_interpolator_ext
+
+def interp1(X, Y, Xnew, kind = 'linear', ext = 'extrapolate', fill_value = 'extrapolate', 
+            force_scipy_interpolator = False, scipy_interpolator = 'InterpolatedUnivariateSpline',
+            delete_nans = True,
+            w = None, bbox = [None, None], check_finite = False, # scipy.interpolate.InterpolatedUnivariateSpline kwargs
+            interp_log = False, extrap_log = False, # perform interpolation method (and/or extrapolation method in log space)
+            choose_most_efficient_interpolator = False, verbosity = 0):
+    """
+    Perform a 1-dimensional interpolation 
+    (wrapper around linterp, interpolatedunivariatespline, interp1d).
+    
+    Args:
+        :X: 
+            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :Y: 
+            | ndarray with values at coordinates in X
+        :Xnew: 
+            | ndarray of new coordinates (last axis represents dimension)
+        :kind:
+            | str,  optional
+            | supported options for str: 'linear', 'quadratic', 'cubic'
+        :ext:
+            | 'extrapolate', optional
+            | options: 
+            |   - 'extrapolate', 'ext': use method specified in :kind: to extrapolate.
+            |   - 'linear', 'quadratic', 'cubic' extrapolation
+            |   - 'zeros': out-of-bounds values are filled with zeros
+            |   - 'const','flat','nearest': out-of-bounds values are filled with nearest value
+            |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
+        :fill_value:
+            | 'extrapolate' or float or int or tupple, optional
+            | If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+        :force_scipy_interpolator:
+            | False, optional
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | 'InterpolatedUnivariateSpline', optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+        :delete_nans:
+            | True, optional
+            | If NaNs are present, remove them and (and try to) interpolate without them.
+        :w,bbox,check_finite:
+            | see scipy.interpolate.InterpolatedUnivariateSpline()
+        :interp_log:
+            | Perform interpolation method ('linear', 'quadratic', or 'cubic') in log space.
+        :extrap_log:
+            | Perform extrapolation method ('linear', 'quadratic', or 'cubic') in log space.
+        
+    Returns:
+        :Ynew:
+            | ndarray with new values at coordinates in Xnew
+    
+    Note:
+        1. 'numpy.interp' is fastest (but only works for linear interpolation and linear or no extrapolation)
+        2. For linear interpolation: 'interp1d' is faster for Y (N,...) with N > 1, else 'InterpolatedUnivariateSpline' is faster
+        3. For 'cubic' interpolation: 'InterpolatedUnivariateSpline' is faster for Y (N,...) with N > 1, else 'interp1d' is faster
+    """
+    
+    if X.ndim == 2: X = X[0]
+    if Xnew.ndim == 2: Xnew = Xnew[0]
+    
+    # avoid interpolation/extrapolation if none is needed:
+    nan_indices = None
+    if np.array_equal(X,Xnew): 
+        if delete_nans == False: 
+            return Y.copy() # keep NaNs if any and return original Y as copy
+        else:
+            nan_indices = np.isnan(Y)
+            if not nan_indices.any(): return Y.copy() # return original Y as copy (doesn't contain any NaNs)
+    if nan_indices is None: nan_indices = np.isnan(Y)
+    
+    # setup extrapolation:
+    if (Xnew[0] < X[0]) | (Xnew[-1] > X[-1]):
+        extrap_required = True 
+        ext_is_lqc_method = ext in ('linear', 'quadratic', 'cubic') # method for ext ('linear', 'quadratic', 'cubic') is same as in kind
+        ext_original = ext
+        if ext_is_lqc_method:
+            fill_value = ('ext','ext')
+            ext = 'extrapolate'
+        else:
+            if ((ext[:3] == 'ext') | (ext == 0)):
+                fill_value = ('ext','ext')
+            elif ((ext == 'zeros') | (ext == 1)):
+                fill_value = (0.0,0.0) 
+            elif ((ext == 'const') | (ext == 'flat') | (ext == 'nearest') | (ext == 3)): 
+                fill_value = (None, None)
+            elif ((ext == 'fill_value')):
+                if isinstance(fill_value, (float,int)): 
+                    fill_value = (fill_value, fill_value) 
+            else:
+                fill_value = ('ext','ext')
+    else:
+        fill_value = (None, None)
+        extrap_required = False
+        ext_is_lqc_method = False
+        ext = 'extrapolate'
+
+    if choose_most_efficient_interpolator:
+        scipy_interpolator_int, scipy_interpolator_ext = _get_most_time_efficient_interpolator(Y, kind, ext, force_scipy_interpolator, extrap_required)
+    else:
+        scipy_interpolator_int, scipy_interpolator_ext = scipy_interpolator, scipy_interpolator
+
+    fintp = _get_fintp(X,Y,Xnew,kind,ext,fill_value,
+               force_scipy_interpolator,scipy_interpolator_int,
+               w, bbox, check_finite,
+               interp_log, extrap_log, verbosity) 
+    
+    Yni = _interpolate_with_nans(fintp, X, Y, Xnew, 
+                                  delete_nans = delete_nans, 
+                                  nan_indices = nan_indices) 
+    
+    # Deal with request for different (from itype/kind) extrapolation method
+    if extrap_required:
+        if ext_is_lqc_method:
+            if ext_original != kind:
+                # do extra interpolation to get the extrapolated values according to the desired extrap. method
+                fextp = _get_fintp(X,Y,Xnew,ext_original,'extrapolate',('ext', 'ext'),
+                                  force_scipy_interpolator,scipy_interpolator_ext,
+                                  w, bbox, check_finite,
+                                  interp_log, extrap_log, verbosity) 
+                Yne = _interpolate_with_nans(fextp, X, Y, Xnew, 
+                                             delete_nans = delete_nans, 
+                                             nan_indices = nan_indices) 
+                cnd = ~((Xnew >= X[0]) & (Xnew <= X[-1]))
+                Yni[:,cnd] = Yne[:,cnd]
+    return Yni
+
+
 #------------------------------------------------------------------------------
 _SPRAGUE_COEFFICIENTS = np.array([
                                  [884, -1960, 3033, -2648, 1080, -180],
@@ -1145,46 +1686,8 @@ _SPRAGUE_COEFFICIENTS = np.array([
                                  [-24, 144, -367, 488, -540, 508],
                                  [-180, 1080, -2648, 3033, -1960, 884],
                                  ]).T / 209.0
-def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = 'interp1d'):
-    """ 
-    Perform a 1-dimensional 5th order Sprague interpolation.
-    
-    Args:
-        :x:
-            | ndarray with n-dimensional coordinates.
-        :y: 
-            | ndarray with values at coordinates in x.
-        :xn:
-            | ndarray of new coordinates.
-        :extrap:
-            | (np.nan, np.nan) or string, optional
-            | If tuple: fill with values in tuple (<x[0],>x[-1])
-            | If string:  ('zeros','linear', 'nearest', 'nearest-up', 'zero', 'slinear', 'quadratic', 'cubic', 'previous','next')
-            |           for more info on the other options see: scipy.interpolate.interp1d?
-    Returns:
-        :yn:
-            | ndarray with values at new coordinates in xn.
-    """
-    # Do extrapolation:
-    if ((xn<x[0]) | (xn>x[-1])).any(): # extrapolation needed !
-        if isinstance(extrap,tuple):
-            if extrap[0] == extrap[1]: 
-                yne = np.ones((y.shape[0],len(xn)))*extrap[0]
-            else:
-                yne = np.zeros((y.shape[0],len(xn)))
-                yne[:,(xn<x[0])] = extrap[0]
-                yne[:,(xn>x[-1])] = extrap[1]
-        elif isinstance(extrap,str):
-            #from scipy.interpolate import interp1d # lazy import
-            #yne = interp1d(x, y, kind = extrap, bounds_error = False, fill_value = 'extrapolate')(xn)
-            yne = interp1(x, y, xn, kind = extrap, ext = 'extrapolate', scipy_interpolator = scipy_interpolator)
-        else:
-            raise Exception('Invalid option for extrap argument. Only tuple and string allowed.')
-        xn_x = xn[(xn>=x[0]) & (xn<=x[-1])]
-    else:
-        xn_x = xn
-        yne = None
-     
+
+def _pre_extrap_left_right_with_2(x,y):
     # Check equal x-spacing:
     dx = np.diff(x)
     if np.all(dx == dx[0]):
@@ -1200,13 +1703,78 @@ def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = '
     ye2 = (y[:, :6] @ _SPRAGUE_COEFFICIENTS[:,1])[:,None]
     ye3 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,2])[:,None]
     ye4 = (y[:,-6:] @ _SPRAGUE_COEFFICIENTS[:,3])[:,None]
-    ye = np.hstack((ye1,ye2,y,ye3,ye4)).T
-    
+    ye = np.hstack((ye1,ye2,y,ye3,ye4))
+    return xe, ye
+
+def _extrap_y(x, y, xn, extrap = 'linear', 
+            force_scipy_interpolator = False,
+            scipy_interpolator = 'InterpolatedUnivariateSpline',
+            delete_nans = True,
+            choose_most_efficient_interpolator = False):
+    """Extrapolate y if needed"""
+    if ((xn<x[0]) | (xn>x[-1])).any(): # extrapolation needed !
+        if isinstance(extrap,tuple):
+            if extrap[0] == extrap[1]: 
+                yne = np.ones((y.shape[0],len(xn)))*extrap[0]
+            else:
+                yne = np.zeros((y.shape[0],len(xn)))
+                yne[:,(xn<x[0])] = extrap[0]
+                yne[:,(xn>x[-1])] = extrap[1]
+        elif isinstance(extrap,str):
+            if extrap[:3] == 'ext': 
+                kind = 'linear'
+                ext = extrap
+            elif extrap in ('linear','quadratic','cubic'):
+                kind = extrap 
+                ext = 'extrapolate'
+            elif extrap in ('zeros','flat','const', 'nearest'):
+                kind = 'linear'
+                ext = extrap
+            elif extrap in ('sprague5', 'sprague_cie224_2017','lagrange5'):
+                kind = 'linear'
+                ext = 'extrapolate'
+            else:
+                raise Exception(f'Unsupported extrapolation type: {extrap}')
+            yne = interp1(x, y, xn, kind = kind, ext = ext, 
+                            force_scipy_interpolator = force_scipy_interpolator, 
+                            scipy_interpolator = scipy_interpolator,
+                            delete_nans = delete_nans,
+                            choose_most_efficient_interpolator = choose_most_efficient_interpolator)
+        else:
+            raise Exception('Invalid option for extrap argument. Only tuple and string allowed.')
+        xn_x = xn[(xn>=x[0]) & (xn<=x[-1])]
+    else:
+        xn_x = xn
+        yne = None
+    return xn_x, yne
+
+def _interp1_sprague5(x, y, xn, extrap = 'linear', 
+                     force_scipy_interpolator = False,
+                     scipy_interpolator = 'InterpolatedUnivariateSpline',
+                     delete_nans = True,
+                     choose_most_efficient_interpolator = False):
+    """ 
+    Perform a 1-dimensional 5th order Sprague interpolation.
+    (Private: for use with interp1_sprague5 function)
+    """
+    # Do extrapolation:
+    xn_x, yne = _extrap_y(x, y, xn, extrap = extrap, 
+                        force_scipy_interpolator = force_scipy_interpolator,
+                        scipy_interpolator = scipy_interpolator,
+                        delete_nans = delete_nans,
+                        choose_most_efficient_interpolator = choose_most_efficient_interpolator)
+     
+            
+    # Extrapolate x, y with required additional elements for Sprague to work:
+    xe, ye = _pre_extrap_left_right_with_2(x,y)
     
     # Evaluate at xn_x (no extrapolation!!):
+    #i = np.searchsorted(xe, xn_x, side = 'right') - 1
+    #i[i > ye.shape[0] - 4] = ye.shape[0] - 4 # deal with end-point
     i = np.searchsorted(xe, xn_x) - 1
     X = np.atleast_2d((xn_x - xe[i]) / (xe[i + 1] - xe[i])).T
 
+    ye = ye.T
     a0 = ye[i]
     a1 = ((2 * ye[i - 2] - 16 * ye[i - 1] + 16 * ye[i + 1] - 2 * ye[i + 2]) / 24)  
     a2 = ((-ye[i - 2] + 16 * ye[i - 1] - 30 * ye[i] + 16 * ye[i + 1] - ye[i + 2]) / 24) 
@@ -1221,116 +1789,264 @@ def interp1_sprague5(x, y, xn, extrap = (np.nan, np.nan), scipy_interpolator = '
     else:
         yne[:,(xn>=x[0]) & (xn<=x[-1])] = yn
         return yne
-
-#------------------------------------------------------------------------------
-def interp1(X,Y,Xnew, kind = 'linear', ext = 'extrapolate', fill_value = 'extrapolate', 
-            force_scipy_interpolator = False, scipy_interpolator = 'interp1d',
-            w = None, bbox=[None, None], check_finite = False):
-    """
-    Perform a 1-dimensional interpolation 
-    (wrapper around scipy.interpolate.InterpolatedUnivariateSpline, scipy.interpolate.interp1d and numpy.interp).
+    
+def interp1_sprague5(X, Y, Xnew, extrap = 'linear', 
+                     force_scipy_interpolator = False,
+                     scipy_interpolator = 'InterpolatedUnivariateSpline',
+                     delete_nans = True,
+                     choose_most_efficient_interpolator = False, verbosity = 0):
+    """ 
+    Perform a 1-dimensional 5th order Sprague interpolation.
     
     Args:
-        :X: 
-            | ndarray with n-dimensional coordinates (last axis represents dimension)
+        :X:
+            | ndarray with n-dimensional coordinates.
         :Y: 
-            | ndarray with values at coordinates in X
-        :Xnew: 
-            | ndarray of new coordinates (last axis represents dimension)
-        :kind:
-            | str or int,  optional
-            | supported options for str: 'linear', 'quadratic', 'cubic'
-        :ext:
-            | 'extrapolate', optional
-            | options: 
-            |   - 'extrapolate'
-            |   - 'zeros': out-of-bounds values are filled with zeros
-            |   - 'const': out-of-bounds values are filled with nearest value
-            |   - 'fill_value': value of tuple (2,) of values is used to fill out-of-bounds values
-        :fill_value:
-            | 'extrpolate' or float or int or tupple, optional
-            | If ext == 'fill_value': use fill_value to set lower- and upper-out-of-bounds values when extrapolating
+            | ndarray with values at coordinates in X.
+        :Xnew:
+            | ndarray of new coordinates.
+        :extrap:
+            | (np.nan, np.nan) or string, optional
+            | If tuple: fill with values in tuple (<X[0],>X[-1])
+            | If string:  ('linear', 'quadratic', 'cubic', 'zeros', 'const')
         :force_scipy_interpolator:
             | False, optional
-            | If False: numpy.interp function is used for linear interpolation when no extrapolation is used/required (fast!). 
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
         :scipy_interpolator:
-            | 'interp1d', optional
-            | options: ['InterpolatedUnivariateSpline', 'interp1d'] (or 0 or 1)
-        :other args:
-            | see scipy.interpolate.InterpolatedUnivariateSpline()
-        
-    Returns:
-        :Ynew:
-            | ndarray with new values at coordinates in Xnew
-    
-    Note:
-        1. 'numpy.interp' is fastest (but only works for linear interpolation without extrapolation)
-        2. For linear interpolation: 'interp1d' is faster for Y (N,...) with N > 1, else 'InterpolatedUnivariateSpline' is faster
-        3. For 'cubic' interpolation: 'InterpolatedUnivariateSpline' is faster for Y (N,...) with N > 1, else 'interp1d' is faster
-    """
-    
-    if X.ndim == 2: X = X[0]
-    if Xnew.ndim == 2: Xnew = Xnew[0]
-    
-    # avoid interpolation/extrapolation if none is needed:
-    if np.array_equal(X,Xnew): return Y
-    
-    if isinstance(scipy_interpolator,int): scipy_interpolator = ['InterpolatedUnivariateSpline', 'interp1d'][scipy_interpolator]
-    if isinstance(kind,str):
-        if kind == 'nearest': kind, ext = 'linear', 'const'
-        if scipy_interpolator == 'InterpolatedUnivariateSpline': 
-            k = ['linear', 'quadratic', 'cubic', 'quartic', 'quintic'].index(kind) + 1
-        else:
-            k = ['zero', 'linear', 'quadratic', 'cubic'].index(kind) 
-    else:
-        k = kind
-    if ext == 'nearest': ext = 'const'
-    
-    if (k == 1) & (force_scipy_interpolator == False):
-        if (((((ext == 'const') | (ext == 3) | (ext == 'zeros') | (ext == 1))) | 
-            ((ext == 'fill_value') & (not (fill_value == 'extrapolate')))) |
-            ((Xnew[0] >= X[0]) & (Xnew[-1] <= (X[-1])))):
-            if ((ext == 'zeros') | (ext == 1)):
-                (left, right) = (0.0,0.0) 
-            elif ((ext == 'const') | (ext == 3)): 
-                (left, right) = (None, None)
-            elif ((ext == 'fill_value')):
-                if isinstance(fill_value, (float,int)): 
-                    fill_value = (fill_value, fill_value) 
-                (left,right) = fill_value
-            else:
-                (left, right) = (None, None)
+            | 'InterpolatedUnivariateSpline', optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+        :delete_nans:
+            | True, optional
+            | If NaNs are present, remove them and (and try to) interpolate without them.
 
-            if Y.ndim == 1:
-                return np.interp(Xnew, X, Y, left = left, right = right)
-            else:
-                return np.array([np.interp(Xnew, X, Y[i], left = left, right = right) for i in range(Y.shape[0])])
-    
-    from scipy import interpolate # lazy import
-    if scipy_interpolator == 'InterpolatedUnivariateSpline':
-        ext_original = ext
-        if ext == 'fill_value':
-            ext = 'extrapolate'
-        if Y.ndim == 1:
-            Yn = interpolate.InterpolatedUnivariateSpline(X,Y, ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew)
-        else:
-           Yn = np.array([interpolate.InterpolatedUnivariateSpline(X,Y[i], ext = ext, k = k, w = w, bbox = bbox, check_finite = check_finite)(Xnew) for i in range(Y.shape[0])])
-        if (ext_original == 'fill_value') & (not (fill_value == 'extrapolate')):
-            if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value)
-            Yn[:,Xnew < X[0]] = fill_value[0]
-            Yn[:,Xnew > X[-1]] = fill_value[1]
-        return Yn
-            
+    Returns:
+        :Yn:
+            | ndarray with values at new coordinates in Xnew.
+    """
+    if verbosity > 0: print('Interpolation: using luxpy interp1_sprague5')
+    fintp = lambda X,Y,Xnew: _interp1_sprague5(X, Y, Xnew, extrap = extrap, 
+                                                force_scipy_interpolator = force_scipy_interpolator,
+                                                scipy_interpolator = scipy_interpolator, 
+                                                delete_nans = delete_nans,
+                                                 choose_most_efficient_interpolator = choose_most_efficient_interpolator) 
+    return _interpolate_with_nans(fintp, X, Y, Xnew, 
+                                delete_nans = delete_nans, 
+                                nan_indices = None)  
+
+#----------------------------------------------------------------------------------------
+def _interp1_sprague_cie224_2017(x,y,xn,
+                                extrap = 'linear', 
+                                force_scipy_interpolator = False,
+                                scipy_interpolator = 'InterpolatedUnivariateSpline',
+                                delete_nans = True,
+                                choose_most_efficient_interpolator = False):
+    """ 
+    Perform a 1-dimensional Sprague interpolation as defined in (CIE-224-2017).
+    (Private: for use with interp1_sprague_cie224_2017 function)
+    """
+    # Use sprague interpolation as defined in CIE227-2017
+
+
+    # Do extrapolation:
+    xn_x, yne = _extrap_y(x, y, xn, extrap = extrap, 
+                        force_scipy_interpolator = force_scipy_interpolator,
+                        scipy_interpolator = scipy_interpolator,
+                        delete_nans = delete_nans,
+                        choose_most_efficient_interpolator = choose_most_efficient_interpolator)
+
+
+    # Extrapolate 2 extra values beyond x-boundary:
+    d = np.diff(x)
+    dx = np.hstack((d[0],(d[0:-1] + d[1:])/2.0,d[-1]))
+    if (dx == dx.mean()).all(): dx = dx[0]
+    if not (isinstance(dx, float) | isinstance(dx,int)):
+        raise Exception('Sprague interpolation method only defined for equally spaced x!')
+    xe = np.hstack((x[0]-2*dx, x[0]-dx, x, x[-1]+dx, x[-1]+2*dx, x[-1]+3*dx))
+    y = np.atleast_2d(y)
+    ye = np.hstack((y[:,:1], y[:,:1], y, y[:,-1:], y[:,-1:],y[:,-1:]))
+
+    # Sprague coefficients for spacing of 5 to 1:
+    Smn = np.array([[0.0000,  0.0000, 1.0000, 0.0000,  0.0000, 0.0000],
+                    [0.0128, -0.0976, 0.9344, 0.1744, -0.0256, 0.0016],
+                    [0.0144, -0.1136, 0.7264, 0.4384, -0.0736, 0.0080],
+                    [0.0080, -0.0736, 0.4384, 0.7264, -0.1136, 0.0144],
+                    [0.0016, -0.0256, 0.1744, 0.9344, -0.0976, 0.0128]
+                    ])
+
+    # Find indices of Smn for bulk processing:
+    i = np.searchsorted(xe, xn)
+    I = np.vstack((i-2,i-1,i,i+1,i+2,i+3))
+    Iu = np.unique((I),axis=1)
+
+    # process xe (as check):
+    xe_ = (Smn @xe[Iu]).T
+    xe__ = np.reshape(xe_,(5*xe_.shape[0],))
+    c = (xe__>=xn[0]) & (xe__<=xn[-1])
+    xe__ = xe__[c]
+
+    # Process ye:
+    ye = ye.T
+    ye_ = np.transpose((Smn @ np.transpose(ye[Iu],(2,0,1))),(0,2,1))
+    ye__ = np.reshape(ye_,(ye_.shape[0],5*xe_.shape[0]))
+    ye__ = ye__[:,c]
+    yn = ye__
+
+    if yne is None:
+        return yn
     else:
-        if ((ext == 'extrapolate') | (ext == 0)): 
-            fill_value = 'extrapolate'
-        elif ((ext == 'zeros') | (ext == 1)):
-            fill_value = (0.0,0.0) 
-        elif ((ext == 'const') | (ext == 3)):
-            fill_value = (Y[...,0], Y[...,-1])
-        elif ((ext == 'fill_value')):
-            if isinstance(fill_value, (float,int)): fill_value = (fill_value, fill_value) 
-        return interpolate.interp1d(X, Y, kind = k, bounds_error = False, fill_value = fill_value)(Xnew)
+        yne[:,(xn_x>=x[0]) & (xn_x<=x[-1])] = yn
+        return yne
+
+
+def interp1_sprague_cie224_2017(X, Y, Xnew, extrap = 'linear', 
+                     force_scipy_interpolator = False,
+                     scipy_interpolator = 'InterpolatedUnivariateSpline',
+                     delete_nans = True,
+                     choose_most_efficient_interpolator = False, verbosity = 0):
+    """ 
+    Perform a 1-dimensional Sprague interpolation according to CIE-224-2017.
+    
+    Args:
+        :X:
+            | ndarray with n-dimensional coordinates.
+        :Y: 
+            | ndarray with values at coordinates in X.
+        :Xnew:
+            | ndarray of new coordinates.
+        :extrap:
+            | (np.nan, np.nan) or string, optional
+            | If tuple: fill with values in tuple (<X[0],>X[-1])
+            | If string:  ('linear', 'quadratic', 'cubic', 'zeros', 'const')
+        :force_scipy_interpolator:
+            | False, optional
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | 'InterpolatedUnivariateSpline', optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+        :delete_nans:
+            | True, optional
+            | If NaNs are present, remove them and (and try to) interpolate without them.
+
+    Returns:
+        :Yn:
+            | ndarray with values at new coordinates in Xnew.
+    """
+    if verbosity > 0: print('Interpolation: using luxpy interp1_sprague_cie227_2017')
+    fintp = lambda X,Y,Xnew: _interp1_sprague_cie224_2017(X, Y, Xnew, extrap = extrap, 
+                                                        force_scipy_interpolator = force_scipy_interpolator,
+                                                        scipy_interpolator = scipy_interpolator, 
+                                                        delete_nans = delete_nans,
+                                                        choose_most_efficient_interpolator = choose_most_efficient_interpolator) 
+    return _interpolate_with_nans(fintp, X, Y, Xnew, 
+                                delete_nans = delete_nans, 
+                                nan_indices = None) 
+#----------------------------------------------------------------------------------------
+def _cardinal_lagrange(xdata, x, k = 3, ydata = None):
+    """
+    cardinal(xdata, x):
+    In: xdata, array with the nodes x_i.
+    x, array or a scalar of values in which the cardinal functions are evaluated.
+    Return: l: a list of arrays of the cardinal functions evaluated in x.
+    """
+    if ydata is not None:
+        xdata, ydata = _pre_extrap_left_right_with_2(xdata,ydata)
+    indices = np.searchsorted(xdata, x, side='left')
+    ks = np.arange(k+1) - (k+1)//2
+    idx = indices + ks[...,None]
+    idx[:,idx[0]<0] = idx[:,idx[0]<0] - idx[:,idx[0]<0].min(axis=0)
+    n = xdata.shape[0]-1
+    idx[:,idx[-1]>n] = idx[:,idx[-1]>n] - (idx[:,idx[-1]>n].max(axis=0) - n)
+    l = []
+    for i in range(k+1):
+        li = np.ones(x.shape[0])
+        for j in range(k+1):
+            if i != j:
+                li = li*(x-xdata[idx[j]])/(xdata[idx[i]]-xdata[idx[j]])
+        l.append(li) # Append the array to the list
+    return l, idx, (xdata, ydata)
+  
+
+def _interp1_lagrange(x, y, xn, k = 5, pre_extrap = True,
+                     extrap = 'linear', 
+                     force_scipy_interpolator = False,
+                     scipy_interpolator = 'InterpolatedUnivariateSpline',
+                     delete_nans = True,
+                     choose_most_efficient_interpolator = False
+                     ):
+    """
+    Perform k-th order Lagrange interpolation to new xn.
+    (Optionally pre-extrapolate data with additional 2 point to the left and 2 to the right)
+    (Private: for use with interp1_lagrange function)
+    """
+    # Do extrapolation:
+    xn_x, yne = _extrap_y(x, y, xn, extrap = extrap, 
+                        force_scipy_interpolator = force_scipy_interpolator,
+                        scipy_interpolator = scipy_interpolator,
+                        delete_nans = delete_nans,
+                        choose_most_efficient_interpolator = choose_most_efficient_interpolator)
+
+    y_ = y if pre_extrap else None
+    l, idx, (xdata,ydata) = _cardinal_lagrange(x, xn, k = k, ydata = y_) # Find the cardinal functions evaluated in x
+    if ydata is not None: y = ydata
+    yn = (y[...,idx]*np.array(l)).sum(axis=int(y.ndim>1)) # multiply yi (points corresponding to xi for each of the k+1 lagrange polynomials) with lagrange polymials and sum
+    
+    if yne is None:
+        return yn
+    else:
+        # copy lagrange interpolation part into full extrapolated result:
+        yne[:,(xn>=x[0]) & (xn<=x[-1])] = yn[:,(xn>=x[0]) & (xn<=x[-1])]
+        return yne
+
+def interp1_lagrange(X, Y, Xnew, k = 5,
+                     extrap = 'linear', 
+                     force_scipy_interpolator = False,
+                     scipy_interpolator = 'InterpolatedUnivariateSpline',
+                     delete_nans = True,
+                     choose_most_efficient_interpolator = False, verbosity = 0):
+    """ 
+    Perform a 1-dimensional k-th order Lagrange interpolation.
+    
+    Args:
+        :X:
+            | ndarray with n-dimensional coordinates.
+        :Y: 
+            | ndarray with values at coordinates in X.
+        :Xnew:
+            | ndarray of new coordinates.
+        :k:
+            | 5 or int, optional
+            | Order of Lagrange interpolation
+        :extrap:
+            | (np.nan, np.nan) or string, optional
+            | If tuple: fill with values in tuple (<X[0],>X[-1])
+            | If string:  ('linear', 'quadratic', 'cubic', 'zeros', 'const')
+        :force_scipy_interpolator:
+            | False, optional
+            | If False: numpy.interp function is used for linear interpolation when no or linear extrapolation is used/required (fast!). 
+        :scipy_interpolator:
+            | 'InterpolatedUnivariateSpline', optional
+            | options: 'InterpolatedUnivariateSpline', 'interp1d'
+        :delete_nans:
+            | True, optional
+            | If NaNs are present, remove them and (and try to) interpolate without them.
+
+    Returns:
+        :Yn:
+            | ndarray with values at new coordinates in Xnew.
+    """
+    if verbosity > 0: print(f'Interpolation: using luxpy interp1_lagrange{k}')
+    fintp = lambda X,Y,Xnew: _interp1_lagrange(X, Y, Xnew, k = k,  
+                                              extrap = extrap, 
+                                              force_scipy_interpolator = force_scipy_interpolator,
+                                              scipy_interpolator = scipy_interpolator, 
+                                              delete_nans = delete_nans,
+                                              choose_most_efficient_interpolator = choose_most_efficient_interpolator) 
+    return _interpolate_with_nans(fintp, X, Y, Xnew, 
+                                delete_nans = delete_nans, 
+                                nan_indices = None)  
+
+
+
 
 #------------------------------------------------------------------------------
 def ndinterp1_scipy(X,Y,Xnew, fill_value = np.nan,  rescale = False):    
@@ -1706,3 +2422,102 @@ def mean_distance_weighted(x, axis = 0, keepdims = False, center_x = False, rtol
             return mu0 + mu
         else:
             return np.squeeze(mu0 + mu, axis = axis)
+            
+#---------------------------------------------------------------------------------
+def round_sigfig(x, n):
+    """
+    Round x (int, float, ndarray) to n significant digits.
+
+    Args:
+        :x: 
+            | int, float, ndarray to be rounded
+        :n:
+            | int
+            | Number of significant digits
+    Returns:
+        :y: 
+            | rounded value(s)
+    
+    Notes:
+        1. From: https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy 
+    """
+    x_positive = np.where(np.isfinite(x) & (x != 0), np.abs(x), 10**(n-1))
+    mags = 10 ** (n - 1 - np.floor(np.log10(x_positive)))
+    return np.round(x * mags) / mags
+
+def round_halfwayfromzero(x, n=0):
+    """
+    Round x to n decimal points using round half away from zero.
+    This function is needed because the rounding specified in the CIE
+    recommendation is different from the standard rounding scheme in python
+    (which is following the IEEE recommendation).
+    Args:
+        :x: 
+            | int, float, ndarray to be rounded
+        :n:
+            | int
+            | Number of decimal points
+    Returns:
+        :y: 
+            | rounded value(s)
+    
+    Notes:
+        1. From: CIETC1-97: https://github.com/ifarup/ciefunctions 
+    """
+    return np.sign(x)*np.floor(np.absolute(x)*10**n + 0.5)/10**n
+
+
+def _round(x, n = None):
+    """Round helper function (private)"""
+    if n is None: 
+        return x
+    elif isinstance(n,tuple):
+        if (n[1] == 'sigfig'):
+            return round_sigfig(x,n[0])
+        elif (n[1] == 'dec') | (n[1] == 'nearesteven') | (n[1] == 'numpy') | (n[1] == 'np'):
+            return np.round(x,n[0])
+        elif (n[1] == 'halfwayfromzero'):
+              return round_halfwayfromzero(x, n[0])
+        else:
+            return np.round(x,n[0])
+    else:
+        return np.round(x, n)
+    
+def round(x, n = None):
+    """
+    Round x (int, float, ndarray or tuple) to n significant digits, or n decimals ('to nearest even' or 'halfway from zero').
+
+    Args:
+        :x: 
+            | int, float, ndarray or tuple to be rounded.
+        :n:
+            | int or tuple
+            | Number of significant digits, or n decimals.
+            | If int: round to nearest even using numpy's round() function
+            | if Tuple: first element specifies the number of digits, the second element is a string specifying the method:
+            |   - 'sigfig': round to n significant digits (uses luxpy.math.round_sigfig function).
+            |   - 'dec' or 'nearesteven' or 'numpy' or 'np': round to nearest even using numpy's round function.
+            |   - 'halfwayfromzero': rounds halfway from zero (uses luxpy.math.round_awayfromzero function).
+    Returns:
+        :y: 
+            | rounded value(s).
+    
+    Notes:
+        1. 'sigfig' from: https://stackoverflow.com/questions/18915378/rounding-to-significant-figures-in-numpy 
+        2. 'halfwayfromzero' from: CIETC1-97: https://github.com/ifarup/ciefunctions 
+    """
+    if isinstance(x, tuple):
+        return [_round(xi, n) for xi in x]
+    else:
+        return _round(x,n)
+
+        
+# if __name__ == '__main__':
+#     import luxpy as lx 
+#     import matplotlib.pyplot as plt
+#     spd = lx._CIE_D65[:,::5]
+#     wln = lx.getwlr([380,830,1])
+#     spdi = interp1_sprague_cie224_2017(spd[0],spd[1:], wln)
+#     plt.plot(spd[0],spd[1],'b-')
+#     plt.plot(wln,spdi[0],'r:')
+

@@ -26,7 +26,7 @@ SPD fields
     
  :self.value: values of spectral data
     
- :self.dtype: spectral data type ('S' light source, or 'R', reflectance, ...),
+ :self.dtype: spectral data type ('spd' light source, or 'rfl', reflectance, ...),
               used to determine interpolation method following CIE15-2017.
     
  :self.shape: self.value.shape
@@ -80,7 +80,7 @@ from luxpy.color.CDATA import XYZ
 
 class SPD:
     
-    def __init__(self, spd = None, wl = None, ax0iswl = True, dtype = 'S', \
+    def __init__(self, spd = None, wl = None, ax0iswl = True, dtype = 'spd', \
                  wl_new = None, interp_method = 'auto', negative_values_allowed = False, extrap_values = 'ext',\
                  norm_type = None, norm_f = 1,\
                  header = None, sep = ','):
@@ -103,12 +103,11 @@ class SPD:
                 | True, optional
                 | Signals that first axis of :spd: contains wavelengths.
             :dtype:
-                | 'S', optional
-                | Type of spectral object (e.g. 'S' for source spectrum, 'R' for
+                | 'spd', optional
+                | Type of spectral object (e.g. 'spd' for source spectrum, 'rfl' for
                   reflectance spectra, etc.)
-                | See SPD._INTERP_TYPES for more options. 
                 | This is used to automatically determine the correct kind of
-                  interpolation method according to CIE15-2018.
+                  interpolation method according to CIE15-20xx.
             :wl_new: 
                 | None or ndarray with wavelength range, optional
                 | If None: don't interpolate, else perform interpolation.
@@ -166,7 +165,7 @@ class SPD:
         if wl_new is not None:
             if interp_method == 'auto':
                 interp_method = dtype
-            self.cie_interp(wl_new, kind = interp_method, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
+            self.cie_interp(wl_new, datatype = dtype, kind = None, negative_values_allowed = negative_values_allowed, extrap_values = extrap_values)
         if norm_type is not None:
             self.normalize(norm_type = norm_type, norm_f = norm_f)
     
@@ -307,7 +306,7 @@ class SPD:
 
         
     #------------------------------------------------------------------------------
-    def normalize(self, norm_type = None, norm_f = 1, cieobs = _CIEOBS):
+    def normalize(self, norm_type = None, norm_f = 1, cieobs = _CIEOBS, K = None, interp_settings = None):
         """
         Normalize spectral power distributions in SPD instance.
         
@@ -331,11 +330,11 @@ class SPD:
                 | Type of cmf set to use for normalization using photometric 
                   units (norm_type == 'pu')
         """
-        self.value = spd_normalize(self.get_(), norm_type = norm_type, norm_f = norm_f, cieobs = cieobs)[1:]
+        self.value = spd_normalize(self.get_(), norm_type = norm_type, norm_f = norm_f, cieobs = cieobs, K = K, interp_settings = interp_settings)[1:]
         return self
 
     #--------------------------------------------------------------------------------------------------
-    def cie_interp(self,wl_new, kind = 'auto', sprague5_allowed = False, negative_values_allowed = False, 
+    def cie_interp(self,wl_new, kind = 'auto', sprague_allowed = False, sprague_method = 'sprague_cie224_2017', negative_values_allowed = False, 
                    extrap_values = 'ext', extrap_kind = 'linear', extrap_log = False):
         """
         Interpolate / extrapolate spectral data following standard CIE15-2018.
@@ -348,21 +347,26 @@ class SPD:
             :kind:
                 | 'auto', optional
                 | If :kind: is None, return original data.
-                | If :kind: is a spectrum type (see _INTERP_TYPES), the correct 
+                | If :kind: is a spectrum type, the correct 
                 |     interpolation type if automatically chosen.
-                |       (The use of the slow(er) 'sprague5' can be toggled on using :sprague5_allowed:).
+                |       (The use of the slow(er) 'sprague5' can be toggled on using :sprague_allowed:).
                 | If kind = 'auto': use self.dtype
                 | Or :kind: can be any interpolation type supported by 
                 |     luxpy.math.interp1
-                |     or can be 'sprague5' (uses luxpy.math.interp1_sprague5). 
-            :sprague5_allowed:
-                | False, optional
-                | If True: When kind is a spectral data type from _INTERP_TYPES['cubic'],
+                |     or can be 'sprague' (uses luxpy.math.interp1_sprague5) or 'sprague_cie224_2017' (uses luxpy.math.interp1_sprague_cie224_2017). 
+            :sprague_allowed:
+                | None, optional
+                | If None: the value from interp_settings is used.
+                | If True: When kind is a spectral data type that corresponds to 'cubic' interpolation,
                 |    then a cubic spline interpolation will be used in case of 
-                |    unequal wavelength spacings, otherwise a 5th order Sprague will be used.
-                | If False: always use 'cubic', don't use 'sprague5'. 
+                |    unequal wavelength spacings, otherwise a 5th order Sprague or Sprague as defined in CIE224-2017 will be used.
+                | If False: always use 'cubic', don't use 'sprague5' or 'sprague_cie224_2017'. 
                 |           This is the default, as differences are minimal and 
-                |           use of the 'sprague5' function is a lot slower!
+                |           use of the 'sprague' functions is a lot slower ('sprague5' = slowest )!
+            :sprague_method:
+                | 'sprague_cie224_2017', optional
+                | Specific sprague method used for interpolation. (Only for equal spacings, 'sprague_cie224_2017' also on for 5 nm -> 1nm)
+                | - options: 'sprague5' (use luxpy.math.interp1_sprague5), 'sprague_cie224_2017' (use luxpy.interp1_sprague_cie224_2017)
             :negative_values_allowed:
                 | False, optional
                 | If False: negative values are clipped to zero
@@ -409,8 +413,10 @@ class SPD:
             |       remains the 'best'. Hence the choice to use the CIE167:2005 recommended linear extrapolation as default!
         """
         if (kind == 'auto') & (self.dtype is not None):
-            kind = self.dtype
-        spd = cie_interp(self.get_(), wl_new, kind = kind, sprague5_allowed = sprague5_allowed,
+            dtype = self.dtype
+            kind = None
+        spd = cie_interp(self.get_(), wl_new, datatype = dtype, kind = kind, 
+                         sprague_allowed = sprague_allowed, sprague_method = sprague_method,
                          negative_values_allowed = negative_values_allowed, 
                          extrap_values = extrap_values,
                          extrap_kind = extrap_kind,

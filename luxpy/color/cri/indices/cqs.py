@@ -3,12 +3,15 @@ Module for color quality scale, CQS
 ===================================
 
  :_CQS_DEFAULTS: default settings for CQS 
-                 (major dict has 10 keys (26-Aug-2022): 
+                 (major dict has 13 keys (04-Mar-2024): 
                  sampleset [str/dict], 
                  ref_type [str], 
-                 cieobs [str], 
+                 calculation_wavelength_range [list],
+                 cieobs [Dict], 
+                 cct_mode [str],
                  avg [fcn handle], 
                  rf_from_avg_rounded_rfi [bool],
+                 round_daylightphase_Mi_to_cie_recommended [bool],
                  scale [dict], 
                  cspace [dict], 
                  catf [dict], 
@@ -37,9 +40,12 @@ __all__ = ['spd_to_cqs', '_CQS_DEFAULTS']
 _CQS_DEFAULTS = {}
 _CQS_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",
                              'ref_type' : 'ciera', 
+                             'calculation_wavelength_range' : None,
                              'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
+                             'cct_mode' : ('ohno2014', {'force_tolerance' : False}),
                              'avg' : math.rms, 
                              'rf_from_avg_rounded_rfi' : False,
+                             'round_daylightphase_Mi_to_cie_recommended' : False,
                              'scale' : {'fcn' : log_scale, 'cfactor' : [2.93, 3.10, 3.78]}, 
                              'cspace' : {'type': 'lab', 'xyzw' : None}, 
                              'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 
@@ -47,9 +53,13 @@ _CQS_DEFAULTS['cqs-v7.5'] = {'sampleset' : "_CRI_RFL['cqs']['v7.5']",
                              'cri_specific_pars' : {'maxC': None}
                              }
 _CQS_DEFAULTS['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']", 
-                             'ref_type' : 'ciera','cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
+                             'ref_type' : 'ciera',
+                             'calculation_wavelength_range' : None,
+                             'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
+                             'cct_mode' : ('ohno2014', {'force_tolerance' : False}),
                              'avg' : math.rms, 
                              'rf_from_avg_rounded_rfi' : False,
+                             'round_daylightphase_Mi_to_cie_recommended' : False,
                              'scale' : {'fcn' : log_scale, 'cfactor' : [3.03, 3.20, 3.88]}, 
                              'cspace' : {'type': 'lab', 'xyzw' : None}, 
                              'catf': {'xyzw': None,'mcat':'cmc','D':None,'La':[1000.0,1000.0],'cattype':'vonkries','Dtype':'cmc', 'catmode' : '1>2'}, 
@@ -58,7 +68,7 @@ _CQS_DEFAULTS['cqs-v9.0'] = {'sampleset' : "_CRI_RFL['cqs']['v9.0']",
                              }
 
 #-----------------------------------------------------------------------------
-def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
+def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None, interp_settings = None):
     """
     Calculates CQS Qa (Qai) or Qf (Qfi) or Qp (Qpi) for versions v9.0 or v7.5.
     
@@ -95,7 +105,8 @@ def  spd_to_cqs(SPD, version = 'v9.0', out = 'Qa',wl = None):
         cri_type = version
      
     # calculate DEI, labti, labri and get cspace_pars and rg_pars:
-    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(SPD, cri_type = cri_type, out = 'DEi,jabt,jabr,cct,duv,cri_type', wl = wl)
+    DEi, labti, labri, cct, duv, cri_type = spd_to_DEi(SPD, cri_type = cri_type, out = 'DEi,jabt,jabr,cct,duv,cri_type', wl = wl, 
+                                                        interp_settings = interp_settings)
     
     # further unpack cri_type:
     scale_fcn = cri_type['scale']['fcn']     

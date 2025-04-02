@@ -1977,7 +1977,8 @@ def initialize_spd_optim_pars(component_data, N_components = None,\
     return spd_optim_pars, spd_model_pars
 
 #------------------------------------------------------------------------------
-def get_primary_fluxratios(res, primaries, Ytarget = 1, ptype = 'pu', cieobs = _CIEOBS, out = 'M,Sopt'):
+def get_primary_fluxratios(res, primaries, Ytarget = 1, ptype = 'pu', cieobs = _CIEOBS, K = None, out = 'M,Sopt',
+                           interp_settings = None):
     """
     Get flux ratios of primaries.
     
@@ -2023,7 +2024,7 @@ def get_primary_fluxratios(res, primaries, Ytarget = 1, ptype = 'pu', cieobs = _
     Sopt = np.vstack((primaries[:1,:],(primaries[1:,:]*M.T).sum(axis=0)))
     
     # rescale to account for target photometric power:
-    Y = spd_to_power(Sopt, cieobs = cieobs,ptype=ptype)
+    Y = spd_to_power(Sopt, cieobs = cieobs,ptype=ptype, K = K, interp_settings = interp_settings)
     M *= Ytarget/Y
     
     # rescale Sopt:

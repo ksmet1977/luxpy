@@ -4,8 +4,8 @@ LuxPy: a package for lighting and color science
 ===============================================
 
     * Author: K.A.G. Smet (ksmet1977 at gmail.com)
-    * Version: 1.11.4
-    * Date: Nov 12, 2024
+    * Version: 1.12.0
+    * Date: April 2, 2025
     * License: GPLv3
 
     * DOI: https://doi.org/10.5281/zenodo.1298963
@@ -80,11 +80,11 @@ E.g.:
 # Initialze LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.11.4'; """Current version"""
+__VERSION__ = 'v1.12.0'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = 'Nov-12-2024'; """release date"""
+__DATE__ = 'Apr-02-2025'; """release date"""
 
-__COPYRIGHT__ = 'Copyright (C) 2017-2024 - Kevin A.G. Smet'; """copyright info"""
+__COPYRIGHT__ = 'Copyright (C) 2017-2025 - Kevin A.G. Smet'; """copyright info"""
 
 __AUTHOR__ = 'Kevin A.G. Smet'; """Package author"""
 __EMAIL__ = 'ksmet1977 at gmail.com'; """contact info"""
@@ -166,13 +166,13 @@ __all__ += ['math']
 #----------------------------------------
 
 #   Load spectral module:
-from luxpy.spectrum import *
+from .spectrum import *
 __all__ += spectrum.__all__
 
 #----------------------------------------
 # From /phot:
 #----------------------------------------
-from luxpy.phot import *
+from .phot import *
 __all__ += phot.__all__
 
 #----------------------------------------
@@ -180,28 +180,28 @@ __all__ += phot.__all__
 #----------------------------------------
 
 #   Load color/chromaticty transforms module:
-from luxpy.color.ctf.colortransforms import *
+from .color.ctf.colortransforms import *
 __all__ += color.ctf.colortransforms.__all__
 
 #   Load correlated color temperature module:
-from luxpy.color.cct import *
+from .color.cct import *
 __all__ += color.cct.__all__
 
 #   Load chromatic adaptation module:
-from luxpy.color.cat import chromaticadaptation as cat
+from .color.cat import chromaticadaptation as cat
 __all__ += ['cat']
 
 #   Load whiteness metric module:
-from luxpy.color.whiteness.smet_white_loci import *
+from .color.whiteness.smet_white_loci import *
 __all__ += color.whiteness.smet_white_loci.__all__
 
 #   Load color appearance model module:
-from luxpy.color import cam 
+from .color import cam 
 __all__ += ['cam']
 
 
 #   load cam wrapper functions for use with colortf() from .colortransforms module:
-from luxpy.color.cam import (_CAM_AXES, 
+from .color.cam import (_CAM_AXES, 
                   xyz_to_jabM_ciecam02, jabM_ciecam02_to_xyz, 
                   xyz_to_jabC_ciecam02, jabC_ciecam02_to_xyz,
                   xyz_to_jabM_ciecam16, jabM_ciecam16_to_xyz, 
@@ -246,21 +246,21 @@ _CSPACE_AXES = {**_CSPACE_AXES, **_CAM_AXES}; """ Dictionary with color space ax
 
 #   Extend color transform module:
 #__all__ = [x for x in dir() if x[:2]!='__'] # to give color.ctf.colortf access to globals()
-import sys,importlib
+import sys, importlib
 importlib.reload(sys.modules['luxpy.color.ctf.colortf']) # force reload so that colortf has access to all colortransforms defined up to that point
-from luxpy.color.ctf.colortf import *
+from .color.ctf.colortf import *
 __all__ += color.ctf.colortf.__all__
 
 #   Load some basic graphics functions:
-from luxpy.color.utils.plotters import *
+from .color.utils.plotters import *
 __all__ += color.utils.plotters.__all__
 
 #   Load DE (color difference) module:
-from luxpy.color import deltaE 
+from .color import deltaE 
 __all__ += ['deltaE']
 
 #   Load color rendition sub-package:
-from luxpy.color.cri import colorrendition as cri
+from .color.cri import colorrendition as cri
 __all__ += ['cri']
 
 
@@ -268,9 +268,9 @@ __all__ += ['cri']
 #----------------------------------------
 # Import some class functionality:
 #----------------------------------------
-from luxpy.color.CDATA import CDATA, XYZ, LAB
+from .color.CDATA import CDATA, XYZ, LAB
 __all__ += ['CDATA', 'XYZ', 'LAB']
-from luxpy.spectrum.SPD import SPD
+from .spectrum.SPD import SPD
 __all__ += ['SPD']
 
 
@@ -285,51 +285,51 @@ list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       ]
 try:
     #   load ciephotbio sub_package:
-    from luxpy.toolboxes import photbiochem 
+    from .toolboxes import photbiochem 
     __all__ += ['photbiochem']
     
     #   load Asano Individual Observer lms-CMF model:
-    from luxpy.toolboxes import indvcmf 
+    from .toolboxes import indvcmf 
     __all__ += ['indvcmf']
     
     #   Load spdbuild sub_package:
-    from luxpy.toolboxes import spdbuild 
+    from .toolboxes import spdbuild 
     __all__ += ['spdbuild']
     
     #   Load hypspcim sub_package:
-    from luxpy.toolboxes import hypspcim 
+    from .toolboxes import hypspcim 
     __all__ += ['hypspcim']
     
     #   Load hypspcim sub_package:
-    from luxpy.toolboxes import iolidfiles 
+    from .toolboxes import iolidfiles 
     __all__ += ['iolidfiles']
     
     #   Load spectro sub_package:
-    from luxpy.toolboxes import spectro 
+    from .toolboxes import spectro 
     __all__ += ['spectro']
     
     #   Load rgb2spec sub_package:
-    from luxpy.toolboxes import rgb2spec
+    from .toolboxes import rgb2spec
     __all__ += ['rgb2spec']
     
     #   Load dispcal sub_package:
-    from luxpy.toolboxes import dispcal
+    from .toolboxes import dispcal
     __all__ += ['dispcal']
     
     #   Load sherbrooke spectral index sub_package:
-    from luxpy.toolboxes import sherbrooke_spectral_indices
+    from .toolboxes import sherbrooke_spectral_indices
     __all__ += ['sherbrooke_spectral_indices']
     
     #   Load spectral mismatch and uncertainty sub_package:
-    from luxpy.toolboxes import spectral_mismatch_and_uncertainty
+    from .toolboxes import spectral_mismatch_and_uncertainty
     __all__ += ['spectral_mismatch_and_uncertainty']
     
     #   Load TechnoTeamLMK sub_package:
-    #from luxpy.toolboxes import technoteamlmk
+    #from .toolboxes import technoteamlmk
     #__all__ += ['technoteamlmk']
     
     #   Load sterescopicoviewer sub_package:
-    #from luxpy.toolboxes import stereoscopicviewer
+    #from .toolboxes import stereoscopicviewer
     #__all__ += ['stereoscopicviewer']
 except:
     pass

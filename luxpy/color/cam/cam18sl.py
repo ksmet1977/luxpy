@@ -416,7 +416,7 @@ def qabS_cam18sl_to_xyz(qab, xyzb = None, Lb = [100], fov = 10.0, parameters = N
 #------------------------------------------------------------------------------
 if __name__ == '__main__':
     C = _CIE_ILLUMINANTS['C'].copy()
-    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],kind='spd')[1:]))
+    C = np.vstack((C,cie_interp(_CIE_ILLUMINANTS['D65'],C[0],datatype='spd')[1:]))
     M = _MUNSELL.copy()
     rflM = M['R']
     cieobs = '2006_10'
@@ -448,10 +448,10 @@ if __name__ == '__main__':
     Lb = np2d([100])
     wlr = getwlr(_CAM18SL_WL3)
     EEW = np.vstack((wlr,np.ones((Lb.shape[1], wlr.shape[0])))) 
-    E = cie_interp(_CIE_ILLUMINANTS['E'],EEW[0],kind='spd')
-    D65 = cie_interp(_CIE_ILLUMINANTS['D65'],EEW[0],kind='spd')
-    A = cie_interp(_CIE_ILLUMINANTS['A'],EEW[0],kind='spd')
-    C = cie_interp(_CIE_ILLUMINANTS['C'],EEW[0],kind='spd')
+    E = cie_interp(_CIE_ILLUMINANTS['E'],EEW[0],datatype='spd')
+    D65 = cie_interp(_CIE_ILLUMINANTS['D65'],EEW[0],datatype='spd')
+    A = cie_interp(_CIE_ILLUMINANTS['A'],EEW[0],datatype='spd')
+    C = cie_interp(_CIE_ILLUMINANTS['C'],EEW[0],datatype='spd')
     
     STIM = np.vstack((EEW, E[1:], C[1:], D65[1,:], A[1:]))
     xyz = spd_to_xyz(STIM, cieobs = cieobs, relative = False)
