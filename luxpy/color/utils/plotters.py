@@ -185,7 +185,7 @@ def plot_color_data(x,y,z=None, axh=None, show = True, cieobs =_CIEOBS, \
 
 def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
            show = True, force_daylight_below4000K = False, cspace_pars = {}, \
-           formatstr = 'k-',  **kwargs):
+           formatstr = 'k-', Y_DL = 100,  **kwargs):
     """
     Plot daylight locus.
     
@@ -230,7 +230,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
         ccts = 10**np.linspace(np.log10(4000.0),np.log10(10.0**11.0),100)
         
     xD,yD = daylightlocus(ccts, cieobs = cieobs, force_daylight_below4000K = force_daylight_below4000K)
-    Y = 100*np.ones(xD.shape)
+    Y = Y_DL*np.ones(xD.shape)
     DL =  Yxy_to_xyz(np.vstack((Y, xD,yD)).T)
     DL = colortf(DL, tf = cspace, fwtf = cspace_pars)
     Y,x,y = asplit(DL)
@@ -238,7 +238,7 @@ def plotDL(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, \
     axh = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show=show, formatstr=formatstr, **kwargs)    
     return axh
     
-def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels = True, show = True, cspace_pars = {}, formatstr = 'k-',  **kwargs):  
+def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels = True, show = True, cspace_pars = {}, formatstr = 'k-', Y_BB = 100, **kwargs):  
     """
     Plot blackbody locus.
         
@@ -289,6 +289,7 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
     
     BB = cri_ref(ccts,ref_type='BB')
     xyz = spd_to_xyz(BB,cieobs = cieobs)
+    xyz = Y_BB*xyz/xyz[...,1:2]
     Yxy = colortf(xyz, tf = cspace, fwtf = cspace_pars)
     Y,x,y = asplit(Yxy)
    
@@ -367,6 +368,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         :Y_SL:
             | 100, optional
             | Normalize the XYZ of the spectrum locus to this value before converting to cspace.
+            | Note that plots of the daylight locus, blackbody locus, etc. are scaled accordingly.
 
         :kwargs: 
             | additional keyword arguments for use with matplotlib.pyplot.
@@ -407,18 +409,22 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     if DL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for DL
             kwargs.pop('label')
-        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:',  **kwargs)
+        plotDL(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:', Y_DL = Y_SL, **kwargs)
 
     if BBL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for BB
             kwargs.pop('label')
-        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.',  **kwargs)
+        plotBB(ccts = None, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, cctlabels = cctlabels, formatstr = 'k-.', Y_BB = Y_SL, **kwargs)
     
     if D65 == True:
-        YxyD65 = colortf(spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs), tf = cspace,  fwtf = cspace_pars)
+        xyzD65 = spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs)
+        xyzD65 = Y_SL*xyzD65/xyzD65[...,1:2]      
+        YxyD65 = colortf(xyzD65, tf = cspace,  fwtf = cspace_pars)
         axh.plot(YxyD65[...,1],YxyD65[...,2],'bo')
     if EEW == True:
-        YxyEEW = colortf(spd_to_xyz(_CIE_ILLUMINANTS['E'], cieobs = cieobs), tf = cspace, fwtf = cspace_pars)
+        xyzEEW = spd_to_xyz(_CIE_ILLUMINANTS['E'], cieobs = cieobs)
+        xyzEEW = Y_SL*xyzEEW/xyzEEW[...,1:2]   
+        YxyEEW = colortf(xyzEEW, tf = cspace, fwtf = cspace_pars)
         axh.plot(YxyEEW[...,1],YxyEEW[...,2],'ko')
     
     if showcopy:
