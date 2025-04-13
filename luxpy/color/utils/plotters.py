@@ -312,7 +312,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
            **kwargs):
     """
     Plot spectrum locus for cieobs in cspace.
-    Only works for Yxy, Yuv, luv (basically any chromaticity diagram where Y or lightness of spectrum locus is not relative that of xyzw, because what would be its value? These are lights!)
+    Only works / makes sense for Yxy, Yuv, luv (basically any chromaticity diagram where Y or lightness of spectrum locus is not relative that of xyzw, because what would be its value? These are lights!)
  
     
     Args: 
@@ -377,13 +377,15 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     """
     
     if isinstance(cieobs,str):
-        SL = _CMF[cieobs]['bar'][1:4].T
+        SL = _CMF[cieobs]['bar']
     else:
-        SL = cieobs[1:4].T
-    SL = Y_SL*SL/(SL[:,1,None] + _EPS)
+        SL = cieobs
+    wl, SL = SL[0], SL[1:4].T
+    SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
     SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
-    plambdamax = SL[:,1].argmax()
+    
+    plambdamax = wl.argmax()
     SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     
@@ -755,7 +757,7 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
                                       **kwargs):
     """
     Plot the chromaticity diagram colors. 
-    Only works for Yxy, Yuv, luv (basically any chromaticity diagram where Y or lightness of spectrum locus is not relative that of xyzw, because what would be its value? These are lights!)
+    Only works / makes sense for Yxy, Yuv, luv (basically any chromaticity diagram where Y or lightness of spectrum locus is not relative that of xyzw, because what would be its value? These are lights!)
     
     Args:
         :diagram_samples:
@@ -805,14 +807,16 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     """
         
     if isinstance(cieobs,str):
-        SL = _CMF[cieobs]['bar'][1:4].T
+        SL = _CMF[cieobs]['bar']
     else:
-        SL = cieobs[1:4].T
+        SL = cieobs
+    wl, SL = SL[0], SL[1:4].T
     SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
     #print(SL.max(0),cspace_pars)
     SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
-    plambdamax = SL[:,1].argmax()
+    
+    plambdamax = wl.argmax()
     SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     SL = np.vstack((x,y)).T
@@ -872,6 +876,9 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
         elif ((cspace == 'Yuv60')) & (isinstance(cieobs,str)):
             axh.set_xlim([0,0.65])
             axh.set_ylim([0,0.4])
+        else:
+            axh.set_xlim([None,None])
+            axh.set_ylim([None,None])
         if (cspace is not None):
             xlabel = _CSPACE_AXES[cspace][1]
             ylabel = _CSPACE_AXES[cspace][2]
