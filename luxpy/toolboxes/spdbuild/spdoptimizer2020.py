@@ -537,9 +537,11 @@ class Minimizer():
                 |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
                 |  - 'nsga_ii' : {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
                 |                 'termination' : ('n_gen' , 40), 'seed' : 1,
-                |                 'ga_opts' : {'sampling'  : ("real_random",{}),
-                |                              'crossover' : ("real_sbx", {'prob' : 0.9, 'eta' : 15}),
-                |                              'mutation'  : ("real_pm",  {'eta' : 20})}}
+                |                 'ga_opts' :{'sampling'    :  (FloatRandomSampling,{}),
+                |                             'crossover'  : (SBX, {'prob_var' : 0.9, 'eta' : 15}),
+                |                             'mutation'    : (PolynomialMutation, {'eta' : 20})
+                |                            }
+                |                 }
                 |  - dict with options for user-defined minimization method.
             :pareto:
                 | False, optional
@@ -612,15 +614,17 @@ class Minimizer():
             
         elif (self.method == 'nsga_ii'):
             tmp_opts = {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
-                          'termination' : ('n_gen' , 40), 'seed' : 1,
-                          'ga_opts' : {'sampling' : ("real_random",{}),
-                                      'crossover': ("real_sbx", {'prob': 0.9, 'eta' : 15}),
-                                      'mutation' : ("real_pm",  {'eta' : 20})}}
+                        'termination' : ('n_gen' , 40), 'seed' : 1,
+                        'ga_opts' :{'sampling'    :  (FloatRandomSampling,{}),
+                                    'crossover'  : (SBX, {'prob_var' : 0.9, 'eta' : 15}),
+                                    'mutation'    : (PolynomialMutation, {'eta' : 20})
+                                    }
+                        }
         
         else:
             if not isinstance(self.method, str):
                 tmp_opts = {'type':'user-defined, specified as part of opt. function definition'}
-                print('User-Defined minimizer: user should (have) set the optimization options when defining minimizer!')
+                print('User-Defined minimizer: remember to set the optimization options when defining the minimizer!')
             else:
                 raise Exception ('Unsupported minimization method.')   
 
@@ -1377,9 +1381,11 @@ def spd_optimizer2(target = np2d([100,1/3,1/3]), tar_type = 'Yxy', cspace_bwtf =
             |                       'ps_opts' : {'c1': 0.5, 'c2': 0.3, 'w':0.9}}
             |  - 'nsga_ii' : {'n_gen' : 40, 'n_pop' : 400, 'n_offsprings' : None,
             |                 'termination' : ('n_gen' , 40), 'seed' : 1,
-            |                 'ga_opts' : {'sampling'  : ("real_random",{}),
-            |                              'crossover' : ("real_sbx", {'prob' : 0.9, 'eta' : 15}),
-            |                              'mutation'  : ("real_pm",  {'eta' : 20})}}
+            |                 'ga_opts' :{'sampling'    :  (FloatRandomSampling,{}),
+            |                             'crossover'  : (SBX, {'prob_var' : 0.9, 'eta' : 15}),
+            |                             'mutation'    : (PolynomialMutation, {'eta' : 20})
+            |                            }
+            |                 }
             |  - dict with options for user-defined minimization method.
         :triangle_strength_bnds:
             | (None,None)

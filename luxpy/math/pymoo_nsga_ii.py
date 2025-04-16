@@ -8,7 +8,8 @@ Wrapper for pymoo's NSGA-II class based optimizer.
 Notes:
 ------
 
- * An import will try and install the pymoo package using pip install. 
+ * An import will try and install the pymoo package (v. 0.6.1.3+) using pip install. 
+ 
 
     
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
@@ -25,10 +26,14 @@ success = is_importable('pymoo', try_pip_install = True)
 if success:
     import pymoo as pm
     
-    from pymoo.model.problem import Problem
-    from pymoo.algorithms.nsga2 import NSGA2
-    from pymoo.factory import get_sampling, get_crossover, get_mutation, get_termination
-    from pymoo.model.problem import ConstraintsAsPenaltyProblem
+    from pymoo.core.problem import Problem
+    from pymoo.algorithms.moo.nsga2 import NSGA2
+    #from pymoo.factory import get_sampling, get_crossover, get_mutation, get_termination
+    
+    from pymoo.operators.sampling.rnd import BinaryRandomSampling, FloatRandomSampling, IntegerRandomSampling
+    from pymoo.operators.mutation.pm import PolynomialMutation
+    from pymoo.operators.crossover.sbx import SBX
+    from pymoo.termination import get_termination
     
 __all__ = ['nsga_ii']
 
@@ -68,9 +73,10 @@ class PymooProblem(Problem):
 def nsga_ii(fitnessfcn, n_variables, n_objectives, args = {}, use_bnds = True, bounds = (None,None), 
             verbosity = 1,
             pm_n_gen = 40, pm_n_pop = 400, pm_n_offsprings = None,
-            pm_options = {'sampling'    : ("real_random",{}),
-                          'crossover'  : ("real_sbx", {'prob' : 0.9, 'eta' : 15}),
-                          'mutation'    : ("real_pm", {'eta' : 20})},
+            pm_options = {'sampling'    :  (FloatRandomSampling,{}),
+                          'crossover'  : (SBX, {'prob_var' : 0.9, 'eta' : 15}),
+                          'mutation'    : (PolynomialMutation, {'eta' : 20})
+                          },
             pm_termination = ('n_gen' , 40),
             pm_eliminate_duplicates = True,
             pm_return_least_infeasible = False,
@@ -116,9 +122,12 @@ def nsga_ii(fitnessfcn, n_variables, n_objectives, args = {}, use_bnds = True, b
             | dict, optional
             | A dictionary containing the parameters for the specific
             | optimization algorithm.
-            |  - 'sampling' : ("real_random",{}),
-            |  - 'crossover': ("real_sbx", ({'prob' : 0.9, 'eta' : 15}),
-            |  - 'mutation' :  ("real_pm", {'eta' : 20}),
+            |  - 'sampling' : (FloatRandomSampling,{}) or FloatRandomSampling(); 
+            |       or other some other supported sampling function: e.g. IntegerRandomSampling, BinaryRandomSampling
+            |  - 'crossover': (SBX, {'prob_var' : 0.9, 'eta' : 15}) or SBX(prob_var = 0.9, eta = 15); 
+            |       or some other supported crossover function
+            |  - 'mutation' : (PolynomialMutation, {'eta' : 20}) or PolynomialMutation(eta = 20);
+            |       or some other supported mutation function
         :pm_termination:
              | ('n_gen', 40), optional
         :pm_eliminate_duplicates:
@@ -148,14 +157,25 @@ def nsga_ii(fitnessfcn, n_variables, n_objectives, args = {}, use_bnds = True, b
        
     # Set up algorithm:
     if pm_algorithm is None:
+        # algorithm_ = NSGA2(pop_size = pm_n_pop,
+        #                    n_offsprings = pm_n_offsprings,
+        #                    sampling = get_sampling(pm_options['sampling'][0],
+        #                                             **pm_options['sampling'][1]),
+        #                    crossover = get_crossover(pm_options['crossover'][0],
+        #                                               **pm_options['crossover'][1]),
+        #                    mutation = get_mutation(pm_options['mutation'][0],
+        #                                               **pm_options['mutation'][1]),
+        #                    eliminate_duplicates = pm_eliminate_duplicates)
+
+        # pymoo Version: 0.6.1.3:
+        sampling = pm_options['sampling'][0](**pm_options['sampling'][1]) if isinstance(pm_options['sampling'],tuple) else pm_options['sampling']
+        crossover = pm_options['crossover'][0](**pm_options['crossover'][1]) if isinstance(pm_options['crossover'],tuple) else pm_options['crossover']
+        mutation = pm_options['mutation'][0](**pm_options['mutation'][1]) if isinstance(pm_options['mutation'],tuple) else pm_options['mutation']
+
         algorithm_ = NSGA2(pop_size = pm_n_pop,
-                           n_offsprings = pm_n_offsprings,
-                           sampling = get_sampling(pm_options['sampling'][0],
-                                                    **pm_options['sampling'][1]),
-                           crossover = get_crossover(pm_options['crossover'][0],
-                                                      **pm_options['crossover'][1]),
-                           mutation = get_mutation(pm_options['mutation'][0],
-                                                      **pm_options['mutation'][1]),
+                           sampling = sampling,
+                           crossover = crossover,
+                           mutation = mutation,
                            eliminate_duplicates = pm_eliminate_duplicates)
     else:
         algorithm_ = pm_algorithm
