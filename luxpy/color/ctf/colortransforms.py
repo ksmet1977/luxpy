@@ -72,7 +72,7 @@ References
 import numpy as np
 
 from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, math, spd_to_xyz , cie_interp
-from luxpy.utils import np2d, np3d, todim, asplit
+from luxpy.utils import np2d, np3d, todim, asplit, _EPS
 
 __all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_Yuv76','Yuv76_to_xyz', 'xyz_to_Yuv60','Yuv60_to_xyz',
@@ -118,7 +118,8 @@ def xyz_to_Yxy(xyz, **kwargs):
     """
     xyz = np2d(xyz)
     Yxy = np.empty(xyz.shape)
-    sumxyz = xyz[...,0] + xyz[...,1] + xyz[...,2]
+    sumxyz = 1.0*(xyz[...,0] + xyz[...,1] + xyz[...,2])
+    sumxyz[sumxyz==0] += _EPS
     Yxy[...,0] = xyz[...,1]
     Yxy[...,1] = xyz[...,0] / sumxyz
     Yxy[...,2] = xyz[...,1] / sumxyz
@@ -140,9 +141,11 @@ def Yxy_to_xyz(Yxy, **kwargs):
     """
     Yxy = np2d(Yxy)
     xyz = np.empty(Yxy.shape)
+    y = Yxy[...,2]
+    y[y==0] += _EPS
     xyz[...,1] = Yxy[...,0]
-    xyz[...,0] = Yxy[...,0]*Yxy[...,1]/Yxy[...,2]
-    xyz[...,2] = Yxy[...,0]*(1.0-Yxy[...,1]-Yxy[...,2])/Yxy[...,2]
+    xyz[...,0] = Yxy[...,0]*Yxy[...,1]/y
+    xyz[...,2] = Yxy[...,0]*(1.0-Yxy[...,1]-Yxy[...,2])/y
     return xyz
 
 def xyz_to_Yuv(xyz,**kwargs):
@@ -161,6 +164,7 @@ def xyz_to_Yuv(xyz,**kwargs):
     xyz = np2d(xyz)
     Yuv = np.empty(xyz.shape)
     denom = xyz[...,0] + 15.0*xyz[...,1] + 3.0*xyz[...,2]
+    denom[denom==0] += _EPS
     Yuv[...,0] = xyz[...,1]
     Yuv[...,1] = 4.0*xyz[...,0] / denom
     Yuv[...,2] = 9.0*xyz[...,1] / denom
@@ -184,8 +188,10 @@ def Yuv_to_xyz(Yuv, **kwargs):
     Yuv = np2d(Yuv)
     xyz = np.empty(Yuv.shape)
     xyz[...,1] = Yuv[...,0]
-    xyz[...,0] = Yuv[...,0]*(9.0*Yuv[...,1])/(4.0*Yuv[...,2])
-    xyz[...,2] = Yuv[...,0]*(12.0 - 3.0*Yuv[...,1] - 20.0*Yuv[...,2])/(4.0*Yuv[...,2])
+    v = Yuv[...,2]
+    v[v==0] += _EPS
+    xyz[...,0] = Yuv[...,0]*(9.0*Yuv[...,1])/(4.0*v)
+    xyz[...,2] = Yuv[...,0]*(12.0 - 3.0*Yuv[...,1] - 20.0*Yuv[...,2])/(4.0*v)
     return xyz
 
 Yuv76_to_xyz = Yuv_to_xyz
@@ -269,6 +275,7 @@ def wuv_to_xyz(wuv,xyzw = _COLORTF_DEFAULT_WHITE_POINT, **kwargs):
     Yuvw = xyz_to_Yuv(xyzw) # convert to cie 1976 u'v'
     Yuv = np.empty(wuv.shape)
     Yuv[...,0] = ((wuv[...,0] + 17.0) / 25.0)**3.0
+    wuv[wuv[...,0]==0,0] += _EPS
     Yuv[...,1] = Yuvw[...,1] + wuv[...,1]/(13.0*wuv[...,0])
     Yuv[...,2] = Yuvw[...,2] + wuv[...,2]/(13.0*wuv[...,0]) * (3.0/2.0) # convert to cie 1960 u, v
     return Yuv_to_xyz(Yuv)
@@ -557,8 +564,9 @@ def xyz_to_Vrb_mb(xyz, cieobs = _CIEOBS, scaling = [1,1], M = None, **kwargs):
         RGB = np.einsum('ij,klj->kli', M, xyz)
     else:
         RGB = np.einsum('ij,lj->li', M, xyz)
-    Vrb = np.empty(xyz.shape)       
-    Vrb[...,0] = RGB[...,0] + RGB[...,1]
+    Vrb = np.empty(xyz.shape)      
+    Vrb[...,0] = 1.0*(RGB[...,0] + RGB[...,1])
+    Vrb[Vrb[...,0]==0,0] += _EPS
     Vrb[...,1] = RGB[...,0] / Vrb[...,0] * scaling[0]
     Vrb[...,2] = RGB[...,2] / Vrb[...,0] * scaling[1]
     return Vrb
@@ -600,6 +608,7 @@ def Vrb_mb_to_xyz(Vrb,cieobs = _CIEOBS, scaling = [1,1], M = None, Minverted = F
     """
     Vrb = np2d(Vrb)
     RGB = np.empty(Vrb.shape)
+    Vrb[Vrb[...,0]==0,0] += _EPS
     RGB[...,0] = Vrb[...,1]*Vrb[...,0] / scaling[0]
     RGB[...,2] = Vrb[...,2]*Vrb[...,0] / scaling[1]
     RGB[...,1] = Vrb[...,0] - RGB[...,0]
@@ -760,141 +769,141 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     return xyz
 
 #------------------------------------------------------------------------------
-def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
-    """
-    Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
-    and excitation purity.
+# def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
+#     """
+#     Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
+#     and excitation purity.
 
-    Args:
-        :xyz:
-            | ndarray with tristimulus values
-        :xyzw:
-            | None or ndarray with tristimulus values of a single (!) native white point, optional
-            | None defaults to xyz of CIE D65 using the :cieobs: observer.
-        :cieobs:
-            | luxpy._CIEOBS, optional
-            | CMF set to use when calculating spectrum locus coordinates.
-        :flip_axes:
-            | False, optional
-            | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
-            |          (single xyzw with is not flipped!)
-    Returns:
-        :Ydlep: 
-            | ndarray with Y, dominant (complementary) wavelength
-            |  and excitation purity
-    """
+#     Args:
+#         :xyz:
+#             | ndarray with tristimulus values
+#         :xyzw:
+#             | None or ndarray with tristimulus values of a single (!) native white point, optional
+#             | None defaults to xyz of CIE D65 using the :cieobs: observer.
+#         :cieobs:
+#             | luxpy._CIEOBS, optional
+#             | CMF set to use when calculating spectrum locus coordinates.
+#         :flip_axes:
+#             | False, optional
+#             | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
+#             |          (single xyzw with is not flipped!)
+#     Returns:
+#         :Ydlep: 
+#             | ndarray with Y, dominant (complementary) wavelength
+#             |  and excitation purity
+#     """
     
-    xyz3 = np3d(xyz).copy().astype(float)
+#     xyz3 = np3d(xyz).copy().astype(float)
 
-    # flip axis so that shortest dim is on axis0 (save time in looping):
-    if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
-        axes12flipped = True
-        xyz3 = xyz3.transpose((1,0,2))
-    else:
-        axes12flipped = False
+#     # flip axis so that shortest dim is on axis0 (save time in looping):
+#     if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
+#         axes12flipped = True
+#         xyz3 = xyz3.transpose((1,0,2))
+#     else:
+#         axes12flipped = False
 
-    # convert xyz to Yxy:
-    Yxy = xyz_to_Yxy(xyz3)
-    Yxyw = xyz_to_Yxy(xyzw)
+#     # convert xyz to Yxy:
+#     Yxy = xyz_to_Yxy(xyz3)
+#     Yxyw = xyz_to_Yxy(xyzw)
 
-    # get spectrum locus Y,x,y and wavelengths:
-    SL = _CMF[cieobs]['bar']
-    if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
-    SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
-    wlsl = SL[0]
-    Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
-    pmaxlambda = Yxysl[...,1].argmax()
-    maxlambda = wlsl[pmaxlambda]
-    maxlambda = 700
-    pmaxlambda = np.where(wlsl==maxlambda)[0][0]
-    Yxysl = Yxysl[:(pmaxlambda+1),:]
-    wlsl = wlsl[:(pmaxlambda+1)]
+#     # get spectrum locus Y,x,y and wavelengths:
+#     SL = _CMF[cieobs]['bar']
+#     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
+#     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
+#     wlsl = SL[0]
+#     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
+#     pmaxlambda = Yxysl[...,1].argmax()
+#     maxlambda = wlsl[pmaxlambda]
+#     maxlambda = 700
+#     pmaxlambda = np.where(wlsl==maxlambda)[0][0]
+#     Yxysl = Yxysl[:(pmaxlambda+1),:]
+#     wlsl = wlsl[:(pmaxlambda+1)]
 
-    # center on xyzw:
-    Yxy = Yxy - Yxyw
-    Yxysl = Yxysl - Yxyw
-    Yxyw = Yxyw - Yxyw
+#     # center on xyzw:
+#     Yxy = Yxy - Yxyw
+#     Yxysl = Yxysl - Yxyw
+#     Yxyw = Yxyw - Yxyw
 
-    #split:
-    Y, x, y = asplit(Yxy)
-    Yw,xw,yw = asplit(Yxyw)
-    Ysl,xsl,ysl = asplit(Yxysl)
+#     #split:
+#     Y, x, y = asplit(Yxy)
+#     Yw,xw,yw = asplit(Yxyw)
+#     Ysl,xsl,ysl = asplit(Yxysl)
 
-    # calculate hue:
-    h = math.positive_arctan(x,y, htype = 'deg')
-    print(h)
-    print('rh',h[0,0]-h[0,1])
-    print(wlsl[0],wlsl[-1])
+#     # calculate hue:
+#     h = math.positive_arctan(x,y, htype = 'deg')
+#     print(h)
+#     print('rh',h[0,0]-h[0,1])
+#     print(wlsl[0],wlsl[-1])
 
-    hsl = math.positive_arctan(xsl,ysl, htype = 'deg')
+#     hsl = math.positive_arctan(xsl,ysl, htype = 'deg')
 
-    hsl_max = hsl[0] # max hue angle at min wavelength
-    hsl_min = hsl[-1] # min hue angle at max wavelength
-    if hsl_min < hsl_max: hsl_min += 360
+#     hsl_max = hsl[0] # max hue angle at min wavelength
+#     hsl_min = hsl[-1] # min hue angle at max wavelength
+#     if hsl_min < hsl_max: hsl_min += 360
 
-    dominantwavelength = np.empty(Y.shape)
-    purity = np.empty(Y.shape)
-    print('xyz:',xyz)
-    for i in range(xyz3.shape[1]):
-            print('\ni:',i,h[:,i],hsl_max,hsl_min)
-            print(h)
-            # find index of complementary wavelengths/hues:
-            pc = np.where((h[:,i] > hsl_max) & (h[:,i] < hsl_min)) # hue's requiring complementary wavelength (purple line)
-            print('pc',(h[:,i] > hsl_max) & (h[:,i] < hsl_min))
-            h[:,i][pc] = h[:,i][pc] - np.sign(h[:,i][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
+#     dominantwavelength = np.empty(Y.shape)
+#     purity = np.empty(Y.shape)
+#     print('xyz:',xyz)
+#     for i in range(xyz3.shape[1]):
+#             print('\ni:',i,h[:,i],hsl_max,hsl_min)
+#             print(h)
+#             # find index of complementary wavelengths/hues:
+#             pc = np.where((h[:,i] > hsl_max) & (h[:,i] < hsl_min)) # hue's requiring complementary wavelength (purple line)
+#             print('pc',(h[:,i] > hsl_max) & (h[:,i] < hsl_min))
+#             h[:,i][pc] = h[:,i][pc] - np.sign(h[:,i][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
 
-            # find 2 closest hues in sl:
-            #hslb,hib = meshblock(hsl,h[:,i:i+1])
-            hib,hslb = np.meshgrid(h[:,i:i+1],hsl)
-            dh = np.abs(hslb-hib)
-            q1 = dh.argmin(axis=0) # index of closest hue
-            dh[q1] = 1000000.0
-            q2 = dh.argmin(axis=0) # index of second closest hue
-            print('q1q2',q2,q1)
+#             # find 2 closest hues in sl:
+#             #hslb,hib = meshblock(hsl,h[:,i:i+1])
+#             hib,hslb = np.meshgrid(h[:,i:i+1],hsl)
+#             dh = np.abs(hslb-hib)
+#             q1 = dh.argmin(axis=0) # index of closest hue
+#             dh[q1] = 1000000.0
+#             q2 = dh.argmin(axis=0) # index of second closest hue
+#             print('q1q2',q2,q1)
             
-            print('wls:',h[:,i],wlsl[q1],wlsl[q2])
-            print('hsls:',hsl[q2,0] , hsl[q1,0])
-            print('d',(wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]),(wlsl[q2] - wlsl[q1])/(hsl[q2,0] - hsl[q1,0]))
-            print('(h[:,i] - hsl[q1,0])',(h[:,i] - hsl[q1,0]))
-            print('div',np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0])))
-            print('mult(...)',np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))))
-            dominantwavelength[:,i] = wlsl[q1] + np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))) # calculate wl corresponding to h: y = y1 + (x-x1)*(y2-y1)/(x2-x1)
-            print('dom',dominantwavelength[:,i])
-            dominantwavelength[(dominantwavelength[:,i]>max(wlsl[q1],wlsl[q2])),i] = max(wlsl[q1],wlsl[q2])
-            dominantwavelength[(dominantwavelength[:,i]<min(wlsl[q1],wlsl[q2])),i] = min(wlsl[q1],wlsl[q2])
+#             print('wls:',h[:,i],wlsl[q1],wlsl[q2])
+#             print('hsls:',hsl[q2,0] , hsl[q1,0])
+#             print('d',(wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]),(wlsl[q2] - wlsl[q1])/(hsl[q2,0] - hsl[q1,0]))
+#             print('(h[:,i] - hsl[q1,0])',(h[:,i] - hsl[q1,0]))
+#             print('div',np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0])))
+#             print('mult(...)',np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))))
+#             dominantwavelength[:,i] = wlsl[q1] + np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))) # calculate wl corresponding to h: y = y1 + (x-x1)*(y2-y1)/(x2-x1)
+#             print('dom',dominantwavelength[:,i])
+#             dominantwavelength[(dominantwavelength[:,i]>max(wlsl[q1],wlsl[q2])),i] = max(wlsl[q1],wlsl[q2])
+#             dominantwavelength[(dominantwavelength[:,i]<min(wlsl[q1],wlsl[q2])),i] = min(wlsl[q1],wlsl[q2])
 
-            dominantwavelength[:,i][pc] = - dominantwavelength[:,i][pc] #complementary wavelengths are specified by '-' sign
+#             dominantwavelength[:,i][pc] = - dominantwavelength[:,i][pc] #complementary wavelengths are specified by '-' sign
 
-            # calculate excitation purity:
-            x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate x of dom. wl
-            y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate y of dom. wl
-            d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to sl
-            d = (x[:,i]**2.0 + y[:,i]**2.0)**0.5 # distance from white point to test point
-            purity[:,i] = d/d_wl
+#             # calculate excitation purity:
+#             x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate x of dom. wl
+#             y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate y of dom. wl
+#             d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to sl
+#             d = (x[:,i]**2.0 + y[:,i]**2.0)**0.5 # distance from white point to test point
+#             purity[:,i] = d/d_wl
 
-            # correct for those test points that have a complementary wavelength
-            # calculate intersection of line through white point and test point and purple line:
-            xy = np.vstack((x[:,i],y[:,i])).T
-            xyw = np.hstack((xw,yw))
-            xypl1 = np.hstack((xsl[0,None],ysl[0,None]))
-            xypl2 = np.hstack((xsl[-1,None],ysl[-1,None]))
-            da = (xy-xyw)
-            db = (xypl2-xypl1)
-            dp = (xyw - xypl1)
-            T = np.array([[0.0, -1.0], [1.0, 0.0]])
-            dap = np.dot(da,T)
-            denom = np.sum(dap * db,axis=1,keepdims=True)
-            num = np.sum(dap * dp,axis=1,keepdims=True)
-            xy_linecross = (num/denom) *db + xypl1
-            d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
-            purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
-    Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))
+#             # correct for those test points that have a complementary wavelength
+#             # calculate intersection of line through white point and test point and purple line:
+#             xy = np.vstack((x[:,i],y[:,i])).T
+#             xyw = np.hstack((xw,yw))
+#             xypl1 = np.hstack((xsl[0,None],ysl[0,None]))
+#             xypl2 = np.hstack((xsl[-1,None],ysl[-1,None]))
+#             da = (xy-xyw)
+#             db = (xypl2-xypl1)
+#             dp = (xyw - xypl1)
+#             T = np.array([[0.0, -1.0], [1.0, 0.0]])
+#             dap = np.dot(da,T)
+#             denom = np.sum(dap * db,axis=1,keepdims=True)
+#             num = np.sum(dap * dp,axis=1,keepdims=True)
+#             xy_linecross = (num/denom) *db + xypl1
+#             d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
+#             purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
+#     Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))
 
-    if axes12flipped == True:
-        Ydlep = Ydlep.transpose((1,0,2))
-    else:
-        Ydlep = Ydlep.transpose((0,1,2))
-    return Ydlep.reshape(xyz.shape)
+#     if axes12flipped == True:
+#         Ydlep = Ydlep.transpose((1,0,2))
+#     else:
+#         Ydlep = Ydlep.transpose((0,1,2))
+#     return Ydlep.reshape(xyz.shape)
 
 def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, SL_max_lambda = None, **kwargs):
     """
@@ -937,7 +946,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     Yxyw = xyz_to_Yxy(xyzw)
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _CMF[cieobs]['bar']
+    SL = _CMF[cieobs]['bar'].copy()
     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0]
@@ -1021,9 +1030,11 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
             T = np.array([[0.0, -1.0], [1.0, 0.0]])
             dap = np.dot(da,T)
             denom = np.sum(dap * db,axis=1,keepdims=True)
+            denom[denom==0] += _EPS
             num = np.sum(dap * dp,axis=1,keepdims=True)
             xy_linecross = (num/denom) *db + xypl1
             d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
+            d_linecross[d_linecross==0] += _EPS
             purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
     Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))
 
@@ -1076,7 +1087,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     Yxywo = Yxyw.copy()
 
     # get spectrum locus Y,x,y and wavelengths:
-    SL = _CMF[cieobs]['bar']
+    SL = _CMF[cieobs]['bar'].copy()
     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0,None].T

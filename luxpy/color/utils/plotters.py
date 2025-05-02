@@ -379,9 +379,9 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     """
     
     if isinstance(cieobs,str):
-        SL = _CMF[cieobs]['bar']
+        SL = _CMF[cieobs]['bar'].copy()
     else:
-        SL = cieobs
+        SL = cieobs.copy()
     wl, SL = SL[0], SL[1:4].T
     SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
     SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
@@ -473,9 +473,9 @@ def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 
         (see Table II, IV)
     """
     if isinstance(cieobs,str):
-        cmf = _CMF[cieobs]['bar']
+        cmf = _CMF[cieobs]['bar'].copy()
     else:
-        cmf = cieobs
+        cmf = cieobs.copy()
     p_y = cmf[0] == 577.0 #Kuehni, CRA 2013 (mean, table IV)
     p_b = cmf[0] == 472.0 #Kuehni, CRA 2013 (mean, table IV)
     xyz_y = cmf[1:,p_y].T
@@ -540,9 +540,9 @@ def plotUH(xyz0 = None, uhues = [0,1,2,3], cieobs = _CIEOBS, cspace = _CSPACE, a
     """
     hues = ['yellow','blue','red','green']
     if isinstance(cieobs,str):
-        cmf = _CMF[cieobs]['bar']
+        cmf = _CMF[cieobs]['bar'].copy()
     else:
-        cmf = cieobs
+        cmf = cieobs.copy()
     p_y = cmf[0] == 577.0 #unique yellow,#Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_b = cmf[0] == 472.0 #unique blue,Kuehni, CRA 2013 (mean, table IV: spectral data)
     p_g = cmf[0] == 514.0 #unique green, Kuehni, CRA 2013 (mean, table II: spectral data)
@@ -813,9 +813,9 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     """
         
     if isinstance(cieobs,str):
-        SL = _CMF[cieobs]['bar']
+        SL = _CMF[cieobs]['bar'].copy()
     else:
-        SL = cieobs
+        SL = cieobs.copy()
     wl, SL = SL[0], SL[1:4].T
     SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
     #print(SL.max(0),cspace_pars)
@@ -953,9 +953,9 @@ def plot_spectrum_colors(spd = None, spdmax = None,\
     """
     
     if isinstance(cieobs,str):
-        cmfs = _CMF[cieobs]['bar']
+        cmfs = _CMF[cieobs]['bar'].copy()
     else:
-        cmfs = cieobs
+        cmfs = cieobs.copy()
     cmfs = cmfs[:,cmfs[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
     cmfs = cmfs[:,~np.isnan(cmfs.sum(axis=0))]
     
