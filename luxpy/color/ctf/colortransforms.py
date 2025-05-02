@@ -954,7 +954,7 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     
     # Get maximum wavelength of spectrum locus (before it turns back on itself)
     if SL_max_lambda is None:
-        pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+        #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
         dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
         dwl[wlsl[:-1]<600] = 10000
         pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
@@ -1095,7 +1095,7 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     
     # Get maximum wavelength of spectrum locus (before it turns back on itself)
     if SL_max_lambda is None:
-        pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+        #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
         dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
         dwl[wlsl[:-1,0]<600] = 10000
         pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
