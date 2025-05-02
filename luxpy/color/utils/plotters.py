@@ -384,10 +384,14 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         SL = cieobs.copy()
     wl, SL = SL[0], SL[1:4].T
     SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
-    SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
+    cnd = SL.sum(axis=1)>0
+    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+    wl = wl[cnd]
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
     
-    plambdamax = wl.argmax()
+    x_coord = SL[...,1]
+    dx_coord = np.vstack((*np.diff(x_coord),0))
+    plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
     SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     
@@ -818,11 +822,15 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
         SL = cieobs.copy()
     wl, SL = SL[0], SL[1:4].T
     SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
-    #print(SL.max(0),cspace_pars)
-    SL = SL[SL.sum(axis=1)>0,:] # avoid div by zero in xyz-to-Yxy conversion
+    cnd = SL.sum(axis=1)>0
+    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+    wl = wl[cnd]
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
     
-    plambdamax = wl.argmax()
+    x_coord = SL[...,1]
+    dx_coord = np.vstack((*np.diff(x_coord),0))
+    plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
+
     SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
     Y,x,y = asplit(SL)
     SL = np.vstack((x,y)).T
