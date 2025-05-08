@@ -74,7 +74,8 @@ import numpy as np
 from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, math, spd_to_xyz , cie_interp
 from luxpy.utils import np2d, np3d, todim, asplit, _EPS
 
-__all__ = ['_CSPACE_AXES', '_IPT_M','xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
+__all__ = ['_CSPACE_AXES', '_IPT_M', '_get_chromaticity_diagram_boundary_wavelengths',
+           'xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
            'xyz_to_Yuv76','Yuv76_to_xyz', 'xyz_to_Yuv60','Yuv60_to_xyz',
            'xyz_to_wuv','wuv_to_xyz','xyz_to_xyz','xyz_to_lms', 'lms_to_xyz','xyz_to_lab','lab_to_xyz','xyz_to_luv','luv_to_xyz',
            'xyz_to_Vrb_mb','Vrb_mb_to_xyz','xyz_to_ipt','ipt_to_xyz','xyz_to_Ydlep','Ydlep_to_xyz','xyz_to_srgb','srgb_to_xyz']
@@ -769,141 +770,75 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     return xyz
 
 #------------------------------------------------------------------------------
-# def xyz_to_Ydlep_(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, **kwargs):
-#     """
-#     Convert XYZ tristimulus values to Y, dominant (complementary) wavelength
-#     and excitation purity.
-
-#     Args:
-#         :xyz:
-#             | ndarray with tristimulus values
-#         :xyzw:
-#             | None or ndarray with tristimulus values of a single (!) native white point, optional
-#             | None defaults to xyz of CIE D65 using the :cieobs: observer.
-#         :cieobs:
-#             | luxpy._CIEOBS, optional
-#             | CMF set to use when calculating spectrum locus coordinates.
-#         :flip_axes:
-#             | False, optional
-#             | If True: flip axis 0 and axis 1 in Ydelep to increase speed of loop in function.
-#             |          (single xyzw with is not flipped!)
-#     Returns:
-#         :Ydlep: 
-#             | ndarray with Y, dominant (complementary) wavelength
-#             |  and excitation purity
-#     """
+def _get_chromaticity_diagram_boundary_wavelengths(cieobs = _CIEOBS, _s = 1):
+    """Get minimum and maximum wavelengths that bound the spectrum locus / purple line. """
     
-#     xyz3 = np3d(xyz).copy().astype(float)
+    if isinstance(cieobs,str):
+        SL = _CMF[cieobs]['bar'].copy()
+    else:
+        SL = cieobs.copy()
+    wl = SL[0]
+       
+    # calculate xy coordinates of SL from xyz:
+    cnd = (SL[1:4].sum(axis=0)>0) # avoid div by zero in xyz-to-Yxy conversion
+    wl = wl[cnd]
+    SL = SL[1:4].T[cnd,:]
+    xySL = xyz_to_Yxy(SL)[...,1:]
 
-#     # flip axis so that shortest dim is on axis0 (save time in looping):
-#     if (xyz3.shape[0] < xyz3.shape[1]) & (flip_axes == True):
-#         axes12flipped = True
-#         xyz3 = xyz3.transpose((1,0,2))
-#     else:
-#         axes12flipped = False
+    # get extreme long-wavelength before SL turns back:
+    x_coord = xySL[...,0]
+    dx_coord = np.vstack((*np.diff(x_coord),0))
+    plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
+    lambdamax = wl[plambdamax]
 
-#     # convert xyz to Yxy:
-#     Yxy = xyz_to_Yxy(xyz3)
-#     Yxyw = xyz_to_Yxy(xyzw)
+    # slope of line connecting end-point with each wavelength point:
+    dx_e = xySL - xySL[plambdamax,:]
+    a_e = math.positive_arctan(dx_e[:,0],dx_e[:,1])
+    
+    
+    # local slope at each wavelength point:
+    s = _s
+    xySLm1 = np.roll(xySL,shift=-s,axis=0)
+    xySLp1 = np.roll(xySL,shift=s,axis=0)
+    dxy_m1 = -(xySL - xySLm1)
+    dxy_p1 = -(xySL - xySLp1)
+    a_m1 = math.positive_arctan(dxy_m1[:,0],dxy_m1[:,1])
+    a_p1 = math.positive_arctan(dxy_p1[:,0],dxy_p1[:,1]) + 180
+    a_p1[:s] = np.nan
+    a = (a_m1+a_p1)/2
 
-#     # get spectrum locus Y,x,y and wavelengths:
-#     SL = _CMF[cieobs]['bar']
-#     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
-#     SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
-#     wlsl = SL[0]
-#     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
-#     pmaxlambda = Yxysl[...,1].argmax()
-#     maxlambda = wlsl[pmaxlambda]
-#     maxlambda = 700
-#     pmaxlambda = np.where(wlsl==maxlambda)[0][0]
-#     Yxysl = Yxysl[:(pmaxlambda+1),:]
-#     wlsl = wlsl[:(pmaxlambda+1)]
+    # Calculate difference in local slopes and slope toward max lambda point. 
+    # Ideally these are as close as possible for the straight purple line connecting them.
+    d_a_a_e = np.abs(a-a_e)
+    d_a_a_e[np.isnan(d_a_a_e)] = np.inf # get rid of nan introduces by np.roll
+    
+    # For min lambda: only look below 420 nm.
+    cnd = (wl<=420)
+    wl_ = wl[cnd]
+    d_a_a_e = d_a_a_e[cnd] 
+    lambdamin = wl_[np.abs(d_a_a_e).argmin()]
+    # plambdamin = np.where(wl == lambdamin)[0][0]
 
-#     # center on xyzw:
-#     Yxy = Yxy - Yxyw
-#     Yxysl = Yxysl - Yxyw
-#     Yxyw = Yxyw - Yxyw
+    # SL = SL[(wl >= lambdamin) & (wl <= lambdamax),:] 
 
-#     #split:
-#     Y, x, y = asplit(Yxy)
-#     Yw,xw,yw = asplit(Yxyw)
-#     Ysl,xsl,ysl = asplit(Yxysl)
+    # # Only needed for plotting to check solution:
+    # a_m1 = a_m1[cnd]
+    # a_p1 = a_p1[cnd]
+    # a = a[cnd]
+    # a_e=a_e[cnd]
+   
+    # import matplotlib.pyplot as plt
+    # fig_ = plt.figure();
+    # ax_= fig_.add_subplot(1,1,1)
+    # ax_.plot(wl_,a_m1,'bx')
+    # ax_.plot(wl_,a_p1,'r+')
+    # ax_.plot(wl_,a_e,'b.-')
+    # ax_.plot(wl_,a,'g.-')
+    # #ax_.plot(wl_[1:],da,'g.-')
+    # #print(wl_.shape,da_e.shape)
+    # #ax_.plot(wl_,a-da_e,'g.-')
 
-#     # calculate hue:
-#     h = math.positive_arctan(x,y, htype = 'deg')
-#     print(h)
-#     print('rh',h[0,0]-h[0,1])
-#     print(wlsl[0],wlsl[-1])
-
-#     hsl = math.positive_arctan(xsl,ysl, htype = 'deg')
-
-#     hsl_max = hsl[0] # max hue angle at min wavelength
-#     hsl_min = hsl[-1] # min hue angle at max wavelength
-#     if hsl_min < hsl_max: hsl_min += 360
-
-#     dominantwavelength = np.empty(Y.shape)
-#     purity = np.empty(Y.shape)
-#     print('xyz:',xyz)
-#     for i in range(xyz3.shape[1]):
-#             print('\ni:',i,h[:,i],hsl_max,hsl_min)
-#             print(h)
-#             # find index of complementary wavelengths/hues:
-#             pc = np.where((h[:,i] > hsl_max) & (h[:,i] < hsl_min)) # hue's requiring complementary wavelength (purple line)
-#             print('pc',(h[:,i] > hsl_max) & (h[:,i] < hsl_min))
-#             h[:,i][pc] = h[:,i][pc] - np.sign(h[:,i][pc] - 180.0)*180.0 # add/subtract 180° to get positive complementary wavelength
-
-#             # find 2 closest hues in sl:
-#             #hslb,hib = meshblock(hsl,h[:,i:i+1])
-#             hib,hslb = np.meshgrid(h[:,i:i+1],hsl)
-#             dh = np.abs(hslb-hib)
-#             q1 = dh.argmin(axis=0) # index of closest hue
-#             dh[q1] = 1000000.0
-#             q2 = dh.argmin(axis=0) # index of second closest hue
-#             print('q1q2',q2,q1)
-            
-#             print('wls:',h[:,i],wlsl[q1],wlsl[q2])
-#             print('hsls:',hsl[q2,0] , hsl[q1,0])
-#             print('d',(wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]),(wlsl[q2] - wlsl[q1])/(hsl[q2,0] - hsl[q1,0]))
-#             print('(h[:,i] - hsl[q1,0])',(h[:,i] - hsl[q1,0]))
-#             print('div',np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0])))
-#             print('mult(...)',np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))))
-#             dominantwavelength[:,i] = wlsl[q1] + np.multiply((h[:,i] - hsl[q1,0]),np.divide((wlsl[q2] - wlsl[q1]),(hsl[q2,0] - hsl[q1,0]))) # calculate wl corresponding to h: y = y1 + (x-x1)*(y2-y1)/(x2-x1)
-#             print('dom',dominantwavelength[:,i])
-#             dominantwavelength[(dominantwavelength[:,i]>max(wlsl[q1],wlsl[q2])),i] = max(wlsl[q1],wlsl[q2])
-#             dominantwavelength[(dominantwavelength[:,i]<min(wlsl[q1],wlsl[q2])),i] = min(wlsl[q1],wlsl[q2])
-
-#             dominantwavelength[:,i][pc] = - dominantwavelength[:,i][pc] #complementary wavelengths are specified by '-' sign
-
-#             # calculate excitation purity:
-#             x_dom_wl = xsl[q1,0] + (xsl[q2,0] - xsl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate x of dom. wl
-#             y_dom_wl = ysl[q1,0] + (ysl[q2,0] - ysl[q1,0])*(h[:,i] - hsl[q1,0])/(hsl[q2,0] - hsl[q1,0]) # calculate y of dom. wl
-#             d_wl = (x_dom_wl**2.0 + y_dom_wl**2.0)**0.5 # distance from white point to sl
-#             d = (x[:,i]**2.0 + y[:,i]**2.0)**0.5 # distance from white point to test point
-#             purity[:,i] = d/d_wl
-
-#             # correct for those test points that have a complementary wavelength
-#             # calculate intersection of line through white point and test point and purple line:
-#             xy = np.vstack((x[:,i],y[:,i])).T
-#             xyw = np.hstack((xw,yw))
-#             xypl1 = np.hstack((xsl[0,None],ysl[0,None]))
-#             xypl2 = np.hstack((xsl[-1,None],ysl[-1,None]))
-#             da = (xy-xyw)
-#             db = (xypl2-xypl1)
-#             dp = (xyw - xypl1)
-#             T = np.array([[0.0, -1.0], [1.0, 0.0]])
-#             dap = np.dot(da,T)
-#             denom = np.sum(dap * db,axis=1,keepdims=True)
-#             num = np.sum(dap * dp,axis=1,keepdims=True)
-#             xy_linecross = (num/denom) *db + xypl1
-#             d_linecross = np.atleast_2d((xy_linecross[:,0]**2.0 + xy_linecross[:,1]**2.0)**0.5).T#[0]
-#             purity[:,i][pc] = d[pc]/d_linecross[pc][:,0]
-#     Ydlep = np.dstack((xyz3[:,:,1],dominantwavelength,purity))
-
-#     if axes12flipped == True:
-#         Ydlep = Ydlep.transpose((1,0,2))
-#     else:
-#         Ydlep = Ydlep.transpose((0,1,2))
-#     return Ydlep.reshape(xyz.shape)
+    return lambdamin, lambdamax
 
 def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, flip_axes = False, SL_max_lambda = None, **kwargs):
     """
@@ -948,20 +883,24 @@ def xyz_to_Ydlep(xyz, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, fli
     # get spectrum locus Y,x,y and wavelengths:
     SL = _CMF[cieobs]['bar'].copy()
     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
-    SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
+    
+    lambdamin, lambdamax = _get_chromaticity_diagram_boundary_wavelengths(cieobs = SL)
+    cnd = (SL[1:].sum(axis=0)>0) & (SL[0]>=lambdamin) & (SL[0]<=lambdamax) # avoid div by zero in xyz-to-Yxy conversion, and limit SL to correct boundaries
+    SL = SL[:,cnd] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0]
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
     
-    # Get maximum wavelength of spectrum locus (before it turns back on itself)
-    if SL_max_lambda is None:
-        #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
-        dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
-        dwl[wlsl[:-1]<600] = 10000
-        pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
-    else:
-        pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
-    Yxysl = Yxysl[:(pmaxlambda + 1),:]
-    wlsl = wlsl[:(pmaxlambda + 1)]
+    # May 08 2025: taken care of by use of _get_chromaticity_diagram_boundary_wavelengths and  (SL[0]>=lambdamin) & (SL[0]<=lambdamax) 
+    # # Get maximum wavelength of spectrum locus (before it turns back on itself)
+    # if SL_max_lambda is None:
+    #     #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+    #     dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
+    #     dwl[wlsl[:-1]<600] = 10000
+    #     pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
+    # else:
+    #     pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
+    # Yxysl = Yxysl[:(pmaxlambda + 1),:]
+    # wlsl = wlsl[:(pmaxlambda + 1)]
 
     # center on xyzw:
     Yxy = Yxy - Yxyw
@@ -1089,20 +1028,24 @@ def Ydlep_to_xyz(Ydlep, cieobs = _CIEOBS, xyzw = _COLORTF_DEFAULT_WHITE_POINT, f
     # get spectrum locus Y,x,y and wavelengths:
     SL = _CMF[cieobs]['bar'].copy()
     if np.isnan(SL).any(): SL = cie_interp(SL,SL[0],datatype = 'cmf')
-    SL = SL[:,SL[1:].sum(axis=0)>0] # avoid div by zero in xyz-to-Yxy conversion
+
+    lambdamin, lambdamax = _get_chromaticity_diagram_boundary_wavelengths(cieobs = SL)
+    cnd = (SL[1:].sum(axis=0)>0) & (SL[0]>=lambdamin) & (SL[0]<=lambdamax) # avoid div by zero in xyz-to-Yxy conversion, and limit SL to correct boundaries
+    SL = SL[:,cnd] # avoid div by zero in xyz-to-Yxy conversion
     wlsl = SL[0,None].T
     Yxysl = xyz_to_Yxy(SL[1:4].T)[:,None]
     
-    # Get maximum wavelength of spectrum locus (before it turns back on itself)
-    if SL_max_lambda is None:
-        #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
-        dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
-        dwl[wlsl[:-1,0]<600] = 10000
-        pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
-    else:
-        pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
-    Yxysl = Yxysl[:(pmaxlambda+1),:]
-    wlsl = wlsl[:(pmaxlambda+1),:1]
+    # May 08 2025: taken care of by use of _get_chromaticity_diagram_boundary_wavelengths and  (SL[0]>=lambdamin) & (SL[0]<=lambdamax) 
+    # # Get maximum wavelength of spectrum locus (before it turns back on itself)
+    # if SL_max_lambda is None:
+    #     #pmaxlambda = Yxysl[...,1].argmax() # lambda with largest x value
+    #     dwl = np.diff(Yxysl[:,0,1]) # spectrumlocus in that range should have increasing x
+    #     dwl[wlsl[:-1,0]<600] = 10000
+    #     pmaxlambda = np.where(dwl<=0)[0][0]  # Take first element with zero or <zero slope
+    # else:
+    #     pmaxlambda = np.abs(wlsl - SL_max_lambda).argmin()
+    # Yxysl = Yxysl[:(pmaxlambda+1),:]
+    # wlsl = wlsl[:(pmaxlambda+1),:1]
 
     # center on xyzw:
     Yxysl = Yxysl - Yxyw

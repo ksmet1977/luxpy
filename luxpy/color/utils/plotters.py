@@ -29,6 +29,8 @@ Module with functions related to plotting of color data
 
  :plotBB(): Plot blackbody locus. 
 
+ :labelWL(): Add wavelength labels to the spectrum locus.
+
  :plotSL(): | Plot spectrum locus.  
             | (plotBB() and plotDL() are also called, but can be turned off).
 
@@ -65,11 +67,11 @@ Module with functions related to plotting of color data
 """
 import numpy as np
 
-from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, daylightlocus, colortf, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb
+from luxpy import math, _CIEOBS, _CSPACE, _CSPACE_AXES, _CIE_ILLUMINANTS, _CMF, _CIE_D65, getwlr, cie_interp, daylightlocus, colortf, xyz_to_Yxy, Yxy_to_xyz, spd_to_xyz, cri_ref, xyz_to_srgb, _get_chromaticity_diagram_boundary_wavelengths
 from luxpy.utils import _EPS, asplit
 
-__all__ = ['get_cmap','get_subplot_layout','plotSL','plotDL','plotBB','plot_color_data',
-           'plotceruleanline','plotUH','plotcircle','plotellipse',
+__all__ = ['get_cmap','get_subplot_layout','plotSL','plotDL','plotBB','labelWL',
+           'plot_color_data','plotceruleanline','plotUH','plotcircle','plotellipse',
            'plot_chromaticity_diagram_colors','plot_spectrum_colors',
            'plot_rfl_color_patches','plot_rgb_color_patches','plot_cmfs']
 
@@ -299,14 +301,111 @@ def plotBB(ccts = None, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, cctlabels
         for i in range(ccts1.shape[0]):
             if ccts1[i]>= 3000.0:
                 if i%2 == 0.0:
-                    axh.plot(x[i],y[i],'k+', color = '0.5')
-                    axh.text(x[i]*1.05,y[i]*0.95,'{:1.0f}K'.format(ccts1[i]), color = '0.5')
-        axh.plot(x[-1],y[-1],'k+', color = '0.5')
-        axh.text(x[-1]*1.05,y[-1]*0.95,'{:1.0e}K'.format(ccts[-1]), color = '0.5')    
+                    axh.plot(x[i],y[i],'+', color = '0.5')
+                    axh.text(x[i]*1.05,y[i]*0.95,f'{ccts1[i]:1.0f}K', color = '0.5', clip_on = True)
+        axh.plot(x[-1],y[-1],'+', color = '0.5')
+        axh.text(x[-1]*1.05,y[-1]*0.95,f'{ccts[-1]:1.0e}K', color = '0.5', clip_on = True)    
     return axh
     
-def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = False,\
-           EEW = False, cctlabels = False, axh = None, show = True,\
+def _find_wllabel_coordinates(x,y,xe,ye, fr = 1.05, fa = 1.0):
+
+    dx, dy = x-xe, y-ye 
+
+    r = (dx**2 + dy**2)**0.5
+    angle = math.positive_arctan(dx, dy, htype = 'rad')
+    xl = xe + fr*r*np.cos(angle)
+    yl = ye + fr*r*np.sin(angle)
+
+    return xl, yl
+
+
+def labelWL(wl, cieobs =_CIEOBS, cspace = _CSPACE, axh = None, wllabels = True, show = True, cspace_pars = {}, formatstr = 'k-', 
+            Y_WL = 100, fr = 1.05, fa = 1.0, **kwargs):  
+    """
+    Label spectrum locus wavelengths.
+        
+    Args: 
+        :wl: 
+            | None or [start, stop, spacing] or spacing, optional
+            | None defaults to [400,700,50].
+        :wllabels:
+            | True or False, optional
+            | Add wl text labels at various points along the spectrum locus.
+        :axh: 
+            | None or axes handle, optional
+            | Determines axes to plot data in.
+            | None: make new figure.
+        :show:
+            | True or False, optional
+            | Invoke matplotlib.pyplot.show() right after plotting
+        :cieobs:
+            | luxpy._CIEOBS or str, optional
+            | Determines CMF set to calculate spectrum locus or other.
+        :cspace:
+            | luxpy._CSPACE or str, optional
+            | Determines color space / chromaticity diagram to plot data in.
+            | Note that data is expected to be in specified :cspace:
+        :formatstr:
+            | 'k-' or str, optional
+            | Format str for plotting (see ?matplotlib.pyplot.plot)
+        :cspace_pars:
+            | {} or dict, optional
+            | Dict with parameters required by color space specified in :cspace: 
+            | (for use with luxpy.colortf())
+        :kwargs: 
+            | additional keyword arguments for use with matplotlib.pyplot.
+    
+    Returns:
+        :returns: 
+            | handle to current axes (:show: == False)
+    """
+    if (wllabels == True):
+        start, end, spacing = 400,700,50
+        SL = None
+        if wl is not None:
+            if isinstance(wl, (float,int)):
+                wl = start, end, wl 
+            elif isinstance(wl, np.ndarray):
+                if wl.shape[0] == 4:
+                    SL = wl.copy()
+                    wl = wl[0]
+        else:
+            wl = start, end, wl 
+        wl = getwlr(wl)
+
+        if SL is None:
+            if isinstance(cieobs,str):
+                SL = _CMF[cieobs]['bar'].copy()
+            else:
+                SL = cieobs.copy()
+            SL = cie_interp(SL, wl, datatype = 'cmf')
+        wl, SL = SL[0], SL[1:4].T
+        SL = Y_WL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
+        cnd = SL.sum(axis=1)>0
+        SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+        wl = wl[cnd]
+        SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
+        eew = colortf(np.array([[1.0,1.0,1.0]])*Y_WL, tf = cspace, fwtf = cspace_pars) # needed as center to find radial lines to spectrum locus to plot labels outside SL
+        
+        Y,x,y = asplit(SL)
+        Ye,xe,ye = asplit(eew)
+        xl, yl = _find_wllabel_coordinates(x, y, xe, ye, fr = fr, fa = fa) 
+
+        axh = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show=show, formatstr=formatstr, **kwargs)    
+
+        for i in range(wl.shape[0]):
+            if wl[i]>= 300.0:
+                if i%2 == 0.0:
+                    axh.plot(x[i],y[i],'+', color = '0.5')
+                    #axh.text(xl[i],yl[i],f'{wl[i]:1.0f}', color = '0.5', clip_on = True) 
+        axh.plot(x[-1],y[-1],'+', color = '0.5')
+        #axh.text(xl[-1],yl[-1],f'{wl[-1]:1.0f}', color = '0.5', clip_on = True)    
+    return axh
+
+
+def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, 
+           DL = False, BBL = True, WL = (False,), WLfrfa = (1.001,1.0), 
+           D65 = False, EEW = False, cctlabels = False, axh = None, show = True,\
            cspace_pars = {}, formatstr = 'k-',\
            diagram_colors = False, diagram_samples = 100, diagram_opacity = 1.0,\
            diagram_lightness = 0.25, Y_SL = 100,\
@@ -315,7 +414,6 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
     Plot spectrum locus for cieobs in cspace.
     Only works / makes sense for Yxy, Yuv, luv (basically any chromaticity diagram where Y or lightness of spectrum locus is not relative that of xyzw, because what would be its value? These are lights!)
  
-    
     Args: 
         :DL: 
             | True or False, optional
@@ -323,6 +421,11 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         :BBL: 
             | True or False, optional
             | True plots BlackBody Locus as well. 
+        :WL:
+            | True or False or (True,) or (False,) or (True, wlr) optional
+            | True plots wavelength labels on the spectrum locus as well.
+            | If no wlr ([start, end, spacing] wavelength range or wavelength spacing) 
+            | is specified as a second element of a tuple than the default is used.
         :D65: 
             | False or True, optional
             | True plots D65 chromaticity as well. 
@@ -377,22 +480,26 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         :returns: 
             | handle to current axes (:show: == False)
     """
-    
+
     if isinstance(cieobs,str):
         SL = _CMF[cieobs]['bar'].copy()
     else:
         SL = cieobs.copy()
+    
+    lambdamin, lambdamax = _get_chromaticity_diagram_boundary_wavelengths(cieobs = SL)
+    
     wl, SL = SL[0], SL[1:4].T
-    SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
-    cnd = SL.sum(axis=1)>0
-    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+
+    SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL    
+    
+    cnd = (SL.sum(axis=1)>0) & (wl >= lambdamin) & (wl <= lambdamax)
+    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion (and select 'correct' SL locus points)
     wl = wl[cnd]
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
-    
-    x_coord = SL[...,1]
-    dx_coord = np.vstack((*np.diff(x_coord),0))
-    plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
-    SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
+
+    SL = np.vstack((SL,SL[0])) # add lowest wavelength data to close SL
+
+        
     Y,x,y = asplit(SL)
     
     showcopy = show
@@ -409,6 +516,20 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
      
     axh = plot_color_data(x,y,axh = axh, cieobs = cieobs, cspace = cspace, show = show, formatstr=formatstr,  **kwargs)
 
+    if isinstance(WL,tuple):
+        if len(WL) == 2:
+            wlr = WL[1]
+            WL = WL[0]
+        else:
+            WL = WL[0]
+            wlr = wl
+    else:
+        wlr = None
+    if WL == True:
+        if 'label' in kwargs.keys(): # avoid label also being used for DL
+            kwargs.pop('label')
+
+        labelWL(wlr, cieobs = cieobs, cspace = cspace, axh = axh, show = show, cspace_pars = cspace_pars, formatstr = 'k:', Y_WL = Y_SL, fr = WLfrfa[0], fa = WLfrfa[1], **kwargs)
 
     if DL == True:
         if 'label' in kwargs.keys(): # avoid label also being used for DL
@@ -435,6 +556,7 @@ def plotSL(cieobs =_CIEOBS, cspace = _CSPACE, DL = False, BBL = True, D65 = Fals
         import matplotlib.pyplot as plt # lazy import
         plt.show()
     return axh    
+ 
         
 def plotceruleanline(cieobs = _CIEOBS, cspace = _CSPACE, axh = None,formatstr = 'ko-', cspace_pars = {}):
     """
@@ -815,23 +937,43 @@ def plot_chromaticity_diagram_colors(diagram_samples = 256, diagram_opacity = 1.
     Returns:
         
     """
-        
     if isinstance(cieobs,str):
         SL = _CMF[cieobs]['bar'].copy()
     else:
         SL = cieobs.copy()
+    
+    lambdamin, lambdamax = _get_chromaticity_diagram_boundary_wavelengths(cieobs = SL)
+    
     wl, SL = SL[0], SL[1:4].T
-    SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
-    cnd = SL.sum(axis=1)>0
-    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+
+    SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL    
+    
+    cnd = (SL.sum(axis=1)>0) & (wl >= lambdamin) & (wl <= lambdamax)
+    SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion (and select 'correct' SL locus points)
     wl = wl[cnd]
     SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
-    
-    x_coord = SL[...,1]
-    dx_coord = np.vstack((*np.diff(x_coord),0))
-    plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
 
-    SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
+    SL = np.vstack((SL,SL[0])) # add lowest wavelength data to close SL
+
+    
+    # if isinstance(cieobs,str):
+    #     SL = _CMF[cieobs]['bar'].copy()
+    # else:
+    #     SL = cieobs.copy()
+    # wl, SL = SL[0], SL[1:4].T
+    # SL = Y_SL*SL/(SL[:,1,None] + _EPS) # normalize so that Y=Y_SL
+
+    # cnd = (SL.sum(axis=1)>0) #& (wl>=410)
+    # SL = SL[cnd,:] # avoid div by zero in xyz-to-Yxy conversion
+    # wl = wl[cnd]
+    # SL = colortf(SL, tf = cspace, fwtf = cspace_pars)
+    
+    # x_coord = SL[...,1]
+    # dx_coord = np.vstack((*np.diff(x_coord),0))
+    # plambdamax = np.where((wl>=600) & (dx_coord[:,0]<0))[0][0]
+
+    # SL = np.vstack((SL[:(plambdamax+1),:],SL[0])) # add lowest wavelength data and go to max of gamut in x (there is a reversal for some cmf set wavelengths >~700 nm!)
+    
     Y,x,y = asplit(SL)
     SL = np.vstack((x,y)).T
 
