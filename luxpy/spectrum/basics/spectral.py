@@ -132,7 +132,7 @@ _INTERP_SETTINGS_ALL = {'CIE15:2018' : {'spd'  : {'itype' : 'cubic',  'etype' : 
                                     'none' : {'itype' : 'linear', 'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False}
                                     },
                     'general' : {'force_scipy_interpolator' : False, 'scipy_interpolator' : 'interp1d',
-                                 'sprague_allowed' : False, 'sprague_method' : 'spargue_cie224_2017', 
+                                 'sprague_allowed' : False, 'sprague_method' : 'sprague_cie224_2017', 
                                  'choose_most_efficient_interpolator' : False,
                                  'interp_log' : False, 'extrap_log' : False}
                     }
