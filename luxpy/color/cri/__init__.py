@@ -33,7 +33,6 @@ utils/init_cri_defaults_database.py
                  |  - cct_mode [str],
                  |  - avg [fcn handle], 
                  |  - rf_from_avg_rounded_rfi [bool],
-                 |  - round_daylightphase_Mi_to_cie_recommended [bool],
                  |  - scale [dict], 
                  |  - cspace [dict], 
                  |  - catf [dict], 

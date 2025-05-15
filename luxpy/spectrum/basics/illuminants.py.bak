@@ -642,6 +642,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             norm_type = None, norm_f = None, 
             force_daylight_below4000K = False, n = None,
             daylight_locus = None, 
+            round_daylightphase_Mi_to_cie_recommended = False, 
             interp_settings = None):
     """
     Calculates a reference illuminant spectrum based on cct 
@@ -714,7 +715,12 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             | for specified cieobs.
             | If None: use pre-calculated values.
             | If 'calc': calculate them on the fly.
-            
+        :round_daylightphase_Mi_to_cie_recommended:
+            | False, optional
+            | If True: Round M1, M2 values to 3 decimals as recommended by CIE (not that TM30 does not do this, which gives slight errors when calculating a daylight phase (equivalent of around 0.75 K for 6500 K illuminant))
+            | Rounding causes larger errors from target CCT! Therefore, the default is set to False!
+            | Note that neither CIE224-2017 or IES TM30 rounds M1 and M2 to 3 decimals! 
+    
     Returns:
         :returns: 
             | ndarray with reference illuminant spectra.
@@ -771,11 +777,13 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
                     Sr = blackbody(cct, wl3, n = n)
                 elif ((cct >= mix_range_[0]) & (not (ref_type_[0:2] == 'BB'))) | (ref_type_[0:2] == 'DL') :
                     Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus,
+                                       round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
                                         interp_settings = interp_settings)
             else:
                 SrBB = blackbody(cct, wl3, n = n)
                 SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, 
                                      cieobs = cieobs_, daylight_locus = daylight_locus,
+                                    round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
                                     interp_settings = interp_settings)
                 
                 #cieobs_ = _CIEOBS if cieobs_ is None else cieobs_ # cieobs_ might still be None as that results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.

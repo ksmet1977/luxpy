@@ -11,7 +11,6 @@
                  cct_mode [str],
                  avg [fcn handle], 
                  rf_from_avg_rounded_rfi [Bool],
-                 round_daylightphase_Mi_to_cie_recommended [Bool],
                  scale [dict], 
                  cspace [dict], 
                  catf [dict], 
@@ -42,7 +41,6 @@ _MCRI_DEFAULTS = {'sampleset': "_CRI_RFL['mcri']",
                   'cct_mode' : ('ohno2014', {}),
                   'avg': math.geomean, 
                   'rf_from_avg_rounded_rfi' : False,
-                  'round_daylightphase_Mi_to_cie_recommended' : False,
                   'scale' : {'fcn': psy_scale, 'cfactor': [21.7016,   4.2106,   2.4154]}, 
                   'cspace': {'type': 'ipt', 'Mxyz2lms': [[ 0.400070,    0.707270,   -0.080674],[-0.228111, 1.150561,    0.061230],[0.0, 0.0,    0.931757]]}, 
                   'catf': {'xyzw': [94.81,  100.00,  107.32], 'mcat': 'cat02', 'cattype': 'vonkries', 'F':1, 'Yb': 20.0,'Dtype':'cat02', 'catmode' : '1>2'}, 
@@ -119,7 +117,7 @@ def spd_to_mcri(SPD, D = 0.9, E = None, Yb = 20.0, out = 'Rm', wl = None,
     
     # unpack metric default values:  
     if mcri_defaults is None: mcri_defaults = _MCRI_DEFAULTS
-    avg, calculation_wavelength_range, catf, cct_mode, cieobs, cri_specific_pars, cspace, ref_type, rf_from_avg_rounded_rfi, rg_pars, round_daylightphase_Mi_to_cie_recommended, sampleset, scale = [mcri_defaults[x] for x in sorted(mcri_defaults.keys())] 
+    avg, calculation_wavelength_range, catf, cct_mode, cieobs, cri_specific_pars, cspace, ref_type, rf_from_avg_rounded_rfi, rg_pars, sampleset, scale = [mcri_defaults[x] for x in sorted(mcri_defaults.keys())] 
     similarity_ai = cri_specific_pars['similarity_ai']
     Mxyz2lms = cspace.get('Mxyz2lms',None)
     scale_fcn = scale['fcn']

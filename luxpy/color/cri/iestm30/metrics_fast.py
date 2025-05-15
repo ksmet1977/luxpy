@@ -41,8 +41,7 @@ for cmf_str in _CMF_['types']:
 
 def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
             cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
-            daylight_locus = None, round_daylightphase_Mi_to_cie_recommended = None, 
-            interp_settings = None):
+            daylight_locus = None, interp_settings = None):
     """
     Calculates a reference illuminant spectrum based on cct 
     for color rendering index calculations.
@@ -57,12 +56,10 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
         return blackbody(cct, wl3, n = n)
     elif (cct > mix_range[1]) | (ref_type == 'DL'):
         return daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
-                             round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended, 
                              interp_settings = interp_settings)
     else:
         SrBB = blackbody(cct, wl3, n = n)
         SrDL = daylightphase(cct, wl3, verbosity = None,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
-                             round_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended, 
                              interp_settings = interp_settings)
         cmf = cie_interp(_CMF_[cieobs_Y_normalization]['bar'], wl3, kind = 'cmf', interp_settings = interp_settings) if isinstance(cieobs_Y_normalization,str) else cieobs_Y_normalization 
         wl = SrBB[0]
@@ -88,8 +85,7 @@ def _cri_ref_i(cct, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
     
 def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000], 
              cieobs = None, cieobs_Y_normalization = None, force_daylight_below4000K = False, n = None,
-             daylight_locus = None, round_daylightphase_Mi_to_cie_recommended = None,
-             interp_settings = None):
+             daylight_locus = None, interp_settings = None):
     """
     Calculates multiple reference illuminant spectra based on ccts 
     for color rendering index calculations.
@@ -108,7 +104,6 @@ def _cri_ref(ccts, wl3 = _WL, ref_type = 'iestm30', mix_range = [4000,5000],
                       cieobs_Y_normalization = cieobs_Y_normalization,
                       force_daylight_below4000K = force_daylight_below4000K, n = n,
                       daylight_locus = daylight_locus,
-                      round_daylightphase_Mi_to_cie_recommended = round_daylightphase_Mi_to_cie_recommended,
                       interp_settings = interp_settings)[1:]
     
     return Srs  
@@ -324,7 +319,7 @@ def spd_to_tm30(St, interp_settings = None):
     cct = np.abs(cct) # out-of-lut ccts are encoded as negative
    
     # calculate ref illuminant:
-    Sr = _cri_ref(cct, mix_range = [4000, 5000], cieobs = '1931_2', wl3 = St[0], cieobs_Y_normalization = '1964_10', round_daylightphase_Mi_to_cie_recommended = False)
+    Sr = _cri_ref(cct, mix_range = [4000, 5000], cieobs = '1931_2', wl3 = St[0], cieobs_Y_normalization = '1964_10')
 
     # calculate CIE 1964 10° sample and white point xyz under test and ref. illuminants:
     xyz, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = '1964_10', 
