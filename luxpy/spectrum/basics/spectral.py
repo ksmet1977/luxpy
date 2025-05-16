@@ -1121,12 +1121,11 @@ def spd_to_xyz_barebones(spd, cmf, K = 1.0, relative = True, rfl = None, wl = No
             |  - XYZw: tristim. values of all white points (purely spds are used) [N,3] 
 
     """
-    if rfl is None: 
-        rfl = np.ones(((wl is None)+ 2,cmf.shape[-1]))
-        
-    if wl is None: 
-        wl, spd, cmf, rfl = spd[0], spd[1:], cmf[1:], rfl[1:]
-    
+    wl_is_None = wl is None
+    if wl_is_None: 
+        wl, spd, cmf = spd[0], spd[1:], cmf[1:]
+    rfl = np.ones((2,cmf.shape[-1])) if (rfl is None) else np.vstack((np.ones((1,cmf.shape[-1])),rfl[wl_is_None:]))
+
     dl = getwld(wl) 
         
     # Compute the xyz values
