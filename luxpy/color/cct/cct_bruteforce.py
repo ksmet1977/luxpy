@@ -245,7 +245,8 @@ def xyz_to_cct_bruteforce(xyz, wl = None, cmfs = "1931_2", atol = 1e-15, rtol = 
     uv60 = colortf(xyz, tf = cspace, fwtf = cspace_kwargs)[...,1:] # default is cspace = 'Yuv60'
 
     if lut is None: 
-        lut = generate_lut_bf(ccts = ccts, start = start, end = end, interval = interval, unit = unit, wl = wl, cmfs = cmfs)
+        lut = generate_lut_bf(ccts = ccts, start = start, end = end, interval = interval, unit = unit, wl = wl, cmfs = cmfs, 
+                              cspace = cspace, cspace_kwargs = cspace_kwargs)
 
     duv = ((lut[:,1:][:,None,:]-uv60)**2).sum(axis=-1)**0.5
     cctmin = lut[duv.argmin(0)][:,0]
@@ -274,7 +275,8 @@ def xyz_to_cct_bruteforce(xyz, wl = None, cmfs = "1931_2", atol = 1e-15, rtol = 
             interval_i = interval/down_sampling_factor
             while True & _check_sampling_interval(unit, interval_i, 1):
                 n += 1
-                lut_i = generate_lut_bf(start = start_i, end = end_i, interval = interval_i, unit = unit, wl = wl, cmfs = cmfs)
+                lut_i = generate_lut_bf(start = start_i, end = end_i, interval = interval_i, unit = unit, wl = wl, cmfs = cmfs,
+                                        cspace = cspace, cspace_kwargs = cspace_kwargs)
                 duv_i = ((lut_i[:,1:][:,None,:]-uv60[i:i+1,:])**2).sum(axis=-1)**0.5
                 cctmin_i = lut_i[duv_i.argmin(0)][0,0]
                 start_i, end_i = _get_start_end(cctmin_i, interval_i, unit)
