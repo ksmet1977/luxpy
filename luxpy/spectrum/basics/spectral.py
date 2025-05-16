@@ -1102,7 +1102,7 @@ def spd_to_xyz_barebones(spd, cmf, K = 1.0, relative = True, rfl = None, wl = No
             |   e.g.  K  = 683 lm/W for '1931_2' (relative == False) 
             |   or K = 100/sum(spd*dl)        (relative == True)
         :relative:
-            | False, optional
+            | True, optional
             | If False: use K, else calculate K = 100 ./ Yw
         :rfl: 
             | None, optional 
