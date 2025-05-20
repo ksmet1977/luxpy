@@ -121,9 +121,9 @@ _BB = {'c1' : 3.74177185e-16, 'c2' : np.round(1.4387768775e-2,6),'n': 1.000, 'na
 # Define interpolation types (conform CIE15:20xx): 
 _SPECTRUM_TYPES = ['spd','cmf','rfl','none']
 _INTERP_REFERENCE = 'CIE15:2018'
-_INTERP_SETTINGS_ALL = {'CIE15:2018' : {'spd'  : {'itype' : 'cubic',  'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
-                                    'cmf'  : {'itype' : 'linear', 'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
-                                    'rfl'  : {'itype' : 'cubic',  'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False},
+_INTERP_SETTINGS_ALL = {'CIE15:2018' : {'spd'  : {'itype' : 'cubic',  'etype' : 'quadratic', 'fill_value' : None, 'negative_values_allowed' : False},
+                                    'cmf'  : {'itype' : 'linear', 'etype' : 'quadratic', 'fill_value' : None, 'negative_values_allowed' : False},
+                                    'rfl'  : {'itype' : 'cubic',  'etype' : 'quadratic', 'fill_value' : None, 'negative_values_allowed' : False},
                                     'none' : {'itype' : 'linear', 'etype' : 'linear', 'fill_value' : None, 'negative_values_allowed' : False}
                                     },
                     'CIE15:2004' : {'spd'  : {'itype' : 'cubic',  'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False},
@@ -132,7 +132,7 @@ _INTERP_SETTINGS_ALL = {'CIE15:2018' : {'spd'  : {'itype' : 'cubic',  'etype' : 
                                     'none' : {'itype' : 'linear', 'etype' : 'linear',     'fill_value' : None, 'negative_values_allowed' : False}
                                     },
                     'general' : {'force_scipy_interpolator' : False, 'scipy_interpolator' : 'interp1d',
-                                 'sprague_allowed' : False, 'sprague_method' : 'sprague_cie224_2017', 
+                                 'sprague_allowed' : False, 'sprague_method' : 'sprague_cie224_2017',
                                  'choose_most_efficient_interpolator' : False,
                                  'interp_log' : False, 'extrap_log' : False}
                     }
@@ -614,7 +614,6 @@ def cie_interp(data, wl_new, datatype = 'none',
             etype = 'nearest'
         else:
             raise Exception("Unsupported extrapolation type, extrap_kind = {}.\n - Options: None or 'nearest',[= 'flat', 'const'],'zeros','linear','quadratic','cubic','fill_value'".format(extrap_kind))
-        
         if (extrap_values is None): extrap_values = interp_settings[datatype]['fill_value']
         if (negative_values_allowed is None): negative_values_allowed = interp_settings[datatype]['negative_values_allowed'] 
         if (force_scipy_interpolator is None): force_scipy_interpolator = interp_settings['general']['force_scipy_interpolator']
@@ -1088,6 +1087,7 @@ def spd_to_xyz_legacy(data,  relative = True, rfl = None, cieobs = _CIEOBS, K = 
         if rflwasnotnone == 0: xyz = np.squeeze(xyz,axis = 0)
         return xyz
         
+        
 def spd_to_xyz_barebones(spd, cmf, K = 1.0, relative = True, rfl = None, wl = None, matmul = True):
     """
     Calculate tristimulus values from equal wavelength spectral data.
@@ -1121,11 +1121,12 @@ def spd_to_xyz_barebones(spd, cmf, K = 1.0, relative = True, rfl = None, wl = No
             |  - XYZw: tristim. values of all white points (purely spds are used) [N,3] 
 
     """
-    wl_is_None = wl is None
-    if wl_is_None: 
-        wl, spd, cmf = spd[0], spd[1:], cmf[1:]
-    rfl = np.ones((2,cmf.shape[-1])) if (rfl is None) else np.vstack((np.ones((1,cmf.shape[-1])),rfl[wl_is_None:]))
-
+    if rfl is None: 
+        rfl = np.ones(((wl is None)+ 2,cmf.shape[-1]))
+        
+    if wl is None: 
+        wl, spd, cmf, rfl = spd[0], spd[1:], cmf[1:], rfl[1:]
+    
     dl = getwld(wl) 
         
     # Compute the xyz values

@@ -142,7 +142,7 @@ __all__ = ['_CCT_MAX','_CCT_MIN','_CCT_CSPACE','_CCT_CSPACE_KWARGS',
            '_CCT_LUT_PATH','_CCT_LUT', '_CCT_LUT_RESOLUTION_REDUCTION_FACTOR',
            '_CCT_FALLBACK_N', '_CCT_FALLBACK_UNIT','_CCT_PKL_COMPRESSLEVEL',
            'cct_to_mired','xyz_to_cct_mcamy1992', 'xyz_to_cct_hernandez1999',
-           'xyz_to_cct_robertson1968','xyz_to_cct_robertson1968','xyz_to_cct_ohno2014',
+           'xyz_to_cct_robertson1968','xyz_to_cct_robertson2023','xyz_to_cct_ohno2014',
            'xyz_to_cct_li2016', 'xyz_to_cct_li2022',
            'xyz_to_cct_zhang2019', 'xyz_to_cct_fibonacci',
            'xyz_to_cct','cct_to_xyz', 'calculate_lut', 'generate_luts', 'get_tcs4',
@@ -269,13 +269,13 @@ def _get_xyzbar_wl_dl(cieobs, wl = None):
     wavelengths and an ndarray with the wavelength differences.
     """
     # get requested cmf set:
-    cmf, cmf_name = _process_cieobs_type(cieobs)
+    cmf, cmf_name, cmf_src = _process_cieobs_type(cieobs)
     wl = cmf[0] if wl is None else getwlr(wl)
     dl = getwld(wl)*1.0
     cmf =  cie_interp(cmf, wl, datatype = 'cmf', negative_values_allowed = False)[1:]
     c = ~(((cmf[1:]==0).sum(0)==3))
     cmf[:,c] += _CCT_AVOID_ZERO_DIV # avoid nan's in uvwvbar
-    return cmf, wl, dl, cmf_name
+    return cmf, wl, dl, cmf_name, cmf_src
 
 
 
@@ -788,7 +788,7 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
 
 
     # get requested cmf set:
-    xyzbar, wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl)
+    xyzbar, wl, dl, _, _ = _get_xyzbar_wl_dl(cieobs, wl)
     
     # process cspace input:
     cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
@@ -1071,7 +1071,8 @@ def _get_lut(lut,
             |   at the top-level a key 'wl' containing the wavelengths of the 
             |   Planckians used to generate the luts in this dictionary.
             | If None: the default dict for the mode is used 
-            |   (e.g. _CCT_LUT['ohno2014']['lut_type_def'], for mode=='ohno2014').    
+            |   (e.g. _CCT_LUT['ohno2014']['lut_type_def'], for mode=='ohno2014'). 
+            | If == 'regenerate': generate new lut from scratch   
         :lut_vars:
             | ['T','uv','uvp','uvpp','iso-T-slope'], optional
             | Data the lut should contain. Must follow this order 
@@ -1143,22 +1144,39 @@ should be a dictionary 'lut_kwargs'.""")
 
     # print(luts_dict[cspace_str][cieobs].keys(),lut)
     if lut is None: lut = lut_type_def # use default type in luts_dict
-    cmf, cmf_name = _process_cieobs_type(cieobs)
+    cmf, cmf_name, cmf_src = _process_cieobs_type(cieobs)
+
+
+    # Regenerate LUT's when CMF set is user provided (so not from _CMF), or when explictely demanded by 'regenerate_lut' in kwargs in xyz_to_cct:
+    if cmf_src == "user": 
+        regenerate_lut = True # force regeneration as we don't know what the cmfs were! Turn off by setting regenerate_lut to False
+    else:
+        regenerate_lut = False
+    if 'regenerate_lut' in kwargs:
+        regenerate_lut = kwargs['regenerate_lut'] # must be bool or str 
+        if isinstance(regenerate_lut,str): 
+            if regenerate_lut == '_CCT_LUT': # read from _CCT_LUT, and replace (so don't regenerate, even for user (useful when optimizations, so next run can re-use same LUT))
+                regenerate_lut = False 
+            else:
+                cmf_name = regenerate_lut # replace name for storage with this one 
+                regenerate_lut = True 
  
     # further process lut (1st element of input lut): 
     if isinstance(lut, (tuple,str)): # lut is key in luts_dict, if not generate new lut from scratch
         lut_from_tuple = True
         lut_tuple = lut # keep copy to use later as key
-        if luts_dict is not None: # luts_dict is None: generate a new lut from scratch
-            if ('wl' not in luts_dict): 
-                luts_dict_empty = True # if not present luts_dict must be empty 
-            else:
-                if cmf_name not in luts_dict['wl']:
-                    luts_dict_empty = True # is empty for this cieobs
-            if cmf_name in luts_dict[cspace_str]:
-                if lut in luts_dict[cspace_str][cmf_name]: # read from luts_dict
-                    lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cmf_name][lut])
-                    lut_from_tuple = False
+        if (luts_dict is not None): # luts_dict is None: generate a new lut from scratch
+            if not regenerate_lut: 
+                if ('wl' not in luts_dict): 
+                    luts_dict_empty = True # if not present luts_dict must be empty 
+                else:
+                    if cmf_name not in luts_dict['wl']:
+                        luts_dict_empty = True # is empty for this cieobs
+            
+                if cmf_name in luts_dict[cspace_str]:
+                    if lut_tuple in luts_dict[cspace_str][cmf_name]: # read from luts_dict
+                        lut, lut_kwargs = copy.deepcopy(luts_dict[cspace_str][cmf_name][lut_tuple])
+                        lut_from_tuple = False
                 
     elif isinstance(lut, np.ndarray): # lut is either pre-calculated lut or a list with Tcs for which a lut needs to be generated
         lut_from_array = True
@@ -1181,7 +1199,7 @@ should be a dictionary 'lut_kwargs'.""")
                 unequal_wl = True 
 
     
-    if (unequal_wl  | luts_dict_empty| lut_from_tuple | lut_from_Tcs | resample_ndarray):
+    if (unequal_wl  | luts_dict_empty | lut_from_tuple | lut_from_Tcs | resample_ndarray):
     
         if cspace_dict is None: raise Exception('No cspace dict or other given !')
     
@@ -1526,12 +1544,12 @@ def _add_lut_endpoints(x):
 
 def _process_cieobs_type(cieobs):
     if isinstance(cieobs, str):
-        cmf, cmf_name = _CMF[cieobs]['bar'].copy(), cieobs
+        cmf, cmf_name, cmf_src = _CMF[cieobs]['bar'].copy(), cieobs, "_CMF"
     elif isinstance(cieobs,tuple):
-        cmf, cmf_name = cieobs[0].copy(), cieobs[1] 
+        cmf, cmf_name, cmf_src = cieobs[0].copy(), cieobs[1], "user" 
     else:
-        cmf, cmf_name = cieobs, "cmf_0"
-    return cmf, cmf_name
+        cmf, cmf_name, cmf_src = cieobs.copy(), "cmf_0", "user"
+    return cmf, cmf_name, cmf_src
 
 def calculate_cct_luts(wl, cmf_list = _CCT_LIST_OF_CIEOBS_LUTS, mode = 'robertson2023', 
                  lut_type = None, lut_generator_kwargs = {}, luts = None, 
@@ -1546,7 +1564,7 @@ def calculate_cct_luts(wl, cmf_list = _CCT_LIST_OF_CIEOBS_LUTS, mode = 'robertso
     if lut_type is None: lut_type = _CCT_LUT[mode]['lut_type_def']
     cmf_list_ = []
     for cieobs in cmf_list: 
-        cmf, cmf_name = _process_cieobs_type(cieobs)
+        cmf, cmf_name, cmf_src = _process_cieobs_type(cieobs)
         if not np.array_equal(cmf[0],wl):
             if cmf_name in _CMF:
                 cmf_name = cmf_name + '_0'
@@ -1760,7 +1778,7 @@ def cct_to_xyz(ccts, duv = None, cct_offset = None, cieobs = _CIEOBS, wl = None,
     if cspace_dict['bwtf'] is None:
         raise Exception('cct_to_xyz_fast requires the backward cspace transform to be defined !!!')
 
-    xyzbar,wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl = wl)
+    xyzbar,wl, dl, _, _ = _get_xyzbar_wl_dl(cieobs, wl = wl)
     if cct_offset is not None:
         # estimate iso-T-line from estimated slope using small cct offset:
         #-----------------------------------------------------------------
@@ -2070,7 +2088,7 @@ def _get_newton_raphson_estimated_Tc(u, v, T0, wl = None, atol = 0.1, rtol = 1e-
     if uvwbar is None:
         if (cspace_dict is not None):
             if (xyzbar is None) & (cieobs is not None):
-                xyzbar, wl, dl, _ = _get_xyzbar_wl_dl(cieobs, wl)
+                xyzbar, wl, dl, _, _ = _get_xyzbar_wl_dl(cieobs, wl)
             elif (xyzbar is None) & (cieobs is None):
                 raise Exception('Must supply xyzbar or cieobs or uvwbar !!!')
             uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
@@ -2252,9 +2270,10 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                 max_iter = _CCT_MAX_ITER, force_au = False, 
                 split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                duv_triangular_threshold = 0.002, 
+                duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
                 first_guess_mode = 'robertson2023',
                 use_fast_duv = _CCT_FAST_DUV,
+                verbosity = 0,
                 **kwargs):
     """ 
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
@@ -2285,7 +2304,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     uvw = cspace_dict['fwtf'](xyzw)[:,1:3]  if is_uv_input == False else xyzw[:,0:2] # xyz contained uv !!! (needed to efficiently determine f_corr)
     
     # pre-calculate wl,dl,uvwbar for later use (will also determine wl if None !):
-    xyzbar, wl, dl, cmf_name = _get_xyzbar_wl_dl(cieobs, wl)
+    xyzbar, wl, dl, cmf_name, cmf_src = _get_xyzbar_wl_dl(cieobs, wl)
     uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict)
     
     # Get or generate requested lut
@@ -2294,7 +2313,6 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
     if (luts_dict is None): 
         luts_dict = _CCT_LUT[mode]['luts']
       
-
     lut, lut_kwargs = _get_lut(lut, 
                                fallback_unit = _CCT_FALLBACK_UNIT, 
                                fallback_n = _CCT_FALLBACK_N,
@@ -2304,8 +2322,15 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                cspace_str = cspace_str, wl = wl, cspace = cspace_dict, 
                                cspace_kwargs = None, ignore_unequal_wl = ignore_wl_diff, 
                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
-                               lut_vars = _CCT_LUT[mode]['lut_vars'])
+                               lut_vars = _CCT_LUT[mode]['lut_vars'],
+                               **kwargs)
     
+    if (mode == 'ohno2014') | (mode == 'li2022'):
+        if f_corr is not None: lut_kwargs['f_corr'] = f_corr # override optimized value with user input
+
+    # import pandas as pd 
+    # pd.DataFrame(lut).to_csv('lx_lut.csv')
+
     # Prepare some parameters for forced tolerance:
     if force_tolerance: 
         if (tol_method == 'newton-raphson') | (tol_method == 'nr'):
@@ -2331,8 +2356,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                    'robertson2023': {},
                    'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
-                   'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold}},
-                   'li2022' :   {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold,'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl}},
+                   'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift},**{'verbosity':verbosity}},
+                   'li2022' :   {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift, 'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl}},
                    'fibonacci' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
                    'none' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
@@ -2353,6 +2378,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                                                         out_of_lut = out_of_lut,
                                                                         fast_duv = use_fast_duv,
                                                                         **mode_kwargs[mode])  
+        
+
         if force_tolerance:
             if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
 
@@ -2576,7 +2603,6 @@ def xyz_to_cct_robertson1968(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = 
             |    best estimate's u,v coordinates. This method is accurate enough
             |    when the atol is small enough -> as long as abs(T-T_former)<=1K
             |    the Duv estimate should be ok.)
-
             
     Returns:
         :returns: 
@@ -2928,7 +2954,7 @@ _initialize_lut(mode = 'zhang2019',lut_types = _unique_types([_CCT_LUT['zhang201
 _CCT_LUT['ohno2014'] = {'luts':None}
 _CCT_LUT['ohno2014']['lut_type_def'] = ((_CCT_LUT_MIN, _CCT_LUT_MAX, 0.25, '%'),)
 _CCT_LUT['ohno2014']['lut_vars'] = ['T','uv']
-
+_OHNO2014_F_CORR_ROUNDING = 6
 def _generate_lut_ohno2014(lut, 
                            uin = None, seamless_stitch = True, 
                            fallback_unit = _CCT_FALLBACK_UNIT, fallback_n = _CCT_FALLBACK_N,
@@ -2939,7 +2965,7 @@ def _generate_lut_ohno2014(lut,
                            #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                            f_corr = None, ignore_f_corr_is_None = False, 
-                           duv_triangular_threshold = 0.002,
+                           duv_triangular_threshold = 0.002, apply_linear_shift = True,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -2984,7 +3010,7 @@ def _generate_lut_ohno2014(lut,
     elif (fallback_unit_lut == '%'):
         if np.round((lut[-1,0]/lut[-2,0] - 1)*100,4) < 0.2:
             f_corr = 1
-        
+    
     # Get correction factor for Tx in parabolic solution:
     if (f_corr is None): 
         if (ignore_f_corr_is_None == False):
@@ -3001,7 +3027,9 @@ def _generate_lut_ohno2014(lut,
                                                   cspace =  cspace, 
                                                   cspace_kwargs = cspace_kwargs,
                                                   ignore_wl_diff = ignore_wl_diff,
-                                                  duv_triangular_threshold = duv_triangular_threshold)
+                                                  duv_triangular_threshold = duv_triangular_threshold,
+                                                  apply_linear_shift = apply_linear_shift,
+                                                  **kwargs)
 
         else: 
             f_corr = 1.0 # use this a backup value
@@ -3021,9 +3049,10 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
                                  #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                  f_corr = None, ignore_f_corr_is_None = False, 
-                                 duv_triangular_threshold = 0.002,
+                                 duv_triangular_threshold = 0.002, apply_linear_shift = True,
                                  ignore_wl_diff = False,
-                                 verbosity = 0):
+                                 verbosity = 0,
+                                 **kwargs):
     """ 
     Ohno's 2014 parabolic solution uses a correction factor to correct the
     calculated CCT. However, this factor depends on the lut used. This function
@@ -3058,7 +3087,9 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
                                         wl = wl, cieobs = cieobs, 
                                         cspace =  cspace, cspace_kwargs = cspace_kwargs,
                                         lut_vars = _CCT_LUT['ohno2014']['lut_vars'])
-
+        
+        np.random.seed(5) # ensure the same f_corr is found each time!
+        
         # add Duv offsets to ccts from finer lut:
         cct = lut_fine[1:-1,:1]
         duv = 0.0
@@ -3075,18 +3106,21 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
         
     
     # define shorthand lambda fcn:
-    rr = 10 # rounding of f_corr
+    rr = _OHNO2014_F_CORR_ROUNDING # rounding of f_corr
+    
     TxDuvx_p = lambda x: _xyz_to_cct(xyz, mode = 'ohno2014', 
                                      lut = [lut, {'f_corr': np.round(x,rr)}], 
                                      is_uv_input = False,#True, 
                                      force_tolerance = False, tol_method = None,
                                      out = '[cct,duv]',
                                      duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
+                                     apply_linear_shift = apply_linear_shift,
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
                                      luts_dict = _CCT_LUT['ohno2014']['luts'],
-                                     )
+                                     verbosity = 0,
+                                     **kwargs)
  
     T = cctduv[:,0] 
     Duv = cctduv[:,1]#0.0
@@ -3133,8 +3167,8 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
 
 
 def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                       f_corr = 1.0, duv_triangular_threshold = 0.002,
-                       **kwargs):
+                       f_corr = 1.0, duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                       verbosity = 0, **kwargs):
     """ 
     Calculate Tx from u,v and lut using Ohno2014.
     """ 
@@ -3158,11 +3192,21 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     #---------------------------------------------
     # Triangular solution:        
     l = ((uBB_p1 - uBB_m1)**2 + (vBB_p1 - vBB_m1)**2)**0.5
-    l[l==0] += -_CCT_AVOID_ZERO_DIV 
+    #l[l==0] += -(_CCT_AVOID_ZERO_DIV)
     x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
     # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
     vTx = vBB_m1 + (vBB_p1 - vBB_m1) * (x/l)
-    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) 
+    
+    # Following Ohno (2014): should be prior to Duv parabolic calcuations 
+    # and CIE224-2017. Some implementation have none or 
+    # put this all the way at the end.
+    corr = 1.0
+    if f_corr is not None:
+        f_corr = np.round(f_corr, _OHNO2014_F_CORR_ROUNDING)
+        corr = f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+
+    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
+
     Duvxt = (di_m1**2 - x**2)
     Duvxt[Duvxt<0] = 0
     Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
@@ -3181,19 +3225,26 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
           di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
     Txp = -b/(2*a)
 
+    # Following Ohno (2014): should be prior to Duv parabolic calcuations 
+    # and CIE224-2017. Some implementation have none or 
+    # put this all the way at the end.
+    if f_corr is not None: 
+        Txp = Txp * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+
     Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
 
-    # Shifted Triangular Solution:
-    Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
-    
+    # Shifted Triangular Solution 
+    # (not part of Ohno2014, but implemented in CQS, TM30 calculators (not in CIE224-2017)):
+    if apply_linear_shift:
+        Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
+
     # Select triangular (threshold=0), parabolic (threshold=inf) or 
     # combined solution:
     Tx, Duvx = Txt_shift, Duvxt 
     cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
-    
-    Tx = Tx * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
-            
+
+
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
 
 _CCT_UV_TO_TX_FCNS['ohno2014']= _uv_to_Tx_ohno2014
@@ -3201,7 +3252,7 @@ _CCT_UV_TO_TX_FCNS['ohno2014']= _uv_to_Tx_ohno2014
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        duv_triangular_threshold = 0.002,
+                        duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
@@ -3266,6 +3317,10 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             | 0.002, optional
             | Threshold for use of the triangular solution.
             |  (if smaller use triangular solution, else use the non-triangular one -> 3e-order poly)
+        :apply_linear_shift:
+            | True, optional
+            | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
+            | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
         :max_iter:
             | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
@@ -3354,7 +3409,10 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                        lut = lut, luts_dict = luts_dict, 
                        ignore_wl_diff = ignore_wl_diff, 
                        duv_triangular_threshold = duv_triangular_threshold,
+                       apply_linear_shift = apply_linear_shift,
+                       f_corr = f_corr,
                        use_fast_duv = use_fast_duv,
+                       verbosity=1,
                        **kwargs)
 
 # pre-generate / load from disk / load from github some LUTs for Ohno2014:
@@ -3386,7 +3444,8 @@ def _generate_lut_li2022(lut,
                            cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                            lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                           f_corr = None, ignore_f_corr_is_None = False,duv_triangular_threshold = 0.002,
+                           f_corr = None, ignore_f_corr_is_None = False, 
+                           duv_triangular_threshold = 0.002, apply_linear_shift = True,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -3448,7 +3507,9 @@ def _generate_lut_li2022(lut,
                                                   cspace =  cspace, 
                                                   cspace_kwargs = cspace_kwargs,
                                                   ignore_wl_diff = ignore_wl_diff,
-                                                  duv_triangular_threshold = duv_triangular_threshold)
+                                                  duv_triangular_threshold = duv_triangular_threshold,
+                                                  apply_linear_shift = apply_linear_shift, 
+                                                  **kwargs)
 
         else: 
             f_corr = 1.0 # use this a backup value
@@ -3467,9 +3528,11 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
                                  cieobs =  _CIEOBS, cspace_str = None, wl = None, ignore_unequal_wl = False, 
                                  lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                                 f_corr = None, ignore_f_corr_is_None = False,duv_triangular_threshold=0.002,
+                                 f_corr = None, ignore_f_corr_is_None = False,
+                                 duv_triangular_threshold=0.002,apply_linear_shift=True,
                                  ignore_wl_diff = False,
-                                 verbosity = 0):
+                                 verbosity = 0,
+                                 **kwargs):
     """ 
     Ohno's 2014 method uses a correction factor to correct the
     calculated CCT. However, this factor depends on the lut used. This function
@@ -3529,11 +3592,12 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
                                      force_tolerance = False, tol_method = None,
                                      out = '[cct,duv]',
                                      duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
+                                     apply_linear_shift=apply_linear_shift,
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
                                      luts_dict = _CCT_LUT['li2022']['luts'],
-                                     )
+                                     **kwargs)
     
     T = cctduv[:,0] 
     Duv = cctduv[:,1]#0.0
@@ -3579,9 +3643,8 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
     return f_corr
 
 
-
 def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                       f_corr = 1.0, duv_triangular_threshold = 0.002,
+                       f_corr = 1.0, duv_triangular_threshold = 0.002, apply_linear_shift = True,
                        uvwbar = None, wl = None, dl = None,
                        **kwargs):
     """ 
@@ -3685,11 +3748,11 @@ _CCT_UV_TO_TX_FCNS['li2022']= _uv_to_Tx_li2022
 def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        duv_triangular_threshold = 0.002,
+                        duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
-                        use_fast_duv = _CCT_FAST_DUV,
+                        use_fast_duv = _CCT_FAST_DUV, 
                         **kwargs):
     """
     Convert XYZ tristimulus values to correlated color temperature (CCT) and 
@@ -3750,6 +3813,10 @@ def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
             | 0.002, optional
             | Threshold for use of the triangular solution 
             |  (if smaller use triangular solution, else use the non-triangular (third order polynomial))
+         :apply_linear_shift:
+            | True, optional
+            | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
+            | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
         :max_iter:
             | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
@@ -3837,6 +3904,8 @@ def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
                        lut = lut, luts_dict = luts_dict, 
                        ignore_wl_diff = ignore_wl_diff, 
                        duv_triangular_threshold = duv_triangular_threshold,
+                       apply_linear_shift = apply_linear_shift,
+                       f_corr = f_corr,
                        use_fast_duv = use_fast_duv,
                        **kwargs)
 
@@ -4242,7 +4311,6 @@ def xyz_to_cct_fibonacci(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = Fals
             |    best estimate's u,v coordinates. This method is accurate enough
             |    when the atol is small enough -> as long as abs(T-T_former)<=1K
             |    the Duv estimate should be ok.)
-
             
     Returns:
         :returns: 
@@ -4359,7 +4427,7 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                lut = None, luts_dict = None, ignore_wl_diff = False,
-               duv_triangular_threshold = 0.002,
+               duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None, 
                first_guess_mode = 'robertson2023', fgm_kwargs = {},
                use_fast_duv = _CCT_FAST_DUV,
                **kwargs):
@@ -4478,6 +4546,10 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
             | Threshold for use of the triangular solution.
             |  (if smaller use triangular solution, else use the non-triangular one:  
             |     If mode == 'ohno2014' -> parabolic, if mode == 'li2022' -> 3e-order poly)
+        :apply_linear_shift:
+            | True, optional
+            | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
+            | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
         :first_guess_mode:
             | 'robertson2023', optional (cfr. mode == 'li2016')
             | Method used to get an approximate (first guess) estimate of the cct,
@@ -4573,8 +4645,11 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
                            lut = lut, luts_dict = luts_dict, 
                            ignore_wl_diff = ignore_wl_diff, 
                            duv_triangular_threshold = duv_triangular_threshold,
+                           apply_linear_shift = apply_linear_shift,
+                           f_corr = f_corr,
                            first_guess_mode = first_guess_mode,
                            use_fast_duv = use_fast_duv,
+                           verbosity = 1,
                            **kwargs)
     
     elif mode == 'mcamy1992':
