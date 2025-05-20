@@ -71,8 +71,8 @@ References
 """
 import numpy as np
 
-from luxpy import _CMF, _CIE_ILLUMINANTS, _CIEOBS, math, spd_to_xyz , cie_interp
-from luxpy.utils import np2d, np3d, todim, asplit, _EPS
+from luxpy import _CMF, _CIE_D65, _CIEOBS, math, spd_to_xyz , cie_interp
+from luxpy.utils import np2d, np3d, asplit, _EPS
 
 __all__ = ['_CSPACE_AXES', '_IPT_M', '_get_chromaticity_diagram_boundary_wavelengths',
            'xyz_to_Yxy','Yxy_to_xyz','xyz_to_Yuv','Yuv_to_xyz',
@@ -98,7 +98,7 @@ _CSPACE_AXES['srgb'] = ['sR', 'sG','sB']
 
 # pre-calculate matrices for conversion of xyz to lms and back for use in xyz_to_ipt() and ipt_to_xyz():
 _IPT_M = {'lms2ipt': np.array([[0.4000,0.4000,0.2000],[4.4550,-4.8510,0.3960],[0.8056,0.3572,-1.1628]]),
-                              'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF[x]['M'],spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = x)) for x in sorted(_CMF['types'])}}
+                              'xyz2lms' : {x : math.normalize_3x3_matrix(_CMF[x]['M'],spd_to_xyz(_CIE_D65,cieobs = x)) for x in sorted(_CMF['types'])}}
 _COLORTF_DEFAULT_WHITE_POINT = np.array([[100.0, 100.0, 100.0]]) # ill. E white point
 
 #------------------------------------------------------------------------------
@@ -382,7 +382,7 @@ def xyz_to_lab(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     xyz = np2d(xyz)
 
     if xyzw is None:
-        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'], cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_D65, cieobs = cieobs)
 
     # get and normalize (X,Y,Z) to white point:
     XYZr = xyz/xyzw
@@ -426,7 +426,7 @@ def lab_to_xyz(lab, xyzw = None, cieobs = _CIEOBS, **kwargs):
     lab = np2d(lab)
 
     if xyzw is None:
-        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_D65,cieobs = cieobs)
 
     # make xyzw same shape as data:
     xyzw = xyzw*np.ones(lab.shape)
@@ -469,11 +469,12 @@ def xyz_to_luv(xyz, xyzw = None, cieobs = _CIEOBS, **kwargs):
     xyz = np2d(xyz)
 
     if xyzw is None:
-        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_D65,cieobs = cieobs)
 
     # Calculate u',v' of test and white:
     Yuv = xyz_to_Yuv(xyz)
-    Yuvw = xyz_to_Yuv(todim(xyzw, xyz.shape)) # todim: make xyzw same shape as xyz
+    #Yuvw = xyz_to_Yuv(todim(xyzw, xyz.shape)) # todim: make xyzw same shape as xyz
+    Yuvw = xyz_to_Yuv(xyzw)
 
     #uv1976 to CIELUV
     luv = np.empty(xyz.shape)
@@ -507,10 +508,11 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     luv = np2d(luv)
 
     if xyzw is None:
-        xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs)
+        xyzw = spd_to_xyz(_CIE_D65,cieobs = cieobs)
 
     # Make xyzw same shape as luv and convert to Yuv:
-    Yuvw = todim(xyz_to_Yuv(xyzw), luv.shape, equal_shape = True)
+    #Yuvw = todim(xyz_to_Yuv(xyzw), luv.shape, equal_shape = True)
+    Yuvw = xyz_to_Yuv(xyzw)
 
     # calculate u'v' from u*,v*:
     Yuv = np.empty(luv.shape)
@@ -518,8 +520,9 @@ def luv_to_xyz(luv, xyzw = None, cieobs = _CIEOBS, **kwargs):
     Yuv[Yuv[...,0]==0,1:3] = 0
 
     Yuv[...,0] = Yuvw[...,0]*(((luv[...,0] + 16.0) / 116.0)**3.0)
-    p = np.where((Yuv[...,0]/Yuvw[...,0]) < ((6.0/29.0)**3.0))
-    Yuv[...,0][p] = Yuvw[...,0][p]*(luv[...,0][p]/((29.0/3.0)**3.0))
+    p = np.where((Yuv[...,0]/Yuvw[...,0]) < ((6.0/29.0)**3.0))[0]
+    #Yuv[...,0][p] = Yuvw[...,0][p]*(luv[...,0][p]/((29.0/3.0)**3.0))
+    Yuv[p,0] = Yuvw[p,:1]*(luv[p,0]/((29.0/3.0)**3.0))
 
     return Yuv_to_xyz(Yuv)
 
@@ -662,7 +665,7 @@ def xyz_to_ipt(xyz, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     if M is None:
         M = _IPT_M['xyz2lms'][cieobs].copy() # matrix conversions from xyz to lms
         if xyzw is None:
-            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)/100.0
+            xyzw = spd_to_xyz(_CIE_D65,cieobs = cieobs, out = 1)/100.0
         else:
             xyzw = xyzw/100.0
         M = math.normalize_3x3_matrix(M,xyzw)
@@ -735,7 +738,7 @@ def ipt_to_xyz(ipt, cieobs = _CIEOBS, xyzw = None, M = None, **kwargs):
     if M is None:
         M = _IPT_M['xyz2lms'][cieobs].copy() # matrix conversions from xyz to lms
         if xyzw is None:
-            xyzw = spd_to_xyz(_CIE_ILLUMINANTS['D65'],cieobs = cieobs, out = 1)/100.0
+            xyzw = spd_to_xyz(_CIE_D65,cieobs = cieobs, out = 1)/100.0
         else:
             xyzw = xyzw/100.0
         M = math.normalize_3x3_matrix(M,xyzw)

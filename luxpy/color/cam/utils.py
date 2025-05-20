@@ -43,6 +43,48 @@ def hue_angle(a,b, htype = 'deg'):
     return math.positive_arctan(a,b, htype = htype)
 
 
+# def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, forward = True):
+#     """
+#     Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
+    
+#     | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise
+    
+#     Args:
+#         :data:
+#             | float or ndarray
+#         :sig: 
+#             | 2.0, optional
+#             | Semi-saturation constant. Value for which NK(:data:) is 1/2
+#         :n: 
+#             | 0.73, optional
+#             | Compression power.
+#         :scaling:
+#             | 1.0, optional
+#             | Maximum value of NK-function.
+#         :noise:
+#             | 0.0, optional
+#             | Cone excitation noise.
+#         :forward:
+#             | True, optional
+#             | True: do NK(x) 
+#             | False: do NK(x)**(-1).
+    
+#     Returns:
+#         :returns: 
+#             | float or ndarray with NK-(de)compressed input :x:        
+#     """
+#     if forward:
+#         return np.sign(data)*scaling * ((np.abs(data)**n) / ((np.abs(data)**n) + (sig**n))) + noise
+#     elif forward == False:
+#         Ip =  sig*(((np.abs(np.abs(data)-noise))/(scaling-np.abs(np.abs(data)-noise))))**(1/n)
+#         if not np.isscalar(Ip):
+#             p = np.where(np.abs(data) < noise)
+#             Ip[p] = -Ip[p]
+#         else:
+#             if np.abs(data) < noise:
+#                 Ip = -Ip
+#         return Ip
+
 def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, forward = True):
     """
     Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).
@@ -74,16 +116,11 @@ def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, forward 
             | float or ndarray with NK-(de)compressed input :x:        
     """
     if forward:
-        return np.sign(data)*scaling * ((np.abs(data)**n) / ((np.abs(data)**n) + (sig**n))) + noise
+        return  np.sign(data) * scaling * (np.abs(data) ** n) / ((np.abs(data) ** n)  + sig**n) + noise
     elif forward == False:
-        Ip =  sig*(((np.abs(np.abs(data)-noise))/(scaling-np.abs(np.abs(data)-noise))))**(1/n)
-        if not np.isscalar(Ip):
-            p = np.where(np.abs(data) < noise)
-            Ip[p] = -Ip[p]
-        else:
-            if np.abs(data) < noise:
-                Ip = -Ip
-        return Ip
+        z = (data - noise) / scaling
+        sgn_z = np.sign((data - noise) / scaling)
+        return sgn_z* np.abs((np.abs(z) * sig**n) / (sgn_z - z)) ** (1 / n)
     
 def deltaH(h1, C1, h2 = None, C2 = None, htype = 'deg'):
     """
@@ -224,6 +261,10 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
             h_j = np.array([((H_j[i] - Hi[pi])*(ei[pi+1]*hi[pi] - ei[pi]*hi[pi+1]) - 100*ei[pi+1]*hi[pi])/((H_j[i] - Hi[pi])*(ei[pi+1] - ei[pi]) - 100*ei[pi+1]) for (i,pi) in enumerate(p)])
             h[...,j:j+1] = h_j
         h[h > 360 - hi[0]*1] -= 360.0
+
+
+        h[h<0] = h[h<0] + 360
+        h[h>360] = h[h>360] - 360
     
         if ndim == 0:
             return h[0][0]

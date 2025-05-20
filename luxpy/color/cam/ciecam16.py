@@ -212,9 +212,9 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
     #--------------------------------------------
     # apply Naka_rushton repsonse compression to white:
     NK = lambda x, forward: naka_rushton(x, forward = forward, **naka_rushton_parameters)
-    pw = np.where(rgbwp<0)
+    #pw = np.where(rgbwp<0)
     rgbwpa = NK(FL*rgbwp/100.0, True)
-    rgbwpa[pw] = 0.1 - (NK(FL*np.abs(rgbwp[pw])/100.0, True) - 0.1)
+    #rgbwpa[pw] = 0.1 - (NK(FL*np.abs(rgbwp[pw])/100.0, True) - 0.1) # dealing with negative values, already included in NK function!
     
     #--------------------------------------------
     # Calculate achromatic signal of white:
@@ -335,14 +335,15 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             J = 100.0*(Q / ((Aw + 4.0)*(FL**0.25)*(4.0/c)))**2.0
         else:
             raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
-            
+
+
         #-------------------------------------------- 
         # calculate Hue quadrature (if requested in 'out'):
         if 'H' in outin:    
             h = hue_quadrature(data[...,outin.index('H'):outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
 
             
-        #--------------------------------------------    
+        #--------------------------------------------     
         if 'a' in outin[1]: 
             # calculate hue h:
             h = hue_angle(data[...,1:2],data[...,2:3], htype = 'deg')
@@ -350,12 +351,12 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             #--------------------------------------------
             # calculate Colorfulness M or Chroma C or Saturation s from a,b:
             MCs = (data[...,1:2]**2.0 + data[...,2:3]**2.0)**0.5   
-        elif 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H')+outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
-            MCs = data[...,1:2] 
         elif 'h' in outin:
             h = data[...,2:3]
             MCs = data[...,1:2]  
+        elif 'H' in outin:    
+            h = hue_quadrature(data[...,2:3], unique_hue_data = unique_hue_data, forward = False)
+            MCs = data[...,1:2] 
         else:
             raise Exception('No (a,b) or hue angle or Hue quadrature data in input!')
         
@@ -434,6 +435,8 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         #--------------------------------------------
         # unnormalize xyz:
         xyz = ((yw/Yw)*xyz)
+
+        if (xyz.shape[1] == 1) & (original_ndim == 2): xyz = xyz[:,0,:]
 
         return xyz
   
