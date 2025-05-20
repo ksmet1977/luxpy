@@ -206,7 +206,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
 
     #--------------------------------------------
     # convert from cat16 sensor space to cone sensors:
-    rgbwp = rgbwc # in ciecam16 the 'cone sensors' and 'cat sensor' are the same
+    rgbwp = rgbwc # in ciecam16 the 'cone sensors' and 'cat sensors' are the same
 
     
     #--------------------------------------------
@@ -252,7 +252,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         # apply Naka_rushton repsonse compression:        
         p = np.where(rgbp<0)
         rgbpa = NK(FL*rgbp/100.0, forward)
-        rgbpa[p] = 0.1 - (NK(FL*np.abs(rgbp[p])/100.0, forward) - 0.1)
+        #rgbpa[p] = 0.1 - (NK(FL*np.abs(rgbp[p])/100.0, forward) - 0.1) # dealing with negative values, already included in NK function!
         
         #--------------------------------------------
         # Calculate achromatic signal:
@@ -337,10 +337,10 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
             raise Exception('No lightness or brightness values in data. Inverse CAM-transform not possible!')
 
 
-        #-------------------------------------------- 
-        # calculate Hue quadrature (if requested in 'out'):
-        if 'H' in outin:    
-            h = hue_quadrature(data[...,outin.index('H'):outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
+        # #-------------------------------------------- 
+        # # calculate Hue quadrature (if requested in 'out'):
+        # if 'H' in outin:    
+        #     h = hue_quadrature(data[...,outin.index('H'):outin.index('H')+1], unique_hue_data = unique_hue_data, forward = False)
 
             
         #--------------------------------------------     
@@ -429,7 +429,6 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
 
         #--------------------------------------------
         # transform from cat sensor space to xyz:
-        
         xyz = math.dot23(invmcat,rgb.T).T
         
         #--------------------------------------------

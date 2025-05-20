@@ -285,7 +285,7 @@ def run(data, xyzw = _DEFAULT_WHITE_POINT, Yw = None, outin = 'J,aM,bM',
         if (yellowbluepurplecorrect == 'brill-suss'): # Brill & Susstrunck approach, for purple line problem
             rgbp[p]=0.0
         rgbpa = NK(FL*rgbp/100.0, forward)
-        rgbpa[p] = 0.1 - (NK(FL*np.abs(rgbp[p])/100.0, forward) - 0.1)
+        #rgbpa[p] = 0.1 - (NK(FL*np.abs(rgbp[p])/100.0, forward) - 0.1) # dealing with negative values, already included in NK function!
         
         #--------------------------------------------
         # Calculate achromatic signal:
