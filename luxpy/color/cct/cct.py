@@ -2270,7 +2270,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                 max_iter = _CCT_MAX_ITER, force_au = False, 
                 split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                 cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
-                duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
+                duv_triangular_threshold = 0.002, f_corr = None,
+                apply_linear_shift = True, apply_f_corr_to_triangular_x = False,
                 first_guess_mode = 'robertson2023',
                 use_fast_duv = _CCT_FAST_DUV,
                 verbosity = 0,
@@ -2356,8 +2357,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                    'robertson2023': {},
                    'zhang2019' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
-                   'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift},**{'verbosity':verbosity}},
-                   'li2022' :   {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift, 'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl}},
+                   'ohno2014' : {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift, 'apply_f_corr_to_triangular_x' : apply_f_corr_to_triangular_x},**{'verbosity':verbosity}},
+                   'li2022' :   {**lut_kwargs, **{'duv_triangular_threshold' : duv_triangular_threshold, 'apply_linear_shift' : apply_linear_shift, 'apply_f_corr_to_triangular_x' : apply_f_corr_to_triangular_x, 'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl}},
                    'fibonacci' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
                                   'max_iter' : max_iter[0], 'atol' : atol, 'rtol' : rtol},
                    'none' : {'uvwbar' : uvwbar, 'wl' : wl, 'dl' : dl, 'lut_vars' : lut_vars,
@@ -2965,7 +2966,9 @@ def _generate_lut_ohno2014(lut,
                            #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                            f_corr = None, ignore_f_corr_is_None = False, 
-                           duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                           duv_triangular_threshold = 0.002, 
+                           apply_linear_shift = True,
+                           apply_f_corr_to_triangular_x = False,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -3029,6 +3032,7 @@ def _generate_lut_ohno2014(lut,
                                                   ignore_wl_diff = ignore_wl_diff,
                                                   duv_triangular_threshold = duv_triangular_threshold,
                                                   apply_linear_shift = apply_linear_shift,
+                                                  apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                                                   **kwargs)
 
         else: 
@@ -3049,7 +3053,9 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
                                  #lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                  f_corr = None, ignore_f_corr_is_None = False, 
-                                 duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                                 duv_triangular_threshold = 0.002, 
+                                 apply_linear_shift = True,
+                                 apply_f_corr_to_triangular_x = False,
                                  ignore_wl_diff = False,
                                  verbosity = 0,
                                  **kwargs):
@@ -3115,6 +3121,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
                                      out = '[cct,duv]',
                                      duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
                                      apply_linear_shift = apply_linear_shift,
+                                     apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
@@ -3167,7 +3174,8 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
 
 
 def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                       f_corr = 1.0, duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                       f_corr = 1.0, duv_triangular_threshold = 0.002, 
+                       apply_linear_shift = True,apply_f_corr_to_triangular_x = False,
                        verbosity = 0, **kwargs):
     """ 
     Calculate Tx from u,v and lut using Ohno2014.
@@ -3201,11 +3209,16 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # and CIE224-2017. Some implementation have none or 
     # put this all the way at the end.
     corr = 1.0
-    if f_corr is not None:
+    corr_Duvt_x = 1.0
+    if (f_corr is not None) & apply_f_corr_to_triangular_x:
         f_corr = np.round(f_corr, _OHNO2014_F_CORR_ROUNDING)
         corr = f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+        corr_Duvt_x = (corr*(2-corr))**0.5
 
     Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
+    
+    if apply_f_corr_to_triangular_x: 
+        x = x*corr_Duvt_x # apply x correction for duv calculations: 
 
     Duvxt = (di_m1**2 - x**2)
     Duvxt[Duvxt<0] = 0
@@ -3253,7 +3266,8 @@ _CCT_UV_TO_TX_FCNS['ohno2014']= _uv_to_Tx_ohno2014
 def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
+                        duv_triangular_threshold = 0.002, f_corr = None,
+                        apply_linear_shift = True, apply_f_corr_to_triangular_x = False, 
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
@@ -3322,6 +3336,11 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
             | True, optional
             | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
             | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
+        :apply_f_corr_to_triangular_x:
+            | False, optional
+            | Apply the f_corr correction to the triangular x value (in Eq. 8 of Ohno 2014), 
+            | although not published in the 2014 paper, it is implemented in CQS, TM30 basic CRI calculators 
+            | (TM30 advanced and CIE224 do not implement it).
         :max_iter:
             | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
@@ -3411,6 +3430,7 @@ def xyz_to_cct_ohno2014(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False
                        ignore_wl_diff = ignore_wl_diff, 
                        duv_triangular_threshold = duv_triangular_threshold,
                        apply_linear_shift = apply_linear_shift,
+                       apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                        f_corr = f_corr,
                        use_fast_duv = use_fast_duv,
                        verbosity=1,
@@ -3446,7 +3466,9 @@ def _generate_lut_li2022(lut,
                            lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                            cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                            f_corr = None, ignore_f_corr_is_None = False, 
-                           duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                           duv_triangular_threshold = 0.002, 
+                           apply_linear_shift = True,
+                           apply_f_corr_to_triangular_x = False,
                            ignore_wl_diff = False, 
                            **kwargs):
     """
@@ -3510,6 +3532,7 @@ def _generate_lut_li2022(lut,
                                                   ignore_wl_diff = ignore_wl_diff,
                                                   duv_triangular_threshold = duv_triangular_threshold,
                                                   apply_linear_shift = apply_linear_shift, 
+                                                  apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                                                   **kwargs)
 
         else: 
@@ -3530,7 +3553,9 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
                                  lut_generator_fcn = _generate_lut, lut_generator_kwargs = {},
                                  cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                                  f_corr = None, ignore_f_corr_is_None = False,
-                                 duv_triangular_threshold=0.002,apply_linear_shift=True,
+                                 duv_triangular_threshold=0.002,
+                                 apply_linear_shift=True,
+                                 apply_f_corr_to_triangular_x = False,
                                  ignore_wl_diff = False,
                                  verbosity = 0,
                                  **kwargs):
@@ -3594,6 +3619,7 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
                                      out = '[cct,duv]',
                                      duv_triangular_threshold = duv_triangular_threshold, # force use of parabolic
                                      apply_linear_shift=apply_linear_shift,
+                                     apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                                      lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
                                      wl = wl, cieobs = cieobs, ignore_wl_diff = ignore_wl_diff,
                                      cspace = cspace, cspace_kwargs = cspace_kwargs,
@@ -3645,7 +3671,9 @@ def get_correction_factor_for_Tx_li2022(lut, lut_fine = None, cctduv = None,
 
 
 def _uv_to_Tx_li2022(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
-                       f_corr = 1.0, duv_triangular_threshold = 0.002, apply_linear_shift = True,
+                       f_corr = 1.0, duv_triangular_threshold = 0.002, 
+                       apply_linear_shift = True,
+                       apply_f_corr_to_triangular_x = True,
                        uvwbar = None, wl = None, dl = None,
                        **kwargs):
     """ 
@@ -3749,7 +3777,8 @@ _CCT_UV_TO_TX_FCNS['li2022']= _uv_to_Tx_li2022
 def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, wl = None, 
                         atol = 0.1, rtol = 1e-5, force_tolerance = True, tol_method = 'newton-raphson', 
                         lut_resolution_reduction_factor = _CCT_LUT_RESOLUTION_REDUCTION_FACTOR,
-                        duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None,
+                        duv_triangular_threshold = 0.002, f_corr = None,
+                        apply_linear_shift = True, apply_f_corr_to_triangular_x = False,
                         split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                         cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                         lut = None, luts_dict = None, ignore_wl_diff = False,
@@ -3818,6 +3847,11 @@ def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
             | True, optional
             | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
             | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
+        :apply_f_corr_to_triangular_x:
+            | False, optional
+            | Apply the f_corr correction to the triangular x value (in Eq. 8 of Ohno 2014), 
+            | although not published in the 2014 paper, it is implemented in CQS, TM30 basic CRI calculators 
+            | (TM30 advanced and CIE224 do not implement it).
         :max_iter:
             | _CCT_MAX_ITER, optional
             | Maximum number of iterations used by the cascading-lut or newton-raphson methods.
@@ -3906,6 +3940,7 @@ def xyz_to_cct_li2022(xyzw, cieobs = _CIEOBS, out = 'cct', is_uv_input = False, 
                        ignore_wl_diff = ignore_wl_diff, 
                        duv_triangular_threshold = duv_triangular_threshold,
                        apply_linear_shift = apply_linear_shift,
+                       apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                        f_corr = f_corr,
                        use_fast_duv = use_fast_duv,
                        **kwargs)
@@ -4428,7 +4463,8 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
                split_calculation_at_N = _CCT_SPLIT_CALC_AT_N, max_iter = _CCT_MAX_ITER,
                cspace = _CCT_CSPACE, cspace_kwargs = _CCT_CSPACE_KWARGS,
                lut = None, luts_dict = None, ignore_wl_diff = False,
-               duv_triangular_threshold = 0.002, apply_linear_shift = True, f_corr = None, 
+               duv_triangular_threshold = 0.002, f_corr = None, 
+               apply_linear_shift = True, apply_f_corr_to_triangular_x = False,
                first_guess_mode = 'robertson2023', fgm_kwargs = {},
                use_fast_duv = _CCT_FAST_DUV,
                **kwargs):
@@ -4551,6 +4587,11 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
             | True, optional
             | Apply a linear shift to the CCT of the triangular solution in the Ohno2014 method,
             | although not published in the 2014 paper, it is implemented in CQS, TM30, ... CRI calculators.
+        :apply_f_corr_to_triangular_x:
+            | False, optional
+            | Apply the f_corr correction to the triangular x value (in Eq. 8 of Ohno 2014), 
+            | although not published in the 2014 paper, it is implemented in CQS, TM30 basic CRI calculators 
+            | (TM30 advanced and CIE224 do not implement it).
         :first_guess_mode:
             | 'robertson2023', optional (cfr. mode == 'li2016')
             | Method used to get an approximate (first guess) estimate of the cct,
@@ -4647,6 +4688,7 @@ def xyz_to_cct(xyzw, mode = 'robertson2023',
                            ignore_wl_diff = ignore_wl_diff, 
                            duv_triangular_threshold = duv_triangular_threshold,
                            apply_linear_shift = apply_linear_shift,
+                           apply_f_corr_to_triangular_x = apply_f_corr_to_triangular_x,
                            f_corr = f_corr,
                            first_guess_mode = first_guess_mode,
                            use_fast_duv = use_fast_duv,
