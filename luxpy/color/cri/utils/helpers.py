@@ -719,7 +719,6 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
     xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]
 
-    
     # C. apply chromatic adaptation for non-cam/lab cspaces:
     if catf is not None:
         D_cat, Dtype_cat, La_cat, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]

@@ -2325,12 +2325,10 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
                                lut_vars = _CCT_LUT[mode]['lut_vars'],
                                **kwargs)
+
     
     if (mode == 'ohno2014') | (mode == 'li2022'):
         if f_corr is not None: lut_kwargs['f_corr'] = f_corr # override optimized value with user input
-
-    # import pandas as pd 
-    # pd.DataFrame(lut).to_csv('lx_lut.csv')
 
     # Prepare some parameters for forced tolerance:
     if force_tolerance: 
@@ -3180,6 +3178,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     """ 
     Calculate Tx from u,v and lut using Ohno2014.
     """ 
+
     # get uBB, vBB from lut:
     TBB, uBB, vBB  = lut[:,0::lut_n_cols], lut[:,1::lut_n_cols], lut[:,2::lut_n_cols]
     idx_sources = np.arange(u.shape[0],dtype=np.int32)
@@ -3210,13 +3209,14 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # put this all the way at the end.
     corr = 1.0
     corr_Duvt_x = 1.0
+    
     if (f_corr is not None) & apply_f_corr_to_triangular_x:
         f_corr = np.round(f_corr, _OHNO2014_F_CORR_ROUNDING)
         corr = f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
         corr_Duvt_x = (corr*(2-corr))**0.5
-
-    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
     
+    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
+
     if apply_f_corr_to_triangular_x: 
         x = x*corr_Duvt_x # apply x correction for duv calculations: 
 
@@ -3248,7 +3248,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     # Shifted Triangular Solution 
     # (not part of Ohno2014, but implemented in CQS, TM30 calculators (not in CIE224-2017)):
-    Txt_shift = Txt
+    Txt_shift = Txt.copy()
     if apply_linear_shift:
         Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
 
@@ -3257,7 +3257,6 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     Tx, Duvx = Txt_shift, Duvxt 
     cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
-
 
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
 

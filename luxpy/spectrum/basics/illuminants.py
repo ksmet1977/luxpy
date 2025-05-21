@@ -507,7 +507,7 @@ def daylightphase(cct, wl3 = None, cct_is_nominal = False, force_daylight_below4
         xD, yD = daylightlocus(cct, force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs, daylight_locus = daylight_locus,
                                use_published_daylightlocus_coeffs_when_cieobs_is_1931_2 = force_tabulated_xyD_Mi_when_cieobs_is_1931_2, 
                                cct_is_nominal = cct_is_nominal, interp_settings = interp_settings)
-        
+
         # Get M1 & M2 component weights:
         if (cieobs is None) | (force_tabulated_xyD_Mi_when_cieobs_is_1931_2 & (cieobs == '1931_2')): # original M1,M2 for Si at 10 nm spacing and CIE 1931 xy
             use_1931_2_published_Mcoeffs = True
@@ -642,6 +642,7 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             norm_type = None, norm_f = None, 
             force_daylight_below4000K = False, n = None,
             daylight_locus = None, 
+            cct_is_nominal = False, 
             interp_settings = None):
     """
     Calculates a reference illuminant spectrum based on cct 
@@ -714,7 +715,13 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
             | for specified cieobs.
             | If None: use pre-calculated values.
             | If 'calc': calculate them on the fly.
-            
+        :cct_is_nominal:
+            | False, optional
+            | If True, when calculating a daylight phase: 
+            |   1. Scale nominal CCT input by a factor of 1.4388/1.4380. 
+            |   2. Round M1, M2 values to 3 decimals as recommended by CIE 
+            |      when calculating daylight phases for nominal CCTs (e.g. 5500 K, 6500 K)    Returns:
+    
     Returns:
         :returns: 
             | ndarray with reference illuminant spectra.
@@ -771,11 +778,13 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
                     Sr = blackbody(cct, wl3, n = n)
                 elif ((cct >= mix_range_[0]) & (not (ref_type_[0:2] == 'BB'))) | (ref_type_[0:2] == 'DL') :
                     Sr = daylightphase(cct,wl3,force_daylight_below4000K = force_daylight_below4000K, cieobs = cieobs_, daylight_locus = daylight_locus,
+                                       cct_is_nominal = cct_is_nominal,
                                         interp_settings = interp_settings)
             else:
                 SrBB = blackbody(cct, wl3, n = n)
                 SrDL = daylightphase(cct,wl3,verbosity = None,force_daylight_below4000K = force_daylight_below4000K, 
                                      cieobs = cieobs_, daylight_locus = daylight_locus,
+                                    cct_is_nominal = cct_is_nominal,
                                     interp_settings = interp_settings)
                 
                 #cieobs_ = _CIEOBS if cieobs_ is None else cieobs_ # cieobs_ might still be None as that results in specific use of fixed published coeff. in the calculation of the daylight phase, while a string will result in calculation of these coeff.
