@@ -718,6 +718,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     N = St.shape[0]-1
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
     xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]
+
     
     # C. apply chromatic adaptation for non-cam/lab cspaces:
     if catf is not None:
@@ -755,7 +756,6 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
             cspace_pars['xyzw'] = xyzrw # enter ref. whitepoint
     jabr = colortf(xyzri, tf = cspace['type'], fwtf = cspace_pars)    
     del cspace_pars
-
 
     # E. Regulate output:
     if out == 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr':
