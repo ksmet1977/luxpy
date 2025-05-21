@@ -3235,6 +3235,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     # Shifted Triangular Solution 
     # (not part of Ohno2014, but implemented in CQS, TM30 calculators (not in CIE224-2017)):
+    Txt_shift = Txt
     if apply_linear_shift:
         Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
 
