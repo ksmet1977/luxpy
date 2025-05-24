@@ -297,14 +297,14 @@ def _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict):
   
 def _get_BB_BBp_BBpp(T, wl, out = 'BB,BBp,BBpp'):
     """ 
-    Get the blackbody radiatior spectrum, and the spectra corresponding to 
-    the first and second derivatives to Tc of the blackbody radiator.
+    Get the blackbody radiatior spectrum (BB), and the spectra corresponding to 
+    the first (BBp) and second derivatives (BBpp) to Tc of the blackbody radiator.
     """
     BBp,BBpp = None,None
     T = np2d(T)*1.0 # force float
     wlt = wl*1.0e-9
-    c_wl_T = _BB['c2']/(wlt*T)
-    exp = np.exp(c_wl_T)
+    c2_wl_T = _BB['c2']/(wlt*T)
+    exp = np.exp(c2_wl_T)
     exp[np.isinf(exp)] = _CCT_AVOID_INF
     
     # avoid div by inf or zero:
@@ -317,21 +317,18 @@ def _get_BB_BBp_BBpp(T, wl, out = 'BB,BBp,BBpp'):
         
     if ('BBp' in out) | ('BBpp' in out): 
         
-        exp_min_1_squared = exp_min_1**2
-        
-        # avoid div by inf or zero:
-        exp_min_1_squared[np.isinf(exp_min_1_squared)] = _CCT_AVOID_INF # avoid warning "invalid value encountered in true_divide"
-        exp_min_1_squared[exp_min_1_squared == 0.0] = _CCT_AVOID_ZERO_DIV
-        
-        exp_frac = exp/exp_min_1_squared
+        # exp_min_1_squared = exp_min_1**2
+        #
+        # # avoid div by inf or zero:
+        # exp_min_1_squared[np.isinf(exp_min_1_squared)] = _CCT_AVOID_INF # avoid warning "invalid value encountered in true_divide"
+        # exp_min_1_squared[exp_min_1_squared == 0.0] = _CCT_AVOID_ZERO_DIV
+        #
+        # BBp = (_BB['c1']*_BB['c2']*(T**(-2))*(wlt**(-6)))*(exp/exp_min_1_squared)
 
-        BBp = (_BB['c1']*_BB['c2']*(T**(-2))*(wlt**(-6)))*exp_frac
+        BBp = (BB/T) * (c2_wl_T * (exp/exp_min_1))
 
-        
     if 'BBpp' in out:
-        exp_plus_1 = exp + 1.0
-        BBpp = (BBp/T) * (c_wl_T * (exp_plus_1 / exp_min_1)  - 2) 
-        
+        BBpp = (BBp/T) * (c2_wl_T * ((exp + 1.0) / exp_min_1)  - 2) 
         
     return BB, BBp, BBpp
 
@@ -786,74 +783,62 @@ def calculate_lut(ccts, cieobs, wl = None, lut_vars = ['T','uv','uvp','uvpp','is
         # no need to calculate anything, only Tcs needed
         return np2d(ccts)
 
-
-    # get requested cmf set:
-    xyzbar, wl, dl, _, _ = _get_xyzbar_wl_dl(cieobs, wl)
-    
-    # process cspace input:
-    cspace_dict, cspace_str = _process_cspace(cspace, cspace_kwargs)
-    
-    # convert to cspace based cmfs (Eq.6-7):
-    uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict) 
-    
-    # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
-    #Ti, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
-    _, u, v, up, vp, upp, vpp, (UVW, UVWp, UVWpp) = _get_uv_uvp_uvpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
-    Ti = ccts
-    if 'uv' in lut_vars: uvi = np.hstack((u,v))
-    if 'uvp' in lut_vars: uvpi = np.hstack((up,vp))
-    if 'uvpp' in lut_vars: uvppi = np.hstack((upp,vpp))
-
-
-    # calculate li, mi (= slope of iso-T-lines):
-    if 'iso-T-slope' in lut_vars:
-        
-        R = UVW.sum(axis=-1, keepdims = True) # for Ohno, 2014 & Robertson, 1968 & Li, 2016
-        if UVWp is not None: Rp = UVWp.sum(axis=-1, keepdims = True) # for Robertson, 1968 & Li, 2016
-        # if UVWpp is not None: Rpp = UVWpp.sum(axis=-1, keepdims = True) # for Li, 2016
-
-        num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
-        denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
-        
-        # avoid div by zero:
-        num[(num == 0)] += _CCT_AVOID_ZERO_DIV
-        denom[(denom == 0)] += _CCT_AVOID_ZERO_DIV
-    
-        li = num/denom  
-        li = li + np.sign(li)*_CCT_AVOID_ZERO_DIV # avoid division by zero
-        mi = -1.0/li # slope of isotemperature lines
-        
     else:
-        mi = None
-    
-    # get u,v & u',v' and u",v":
-    # uvi = UVW[:,:2]/R
-    # if UVWp is not None: uvpi = UVWp[:,:2]/Rp
-    # if UVWpp is not None: uvppi = UVWpp[:,:2]/Rpp
 
-    
-    # construct output (use comple if structure to avoid creating intermediate arrays for optimal speed):
-    if   ('uvp' in lut_vars) & ('uvpp' in lut_vars) & ('iso-T-slope' in lut_vars):
-        lut = np.hstack((Ti,uvi,uvpi,uvppi,mi))
-    elif ('uvp' not in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' not in lut_vars):
-        lut = np.hstack((Ti,uvi))
+        # get requested cmf set:
+        xyzbar, wl, dl, _, _ = _get_xyzbar_wl_dl(cieobs, wl)
         
-    elif ('uvp' in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' in lut_vars):
-        lut = np.hstack((Ti,uvi, uvpi, mi))
-    elif ('uvp' in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' not in lut_vars):
-        lut = np.hstack((Ti,uvi, uvpi))
-    elif ('uvp' in lut_vars) & ('uvpp' in lut_vars) & ('iso-T-slope' not in lut_vars):
-        lut = np.hstack((Ti,uvi, uvpi, uvppi))
+        # process cspace input:
+        cspace_dict, _ = _process_cspace(cspace, cspace_kwargs)
         
-    elif ('uvp' not in lut_vars) & ('uvpp' in lut_vars) & ('iso-T-slope' in lut_vars):
-        lut = np.hstack((Ti,uvi, uvppi, mi))
-    elif ('uvp' not in lut_vars) & ('uvpp' in lut_vars) & ('iso-T-slope' not in lut_vars):
-        lut = np.hstack((Ti,uvi, uvppi))
-           
-    elif ('uvp' not in lut_vars) & ('uvpp' not in lut_vars) & ('iso-T-slope' in lut_vars):
-        lut = np.hstack((Ti,uvi,mi))
+        # convert to cspace based cmfs (Eq.6-7):
+        uvwbar = _convert_xyzbar_to_uvwbar(xyzbar, cspace_dict) 
+        
+        # calculate U,V,W (Eq. 6) and U',V',W' (Eq.10) [Robertson,1986] and U",V",W" [Li,2016; started from XYZ, but this is equivalent]:
+        #Ti, UVW, UVWp, UVWpp = _get_tristim_of_BB_BBp_BBpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+        _, u, v, up, vp, upp, vpp, (UVW, UVWp, UVWpp) = _get_uv_uvp_uvpp(ccts, uvwbar, wl, dl, out = 'BB,BBp,BBpp')
+        Ti = ccts
+        uvi = np.hstack((u,v)) if ('uv' in lut_vars) else None
+        uvpi = np.hstack((up,vp)) if ('uvp' in lut_vars) else None
+        uvppi = np.hstack((upp,vpp)) if ('uvpp' in lut_vars) else None
 
-    return lut 
+
+        # calculate li, mi (= slope of iso-T-lines):
+        if 'iso-T-slope' in lut_vars:
+            
+            R = UVW.sum(axis=-1, keepdims = True) # for Ohno, 2014 & Robertson, 1968 & Li, 2016
+            if UVWp is not None: Rp = UVWp.sum(axis=-1, keepdims = True) # for Robertson, 1968 & Li, 2016
+            # if UVWpp is not None: Rpp = UVWpp.sum(axis=-1, keepdims = True) # for Li, 2016
+
+            num = (UVWp[:,1:2]*R - UVW[:,1:2]*Rp) 
+            denom = (UVWp[:,:1]*R - UVW[:,:1]*Rp)
+            
+            # avoid div by zero:
+            num[(num == 0)] += _CCT_AVOID_ZERO_DIV
+            denom[(denom == 0)] += _CCT_AVOID_ZERO_DIV
+        
+            li = num/denom  
+            li = li + np.sign(li)*_CCT_AVOID_ZERO_DIV # avoid division by zero
+            mi = -1.0/li # slope of isotemperature lines
+
+        else:
+            mi = None 
+                
+        # pre-calculate functions of slope of iso-T lines for storage in lut to increase speed
+        sq1pmi2 = (1+mi**2)**0.5 if ('sqrt(1+iso-T-slope**2)' in lut_vars) else None
+        sign_mimip1 = np.sign(mi*np.vstack((mi[1:],mi[-1:]))) if ('sign(iso-T-slope_i*i+1)' in lut_vars) else None # use same value for last one
+        
+        # get u,v & u',v' and u",v": #old code for Li2016 ?
+        # uvi = UVW[:,:2]/R
+        # if UVWp is not None: uvpi = UVWp[:,:2]/Rp
+        # if UVWpp is not None: uvppi = UVWpp[:,:2]/Rpp
+
+        
+        # construct output (use complicated structure to avoid creating intermediate arrays for optimal speed):
+        lut_components = {'T' : Ti, 'uv' : uvi, 'uvp': uvpi, 'uvpp' : uvppi, 'iso-T-slope' : mi, 'sqrt(1+iso-T-slope**2)' : sq1pmi2, 'sign(iso-T-slope_i*i+1)' : sign_mimip1}
+        lut = np.hstack([lut_components[x] for x in lut_vars])
+
+        return lut 
 
 
     
