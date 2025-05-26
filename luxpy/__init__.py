@@ -169,6 +169,10 @@ __all__ += ['math']
 from .spectrum import *
 __all__ += spectrum.__all__
 
+# Load spdurl:
+from .spectrum import spdurl
+__all__ += ['spdurl']
+
 #----------------------------------------
 # From /phot:
 #----------------------------------------
