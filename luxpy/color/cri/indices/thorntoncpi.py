@@ -14,7 +14,7 @@ import numpy as np
 from luxpy import _RFL
 from luxpy.color.cri.utils.helpers import spd_to_jab_t_r
 
-_RFL_CPI = _RFL['cri']['cie-13.3-1995']['8']
+_RFL_CPI = _RFL['cri']['cie-13.3-1995']['8']['1nm']
 
 #add white so we have access to the white point chromaticity for a Judd-type translational CAT
 _RFL_CPIw = np.vstack((_RFL_CPI,np.ones((1,_RFL_CPI.shape[1])))) 

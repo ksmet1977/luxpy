@@ -224,7 +224,7 @@ _CRI_DEFAULTS['cri_types'].append('mcri')
 _CRI_DEFAULTS['fci'] = {'sampleset' : "_CRI_RFL['fci']['R']"}
 _CRI_DEFAULTS['cri_types'].append('fci')
 
-_CRI_DEFAULTS['thornton_cpi'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']"}
+_CRI_DEFAULTS['thornton_cpi'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8']['1nm']"}
 _CRI_DEFAULTS['cri_types'].append('thornton_cpi')
 
    

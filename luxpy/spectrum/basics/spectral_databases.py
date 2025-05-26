@@ -155,11 +155,18 @@ _CIE_GLASS_ID = {'T': getdata(_R_PATH + 'GlassSpecTrans_indoor_illuminants.csv')
 
 #------------------------------------------------------------------------------
 # CIE 13.3-1995 color rendering index:
-_CIE133_1995 = {'14': getdata(_R_PATH + 'CIE_13_3_1995_R14.dat').T}
-_CIE133_1995['8'] = _CIE133_1995['14'][0:9].copy()
+_CIE133_1995 = {'14': {'5nm' : getdata(_R_PATH + 'CIE_13_3_1995_R14.dat').T}}
+_CIE133_1995['8'] = {'5nm' : _CIE133_1995['14']['5nm'][0:9].copy()}
 _JISZ8726_R15 = getdata(_R_PATH + 'JIS-Z-8726-R15.dat').T # = R15 J-Z-8726 sample (asian skin)
-_CIE133_1995['15'] = np.vstack((_CIE133_1995['14'].copy(),_JISZ8726_R15[1:]))
-   
+_CIE133_1995['15'] = {'5nm' : np.vstack((_CIE133_1995['14']['5nm'].copy(),_JISZ8726_R15[1:]))}
+
+# CIE13.3-1995 requires linear interpolation from 5 nm to smaller intervals, contrary
+# to the CIE015 recommended method for interpolation for spectral reflectances. Hence,
+# we pre-interpolate here so these are available with te correct interpolation method applied.
+wln = np.arange(360,831,1)
+for key in list(_CIE133_1995.keys()):
+    _CIE133_1995[key]['1nm'] = np.vstack((wln,np.array([np.interp(wln,_CIE133_1995[key]['5nm'][0],_CIE133_1995[key]['5nm'][i+1]) for i in range(_CIE133_1995[key]['5nm'].shape[0]-1)])))
+
 #------------------------------------------------------------------------------  
 # IES TM30-15 color fidelity and color gamut indices:
 # (note that wavelength range of rfls has been extended from [380-780] nm using flat-extrapolation to [360-830] nm.)
