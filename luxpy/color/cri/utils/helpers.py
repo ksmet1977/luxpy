@@ -52,7 +52,7 @@ import copy
 import numpy as np
 
 from luxpy import (_IESTM3015, math, cam, cat, _CRI_RFL,
-                   colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct)
+                   colortf, spd_to_xyz, cie_interp, cri_ref, xyz_to_cct, xyz_to_Yxy, Yxy_to_xyz)
 from luxpy.utils import np2d 
 #from luxpy.color.cri.utils.DE_scalers import linear_scale, log_scale, psy_scale
 
@@ -568,6 +568,15 @@ def _hue_bin_data_to_rf(hue_bin_data = None, cri_type = _CRI_TYPE_DEFAULT,
         return  Rf
     elif out == 'DEa':
         return DEa
+    
+def _round_xyz_by_rounding_Yxy(xyz, rounding = None):
+    """Round the XYZ tristimulus values by rounding the associated x,y chromaticity coordinates"""
+    if rounding is None:
+        return xyz
+    else:
+        Yxy = xyz_to_Yxy(xyz)
+        Yxy[...,1:] = np.round(Yxy[...,1:],rounding)
+        return Yxy_to_xyz(Yxy)
 
 def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr', 
                    wl = None, sampleset = None, ref_type = None, 
@@ -678,7 +687,6 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     cri_type = process_cri_type_input(cri_type, args, callerfunction = 'cri.spd_to_jab_t_r')
     
     # unpack and update dict with parameters:
-
     (avg, calculation_wavelength_range, catf, cct_mode, cieobs,
      cri_specific_pars, cspace, 
      ref_type, rf_from_avg_rounded_rfi, rg_pars, 
@@ -705,7 +713,7 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     if not (isinstance(cct_mode,tuple) | isinstance(cct_mode, list)): cct_mode = (cct_mode, {})
     cct, duv = xyz_to_cct(xyztw_cct, mode = cct_mode[0], cieobs = cieobs['cct'], out = 'cct,duv', interp_settings = interp_settings, **cct_mode[1])
     cct = np.abs(cct) # out-of-lut ccts are encoded as negative
-    
+
     # A.c. get reference ill.:
     if isinstance(ref_type,np.ndarray):
         Sr = cri_ref(ref_type, ref_type = 'spd', cieobs = cieobs['cct'], wl3 = St[0], interp_settings = interp_settings)
@@ -716,9 +724,19 @@ def spd_to_jab_t_r(St, cri_type = _CRI_TYPE_DEFAULT, out = 'jabt,jabr',
     xyzi, xyzw = spd_to_xyz(np.vstack((St,Sr[1:])), cieobs = cieobs['xyz'], rfl = sampleset, out = 2, interp_settings = interp_settings)
     #xyzri, xyzrw = spd_to_xyz(Sr, cieobs = cieobs['xyz'], rfl = sampleset, out = 2)
     N = St.shape[0]-1
+
+    # B.1 round (x,y) chromaticity coordinates to specified values (required by CIE13.3-1995):
+    # So we convert xyz to Yxy, round the xy, and convert back:
+    if cri_specific_pars is not None:
+        if 'round_xy_to' in cri_specific_pars:
+            if cri_specific_pars['round_xy_to'] is not None:
+                xyzi = _round_xyz_by_rounding_Yxy(xyzi, rounding = cri_specific_pars['round_xy_to'])
+                xyzw = _round_xyz_by_rounding_Yxy(xyzw, rounding = cri_specific_pars['round_xy_to'])
+
     xyzti, xyzri =  xyzi[:,:N,:], xyzi[:,N:,:]
     xyztw, xyzrw =  xyzw[:N,:], xyzw[N:,:]
 
+    
     # C. apply chromatic adaptation for non-cam/lab cspaces:
     if catf is not None:
         D_cat, Dtype_cat, La_cat, catmode_cat, cattype_cat, mcat_cat, xyzw_cat = [catf[x] for x in sorted(catf.keys())]
@@ -1488,6 +1506,7 @@ def spd_to_cri(St, cri_type = _CRI_TYPE_DEFAULT, out = 'Rf', wl = None, \
      cct,duv,St,Sr) = spd_to_jab_t_r(St, wl = wl, cri_type = cri_type, 
                                      out = 'jabt,jabr,xyzti,xyztw,xyzri,xyzrw,xyztw_cct,cct,duv,St,Sr',
                                      interp_settings = interp_settings) 
+
 
     # E. calculate DEi, DEa:
     DEi = ((jabt - jabr)**2).sum(axis = -1)**0.5

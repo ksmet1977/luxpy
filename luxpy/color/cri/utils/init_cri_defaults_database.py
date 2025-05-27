@@ -29,7 +29,7 @@ Module with color fidelity and color gamut area parameter dicts
 import copy
 import numpy as np
 
-from luxpy import math, _CRI_RFL
+from luxpy import math, _CRI_RFL, cie_interp
 from luxpy.utils import put_args_in_db
 from .DE_scalers import linear_scale, log_scale, psy_scale
 
@@ -47,15 +47,16 @@ _CRI_DEFAULTS['ciera-13.3-1995'] = {'sampleset' : "_CRI_RFL['cie-13.3-1995']['8'
                          'ref_type' : 'ciera', 
                          'calculation_wavelength_range' : None,
                          'cieobs' : {'xyz': '1931_2', 'cct' : '1931_2'}, 
-                         'cct_mode' : ('robertson2023',{}),
+                         'cct_mode' : ('robertson2023',{'force_tolerance' : False}),
                          'avg' : np.mean, 
                          'rf_from_avg_rounded_rfi' : True,
                          'scale' :{'fcn' : linear_scale, 'cfactor' : [4.6]}, 
                          'cspace' : {'type':'wuv', 'xyzw' : None}, 
-                         'catf': {'xyzw':None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 
+                         'catf': {'xyzw': None, 'mcat':'judd-1945','D':1.0,'La':None,'cattype':'vonkries','Dtype':None, 'catmode' : '1>2'}, 
                          'rg_pars' : {'nhbins': None, 'start_hue':0.0, 'normalize_gamut': False, 'normalized_chroma_ref' : 100, 'use_bin_avg_DEi' : True}, 
-                         'cri_specific_pars' : None
+                         'cri_specific_pars' : {'round_xy_to' : 4}
                          }
+
 
 _CRI_DEFAULTS['ciera'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])
 _CRI_DEFAULTS['ciera-8'] = copy.deepcopy(_CRI_DEFAULTS['ciera-13.3-1995'])

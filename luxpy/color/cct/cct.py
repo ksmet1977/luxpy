@@ -2310,7 +2310,6 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                lut_generator_fcn = _CCT_LUT[mode]['_generate_lut'],
                                lut_vars = _CCT_LUT[mode]['lut_vars'],
                                **kwargs)
-
     
     if (mode == 'ohno2014') | (mode == 'li2022'):
         if f_corr is not None: lut_kwargs['f_corr'] = f_corr # override optimized value with user input
@@ -2326,7 +2325,7 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
             raise Exception('Tolerance method = {:s} not implemented.'.format(tol_method))
     
     lut_n_cols = lut.shape[-1] # store now, as this will change later
-    
+
     # prepare split of input data to speed up calculation:
     n = xyzw.shape[0]
     ccts = np.zeros((n,1))
@@ -2394,6 +2393,8 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
         else: 
             ccts[n_ii*ii:] = Tx
             duvs[n_ii*ii:] = Duvx
+
+    #print(mode, force_tolerance, ccts[0,0])
 
     # Regulate output:
     if (out == 'cct') | (out == 1):
@@ -3194,7 +3195,6 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # put this all the way at the end.
     corr = 1.0
     corr_Duvt_x = 1.0
-    
     if (f_corr is not None) & apply_f_corr_to_triangular_x:
         f_corr = np.round(f_corr, _OHNO2014_F_CORR_ROUNDING)
         corr = f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)

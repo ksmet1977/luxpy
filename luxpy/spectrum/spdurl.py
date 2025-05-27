@@ -63,7 +63,7 @@ class SPD:
         self.base = 380
         self.delta = 1
         self.data = np.array([], dtype=np.float64)
-        self.unit = "uwi"
+        self.unit = "wr"
         self.name = None
         self.date = 0
         self.loc = []
@@ -81,7 +81,7 @@ class SPD:
 
     def Unit(self):
         return UnitMap.get(self.unit)
-
+    
 
 def encodeSPD(spd: SPD) -> str:
     result = [version, str(spd.base), str(spd.delta), spd.unit]
