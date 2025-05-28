@@ -119,7 +119,8 @@ __all__ = ['_PHOTORECEPTORS','_QUANTITIES',
            'Km_correction_factor',
            '_Ee_SYMBOLS', '_E_SYMBOLS', '_Q_SYMBOLS', 
            '_Ee_UNITS', '_E_UNITS', '_Q_UNITS', 
-           'spd_to_aopicE','spd_to_aopicEDI','spd_to_aopicDER','spd_to_aopicELR']
+           'spd_to_aopicE','spd_to_aopicEDI','spd_to_aopicDER','spd_to_aopicELR',
+           'spd_to_aopicX']
 
 
 _PHOTORECEPTORS = ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
@@ -432,4 +433,104 @@ def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
 
 
         
+#==============================================================================================
+def spd_to_aopicX(sid, Xtype = 'E', out = None, sid_units = 'W/m2', 
+                  Ee = None, E = None, Q = None, 
+                  actionspectra = 'CIE-S026', ref = 'D65',
+                  cieobs = _CIEOBS, K = None):
+    """
+    Calculate various alpha-opic quantites for the l-cone, m-cone, 
+    s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.
     
+    Args:
+        :sid: 
+            | numpy.ndarray with retinal spectral irradiance in :sid_units: 
+            | (if 'uW/cm2', sid will be converted to SI units 'W/m2')
+        :Xtype:
+            | 'E', optional
+            | Type of alpha-opic quantity to calculate.
+            | Options:
+            |   - 'E'   : alpha-opic irradiance (Ee,α) values (W/m²)
+            |   - 'EDI' : alpha-opic equivalent daylight (D65) illuminance (lux)
+            |   - 'DER' : alpha-opic Daylight (D65) Efficacy Ratio (= alpha-opic Daylight (D65) Efficiency)
+            |   - 'ELR' : alpha-opic Efficacy of Luminous Radiation (W/lm)
+        :sid_units:
+            | 'W/m2', optional
+            | Other option 'uW/m2', input units of :sid:
+        :Ee: 
+            | None, optional
+            | If not None: normalize :sid: to an irradiance of :Ee:
+        :E: 
+            | None, optional
+            | If not None: normalize :sid: to an illuminance of :E:
+            | Note that E is calculate using a Km factor corrected to standard air.
+        :Q: 
+            | None, optional
+            | If not None: Normalize :sid: to a quantal energy of :Q:
+        :out: 
+            | None or str, optional
+            | Determines values to return for the specific function. 
+            | (e.g. to get  alphaopic irradiance Ee and 
+            |  equivalent alpha-opic illuminance E, set :out: to 'Eeas,Eas' for Xtype == 'E')
+        :actionspectra:
+            | 'CIE-S026', optional
+            | Actionspectra to use in calculation 
+            | options: 
+            | - 'CIE-S026': will use action spectra as defined in CIE S026 
+        :ref:
+            | 'D65', optional
+            | Reference (daylight) spectrum to use with specific Xtype quantities. 
+            | Options: 'D65' or 'E' or ndarray
+        :cieobs:
+            | _CIEOBS, optional
+            | CMF set to use to get Vlambda.
+        :K:
+            | None, optional
+            | Photopic Luminous Efficacy (lm/W)
+            | If None: use the one stored in _CMF[cmf]['K']
+            
+    Returns:
+        :returns: 
+            | Eeas a numpy.ndarray with the α-opic irradiance
+            | of all spectra in :sid: in SI-units (W/m²). 
+            |
+            | (other choice can be set using :out:)
+            
+    References:
+          1. `CIE-S026:E2018 (2018). 
+          CIE System for Metrology of Optical Radiation for ipRGC-Influenced Responses to Light 
+          (Vienna, Austria).
+          <https://cie.co.at/publications/cie-system-metrology-optical-radiation-iprgc-influenced-responses-light-0>`_
+          (https://files.cie.co.at/CIE%20S%20026%20alpha-opic%20Toolbox%20User%20Guide.pdf)
+    
+          2. `CIE-TN003:2015 (2015). 
+          Report on the first international workshop on 
+          circadian and neurophysiological photometry, 2013 
+          (Vienna, Austria).
+          <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
+          (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
+    """
+        
+    if Xtype == 'E':
+        if out is None: out = 'Eeas'
+        return spd_to_aopicE(sid, Ee = Ee, E = E, Q = Q, 
+                             sid_units = sid_units, out = out, 
+                             actionspectra = actionspectra,
+                             cieobs = cieobs, K = K)
+    elif Xtype == 'EDI':
+        if out is None: out = 'a_edi'
+        return spd_to_aopicEDI(sid, Ee = Ee, E = E, Q = Q, 
+                               sid_units = sid_units, out = out, 
+                               actionspectra = actionspectra, 
+                               ref = ref, cieobs = cieobs, K = K)
+    elif Xtype == 'DER':
+        return spd_to_aopicDER(sid, sid_units = sid_units,
+                               actionspectra = actionspectra, ref = ref,
+                               cieobs = cieobs, K = K)
+    elif Xtype == 'ELR':
+        return spd_to_aopicELR(sid,  sid_units = sid_units,
+                               actionspectra = actionspectra, 
+                               cieobs = cieobs, K = K)
+    else:
+        raise Exception(f'Unknown Xtype: {Xtype}')
+
