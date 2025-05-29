@@ -3214,13 +3214,11 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     #---------------------------------------------
     # Parabolic solution:
     X = (TBB_p1 - TBB_0) * (TBB_m1 - TBB_p1) * (TBB_0-TBB_m1)
-    X[X==0] += _CCT_AVOID_ZERO_DIV
+    X[X==0] += (_CCT_AVOID_ZERO_DIV)
     a = (TBB_m1 * (di_p1 - di_0) + TBB_0 * (di_m1 - di_p1) + TBB_p1 * (di_0 - di_m1)) / X
-    a[a==0] += _CCT_AVOID_ZERO_DIV
+    a[a==0] += (_CCT_AVOID_ZERO_DIV)
     b = -((TBB_m1**2) * (di_p1 - di_0) + (TBB_0**2) * (di_m1 - di_p1) + (TBB_p1**2) * (di_0 - di_m1)) / X
-    c = -(di_m1 * (TBB_p1 - TBB_0)  * TBB_p1 * TBB_0  +\
-          di_0  * (TBB_m1 - TBB_p1) * TBB_m1 * TBB_p1 +\
-          di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
+    c = -(di_m1 * (TBB_p1 - TBB_0)  * TBB_p1 * TBB_0  + di_0  * (TBB_m1 - TBB_p1) * TBB_m1 * TBB_p1 + di_p1 * (TBB_0 - TBB_m1)  * TBB_0 * TBB_m1) / X
     Txp = -b/(2*a)
 
     # Following Ohno (2014): should be prior to Duv parabolic calcuations 

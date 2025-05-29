@@ -744,7 +744,9 @@ def cri_ref(ccts, wl3 = None, ref_type = _CRI_REF_TYPE, mix_range = None,
         if cieobs_Y_normalization is not None: cieobs_Y_normalization = np.atleast_1d(cieobs_Y_normalization)
 
         if not (isinstance(ref_type,list) | isinstance(ref_type,dict)): ref_type = [ref_type]
-   
+        
+        ccts = np.abs(ccts) # CCTs could be negative (signalling out of lut cases)!
+        
         for i in range(len(ccts)):
             cct = ccts[i]
 
