@@ -3193,18 +3193,19 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # Following Ohno (2014): should be prior to Duv parabolic calcuations 
     # and CIE224-2017. Some implementation have none or 
     # put this all the way at the end.
-    corr = 1.0
+    # correction factor depends on the LUT !!!!! 
+    # (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+    f_corr = np.round(f_corr,_OHNO2014_F_CORR_ROUNDING) if (f_corr is not None) else 1.0
+    corr_x = 1.0
     corr_Duvt_x = 1.0
-    if (f_corr is not None) & apply_f_corr_to_triangular_x:
-        f_corr = np.round(f_corr, _OHNO2014_F_CORR_ROUNDING)
-        corr = f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
-        corr_Duvt_x = (corr*(2-corr))**0.5
+    corr_Tx = 1.0
+    if apply_f_corr_to_triangular_x & (f_corr > 0): 
+        corr_x = f_corr # Apply f_corr to x when calculating CCT_triangular and Duv
+        corr_Duvt_x = (f_corr*(2-f_corr))**0.5
+    elif (apply_f_corr_to_triangular_x == False) & (f_corr > 0):
+        corr_Tx = f_corr # Apply f_corr to CCT_triangular as a whole, but only when not already applied earlier at x!
     
-    Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
-
-    # Apply f_corr to CCT_triangular, but only when not already applied earlier!
-    if (f_corr > 0) & (apply_f_corr_to_triangular_x == False):
-        Txt = Txt * f_corr
+    Txt = (TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr_x) * (corr_Tx)
 
     if apply_f_corr_to_triangular_x: 
         x = x*corr_Duvt_x # apply x correction for duv calculations: 
@@ -3228,8 +3229,7 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # Following Ohno (2014): should be prior to Duv parabolic calcuations 
     # and CIE224-2017. Some implementation have none or 
     # put this all the way at the end.
-    if f_corr is not None: 
-        Txp = Txp * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
+    Txp = Txp * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
 
     Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
 
