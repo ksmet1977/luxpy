@@ -3202,6 +3202,10 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     
     Txt = TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr
 
+    # Apply f_corr to CCT_triangular, but only when not already applied earlier!
+    if (f_corr > 0) & (apply_f_corr_to_triangular_x == False):
+        Txt = Txt * f_corr
+
     if apply_f_corr_to_triangular_x: 
         x = x*corr_Duvt_x # apply x correction for duv calculations: 
 
