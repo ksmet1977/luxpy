@@ -2359,7 +2359,7 @@ def stress_F_test(stressA, stressB, N, alpha = 0.05):
         elif (Fcs[i] <= Fvs[i]) & (Fvs[i] < 1):
             H_ = "A insignificantly better than B"
         elif (1 < Fvs[i]) & (Fvs[i] <= 1/Fcs[i]):
-            H_ = "A insignificanty poorer than B"
+            H_ = "A insignificantly poorer than B"
         elif (Fvs[i] == 1):
             H_ = "A equals B"
         H.append(H_)
