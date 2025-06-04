@@ -52,6 +52,18 @@ Module for calculating CIE (S026:2018 & TN003:2015) photobiological quantities
 | To avoid ambiguity, the weighting function used must be stated, so, for example, 
 | cyanopic refers to the cyanopic irradiance weighted using 
 | the s-cone or ssc(λ) spectral efficiency function.
+| 
+| Notes:
+| 1. that in CIE S026 the l-cone, m-cone, s-cone -opic quantities are 
+| based on the CIE 2006 L,M,S 10° cone fundamentals!
+| 2. This differs from the approach in Lucas et al. (2014), 
+| where the cone spectral sensitivity functions are based on an opsin template, and
+| are denote by the terms 'erythropic', 'chloropic' and 'cyanopic', resp.
+| 3. For rhopic responses, the sensitivity curve is the V'(lambda) curve from ISO 23539 / CIE S 010.
+| 4. The melanopic spectral sensitivity curve is the same shape as the Nz(lambda) function 
+| in Lucas et al. (2014)
+| 5. In CIE S026: luminous radiation is limited to a 380 nm - 780 nm range, and any summing is done
+| over the range with a 1 nm spacing!
 
  :_PHOTORECEPTORS: ['l-cone', 'm-cone','s-cone', 'rod', 'iprgc']
  :_Ee_SYMBOLS: ['Ee,lc','Ee,mc', 'Ee,sc','Ee,r',  'Ee,z']
@@ -107,6 +119,11 @@ References:
       <http://www.cie.co.at/publications/report-first-international-workshop-circadian-and-neurophysiological-photometry-2013>`_
       (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
 
+      3. `Lucas RJ, Peirson SN, Berson DM, Brown TM, Cooper HM, Czeisler CA, Figueiro MG, 
+      Gamlin PD, Lockley SW, O'Hagan JB, Price LL, Provencio I, Skene DJ, Brainard GC. (2014). 
+      Measuring and using light in the melanopsin age. 
+      Trends Neurosci. 2014 Jan;37(1):1-9. doi: 10.1016/j.tins.2013.10.004.<https://doi.org/10.1016/j.tins.2013.10.004>`_
+
 .. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)
 """
 import numpy as np 
@@ -133,7 +150,8 @@ _Q_UNITS = ['photons/m2/s', 'photons/m2/s', 'photons/m2/s', 'photons/m2/s', 'pho
 _QUANTITIES = ['erythropic', 'chloropic','cyanopic','rhodopic','melanopic'] #irradiance, illuminance
 
 #_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_S026_2018_SI_action_spectra_CIEToolBox_v1.049a_20_11.csv', header = 'infer', verbosity = 0).T[[0,3,2,1,4,5]] # [[0,3,2,1,4,5]]-> put in l,m,s order
-_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_S026_2018_SI_action_spectra_LUOXapp_download04062025.csv', header = 'infer', verbosity = 0).T[[0,3,2,1,4,5]] # [[0,3,2,1,4,5]]-> put in l,m,s order
+#_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_S026_2018_SI_action_spectra_LUOXapp_download04062025.csv', header = 'infer', verbosity = 0).T[[0,3,2,1,4,5]] # [[0,3,2,1,4,5]]-> put in l,m,s order
+_ACTIONSPECTRA_CIES026 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'S026_Table2_Data_downloaded_04062025.csv', header = 'infer', verbosity = 0).T[[0,3,2,1,4,5]] # [[0,3,2,1,4,5]]-> put in l,m,s order
 _ACTIONSPECTRA_CIES026[np.isnan(_ACTIONSPECTRA_CIES026)] = 0.0 # unknown data stored as NaN,-> convert to 0.0 so summing does not add any contribution
 _ACTIONSPECTRA_CIETN003 = getdata(_PKG_PATH + _SEP + 'toolboxes' + _SEP + 'photbiochem' + _SEP  + 'data' + _SEP + 'cie_tn003_2015_SI_action_spectra.dat', header = 'infer', verbosity = 0).T
 _ACTIONSPECTRA = _ACTIONSPECTRA_CIES026
@@ -146,10 +164,16 @@ c = _BB['c'] # m/s light speed
 lambdad = c/(na*54*1e13)/(1e-9) # 555 nm lambda in standard air
 _KM_CORRECTION_FACTOR = 1/(1 - (1 - 0.9998567)*(lambdad - 555)) # correction factor for Km in standard air
 
+def _limit_spd_wl_range(spd, force_1nm_spacing = False):
+    if force_1nm_spacing:
+        return cie_interp(spd, [380,780,1], 'spd')
+    else:
+        cnd = (spd[0]>=380) & (spd[0]<=780)
+        return spd[:,cnd].copy()
 
 def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None,
                   sid_units = 'W/m2', out = 'Eeas', actionspectra = 'CIE-S026',
-                  interp_settings = None, use_pusa = False):
+                  interp_settings = None, use_pusa = False, force_1nm_sid_spacing = True):
     """
     Calculate alpha-opic irradiance (Ee,α) values (W/m²) for the l-cone, m-cone, 
     s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.
@@ -184,6 +208,10 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
             | options: 
             | - 'CIE-S026': will use action spectra as defined in CIE S026 
             | - 'CIE-TN003': will use action spectra as defined in CIE TN003
+        :force_1nm_sid_spacing:
+            | True, optional
+            | If True: when limiting the sid wavelength range to 380 nm -780 nm,
+            |   also, force the wavelength spacing to 1 nm by interpolating the sid.
             
     Returns:
         :returns: 
@@ -207,6 +235,8 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
           (http://files.cie.co.at/785_CIE_TN_003-2015.pdf)
     """
     outlist = out.split(',')
+
+    sid = _limit_spd_wl_range(sid, force_1nm_spacing = force_1nm_sid_spacing)
     
     # Convert to Watt/m²:
     if sid_units == 'uW/cm2':
@@ -286,6 +316,8 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
         return Eeas
     elif out == 'Eeas,E':
         return Eeas,E
+    elif out == 'Eeas,E,sid':
+        return Eeas,E, sid
     elif out == 'Eeas,Eas':
         return Eeas,Eas
     elif out == 'Eeas,Eas,E':
@@ -298,7 +330,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
 #----------------------------------------------------------------------------------
 def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
                     actionspectra = 'CIE-S026', use_pusa = False, 
-                    out = 'ELR',interp_settings = None):
+                    out = 'ELR', force_1nm_sid_spacing = True, interp_settings = None):
     """
     Calculate α-opic Efficacy of Luminous Radiation (W/lm)
     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
@@ -322,6 +354,10 @@ def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
         :out: 
             | 'ELR' or str, optional
             | Determines values to return.
+        :force_1nm_sid_spacing:
+            | True, optional
+            | If True: when limiting the sid wavelength range to 380 nm -780 nm,
+            |   also, force the wavelength spacing to 1 nm by interpolating the sid.
             
     Returns:
         :returns: 
@@ -330,8 +366,8 @@ def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
             | of all spectra in :sid: in SI-units. 
     """
     # Calculate all alpha-opic irradiance values:
-    Eeas, Ev = spd_to_aopicE(sid, cieobs = cieobs, K = K, sid_units = sid_units, out = 'Eeas,E', actionspectra = actionspectra,
-                             use_pusa = use_pusa, interp_settings = interp_settings) # calculate all alpha-opic values 
+    Eeas, Ev, sid = spd_to_aopicE(sid, cieobs = cieobs, K = K, sid_units = sid_units, out = 'Eeas,E,sid', actionspectra = actionspectra,
+                             use_pusa = use_pusa, force_1nm_sid_spacing = force_1nm_sid_spacing, interp_settings = interp_settings) # calculate all alpha-opic values 
     
     # Calculate α-opic Efficacy of Luminous Radiation: 
     ELR = Eeas / Ev 
@@ -340,6 +376,8 @@ def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
         return ELR
     elif (out.lower() == 'elr,ev') | (out.lower() == 'elr,e'):
         return ELR, Ev 
+    elif (out.lower() == 'elr,ev,sid') | (out.lower() == 'elr,e,sid'):
+        return ELR, Ev, sid
     else:
         raise Exception(f'Unknown requested output: {out}')
 
@@ -347,7 +385,7 @@ def spd_to_aopicELR(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
 #--------------------------------------------------------------------------------------
 def spd_to_aopicDER(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
                     actionspectra = 'CIE-S026', ref = 'D65', use_pusa = False,
-                    out = 'DER', interp_settings = None):
+                    out = 'DER', force_1nm_sid_spacing = True, interp_settings = None):
     """
     Calculate α-opic Daylight (D65) Efficacy Ratio (= α-opic Daylight (D65) Efficiency)
     for the l-cone, m-cone, s-cone, rod and iprgc (α) photoreceptor cells.
@@ -374,6 +412,10 @@ def spd_to_aopicDER(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
         :out: 
             | 'DER' or str, optional
             | Determines values to return.
+        :force_1nm_sid_spacing:
+            | True, optional
+            | If True: when limiting the sid wavelength range to 380 nm -780 nm,
+            |   also, force the wavelength spacing to 1 nm by interpolating the sid.
             
     Returns:
         :returns: 
@@ -383,22 +425,43 @@ def spd_to_aopicDER(sid, cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
     """
     #----------------------------------
     # Get ELR for spd:
-    ELR, Ev = spd_to_aopicELR(sid, cieobs = cieobs, K = K, sid_units = sid_units,
-                    actionspectra = actionspectra, use_pusa = use_pusa, out = 'ELR,Ev')
+    ELR, Ev, sid = spd_to_aopicELR(sid, cieobs = cieobs, K = K, sid_units = sid_units,
+                    actionspectra = actionspectra, use_pusa = use_pusa, 
+                    force_1nm_sid_spacing = force_1nm_sid_spacing, out = 'ELR,Ev,sid',
+                    interp_settings = interp_settings)
     
 
     #----------------------------------
     # Get and interpolate reference illuminant spectrum:
+    ELR_ref = None
     if isinstance(ref,str):
-        ref = _CIE_D65 if (ref == 'D65') else _CIE_E
-    ref = cie_interp(ref, sid[0], 'spd') # make ref same wavelength range as spd!
+        if (ref == 'D65'):
+            ref = _CIE_D65 
+            ELR_ref = None#_ELR_D65_LUOX_APP_GITHUB/1000 # only works for D65 (and uses Km = 683.0015478, which is not mentioned in CIES026:2018)!
+        else:
+            ref = _CIE_E
 
-    #----------------------------------
-    # Get ELR for ref spd:
-    # ELR_ref = _ELR_D65_LUOX_APP_GITHUB/1000 # only works for D65 !
-    K = 683.0015478 # Excel calculator uses 683.0015478 lm/W, but javascript app uses 683.002 lm/W (except when for the pre-calculated ELR(D65)) !!!
-    ELR_ref = spd_to_aopicELR(ref, cieobs = cieobs, K = K, sid_units = sid_units,
-                            actionspectra = actionspectra, use_pusa = use_pusa)
+    
+    if ELR_ref is None: 
+        ref = cie_interp(ref, sid[0], 'spd') # make ref same wavelength range as spd!
+
+        #----------------------------------
+        # Get ELR for ref spd:
+        
+        # Excel calculator uses 683.0015478 lm/W overall, the javascript only uses it
+        # when pre-calculating the ELR(D65), for the remainder it uses 683.002.
+        # The CIE S026 publication only uses 683.002 lm/W!
+        # K = 683.0015478 # needed to match excel calculator toolbox (and javascript pre-calculated ELR(D65) values)) !!!
+        ELR_ref = spd_to_aopicELR(ref, cieobs = cieobs, K = K, sid_units = sid_units,
+                                actionspectra = actionspectra, use_pusa = use_pusa,
+                                force_1nm_sid_spacing = force_1nm_sid_spacing,
+                                interp_settings = interp_settings)
+        
+        # In CIE S026 these values are rounded to 4 digits for D65. 
+        # However, when only rounding the ELR_ref, the the DER would not be 1.0 anymore
+        # for D65! There is no mention of rounding ELR for the spectrum (nor actually any
+        # explicit mention for the D65). So we leave it unrounded.
+        # ELR_ref = np.round(ELR_ref, 4) 
     
 
     #----------------------------------
@@ -419,6 +482,7 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
                     cieobs = _CIEOBS, K = None, sid_units = 'W/m2',
                     actionspectra = 'CIE-S026', ref = 'D65', 
                     out = 'EDI', use_pusa = False,
+                    force_1nm_sid_spacing = True,
                     interp_settings = None):
     """
     Calculate alpha-opic equivalent daylight (D65) illuminance (lux)
@@ -456,6 +520,10 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
         :out: 
             | 'EDI' or str, optional
             | Determines values to return.
+        :force_1nm_sid_spacing:
+            | True, optional
+            | If True: when limiting the sid wavelength range to 380 nm -780 nm,
+            |   also, force the wavelength spacing to 1 nm by interpolating the sid.
             
     Returns:
         :returns: 
@@ -483,7 +551,9 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
     #----------------------------------
     # Calculate alpha-opic Daylight (D65) Efficacy Ratio (= alpha-opic Daylight (D65) Efficiency)
     DER, Ev = spd_to_aopicDER(sid, cieobs = cieobs, K = K, sid_units =  sid_units, out = 'DER,Ev',
-                    actionspectra = actionspectra, ref = ref, use_pusa = use_pusa)
+                    actionspectra = actionspectra, ref = ref, use_pusa = use_pusa,
+                    force_1nm_sid_spacing = force_1nm_sid_spacing,
+                    interp_settings = interp_settings)
    
     #----------------------------------
     # Calculate alpha-opic equivalent daylight (D65) illuminance:
@@ -504,7 +574,9 @@ def spd_to_aopicEDI(sid, Ee = None, E = None, Q = None,
 def spd_to_aopicX(sid, Xtype = 'E', out = None, sid_units = 'W/m2', 
                   Ee = None, E = None, Q = None, 
                   actionspectra = 'CIE-S026', ref = 'D65', use_pusa = False,
-                  cieobs = _CIEOBS, K = None):
+                  cieobs = _CIEOBS, K = None,
+                  force_1nm_sid_spacing = True, 
+                  interp_settings = None):
     """
     Calculate various alpha-opic quantites for the l-cone, m-cone, 
     s-cone, rod and iprgc (α) photoreceptor cells following CIE S026:2018.
@@ -555,6 +627,10 @@ def spd_to_aopicX(sid, Xtype = 'E', out = None, sid_units = 'W/m2',
             | None, optional
             | Photopic Luminous Efficacy (lm/W)
             | If None: use the one stored in _CMF[cmf]['K']
+        :force_1nm_sid_spacing:
+            | True, optional
+            | If True: when limiting the sid wavelength range to 380 nm -780 nm,
+            |   also, force the wavelength spacing to 1 nm by interpolating the sid.
             
     Returns:
         :returns: 
@@ -584,24 +660,32 @@ def spd_to_aopicX(sid, Xtype = 'E', out = None, sid_units = 'W/m2',
                              sid_units = sid_units, out = out, 
                              actionspectra = actionspectra,
                              cieobs = cieobs, K = K,
-                             use_pusa = use_pusa)
+                             use_pusa = use_pusa, 
+                             force_1nm_sid_spacing = force_1nm_sid_spacing,
+                             interp_settings = interp_settings)
     elif Xtype == 'EDI':
         if out is None: out = 'EDI'
         return spd_to_aopicEDI(sid, Ee = Ee, E = E, Q = Q, 
                                sid_units = sid_units, out = out, 
                                actionspectra = actionspectra, 
                                ref = ref, cieobs = cieobs, K = K,
-                               use_pusa = use_pusa)
+                               use_pusa = use_pusa,
+                               force_1nm_sid_spacing = force_1nm_sid_spacing,
+                               interp_settings = interp_settings)
     elif Xtype == 'DER':
         return spd_to_aopicDER(sid, sid_units = sid_units,
                                actionspectra = actionspectra, ref = ref,
                                cieobs = cieobs, K = K,
-                               use_pusa = use_pusa)
+                               use_pusa = use_pusa,
+                               force_1nm_sid_spacing = force_1nm_sid_spacing,
+                               interp_settings = interp_settings)
     elif Xtype == 'ELR':
         return spd_to_aopicELR(sid,  sid_units = sid_units,
                                actionspectra = actionspectra, 
                                cieobs = cieobs, K = K,
-                               use_pusa = use_pusa)
+                               use_pusa = use_pusa,
+                               force_1nm_sid_spacing = force_1nm_sid_spacing,
+                               interp_settings = interp_settings)
     else:
         raise Exception(f'Unknown Xtype: {Xtype}')
 
