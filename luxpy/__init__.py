@@ -287,11 +287,12 @@ list_of_toolboxes = ['photbiochem','indvcmf','spdbuild','hypspcim','iolidfiles',
                       # 'technoteamlmk', # don't import to not force additional dependencies: pywin32 and easygui
                       # 'stereoscopicviewer' # don't import to not force additional dependencies: harfang
                       ]
-try:
+
+try:   
     #   load ciephotbio sub_package:
     from .toolboxes import photbiochem 
     __all__ += ['photbiochem']
-    
+
     #   load Asano Individual Observer lms-CMF model:
     from .toolboxes import indvcmf 
     __all__ += ['indvcmf']
