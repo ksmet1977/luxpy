@@ -55,7 +55,8 @@ Module for calculating CIE (S026:2018 & TN003:2015) photobiological quantities
 | 
 | Notes:
 | 1. that in CIE S026 the l-cone, m-cone, s-cone -opic quantities are 
-| based on the CIE 2006 L,M,S 10° cone fundamentals!
+| based on the CIE 2006 L,M,S 10° cone fundamentals! (the value at 390 nm of the L-cone
+| spectral sensitivity has been corrected from 4.07615e-4 (CIE 2006 LMS functions) to 4.07619e-4).
 | 2. This differs from the approach in Lucas et al. (2014), 
 | where the cone spectral sensitivity functions are based on an opsin template, and
 | are denote by the terms 'erythropic', 'chloropic' and 'cyanopic', resp.
