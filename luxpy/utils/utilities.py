@@ -286,15 +286,15 @@ def put_args_in_db(db, args):
         return db
 
 #------------------------------------------------------------------------------   
-def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
+def vec_to_dict(vec= None, dic = None, vsize = None, keys = None):
     """
     Convert dict to vec and vice versa.
     
     Args:
         :vec: 
-            | list or vector array, optional
+            | None or list or vector array, optional
         :dic: 
-            | dict, optional
+            | None or dict, optional
         :vsize:
             | list or vector array with size of values of dict, optional
         :keys:
@@ -306,14 +306,15 @@ def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
             |   x is an array, if vec is None
             |   x is a dict, if vec is not None
     """
-    if vec is not None:
+    if (vec is not None) & (dic is None):
         # Put values in vec in dic:
         n = 0 # keeps track of length already read from x
+        dic = {}
         for i,v in enumerate(keys):
             dic[v] = vec[n + np.arange(vsize[i])]
             n += dic[v].shape[0] 
         return dic, vsize
-    else:
+    elif (vec is None) & (dic is not None):
         # Put values of keys in dic in vec:
         vec = []
         vsize = []
@@ -321,6 +322,8 @@ def vec_to_dict(vec= None, dic = {}, vsize = None, keys = None):
             vec = np.hstack((vec, dic[v]))
             vsize.append(dic[v].shape[0])
         return vec, vsize
+    else:
+        raise Exception('Either vec or dict must be not None, and also not both!')
 
 #------------------------------------------------------------------------------
 def loadtxt(filename, header = None, sep = ',', dtype = float, missing_values = np.nan):
