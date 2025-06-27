@@ -80,7 +80,7 @@ E.g.:
 # Initialize LuxPy
 ###############################################################################
 # Package info:
-__VERSION__ = 'v1.12.2'; """Current version"""
+__VERSION__ = 'v1.12.3'; """Current version"""
 __version__ = __VERSION__
 __DATE__ = 'May-02-2025'; """release date"""
 

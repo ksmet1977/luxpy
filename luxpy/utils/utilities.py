@@ -286,7 +286,7 @@ def put_args_in_db(db, args):
         return db
 
 #------------------------------------------------------------------------------   
-def vec_to_dict(vec= None, dic = None, vsize = None, keys = None):
+def vec_to_dict(vec = None, dic = None, vsize = None, keys = None):
     """
     Convert dict to vec and vice versa.
     

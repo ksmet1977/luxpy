@@ -3207,6 +3207,8 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     
     Txt = (TBB_m1 + (TBB_p1 - TBB_m1) * (x/l) * corr_x) * (corr_Tx)
 
+    # print('Txt, corr_Tx', Txt[0,0], corr_Tx)
+
     if apply_f_corr_to_triangular_x: 
         x = x*corr_Duvt_x # apply x correction for duv calculations: 
 
@@ -3231,6 +3233,8 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     # put this all the way at the end.
     Txp = Txp * f_corr  # correction factor depends on the LUT !!!!! (0.99991 is for 1% Table I in paper, for smaller % correction factor is not needed)
 
+    # print('Txp, f_corr', Txp[0,0], f_corr)
+
     Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
 
     # Shifted Triangular Solution 
@@ -3239,11 +3243,16 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     if apply_linear_shift:
         Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
 
+    
+    # print('Txt_shift', Txt_shift[0,0])
+
     # Select triangular (threshold=0), parabolic (threshold=inf) or 
     # combined solution:
     Tx, Duvx = Txt_shift, Duvxt 
     cnd = np.abs(Duvx) >= duv_triangular_threshold
     Tx[cnd], Duvx[cnd]= Txp[cnd], Duvxp[cnd]
+
+    # print('Tx', Tx[0,0])
 
     return Tx, Duvx, out_of_lut, (TBB_m1,TBB_p1)
 

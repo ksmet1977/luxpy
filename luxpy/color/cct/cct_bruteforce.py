@@ -59,6 +59,7 @@ def _check_sampling_interval(unit, interval, down_sampling_factor):
         raise Exception('Unknown unit')
 
 def _get_start_end(cctmin, interval, unit):
+    interval = 2*interval
     if unit == '%':
         start = (cctmin/(1+interval/100))
         end = (cctmin*(1+interval/100))
