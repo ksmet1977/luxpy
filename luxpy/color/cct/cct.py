@@ -177,7 +177,7 @@ _CCT_LUT = {}
 _CCT_UV_TO_TX_FCNS = {}
 _CCT_LUT_RESOLUTION_REDUCTION_FACTOR = 4 # for when cascading luts are used (d(Tm1,Tp1)-->divide in _CCT_LUT_RESOLUTION_REDUCTION_FACTOR segments)
 
-_CCT_FAST_DUV = True # use a fast, but slightly less accurate Duv calculation with Newton-Raphson
+_CCT_FAST_DUV = True # use a fast, but slightly less accurate Duv calculation with Newton-Raphson, robertson, etc.
 _CCT_VERBOSITY_LUT_GENERATION = 1
 
 # flow control parameters:
@@ -2361,7 +2361,6 @@ def _xyz_to_cct(xyzw, mode, is_uv_input = False, cieobs = _CIEOBS, wl = None, ou
                                                                         out_of_lut = out_of_lut,
                                                                         fast_duv = use_fast_duv,
                                                                         **mode_kwargs[mode])  
-        
 
         if force_tolerance:
             if (tol_method == 'cascading-lut') | (tol_method == 'cl'): 
@@ -2466,6 +2465,7 @@ def _uv_to_Tx_robertson1968(u, v, lut, lut_n_cols, ns = 4, out_of_lut = None,
         vBB_0, vBB_p1 = _get_pns_from_x(vBB, pn, i = idx_sources, m0p = '0p')
         ux, vx = (uBB_0 + slope * (uBB_p1 - uBB_0)), (vBB_0 + slope * (vBB_p1 - vBB_0))
         Duvx = _get_Duv_for_T_from_uvBB(u, v, ux, vx)
+
     return Tx, Duvx, out_of_lut, (TBB_m1, TBB_p1)
 
 _CCT_UV_TO_TX_FCNS['robertson1968'] = _uv_to_Tx_robertson1968
@@ -3159,7 +3159,7 @@ def get_correction_factor_for_Tx(lut, lut_fine = None, cctduv = None,
 
 def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None, 
                        f_corr = 1.0, duv_triangular_threshold = 0.002, 
-                       apply_linear_shift = True,apply_f_corr_to_triangular_x = False,
+                       apply_linear_shift = True, apply_f_corr_to_triangular_x = False,
                        verbosity = 0, **kwargs):
     """ 
     Calculate Tx from u,v and lut using Ohno2014.
@@ -3187,8 +3187,6 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     l = ((uBB_p1 - uBB_m1)**2 + (vBB_p1 - vBB_m1)**2)**0.5
     #l[l==0] += -(_CCT_AVOID_ZERO_DIV)
     x = (di_m1**2 - di_p1**2 + l**2) / (2*l)
-    # uTx = uBB_m1 + (uBB_p1 - uBB_m1)*(x/l)
-    vTx = vBB_m1 + (vBB_p1 - vBB_m1) * (x/l)
     
     # Following Ohno (2014): should be prior to Duv parabolic calcuations 
     # and CIE224-2017. Some implementation have none or 
@@ -3212,9 +3210,11 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
     if apply_f_corr_to_triangular_x: 
         x = x*corr_Duvt_x # apply x correction for duv calculations: 
 
+    vTx = vBB_m1 + (vBB_p1 - vBB_m1) * (x/l)
     Duvxt = (di_m1**2 - x**2)
     Duvxt[Duvxt<0] = 0
-    Duvxt = (Duvxt**0.5)*np.sign(v - vTx)
+    sign = np.sign(v - vTx)
+    Duvxt = (Duvxt**0.5)*sign
     #_plot_triangular_solution(u,v,uBB,vBB,TBB,pn)
 
 
@@ -3235,15 +3235,15 @@ def _uv_to_Tx_ohno2014(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
 
     # print('Txp, f_corr', Txp[0,0], f_corr)
 
-    Duvxp = np.sign(v - vTx)*(a*Txp**2 + b*Txp + c)
+    Duvxp = sign*(a*Txp**2 + b*Txp + c)
 
     # Shifted Triangular Solution 
     # (not part of Ohno2014, but implemented in CQS, TM30 calculators (not in CIE224-2017)):
-    Txt_shift = Txt.copy()
     if apply_linear_shift:
         Txt_shift = Txt + (Txp - Txt) * np.abs(Duvxt) * (1 / duv_triangular_threshold)
+    else:
+        Txt_shift = Txt.copy()
 
-    
     # print('Txt_shift', Txt_shift[0,0])
 
     # Select triangular (threshold=0), parabolic (threshold=inf) or 

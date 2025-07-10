@@ -252,23 +252,16 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
     # Normalize sid to Ee:
     ptype = 'pusa' if use_pusa else 'pu'
     if Ee is not None:
-        sid = spd_normalize(sid.copy(), norm_type = 'ru', norm_f = Ee,
-                            cieobs = cieobs, K = K,
-                            interp_settings = interp_settings)  
+        sid = spd_normalize(sid.copy(), norm_type = 'ru', norm_f = Ee, cieobs = cieobs, K = K, interp_settings = interp_settings)  
     elif E is not None:
-        sid = spd_normalize(sid.copy(), norm_type = ptype, norm_f = E, 
-                            cieobs = cieobs, K = K,
-                            interp_settings = interp_settings) 
+        sid = spd_normalize(sid.copy(), norm_type = ptype, norm_f = E, cieobs = cieobs, K = K, interp_settings = interp_settings) 
     elif Q is not None:
-        sid = spd_normalize(sid.copy(), norm_type = 'qu', norm_f = Q,
-                            cieobs = cieobs, K = K, 
-                            interp_settings = interp_settings) 
+        sid = spd_normalize(sid.copy(), norm_type = 'qu', norm_f = Q, cieobs = cieobs, K = K, interp_settings = interp_settings) 
         
     
     # Get sid irradiance (W/m²):
     if 'Ee' in outlist:
-        Ee = spd_to_power(sid, cieobs = cieobs, K = K, ptype = 'ru', 
-                          interp_settings = interp_settings)
+        Ee = spd_to_power(sid, cieobs = cieobs, K = K, ptype = 'ru', interp_settings = interp_settings)
     
     # Get sid illuminance (lx):
     if 'E' in outlist:
@@ -277,8 +270,7 @@ def spd_to_aopicE(sid, Ee = None, E = None, Q = None, cieobs = _CIEOBS, K = None
     
     # Get sid quantal energy (photons/m²/s):
     if 'Q' in outlist:
-        Q = spd_to_power(sid, cieobs = cieobs, K = K,  ptype = 'qu',
-                         interp_settings = interp_settings)
+        Q = spd_to_power(sid, cieobs = cieobs, K = K,  ptype = 'qu', interp_settings = interp_settings)
 
     # select requested actionspectra:
     if actionspectra == 'CIE-TN003':
