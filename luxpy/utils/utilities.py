@@ -104,6 +104,7 @@ import pstats
 import io
 import pickle
 import gzip
+import math
 from collections import OrderedDict as odict
 __all__ = ['odict']
 
@@ -1072,47 +1073,143 @@ def unique(array, sort = True):
         return uniq[index.argsort()]
 
 #------------------------------------------------------------------------------
-def save_pkl(filename, obj, compresslevel = 0): 
-    """ 
-    Save an object in a (gzipped) pickle file.
+# def save_pkl(filename, obj, compresslevel = 0): 
+#     """ 
+#     Save an object in a (gzipped) pickle file.
     
-    Args:
-        :filename:
-            | str with filename of pickle file.
-        :obj:
-            | python object to save
-        :compresslevel:
-            | 0, optional
-            | If > 0: use gzip to compress pkl file.
+#     Args:
+#         :filename:
+#             | str with filename of pickle file.
+#         :obj:
+#             | python object to save
+#         :compresslevel:
+#             | 0, optional
+#             | If > 0: use gzip to compress pkl file.
     
-    Returns:
-        :None:
-    """
-    _open = (lambda file,w: gzip.open(file+'.gz', w, compresslevel = compresslevel)) if (compresslevel > 0) else (lambda file, w: open(file,w))
-    with _open(filename, 'wb') as handle:
-        pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
+#     Returns:
+#         :None:
+#     """
+#     _open = (lambda file,w: gzip.open(file+'.gz', w, compresslevel = compresslevel)) if (compresslevel > 0) else (lambda file, w: open(file,w))
+#     with _open(filename, 'wb') as handle:
+#         pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
-def load_pkl(filename, gzipped = False):
-    """ 
-    Load the object in a (gzipped) pickle file.
+# def load_pkl(filename, gzipped = False):
+#     """ 
+#     Load the object in a (gzipped) pickle file.
+    
+#     Args:
+#         :filename:
+#             | str with filename of pickle file.
+#         :gzipped:
+#             | False, optional 
+#             | If True: '.gz' will be added to filename before opening. 
+        
+#     Returns:
+#         :obj:
+#             | loaded python object
+#     """
+#     obj = None
+#     if gzipped and (filename[-3:] != '.gz'): filename = filename + '.gz'
+#     _open = gzip.open if filename[-3:] == '.gz' else open
+#     with _open(filename, 'rb') as handle:
+#         obj = pickle.load(handle)
+#     return obj
+
+def save_pkl(filename, obj, compresslevel = 0, max_file_size_in_Mb = None, part_indicator = '_part_'):
+    """
+    Save an object in a (gzipped) pickle file, optionally splitting into multiple files.
     
     Args:
         :filename:
-            | str with filename of pickle file.
+          | str with (base) filename.
+        :obj: 
+            | Python object to save.
+        :compresslevel: 
+            | 0 or int, optional 
+            | If > 0: use gzip compression.
+        :max_file_size_in_Mb:
+            | None or float 
+            | Maximum file size per part in MB. If None, do not split.
+        :part_indicator:
+            | '_part_', optional
+            | String to indicate part number in filename (e.g., '_part_1', '_part_2',...).
+
+    Returns:
+        None
+    """
+    raw_data = pickle.dumps(obj, protocol=pickle.HIGHEST_PROTOCOL)
+    ext = ".pkl.gz" if compresslevel > 0 else ".pkl"
+    filename = filename.removesuffix(ext)  # Ensure no trailing extension
+    
+    max_bytes = int(max_file_size_in_Mb * 1024 * 1024)
+    n_parts = math.ceil(len(raw_data) / max_bytes)
+
+    if (max_file_size_in_Mb is None) or (n_parts <= 1):
+        _open = (lambda file, mode: gzip.open(file, mode, compresslevel=compresslevel)) if compresslevel > 0 else open
+        with _open(filename + ext, 'wb') as handle:
+            handle.write(raw_data)
+    else:
+        
+        for i in range(n_parts):
+            part_data = raw_data[i*max_bytes : (i+1)*max_bytes]
+            part_filename = f"{filename}{part_indicator}{i+1}{ext}"
+            _open = (lambda file, mode: gzip.open(file, mode, compresslevel=compresslevel)) if compresslevel > 0 else open
+            with _open(part_filename, 'wb') as handle:
+                handle.write(part_data)
+
+def load_pkl(filename, gzipped = False, part_indicator = '_part_'):
+    """
+    Load a (possibly split and/or gzipped) pickle file and reconstruct the object.
+
+    Args:
+        :filename: 
+            | str with (base) filename (without any part indices).
         :gzipped:
             | False, optional 
-            | If True: '.gz' will be added to filename before opening. 
-        
+            | If True, assume gzipped files (i.e., use .pkl.gz). If False, use .pkl.
+        :part_indicator:
+            | '_part_', optional
+            | String that was used when saving to indicate part number in filename (e.g., '_part_1', '_part_2',...).
+
     Returns:
-        :obj:
-            | loaded python object
+        obj: 
+            | loaded Python object.
     """
-    obj = None
-    if gzipped and (filename[-3:] != '.gz'): filename = filename + '.gz'
-    _open = gzip.open if filename[-3:] == '.gz' else open
-    with _open(filename, 'rb') as handle:
-        obj = pickle.load(handle)
-    return obj
+    ext = ".pkl.gz" if gzipped else ".pkl"
+    base_name = filename.removesuffix(ext)
+
+    if _is_split_pickle(base_name, ext, part_indicator):
+        i = 1
+        raw_data = bytearray()
+        while True:
+            part_file = f"{base_name}{part_indicator}{i}{ext}"
+            if not os.path.exists(part_file):
+                break
+            _open = gzip.open if part_file.endswith('.gz') else open
+            with _open(part_file, 'rb') as f:
+                raw_data += f.read()
+            i += 1
+        return pickle.loads(raw_data)
+    else:
+        if gzipped and not filename.endswith('.gz'):
+            filename += '.gz'
+        _open = gzip.open if filename.endswith('.gz') else open
+        with _open(filename, 'rb') as handle:
+            return pickle.load(handle)
+
+def _is_split_pickle(base_filename, ext = ".pkl", part_indicator = '_part_'):
+    """
+    Check whether a base filename corresponds to a split pickle object.
+    
+    Args:
+        base_filename (str): The base file name without suffix/index.
+        ext (str): The extension to check for (e.g., '.pkl' or '.pkl.gz').
+
+    Returns:
+        bool: True if split parts exist, False otherwise.
+    """
+    first_part = f"{base_filename}{part_indicator}1{ext}"
+    return os.path.exists(first_part)
 
 #------------------------------------------------------------------------------
 def _try_imageio_import(use_freeimage=True): 
