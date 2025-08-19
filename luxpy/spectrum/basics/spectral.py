@@ -1445,7 +1445,70 @@ def spd_to_power(data, ptype = 'ru', cieobs = _CIEOBS, K = None,
     return p
 
 #------------------------------------------------------------------------------
-def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
+# def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
+    # """
+    # Detect primary peak wavelengths and fwhm in spectrum spd.
+    
+    # Args:
+        # :spd:
+            # | ndarray with spectral data (2xN). 
+            # | First row should be wavelengths.
+        # :n:
+            # | 1, optional
+            # | The number of peaks to try to detect in spd. 
+        # :verbosity:
+            # | Make a plot of the detected peaks, their fwhm, etc.
+        # :kwargs:
+            # | Additional input arguments for scipy.signal.find_peaks.
+    # Returns:
+        # :prop:
+            # | list of dictionaries with keys: 
+            # | - 'peaks_idx' : index of detected peaks
+            # | - 'peaks' : peak wavelength values (nm)
+            # | - 'heights' : height of peaks
+            # | - 'fwhms' : full-width-half-maxima of peaks
+            # | - 'fwhms_mid' : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in 'peaks', then their is some non-symmetry in the peaks)
+            # | - 'fwhms_mid_heights' : height at the middle of the peak
+    # """
+    # from scipy import signal, interpolate # lazy import
+    
+    # props = []
+    # ips_to_spd_fit = np.polyfit(np.arange(spd.shape[1]),spd[0],1)
+    # for i in range(spd.shape[0]-1):
+        # peaks_, prop_ = signal.find_peaks(spd[i+1,:], **kwargs)
+        # prominences = signal.peak_prominences(spd[i+1,:], peaks_)[0]
+        # peaks = [peaks_[prominences.argmax()]]
+        # prominences[prominences.argmax()] = 0
+        # for j in range(n-1):
+            # peaks.append(peaks_[prominences.argmax()])
+            # prominences[prominences.argmax()] = 0
+        # peaks = np.sort(np.array(peaks))
+        # peak_heights = spd[i+1,peaks]
+        # _, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
+        # #left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
+        # left_ips, right_ips = np.polyval(ips_to_spd_fit, left_ips), np.polyval(ips_to_spd_fit, right_ips)
+        # widths = (right_ips - left_ips)
+        
+    
+        # # get middle of fwhm and calculate peak position and height:
+        # mpeaks = left_ips + widths/2
+        # hmpeaks = interpolate.InterpolatedUnivariateSpline(spd[0,:],spd[i+1,:])(mpeaks)
+    
+        # prop = {'peaks_idx' : peaks,'peaks' : spd[0,peaks], 'heights' : peak_heights,
+                # 'fwhms' : widths, 'fwhms_mid' : mpeaks, 'fwhms_mid_heights' : hmpeaks}
+        # props.append(prop)
+        # if verbosity == 1:
+            # print('Peak properties:', prop)
+            # results_half = (widths, width_heights, left_ips, right_ips)
+            # import matplotlib.pyplot as plt # lazy import
+            # plt.plot(spd[0,:],spd[i+1,:],'b-',label = 'spectrum')
+            # plt.plot(spd[0,peaks],spd[i+1,peaks],'ro', label = 'peaks')
+            # plt.hlines(*results_half[1:], color="C2", label = 'FWHM range of peaks')
+            # plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
+    # if verbosity == 1: plt.show()
+    # return props
+    
+def detect_peakwl(spd, n=1, verbosity=1, **kwargs):
     """
     Detect primary peak wavelengths and fwhm in spectrum spd.
     
@@ -1470,42 +1533,116 @@ def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):
             | - 'fwhms_mid' : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in 'peaks', then their is some non-symmetry in the peaks)
             | - 'fwhms_mid_heights' : height at the middle of the peak
     """
-    from scipy import signal, interpolate # lazy import
-    
+    from scipy import signal, interpolate
+    import matplotlib.pyplot as plt
+
+    wl = spd[0, :]
+    if not np.all(np.diff(wl) > 0):
+        raise ValueError("spd[0,:] (wavelength axis) must be strictly increasing.")
+
     props = []
-    ips_to_spd_fit = np.polyfit(np.arange(spd.shape[1]),spd[0],1)
-    for i in range(spd.shape[0]-1):
-        peaks_, prop_ = signal.find_peaks(spd[i+1,:], **kwargs)
-        prominences = signal.peak_prominences(spd[i+1,:], peaks_)[0]
-        peaks = [peaks_[prominences.argmax()]]
-        prominences[prominences.argmax()] = 0
-        for j in range(n-1):
-            peaks.append(peaks_[prominences.argmax()])
-            prominences[prominences.argmax()] = 0
-        peaks = np.sort(np.array(peaks))
-        peak_heights = spd[i+1,peaks]
-        _, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)
-        #left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]
-        left_ips, right_ips = np.polyval(ips_to_spd_fit, left_ips), np.polyval(ips_to_spd_fit, right_ips)
-        widths = (right_ips - left_ips)
-        
-    
-        # get middle of fwhm and calculate peak position and height:
-        mpeaks = left_ips + widths/2
-        hmpeaks = interpolate.InterpolatedUnivariateSpline(spd[0,:],spd[i+1,:])(mpeaks)
-    
-        prop = {'peaks_idx' : peaks,'peaks' : spd[0,peaks], 'heights' : peak_heights,
-                'fwhms' : widths, 'fwhms_mid' : mpeaks, 'fwhms_mid_heights' : hmpeaks}
+    for i in range(1, spd.shape[0]):
+        y = spd[i, :]
+
+        # 1) Find candidate peaks, allow user constraints via **kwargs
+        peaks_all, _ = signal.find_peaks(y, **kwargs)
+        if peaks_all.size == 0:
+            if verbosity:
+                print("No peaks found in spectrum row", i)
+            props.append({
+                'peaks_idx': np.array([], dtype=int),
+                'peaks': np.array([]),
+                'heights': np.array([]),
+                'fwhms': np.array([]),
+                'fwhms_mid': np.array([]),
+                'fwhms_mid_heights': np.array([]),
+            })
+            continue
+
+        # 2) Rank by prominence (robust selection) and keep top-n
+        prominences, _, _ = signal.peak_prominences(y, peaks_all)
+        order = np.argsort(prominences)[::-1]
+        peaks = np.sort(peaks_all[order[:min(n, order.size)]])
+        peak_heights = y[peaks]
+
+        # Helper: linear crossing λ for a target between samples k and k+1
+        def interp_cross_lambda(k, target):
+            y0, y1 = y[k], y[k+1]
+            if y1 == y0:  # flat segment; return midpoint in λ as a fallback
+                return 0.5 * (wl[k] + wl[k+1])
+            t = (target - y0) / (y1 - y0)
+            return wl[k] + t * (wl[k+1] - wl[k])
+
+        fwhm_left = np.full(peaks.size, np.nan)
+        fwhm_right = np.full(peaks.size, np.nan)
+        width_level = np.empty(peaks.size)
+
+        for pi, p in enumerate(peaks):
+            target = 0.5 * y[p]
+            width_level[pi] = target
+
+            # --- Left crossing (search left of the peak for first downward crossing) ---
+            left_lambda = np.nan
+            for k in range(p-1, -1, -1):
+                # Want a bracket where values straddle 'target'
+                y_lo, y_hi = y[k], y[k+1]
+                if (y_lo <= target <= y_hi) or (y_hi <= target <= y_lo):
+                    left_lambda = interp_cross_lambda(k, target)
+                    break
+
+            # --- Right crossing (search right of the peak) ---
+            right_lambda = np.nan
+            for k in range(p, wl.size-1):
+                y_lo, y_hi = y[k], y[k+1]
+                if (y_lo >= target >= y_hi) or (y_hi >= target >= y_lo):
+                    right_lambda = interp_cross_lambda(k, target)
+                    break
+
+            fwhm_left[pi] = left_lambda
+            fwhm_right[pi] = right_lambda
+
+        widths_wl = fwhm_right - fwhm_left  # NaN if one side missing
+
+        # Midpoint λ and its height (diagnostic)
+        mpeaks = 0.5 * (fwhm_left + fwhm_right)
+        spline = interpolate.InterpolatedUnivariateSpline(wl, y, k=3)
+        # If midpoint NaN (no width), keep NaN height
+        hmpeaks = np.full_like(mpeaks, np.nan, dtype=float)
+        valid_mid = np.isfinite(mpeaks)
+        if np.any(valid_mid):
+            hmpeaks[valid_mid] = spline(mpeaks[valid_mid])
+
+        prop = {
+            'peaks_idx': peaks,
+            'peaks': wl[peaks],
+            'heights': peak_heights,
+            'fwhms': widths_wl,
+            'fwhms_mid': mpeaks,
+            'fwhms_mid_heights': hmpeaks,
+        }
         props.append(prop)
-        if verbosity == 1:
+
+        if verbosity:
             print('Peak properties:', prop)
-            results_half = (widths, width_heights, left_ips, right_ips)
-            import matplotlib.pyplot as plt # lazy import
-            plt.plot(spd[0,:],spd[i+1,:],'b-',label = 'spectrum')
-            plt.plot(spd[0,peaks],spd[i+1,peaks],'ro', label = 'peaks')
-            plt.hlines(*results_half[1:], color="C2", label = 'FWHM range of peaks')
-            plt.plot(mpeaks,hmpeaks,'gd', label = 'middle of FWHM range')
-    if verbosity == 1: plt.show()
+            plt.figure()
+            plt.plot(wl, y, 'b-', label='spectrum')
+            plt.plot(wl[peaks], y[peaks], 'ro', label='peaks')
+            # Draw half-height lines where crossings exist
+            for L, R, H in zip(fwhm_left, fwhm_right, width_level):
+                if np.isfinite(L) and np.isfinite(R):
+                    plt.hlines(H, L, R, color='C2',
+                               label='FWHM (half-height)' if 'FWHM (half-height)' not in plt.gca().get_legend_handles_labels()[1] else None)
+            # Midpoints
+            valid = np.isfinite(mpeaks)
+            plt.plot(mpeaks[valid], hmpeaks[valid], 'gd', label='mid of FWHM span')
+            plt.xlabel('Wavelength (nm)')
+            plt.ylabel('Amplitude')
+            plt.title('Detected peak(s) and FWHM(s)')
+            plt.legend(loc='best')
+
+    if verbosity:
+        plt.show()
+
     return props
 
 #------------------------------------------------------------------------------
