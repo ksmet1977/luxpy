@@ -1533,8 +1533,7 @@ def detect_peakwl(spd, n=1, verbosity=1, **kwargs):
             | - 'fwhms_mid' : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in 'peaks', then their is some non-symmetry in the peaks)
             | - 'fwhms_mid_heights' : height at the middle of the peak
     """
-    from scipy import signal, interpolate
-    import matplotlib.pyplot as plt
+    from scipy import signal, interpolate  #lazy import
 
     wl = spd[0, :]
     if not np.all(np.diff(wl) > 0):
@@ -1624,6 +1623,7 @@ def detect_peakwl(spd, n=1, verbosity=1, **kwargs):
 
         if verbosity:
             print('Peak properties:', prop)
+            import matplotlib.pyplot as plt # lazy import
             plt.figure()
             plt.plot(wl, y, 'b-', label='spectrum')
             plt.plot(wl[peaks], y[peaks], 'ro', label='peaks')
