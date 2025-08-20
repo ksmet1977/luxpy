@@ -194,6 +194,7 @@ def hue_quadrature(h, unique_hue_data = None, forward = True):
                            'Hi':[0.0,100.0,200.0,300.0,400.0]}
     
     ndim = np.array(h).ndim
+    if ndim == 3: h,ndim = h[...,0], 2
 
     hi = unique_hue_data['hi']
     Hi = unique_hue_data['Hi']
