@@ -514,7 +514,7 @@ def cie_interp(data, wl_new, datatype = 'none',
             | is set as the default.
         :extrap_values:
             | None, optional
-            | If float or list or ndarray, use those values to fill extrapolated value(s) when :extrap_kind:S == 'fill_value'.
+            | If float or list or ndarray, use those values to fill extrapolated value(s) when :extrap_kind: == 'fill_value'.
         :extrap_log:
             | None, optional
             | If None: the value from interp_settings is used.
@@ -615,6 +615,7 @@ def cie_interp(data, wl_new, datatype = 'none',
         else:
             raise Exception("Unsupported extrapolation type, extrap_kind = {}.\n - Options: None or 'nearest',[= 'flat', 'const'],'zeros','linear','quadratic','cubic','fill_value'".format(extrap_kind))
         if (extrap_values is None): extrap_values = interp_settings[datatype]['fill_value']
+        if isinstance(extrap_values, (tuple, list, float, int, np.ndarray)): etype = 'fill_value' # if a value is given, use fill_value extrapolation
         if (negative_values_allowed is None): negative_values_allowed = interp_settings[datatype]['negative_values_allowed'] 
         if (force_scipy_interpolator is None): force_scipy_interpolator = interp_settings['general']['force_scipy_interpolator']
         if (scipy_interpolator is None): scipy_interpolator = interp_settings['general']['scipy_interpolator'] 
