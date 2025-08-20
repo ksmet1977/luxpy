@@ -82,7 +82,7 @@ E.g.:
 # Package info:
 __VERSION__ = 'v1.12.4'; """Current version"""
 __version__ = __VERSION__
-__DATE__ = 'August-19-2025'; """release date"""
+__DATE__ = 'Aug-19-2025'; """release date"""
 
 __COPYRIGHT__ = 'Copyright (C) 2017-2025 - Kevin A.G. Smet'; """copyright info"""
 
