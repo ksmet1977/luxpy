@@ -1453,8 +1453,8 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
                floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
                grid_interp_method='linear', angle_res = 5, theta_min = 0,
                ax3D = None, ax2D = None, join_axes = True, legend_on = True,
-               plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
-               plot_sensor_position = True, plot_sensor_pixels = True, plot_sensor_rays = False, 
+               plot_luminaire_position = True, plot_luminaire_rays = False, plot_luminaire_lid = True,
+               plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
                plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
                plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
                out = 'Lv2D'):
@@ -1636,21 +1636,26 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
         ax2D = fig2D.add_subplot(111)
 
     if ax3D != False:
+        legend_labels = []
         if plot_luminaire_position:
             dv = 1.2
             ax3D.plot(luminaire_position[:,0],luminaire_position[:,1],luminaire_position[:,2],color = 'y',marker='p',markersize=14,label='luminaire')
             ax3D.plot(np.vstack((luminaire_position[:,0],luminaire_position[:,0]+dv*luminaire_n_[0]))[:,0],
                       np.vstack((luminaire_position[:,1],luminaire_position[:,1]+dv*luminaire_n_[1]))[:,0],
                       np.vstack((luminaire_position[:,2],luminaire_position[:,2]+dv*luminaire_n_[2]))[:,0],'y-',linewidth = 3)
-
+        
         if plot_sensor_pixels:
+            legend_labels.append('sensor pixels')
             ax3D.plot(sensor_pixels[:,0],sensor_pixels[:,1],sensor_pixels[:,2],'g.',label = 'sensor pixels',alpha=0.5)
+        
         if plot_sensor_position:
             dv = 0.1
+            legend_labels.append('sensor focal point')
             ax3D.plot(sensor_position[:,0],sensor_position[:,1],sensor_position[:,2],'ro', label = 'sensor focal point',alpha=0.5)
             ax3D.plot(np.vstack((sensor_position[:,0],sensor_position[:,0]+dv*sensor_n[0]))[:,0],
                       np.vstack((sensor_position[:,1],sensor_position[:,1]+dv*sensor_n[1]))[:,0],
                       np.vstack((sensor_position[:,2],sensor_position[:,2]+dv*sensor_n[2]))[:,0],'r-',linewidth = 3)
+        
         if plot_sensor_rays:
             # for i in range(sensor_pixels.shape[0]):
             #     ax3D.plot(np.vstack((sensor_pixels[i,0],sensor_position[:,0]))[:,0],
@@ -1659,6 +1664,7 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
             t = 3
             for i in range(drays.shape[0]):
                 if i == 0:
+                    legend_labels.append('sensor rays')
                     ax3D.plot(np.vstack((sensor_position[:,0]+t*drays[i,0],sensor_position[:,0]))[:,0],
                         np.vstack((sensor_position[:,1]+t*drays[i,1],sensor_position[:,1]))[:,0],
                         np.vstack((sensor_position[:,2]+t*drays[i,2],sensor_position[:,2]))[:,0],'c.:',label = 'sensor rays',alpha = 0.4) 
@@ -1667,12 +1673,13 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
                         np.vstack((sensor_position[:,1]+t*drays[i,1],sensor_position[:,1]))[:,0],
                         np.vstack((sensor_position[:,2]+t*drays[i,2],sensor_position[:,2]))[:,0],'c.:',alpha = 0.4) 
         
-        if plot_lumiaire_rays:
+        if plot_luminaire_rays:
             t = 3
             drays_ = intersectionpoints - luminaire_position
             drays_ = drays_/_norm(drays_,axis=1)
             for i in range(drays_.shape[0]):
                 if i == 0:
+                    legend_labels.append('luminaire rays')
                     ax3D.plot(np.vstack((luminaire_position[:,0]+t*drays_[i,0],luminaire_position[:,0]))[:,0],
                         np.vstack((luminaire_position[:,1]+t*drays_[i,1],luminaire_position[:,1]))[:,0],
                         np.vstack((luminaire_position[:,2]+t*drays_[i,2],luminaire_position[:,2]))[:,0],'y.:',label = 'luminaire rays',alpha = 0.4) 
@@ -1680,12 +1687,18 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
                     ax3D.plot(np.vstack((luminaire_position[:,0]+t*drays_[i,0],luminaire_position[:,0]))[:,0],
                         np.vstack((luminaire_position[:,1]+t*drays_[i,1],luminaire_position[:,1]))[:,0],
                         np.vstack((luminaire_position[:,2]+t*drays_[i,2],luminaire_position[:,2]))[:,0],'y.:',alpha = 0.4) 
+        
         if plot_luminaire_lid:
-            ax3D.scatter(xm_map_r.ravel(),ym_map_r.ravel(),zm_map_r.ravel(),c=values_map.ravel(),marker='.',alpha = 0.5)
+            values_map_norm = values_map.copy()
+            values_map_norm = values_map_norm/values_map.max()
+            values_map_norm = values_map_norm.ravel()*maxL
+            ax3D.scatter(xm_map_r.ravel(),ym_map_r.ravel(),zm_map_r.ravel(),c=values_map_norm,marker='.', alpha = 0.5, vmin = 0, vmax = maxL, cmap='jet')
                     
         if plot_wall_intersections:
+            legend_labels.append('wall-ray intersections')
             ax3D.plot(intersectionpoints_wall[:,0],intersectionpoints_wall[:,1],intersectionpoints_wall[:,2],'bo', label = 'wall-ray intersection')
         if plot_floor_intersections:
+            legend_labels.append('floor-ray intersections') 
             ax3D.plot(intersectionpoints_floor[:,0],intersectionpoints_floor[:,1],intersectionpoints_floor[:,2],'mo', label = 'floor-ray intersections')
         if plot_wall_edges:
             _plot_plane_edges(wall_corners, ax3D, color = 'b', marker = 's')
@@ -1704,11 +1717,12 @@ def render_lid(LID = './data/luxpy_test_lid_file.ies',
                       np.vstack((floor_center[2],floor_center[2]+dv*floor_n[2]))[:,0],'m-',linewidth = 3)
         
         if plot_wall_luminance:
-            ax3D.scatter(intersectionpoints_wall[:,0],intersectionpoints_wall[:,1],intersectionpoints_wall[:,2], c = L_wall,cmap='gray',vmin = 0, vmax=maxL)
+            ax3D.scatter(intersectionpoints_wall[:,0],intersectionpoints_wall[:,1],intersectionpoints_wall[:,2], c = L_wall,cmap='gray', alpha = 0.1, vmin = 0, vmax=maxL)
         if plot_floor_luminance:
-            ax3D.scatter(intersectionpoints_floor[:,0],intersectionpoints_floor[:,1],intersectionpoints_floor[:,2], c = L_floor,cmap='gray',vmin = 0, vmax=maxL)
-        if legend_on:
-            ax3D.legend()
+            ax3D.scatter(intersectionpoints_floor[:,0],intersectionpoints_floor[:,1],intersectionpoints_floor[:,2], c = L_floor,cmap='gray',alpha = 0.1, vmin = 0, vmax=maxL)
+        if legend_on & (len(legend_labels)>0):
+            ax3D.legend(labels=legend_labels)
+
         
     if ax2D != False:
         ax2D.imshow(Lv2D, cmap='gray',vmin = 0, vmax = maxL)
@@ -1866,7 +1880,7 @@ if __name__ == '__main__':
     #                     wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
     #                     floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
     #                     ax3D = None, ax2D = None, join_axes = False, 
-    #                     plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
+    #                     plot_luminaire_position = True, plot_luminaire_rays = False, plot_luminaire_lid = True,
     #                     plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
     #                     plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
     #                     plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
@@ -1886,7 +1900,7 @@ if __name__ == '__main__':
                         wall_center = [0,2,1], wall_n = [0,-1,0], wall_width = 4, wall_height = 2, wall_rho = 1,
                         floor_center = [0,1,0], floor_n = [0,0,1], floor_width = 4, floor_height = 2, floor_rho = 1,
                         ax3D = axs[1], ax2D = axs[3], join_axes = False, 
-                        plot_luminaire_position = True, plot_lumiaire_rays = False, plot_luminaire_lid = True,
+                        plot_luminaire_position = True, plot_luminaire_rays = False, plot_luminaire_lid = True,
                         plot_sensor_position = True, plot_sensor_pixels = False, plot_sensor_rays = False, 
                         plot_wall_edges = True, plot_wall_luminance = True, plot_wall_intersections = False,
                         plot_floor_edges = True, plot_floor_luminance = True, plot_floor_intersections = False,
