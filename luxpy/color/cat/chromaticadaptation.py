@@ -27,7 +27,7 @@ cat: Module supporting chromatic adaptation transforms (corresponding colors)
 
  :_MCATS: | default chromatic adaptation sensor spaces
           | * 'hpe': Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley & Sons Ltd, 2004.
-          | * 'cat02': from ciecam02: `CIE159-2004, âA Colour Apperance Model for Color Management System: CIECAM02,â? CIE, Vienna, 2004. <http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract>`_
+          | * 'cat02': from ciecam02: `CIE159-2004, "A Colour Apperance Model for Color Management System: CIECAM02," CIE, Vienna, 2004. <http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract>`_
           | * 'cat02-bs':  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. <http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract>`_
           | * 'cat02-jiang': cat02 modified to solve yb-probem + purple problem: `Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503. <http://onlinelibrary.wiley.com/doi/10.1002/col.21921/abstract>`_
           | * 'kries'
@@ -675,10 +675,10 @@ def apply_vonkries1(xyz, xyzw1, xyzw2, D = 1,
         rgb = math.dot23(mcat, xyz.T)
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
-    elif (in_type == 'xyz') & (use_Yw == False):
-        rgb = xyz
-        rgbw1 = xyzw1
-        rgbw2 = xyzw2
+    elif (in_type != 'xyz') & (use_Yw == False):
+        rgb = xyz.T
+        rgbw1 = xyzw1.T
+        rgbw2 = xyzw2.T
     else:
         raise Exception('Use of Yw requires xyz input.')
             
@@ -776,11 +776,11 @@ def apply_vonkries2(xyz, xyzw1, xyzw2, xyzw0 = None, D = 1,
         rgbw1 = math.dot23(mcat, xyzw1.T)
         rgbw2 = math.dot23(mcat, xyzw2.T)
         rgbw0 = math.dot23(mcat, xyzw0.T)
-    elif (in_type == 'xyz') & (use_Yw == False):
-        rgb = xyz
-        rgbw1 = xyzw1
-        rgbw2 = xyzw2
-        rgbw0 = xyzw0
+    elif (in_type != 'xyz') & (use_Yw == False):
+        rgb = xyz.T
+        rgbw1 = xyzw1.T
+        rgbw2 = xyzw2.T
+        rgbw0 = xyzw0.T
     else:
         raise Exception('Use of Yw requires xyz input.')
         
