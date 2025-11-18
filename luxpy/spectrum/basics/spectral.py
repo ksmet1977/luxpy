@@ -197,7 +197,7 @@ def getwld(wl):
 
 #------------------------------------------------------------------------------
 def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOBS, K = None,
-                  interp_settings = None):
+                  copy = True, interp_settings = None):
     """
     Normalize a spectral power distribution (SPD).
     
@@ -230,11 +230,15 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             | None, optional
             | Luminous efficacy of radiation.
             | Must be supplied if cieobs is an array for norm_type == 'pu'
+        :copy:
+            | True, optional
+            | If False: normalize in-place.
     
     Returns:
         :returns: 
             | ndarray with normalized data.
     """
+    data_out = data.copy() if copy else data
     if norm_type is not None:
         if not isinstance(norm_type,list): norm_type = [norm_type]
         
@@ -251,6 +255,7 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
             dl = 1 #no wavelengths provided
             
         offset = int(wl)
+        
         for i in range(data.shape[0]-offset):  
             norm_type_ = norm_type[i] if (len(norm_type)>1) else norm_type[0]
 
@@ -260,20 +265,19 @@ def spd_normalize(data, norm_type = None, norm_f = 1, wl = True, cieobs = _CIEOB
                 norm_f_ = 560.0 if (norm_type_ == 'lambda') else 1.0
       
             if norm_type_=='max':
-                data[i+offset]=norm_f_*data[i+offset]/np.max(data[i+offset])
+                data_out[i+offset]=norm_f_*data[i+offset]/np.max(data[i+offset])
             elif norm_type_=='area':
-                data[i+offset]=norm_f_*data[i+offset]/(np.sum(data[i+offset])*dl)
+                data_out[i+offset]=norm_f_*data[i+offset]/(np.sum(data[i+offset])*dl)
             elif norm_type_=='lambda':
                 wl_index = np.abs(wlr-norm_f_).argmin()
-                data[i+offset]=data[i+offset]/data[i+offset][wl_index]
+                data_out[i+offset]=data[i+offset]/data[i+offset][wl_index]
             elif (norm_type_ == 'ru') | (norm_type_ == 'pu') | (norm_type == 'pusa') | (norm_type_ == 'qu'):
                 rpq_power = spd_to_power(data[[0,i+offset],:], cieobs = cieobs, K = K, ptype = norm_type_,
                                          interp_settings = interp_settings)
-                data[i+offset] = (norm_f/rpq_power)*data[i+offset]
+                data_out[i+offset] = (norm_f/rpq_power)*data[i+offset]
             else:
-                data[i+offset]=data[i+offset]/norm_f_
-    return data
-
+                data_out[i+offset]=data[i+offset]/norm_f_
+    return data_out
 
 #--------------------------------------------------------------------------------------------------
 def spectral_interp(data, wl_new, stype = 'cmf', 
