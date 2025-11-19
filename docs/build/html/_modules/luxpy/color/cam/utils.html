@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cam.utils &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.cam.utils &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -95,16 +90,16 @@
 
 <span class="sd">@author: ksmet1977 at gmail.com</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">math</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;naka_rushton&#39;</span><span class="p">,</span> <span class="s1">&#39;hue_angle&#39;</span><span class="p">,</span> <span class="s1">&#39;deltaH&#39;</span><span class="p">,</span> <span class="s1">&#39;hue_quadrature&#39;</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="hue_angle">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.hue_angle">[docs]</a>
-<span class="k">def</span> <span class="nf">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hue_angle</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate positive hue angle (0°-360° or 0 - 2*pi rad.) from opponent signals a and b.</span>
 <span class="sd">    </span>
@@ -125,9 +120,51 @@
 
 
 
+<span class="c1"># def naka_rushton(data, sig = 2.0, n = 0.73, scaling = 1.0, noise = 0.0, forward = True):</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).</span>
+    
+<span class="c1">#     | NK(x) = sign(x) * scaling * ((abs(x)**n) / ((abs(x)**n) + (sig**n))) + noise</span>
+    
+<span class="c1">#     Args:</span>
+<span class="c1">#         :data:</span>
+<span class="c1">#             | float or ndarray</span>
+<span class="c1">#         :sig: </span>
+<span class="c1">#             | 2.0, optional</span>
+<span class="c1">#             | Semi-saturation constant. Value for which NK(:data:) is 1/2</span>
+<span class="c1">#         :n: </span>
+<span class="c1">#             | 0.73, optional</span>
+<span class="c1">#             | Compression power.</span>
+<span class="c1">#         :scaling:</span>
+<span class="c1">#             | 1.0, optional</span>
+<span class="c1">#             | Maximum value of NK-function.</span>
+<span class="c1">#         :noise:</span>
+<span class="c1">#             | 0.0, optional</span>
+<span class="c1">#             | Cone excitation noise.</span>
+<span class="c1">#         :forward:</span>
+<span class="c1">#             | True, optional</span>
+<span class="c1">#             | True: do NK(x) </span>
+<span class="c1">#             | False: do NK(x)**(-1).</span>
+    
+<span class="c1">#     Returns:</span>
+<span class="c1">#         :returns: </span>
+<span class="c1">#             | float or ndarray with NK-(de)compressed input :x:        </span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     if forward:</span>
+<span class="c1">#         return np.sign(data)*scaling * ((np.abs(data)**n) / ((np.abs(data)**n) + (sig**n))) + noise</span>
+<span class="c1">#     elif forward == False:</span>
+<span class="c1">#         Ip =  sig*(((np.abs(np.abs(data)-noise))/(scaling-np.abs(np.abs(data)-noise))))**(1/n)</span>
+<span class="c1">#         if not np.isscalar(Ip):</span>
+<span class="c1">#             p = np.where(np.abs(data) &lt; noise)</span>
+<span class="c1">#             Ip[p] = -Ip[p]</span>
+<span class="c1">#         else:</span>
+<span class="c1">#             if np.abs(data) &lt; noise:</span>
+<span class="c1">#                 Ip = -Ip</span>
+<span class="c1">#         return Ip</span>
+
 <div class="viewcode-block" id="naka_rushton">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.naka_rushton">[docs]</a>
-<span class="k">def</span> <span class="nf">naka_rushton</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.73</span><span class="p">,</span> <span class="n">scaling</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">naka_rushton</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sig</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mf">0.73</span><span class="p">,</span> <span class="n">scaling</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">noise</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Apply a Naka-Rushton response compression (n) and an adaptive shift (sig).</span>
 <span class="sd">    </span>
@@ -158,21 +195,16 @@
 <span class="sd">            | float or ndarray with NK-(de)compressed input :x:        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">forward</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">*</span><span class="n">scaling</span> <span class="o">*</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">sig</span><span class="o">**</span><span class="n">n</span><span class="p">)))</span> <span class="o">+</span> <span class="n">noise</span>
+        <span class="k">return</span>  <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">scaling</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="n">n</span><span class="p">)</span>  <span class="o">+</span> <span class="n">sig</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
     <span class="k">elif</span> <span class="n">forward</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
-        <span class="n">Ip</span> <span class="o">=</span>  <span class="n">sig</span><span class="o">*</span><span class="p">(((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="n">noise</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">scaling</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="n">noise</span><span class="p">))))</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">Ip</span><span class="p">):</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">)</span>
-            <span class="n">Ip</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ip</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">noise</span><span class="p">:</span>
-                <span class="n">Ip</span> <span class="o">=</span> <span class="o">-</span><span class="n">Ip</span>
-        <span class="k">return</span> <span class="n">Ip</span></div>
+        <span class="n">z</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span> <span class="o">-</span> <span class="n">noise</span><span class="p">)</span> <span class="o">/</span> <span class="n">scaling</span>
+        <span class="n">sgn_z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">((</span><span class="n">data</span> <span class="o">-</span> <span class="n">noise</span><span class="p">)</span> <span class="o">/</span> <span class="n">scaling</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sgn_z</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig</span><span class="o">**</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">sgn_z</span> <span class="o">-</span> <span class="n">z</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span></div>
 
     
 <div class="viewcode-block" id="deltaH">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.deltaH">[docs]</a>
-<span class="k">def</span> <span class="nf">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</span>
 <span class="sd">    </span>
@@ -211,7 +243,7 @@
 
 <div class="viewcode-block" id="hue_quadrature">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.hue_quadrature">[docs]</a>
-<span class="k">def</span> <span class="nf">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">hue_quadrature</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get hue quadrature H from hue h.</span>
 <span class="sd">    </span>
@@ -247,6 +279,7 @@
                            <span class="s1">&#39;Hi&#39;</span><span class="p">:[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">100.0</span><span class="p">,</span><span class="mf">200.0</span><span class="p">,</span><span class="mf">300.0</span><span class="p">,</span><span class="mf">400.0</span><span class="p">]}</span>
     
     <span class="n">ndim</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span>
+    <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span><span class="n">ndim</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="mi">2</span>
 
     <span class="n">hi</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;hi&#39;</span><span class="p">]</span>
     <span class="n">Hi</span> <span class="o">=</span> <span class="n">unique_hue_data</span><span class="p">[</span><span class="s1">&#39;Hi&#39;</span><span class="p">]</span>
@@ -314,6 +347,10 @@
             <span class="n">h_j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">/</span><span class="p">((</span><span class="n">H_j</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">Hi</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span><span class="o">*</span><span class="p">(</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="p">])</span> <span class="o">-</span> <span class="mi">100</span><span class="o">*</span><span class="n">ei</span><span class="p">[</span><span class="n">pi</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">pi</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">p</span><span class="p">)])</span>
             <span class="n">h</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">j</span><span class="p">:</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">h_j</span>
         <span class="n">h</span><span class="p">[</span><span class="n">h</span> <span class="o">&gt;</span> <span class="mi">360</span> <span class="o">-</span> <span class="n">hi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">1</span><span class="p">]</span> <span class="o">-=</span> <span class="mf">360.0</span>
+
+
+        <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">360</span>
+        <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span><span class="p">[</span><span class="n">h</span><span class="o">&gt;</span><span class="mi">360</span><span class="p">]</span> <span class="o">-</span> <span class="mi">360</span>
     
         <span class="k">if</span> <span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">h</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>

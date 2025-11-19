@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.spectrum.basics.spectral &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -171,13 +166,13 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">math</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">_EPS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span>  <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">getdata</span><span class="p">,</span> <span class="n">_EPS</span>
 
-<span class="kn">from</span> <span class="nn">.cmf</span> <span class="kn">import</span> <span class="n">_CMF</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.cmf</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CMF</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_BB&#39;</span><span class="p">,</span><span class="s1">&#39;_WL3&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_S_INTERP_TYPE&#39;</span><span class="p">,</span> <span class="s1">&#39;_R_INTERP_TYPE&#39;</span><span class="p">,</span><span class="s1">&#39;_C_INTERP_TYPE&#39;</span><span class="p">,</span>
            <span class="s1">&#39;_SPECTRUM_TYPES&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_REFERENCE&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_SETTINGS&#39;</span><span class="p">,</span><span class="s1">&#39;_INTERP_SETTINGS_ALL&#39;</span><span class="p">,</span> 
            <span class="s1">&#39;getwlr&#39;</span><span class="p">,</span><span class="s1">&#39;getwld&#39;</span><span class="p">,</span><span class="s1">&#39;spd_normalize&#39;</span><span class="p">,</span><span class="s1">&#39;spectral_interp&#39;</span><span class="p">,</span><span class="s1">&#39;cie_interp&#39;</span><span class="p">,</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;xyzbar&#39;</span><span class="p">,</span> <span class="s1">&#39;vlbar&#39;</span><span class="p">,</span> 
@@ -200,9 +195,9 @@
 <span class="c1"># Define interpolation types (conform CIE15:20xx): </span>
 <span class="n">_SPECTRUM_TYPES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spd&#39;</span><span class="p">,</span><span class="s1">&#39;cmf&#39;</span><span class="p">,</span><span class="s1">&#39;rfl&#39;</span><span class="p">,</span><span class="s1">&#39;none&#39;</span><span class="p">]</span>
 <span class="n">_INTERP_REFERENCE</span> <span class="o">=</span> <span class="s1">&#39;CIE15:2018&#39;</span>
-<span class="n">_INTERP_SETTINGS_ALL</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;CIE15:2018&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;spd&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
-                                    <span class="s1">&#39;cmf&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
-                                    <span class="s1">&#39;rfl&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+<span class="n">_INTERP_SETTINGS_ALL</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;CIE15:2018&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;spd&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                                    <span class="s1">&#39;cmf&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+                                    <span class="s1">&#39;rfl&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
                                     <span class="s1">&#39;none&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
                                     <span class="p">},</span>
                     <span class="s1">&#39;CIE15:2004&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;spd&#39;</span>  <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span>  <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>     <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
@@ -211,7 +206,7 @@
                                     <span class="s1">&#39;none&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;itype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;etype&#39;</span> <span class="p">:</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span>     <span class="s1">&#39;fill_value&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span> <span class="s1">&#39;negative_values_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
                                     <span class="p">},</span>
                     <span class="s1">&#39;general&#39;</span> <span class="p">:</span> <span class="p">{</span><span class="s1">&#39;force_scipy_interpolator&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;scipy_interpolator&#39;</span> <span class="p">:</span> <span class="s1">&#39;interp1d&#39;</span><span class="p">,</span>
-                                 <span class="s1">&#39;sprague_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;sprague_method&#39;</span> <span class="p">:</span> <span class="s1">&#39;spargue_cie224_2017&#39;</span><span class="p">,</span> 
+                                 <span class="s1">&#39;sprague_allowed&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;sprague_method&#39;</span> <span class="p">:</span> <span class="s1">&#39;sprague_cie224_2017&#39;</span><span class="p">,</span>
                                  <span class="s1">&#39;choose_most_efficient_interpolator&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
                                  <span class="s1">&#39;interp_log&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;extrap_log&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
                     <span class="p">}</span>
@@ -233,7 +228,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="getwlr">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.getwlr">[docs]</a>
-<span class="k">def</span> <span class="nf">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get/construct a wavelength range from a 3-vector (start, stop, spacing).</span>
 <span class="sd">    </span>
@@ -258,7 +253,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="getwld">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.getwld">[docs]</a>
-<span class="k">def</span> <span class="nf">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get wavelength spacing. </span>
 <span class="sd">    </span>
@@ -283,8 +278,8 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_normalize">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_normalize">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_normalize</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+                  <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Normalize a spectral power distribution (SPD).</span>
 <span class="sd">    </span>
@@ -317,11 +312,15 @@
 <span class="sd">            | None, optional</span>
 <span class="sd">            | Luminous efficacy of radiation.</span>
 <span class="sd">            | Must be supplied if cieobs is an array for norm_type == &#39;pu&#39;</span>
+<span class="sd">        :copy:</span>
+<span class="sd">            | True, optional</span>
+<span class="sd">            | If False: normalize in-place.</span>
 <span class="sd">    </span>
 <span class="sd">    Returns:</span>
 <span class="sd">        :returns: </span>
 <span class="sd">            | ndarray with normalized data.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data_out</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="k">if</span> <span class="n">copy</span> <span class="k">else</span> <span class="n">data</span>
     <span class="k">if</span> <span class="n">norm_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">norm_type</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">norm_type</span><span class="p">]</span>
         
@@ -338,6 +337,7 @@
             <span class="n">dl</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#no wavelengths provided</span>
             
         <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
+        
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">offset</span><span class="p">):</span>  
             <span class="n">norm_type_</span> <span class="o">=</span> <span class="n">norm_type</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">norm_type</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)</span> <span class="k">else</span> <span class="n">norm_type</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
@@ -347,26 +347,25 @@
                 <span class="n">norm_f_</span> <span class="o">=</span> <span class="mf">560.0</span> <span class="k">if</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;lambda&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1.0</span>
       
             <span class="k">if</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;max&#39;</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span>
+                <span class="n">data_out</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span>
             <span class="k">elif</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;area&#39;</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
+                <span class="n">data_out</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">norm_f_</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">])</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span>
             <span class="k">elif</span> <span class="n">norm_type_</span><span class="o">==</span><span class="s1">&#39;lambda&#39;</span><span class="p">:</span>
                 <span class="n">wl_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">wlr</span><span class="o">-</span><span class="n">norm_f_</span><span class="p">)</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">][</span><span class="n">wl_index</span><span class="p">]</span>
+                <span class="n">data_out</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">][</span><span class="n">wl_index</span><span class="p">]</span>
             <span class="k">elif</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;ru&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;pu&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type</span> <span class="o">==</span> <span class="s1">&#39;pusa&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">norm_type_</span> <span class="o">==</span> <span class="s1">&#39;qu&#39;</span><span class="p">):</span>
                 <span class="n">rpq_power</span> <span class="o">=</span> <span class="n">spd_to_power</span><span class="p">(</span><span class="n">data</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">],:],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="n">norm_type_</span><span class="p">,</span>
                                          <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">)</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm_f</span><span class="o">/</span><span class="n">rpq_power</span><span class="p">)</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span>
+                <span class="n">data_out</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">norm_f</span><span class="o">/</span><span class="n">rpq_power</span><span class="p">)</span><span class="o">*</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">norm_f_</span>
-    <span class="k">return</span> <span class="n">data</span></div>
-
+                <span class="n">data_out</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">offset</span><span class="p">]</span><span class="o">/</span><span class="n">norm_f_</span>
+    <span class="k">return</span> <span class="n">data_out</span></div>
 
 
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spectral_interp">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spectral_interp">[docs]</a>
-<span class="k">def</span> <span class="nf">spectral_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">stype</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">spectral_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">stype</span> <span class="o">=</span> <span class="s1">&#39;cmf&#39;</span><span class="p">,</span> 
                     <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_INTERP_SETTINGS</span><span class="p">),</span>
                     <span class="n">itype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -514,7 +513,7 @@
     <span class="k">return</span> <span class="n">datan</span></div>
 
 
-<span class="k">def</span> <span class="nf">_get_itype_sprague_interp_options</span><span class="p">(</span><span class="n">itype</span><span class="p">,</span> <span class="n">sprague_method</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_itype_sprague_interp_options</span><span class="p">(</span><span class="n">itype</span><span class="p">,</span> <span class="n">sprague_method</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">):</span>
     <span class="n">dwl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dwl</span> <span class="o">==</span> <span class="n">dwl</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
         <span class="n">dwl_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wl_new</span><span class="p">)</span>
@@ -530,7 +529,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cie_interp">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.cie_interp">[docs]</a>
-<span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cie_interp</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">wl_new</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">,</span>
                <span class="n">interp_settings</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">_INTERP_SETTINGS</span><span class="p">),</span> 
                <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -607,7 +606,7 @@
 <span class="sd">            | is set as the default.</span>
 <span class="sd">        :extrap_values:</span>
 <span class="sd">            | None, optional</span>
-<span class="sd">            | If float or list or ndarray, use those values to fill extrapolated value(s) when :extrap_kind:S == &#39;fill_value&#39;.</span>
+<span class="sd">            | If float or list or ndarray, use those values to fill extrapolated value(s) when :extrap_kind: == &#39;fill_value&#39;.</span>
 <span class="sd">        :extrap_log:</span>
 <span class="sd">            | None, optional</span>
 <span class="sd">            | If None: the value from interp_settings is used.</span>
@@ -707,8 +706,8 @@
             <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;nearest&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unsupported extrapolation type, extrap_kind = </span><span class="si">{}</span><span class="s2">.</span><span class="se">\n</span><span class="s2"> - Options: None or &#39;nearest&#39;,[= &#39;flat&#39;, &#39;const&#39;],&#39;zeros&#39;,&#39;linear&#39;,&#39;quadratic&#39;,&#39;cubic&#39;,&#39;fill_value&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">extrap_kind</span><span class="p">))</span>
-        
         <span class="k">if</span> <span class="p">(</span><span class="n">extrap_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">[</span><span class="n">datatype</span><span class="p">][</span><span class="s1">&#39;fill_value&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">extrap_values</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fill_value&#39;</span> <span class="c1"># if a value is given, use fill_value extrapolation</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">negative_values_allowed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">[</span><span class="n">datatype</span><span class="p">][</span><span class="s1">&#39;negative_values_allowed&#39;</span><span class="p">]</span> 
         <span class="k">if</span> <span class="p">(</span><span class="n">force_scipy_interpolator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;force_scipy_interpolator&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">scipy_interpolator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="n">interp_settings</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">][</span><span class="s1">&#39;scipy_interpolator&#39;</span><span class="p">]</span> 
@@ -731,7 +730,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd">[docs]</a>
-<span class="k">def</span> <span class="nf">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">spd</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
         <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
         <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
         <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> \
@@ -831,7 +830,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="xyzbar">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.xyzbar">[docs]</a>
-<span class="k">def</span> <span class="nf">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">xyzbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
            <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
            <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -884,7 +883,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="vlbar">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.vlbar">[docs]</a>
-<span class="k">def</span> <span class="nf">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">vlbar</span><span class="p">(</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">src</span> <span class="o">=</span> <span class="s1">&#39;dict&#39;</span><span class="p">,</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
           <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
           <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
           <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
@@ -954,7 +953,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="vlbar_cie_mesopic">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.vlbar_cie_mesopic">[docs]</a>
-<span class="k">def</span> <span class="nf">vlbar_cie_mesopic</span><span class="p">(</span><span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vlbar_cie_mesopic</span><span class="p">(</span><span class="n">m</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
                       <span class="n">Lp</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Ls</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">SP</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                       <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                       <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -1038,7 +1037,7 @@
 
 <div class="viewcode-block" id="get_cie_mesopic_adaptation">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.get_cie_mesopic_adaptation">[docs]</a>
-<span class="k">def</span> <span class="nf">get_cie_mesopic_adaptation</span><span class="p">(</span><span class="n">Lp</span><span class="p">,</span> <span class="n">Ls</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">SP</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cie_mesopic_adaptation</span><span class="p">(</span><span class="n">Lp</span><span class="p">,</span> <span class="n">Ls</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">SP</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the mesopic adaptation state according to CIE191:2010</span>
 <span class="sd">    </span>
@@ -1091,7 +1090,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_xyz_legacy">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_xyz_legacy">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_xyz_legacy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>  <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cie_std_dev_obs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_xyz_legacy</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>  <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cie_std_dev_obs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates xyz tristimulus values from spectral data.</span>
 <span class="sd">       </span>
@@ -1200,9 +1199,10 @@
         <span class="k">return</span> <span class="n">xyz</span></div>
 
         
+        
 <div class="viewcode-block" id="spd_to_xyz_barebones">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_xyz_barebones">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_xyz_barebones</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">matmul</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_xyz_barebones</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">matmul</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate tristimulus values from equal wavelength spectral data.</span>
 
@@ -1216,7 +1216,7 @@
 <span class="sd">            |   e.g.  K  = 683 lm/W for &#39;1931_2&#39; (relative == False) </span>
 <span class="sd">            |   or K = 100/sum(spd*dl)        (relative == True)</span>
 <span class="sd">        :relative:</span>
-<span class="sd">            | False, optional</span>
+<span class="sd">            | True, optional</span>
 <span class="sd">            | If False: use K, else calculate K = 100 ./ Yw</span>
 <span class="sd">        :rfl: </span>
 <span class="sd">            | None, optional </span>
@@ -1262,7 +1262,7 @@
     
 <div class="viewcode-block" id="spd_to_xyz">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_xyz</span><span class="p">(</span><span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_xyz</span><span class="p">(</span><span class="n">spds</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cie_std_dev_obs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">rounding</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">matmul</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
                <span class="n">interpolate_to</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span>
@@ -1446,7 +1446,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_ler">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_ler">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_ler</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_ler</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates Luminous efficacy of radiation (LER) from spectral data.</span>
@@ -1490,7 +1490,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spd_to_power">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.spd_to_power">[docs]</a>
-<span class="k">def</span> <span class="nf">spd_to_power</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spd_to_power</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">ptype</span> <span class="o">=</span> <span class="s1">&#39;ru&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate power of spectral data in radiometric, photometric </span>
@@ -1569,9 +1569,72 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># def detect_peakwl(spd, n = 1,verbosity = 1, **kwargs):</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># Detect primary peak wavelengths and fwhm in spectrum spd.</span>
+    
+    <span class="c1"># Args:</span>
+        <span class="c1"># :spd:</span>
+            <span class="c1"># | ndarray with spectral data (2xN). </span>
+            <span class="c1"># | First row should be wavelengths.</span>
+        <span class="c1"># :n:</span>
+            <span class="c1"># | 1, optional</span>
+            <span class="c1"># | The number of peaks to try to detect in spd. </span>
+        <span class="c1"># :verbosity:</span>
+            <span class="c1"># | Make a plot of the detected peaks, their fwhm, etc.</span>
+        <span class="c1"># :kwargs:</span>
+            <span class="c1"># | Additional input arguments for scipy.signal.find_peaks.</span>
+    <span class="c1"># Returns:</span>
+        <span class="c1"># :prop:</span>
+            <span class="c1"># | list of dictionaries with keys: </span>
+            <span class="c1"># | - &#39;peaks_idx&#39; : index of detected peaks</span>
+            <span class="c1"># | - &#39;peaks&#39; : peak wavelength values (nm)</span>
+            <span class="c1"># | - &#39;heights&#39; : height of peaks</span>
+            <span class="c1"># | - &#39;fwhms&#39; : full-width-half-maxima of peaks</span>
+            <span class="c1"># | - &#39;fwhms_mid&#39; : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in &#39;peaks&#39;, then their is some non-symmetry in the peaks)</span>
+            <span class="c1"># | - &#39;fwhms_mid_heights&#39; : height at the middle of the peak</span>
+    <span class="c1"># &quot;&quot;&quot;</span>
+    <span class="c1"># from scipy import signal, interpolate # lazy import</span>
+    
+    <span class="c1"># props = []</span>
+    <span class="c1"># ips_to_spd_fit = np.polyfit(np.arange(spd.shape[1]),spd[0],1)</span>
+    <span class="c1"># for i in range(spd.shape[0]-1):</span>
+        <span class="c1"># peaks_, prop_ = signal.find_peaks(spd[i+1,:], **kwargs)</span>
+        <span class="c1"># prominences = signal.peak_prominences(spd[i+1,:], peaks_)[0]</span>
+        <span class="c1"># peaks = [peaks_[prominences.argmax()]]</span>
+        <span class="c1"># prominences[prominences.argmax()] = 0</span>
+        <span class="c1"># for j in range(n-1):</span>
+            <span class="c1"># peaks.append(peaks_[prominences.argmax()])</span>
+            <span class="c1"># prominences[prominences.argmax()] = 0</span>
+        <span class="c1"># peaks = np.sort(np.array(peaks))</span>
+        <span class="c1"># peak_heights = spd[i+1,peaks]</span>
+        <span class="c1"># _, width_heights, left_ips, right_ips = signal.peak_widths(spd[i+1,:], peaks, rel_height=0.5)</span>
+        <span class="c1"># #left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]</span>
+        <span class="c1"># left_ips, right_ips = np.polyval(ips_to_spd_fit, left_ips), np.polyval(ips_to_spd_fit, right_ips)</span>
+        <span class="c1"># widths = (right_ips - left_ips)</span>
+        
+    
+        <span class="c1"># # get middle of fwhm and calculate peak position and height:</span>
+        <span class="c1"># mpeaks = left_ips + widths/2</span>
+        <span class="c1"># hmpeaks = interpolate.InterpolatedUnivariateSpline(spd[0,:],spd[i+1,:])(mpeaks)</span>
+    
+        <span class="c1"># prop = {&#39;peaks_idx&#39; : peaks,&#39;peaks&#39; : spd[0,peaks], &#39;heights&#39; : peak_heights,</span>
+                <span class="c1"># &#39;fwhms&#39; : widths, &#39;fwhms_mid&#39; : mpeaks, &#39;fwhms_mid_heights&#39; : hmpeaks}</span>
+        <span class="c1"># props.append(prop)</span>
+        <span class="c1"># if verbosity == 1:</span>
+            <span class="c1"># print(&#39;Peak properties:&#39;, prop)</span>
+            <span class="c1"># results_half = (widths, width_heights, left_ips, right_ips)</span>
+            <span class="c1"># import matplotlib.pyplot as plt # lazy import</span>
+            <span class="c1"># plt.plot(spd[0,:],spd[i+1,:],&#39;b-&#39;,label = &#39;spectrum&#39;)</span>
+            <span class="c1"># plt.plot(spd[0,peaks],spd[i+1,peaks],&#39;ro&#39;, label = &#39;peaks&#39;)</span>
+            <span class="c1"># plt.hlines(*results_half[1:], color=&quot;C2&quot;, label = &#39;FWHM range of peaks&#39;)</span>
+            <span class="c1"># plt.plot(mpeaks,hmpeaks,&#39;gd&#39;, label = &#39;middle of FWHM range&#39;)</span>
+    <span class="c1"># if verbosity == 1: plt.show()</span>
+    <span class="c1"># return props</span>
+    
 <div class="viewcode-block" id="detect_peakwl">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.detect_peakwl">[docs]</a>
-<span class="k">def</span> <span class="nf">detect_peakwl</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">detect_peakwl</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Detect primary peak wavelengths and fwhm in spectrum spd.</span>
 <span class="sd">    </span>
@@ -1596,49 +1659,123 @@
 <span class="sd">            | - &#39;fwhms_mid&#39; : wavelength at the middle of the fwhm-range of the peaks (if this is different from the values in &#39;peaks&#39;, then their is some non-symmetry in the peaks)</span>
 <span class="sd">            | - &#39;fwhms_mid_heights&#39; : height at the middle of the peak</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
-    
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">interpolate</span>  <span class="c1">#lazy import</span>
+
+    <span class="n">wl</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;spd[0,:] (wavelength axis) must be strictly increasing.&quot;</span><span class="p">)</span>
+
     <span class="n">props</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">ips_to_spd_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyfit</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="n">peaks_</span><span class="p">,</span> <span class="n">prop_</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">prominences</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">peak_prominences</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">peaks_</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">peaks</span> <span class="o">=</span> <span class="p">[</span><span class="n">peaks_</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]]</span>
-        <span class="n">prominences</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-            <span class="n">peaks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">peaks_</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()])</span>
-            <span class="n">prominences</span><span class="p">[</span><span class="n">prominences</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">peaks</span><span class="p">))</span>
-        <span class="n">peak_heights</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">peaks</span><span class="p">]</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">width_heights</span><span class="p">,</span> <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">peak_widths</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span> <span class="n">peaks</span><span class="p">,</span> <span class="n">rel_height</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="c1">#left_ips, right_ips = left_ips + spd[0,0], right_ips + spd[0,0]</span>
-        <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">ips_to_spd_fit</span><span class="p">,</span> <span class="n">left_ips</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">polyval</span><span class="p">(</span><span class="n">ips_to_spd_fit</span><span class="p">,</span> <span class="n">right_ips</span><span class="p">)</span>
-        <span class="n">widths</span> <span class="o">=</span> <span class="p">(</span><span class="n">right_ips</span> <span class="o">-</span> <span class="n">left_ips</span><span class="p">)</span>
-        
-    
-        <span class="c1"># get middle of fwhm and calculate peak position and height:</span>
-        <span class="n">mpeaks</span> <span class="o">=</span> <span class="n">left_ips</span> <span class="o">+</span> <span class="n">widths</span><span class="o">/</span><span class="mi">2</span>
-        <span class="n">hmpeaks</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])(</span><span class="n">mpeaks</span><span class="p">)</span>
-    
-        <span class="n">prop</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;peaks_idx&#39;</span> <span class="p">:</span> <span class="n">peaks</span><span class="p">,</span><span class="s1">&#39;peaks&#39;</span> <span class="p">:</span> <span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span> <span class="s1">&#39;heights&#39;</span> <span class="p">:</span> <span class="n">peak_heights</span><span class="p">,</span>
-                <span class="s1">&#39;fwhms&#39;</span> <span class="p">:</span> <span class="n">widths</span><span class="p">,</span> <span class="s1">&#39;fwhms_mid&#39;</span> <span class="p">:</span> <span class="n">mpeaks</span><span class="p">,</span> <span class="s1">&#39;fwhms_mid_heights&#39;</span> <span class="p">:</span> <span class="n">hmpeaks</span><span class="p">}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">spd</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># 1) Find candidate peaks, allow user constraints via **kwargs</span>
+        <span class="n">peaks_all</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">find_peaks</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">peaks_all</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbosity</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No peaks found in spectrum row&quot;</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="n">props</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s1">&#39;peaks_idx&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+                <span class="s1">&#39;peaks&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="s1">&#39;heights&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="s1">&#39;fwhms&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="s1">&#39;fwhms_mid&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+                <span class="s1">&#39;fwhms_mid_heights&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+            <span class="p">})</span>
+            <span class="k">continue</span>
+
+        <span class="c1"># 2) Rank by prominence (robust selection) and keep top-n</span>
+        <span class="n">prominences</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">peak_prominences</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">peaks_all</span><span class="p">)</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">prominences</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">peaks_all</span><span class="p">[</span><span class="n">order</span><span class="p">[:</span><span class="nb">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">order</span><span class="o">.</span><span class="n">size</span><span class="p">)]])</span>
+        <span class="n">peak_heights</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">peaks</span><span class="p">]</span>
+
+        <span class="c1"># Helper: linear crossing λ for a target between samples k and k+1</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">interp_cross_lambda</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+            <span class="n">y0</span><span class="p">,</span> <span class="n">y1</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">y1</span> <span class="o">==</span> <span class="n">y0</span><span class="p">:</span>  <span class="c1"># flat segment; return midpoint in λ as a fallback</span>
+                <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">wl</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">y1</span> <span class="o">-</span> <span class="n">y0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">wl</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wl</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+        <span class="n">fwhm_left</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">peaks</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">fwhm_right</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">peaks</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+        <span class="n">width_level</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">peaks</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">pi</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">peaks</span><span class="p">):</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">y</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+            <span class="n">width_level</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">=</span> <span class="n">target</span>
+
+            <span class="c1"># --- Left crossing (search left of the peak for first downward crossing) ---</span>
+            <span class="n">left_lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="c1"># Want a bracket where values straddle &#39;target&#39;</span>
+                <span class="n">y_lo</span><span class="p">,</span> <span class="n">y_hi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">y_lo</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="o">&lt;=</span> <span class="n">y_hi</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y_hi</span> <span class="o">&lt;=</span> <span class="n">target</span> <span class="o">&lt;=</span> <span class="n">y_lo</span><span class="p">):</span>
+                    <span class="n">left_lambda</span> <span class="o">=</span> <span class="n">interp_cross_lambda</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+            <span class="c1"># --- Right crossing (search right of the peak) ---</span>
+            <span class="n">right_lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">wl</span><span class="o">.</span><span class="n">size</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">y_lo</span><span class="p">,</span> <span class="n">y_hi</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">y_lo</span> <span class="o">&gt;=</span> <span class="n">target</span> <span class="o">&gt;=</span> <span class="n">y_hi</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y_hi</span> <span class="o">&gt;=</span> <span class="n">target</span> <span class="o">&gt;=</span> <span class="n">y_lo</span><span class="p">):</span>
+                    <span class="n">right_lambda</span> <span class="o">=</span> <span class="n">interp_cross_lambda</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+                    <span class="k">break</span>
+
+            <span class="n">fwhm_left</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">=</span> <span class="n">left_lambda</span>
+            <span class="n">fwhm_right</span><span class="p">[</span><span class="n">pi</span><span class="p">]</span> <span class="o">=</span> <span class="n">right_lambda</span>
+
+        <span class="n">widths_wl</span> <span class="o">=</span> <span class="n">fwhm_right</span> <span class="o">-</span> <span class="n">fwhm_left</span>  <span class="c1"># NaN if one side missing</span>
+
+        <span class="c1"># Midpoint λ and its height (diagnostic)</span>
+        <span class="n">mpeaks</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">fwhm_left</span> <span class="o">+</span> <span class="n">fwhm_right</span><span class="p">)</span>
+        <span class="n">spline</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="c1"># If midpoint NaN (no width), keep NaN height</span>
+        <span class="n">hmpeaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">valid_mid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">valid_mid</span><span class="p">):</span>
+            <span class="n">hmpeaks</span><span class="p">[</span><span class="n">valid_mid</span><span class="p">]</span> <span class="o">=</span> <span class="n">spline</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">[</span><span class="n">valid_mid</span><span class="p">])</span>
+
+        <span class="n">prop</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;peaks_idx&#39;</span><span class="p">:</span> <span class="n">peaks</span><span class="p">,</span>
+            <span class="s1">&#39;peaks&#39;</span><span class="p">:</span> <span class="n">wl</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span>
+            <span class="s1">&#39;heights&#39;</span><span class="p">:</span> <span class="n">peak_heights</span><span class="p">,</span>
+            <span class="s1">&#39;fwhms&#39;</span><span class="p">:</span> <span class="n">widths_wl</span><span class="p">,</span>
+            <span class="s1">&#39;fwhms_mid&#39;</span><span class="p">:</span> <span class="n">mpeaks</span><span class="p">,</span>
+            <span class="s1">&#39;fwhms_mid_heights&#39;</span><span class="p">:</span> <span class="n">hmpeaks</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">props</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="n">verbosity</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Peak properties:&#39;</span><span class="p">,</span> <span class="n">prop</span><span class="p">)</span>
-            <span class="n">results_half</span> <span class="o">=</span> <span class="p">(</span><span class="n">widths</span><span class="p">,</span> <span class="n">width_heights</span><span class="p">,</span> <span class="n">left_ips</span><span class="p">,</span> <span class="n">right_ips</span><span class="p">)</span>
-            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:],</span><span class="s1">&#39;b-&#39;</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">spd</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span><span class="n">spd</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">peaks</span><span class="p">],</span><span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;peaks&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="o">*</span><span class="n">results_half</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;FWHM range of peaks&#39;</span><span class="p">)</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">,</span><span class="n">hmpeaks</span><span class="p">,</span><span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;middle of FWHM range&#39;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">verbosity</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;spectrum&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wl</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">peaks</span><span class="p">],</span> <span class="s1">&#39;ro&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;peaks&#39;</span><span class="p">)</span>
+            <span class="c1"># Draw half-height lines where crossings exist</span>
+            <span class="k">for</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">H</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fwhm_left</span><span class="p">,</span> <span class="n">fwhm_right</span><span class="p">,</span> <span class="n">width_level</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">L</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+                    <span class="n">plt</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span>
+                               <span class="n">label</span><span class="o">=</span><span class="s1">&#39;FWHM (half-height)&#39;</span> <span class="k">if</span> <span class="s1">&#39;FWHM (half-height)&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="c1"># Midpoints</span>
+            <span class="n">valid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mpeaks</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="n">hmpeaks</span><span class="p">[</span><span class="n">valid</span><span class="p">],</span> <span class="s1">&#39;gd&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;mid of FWHM span&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Wavelength (nm)&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Amplitude&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Detected peak(s) and FWHM(s)&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;best&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbosity</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
     <span class="k">return</span> <span class="n">props</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="create_spectral_interpolator">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.create_spectral_interpolator">[docs]</a>
-<span class="k">def</span> <span class="nf">create_spectral_interpolator</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_spectral_interpolator</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Create an interpolator of kind for spectral data S. </span>
 <span class="sd">    </span>
@@ -1662,7 +1799,7 @@
 <span class="sd">    Note:</span>
 <span class="sd">        1. Nan&#39;s, +infs, -infs will be ignored when generating the interpolators. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     
     <span class="k">if</span> <span class="n">S</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">S</span> <span class="o">=</span> <span class="n">S</span><span class="p">[</span><span class="kc">None</span><span class="p">,:]</span> <span class="c1"># make 2d</span>
@@ -1678,7 +1815,7 @@
 
 <div class="viewcode-block" id="wls_shift">
 <a class="viewcode-back" href="../../../../spectrum.html#luxpy.spectrum.wls_shift">[docs]</a>
-<span class="k">def</span> <span class="nf">wls_shift</span><span class="p">(</span><span class="n">shfts</span><span class="p">,</span> <span class="n">log_shft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interpolators</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">wls_shift</span><span class="p">(</span><span class="n">shfts</span><span class="p">,</span> <span class="n">log_shft</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interpolators</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Wavelength-shift array S over shft wavelengths.</span>
 <span class="sd">    </span>

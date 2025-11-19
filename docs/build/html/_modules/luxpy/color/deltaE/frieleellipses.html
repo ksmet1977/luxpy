@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.deltaE.frieleellipses &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.deltaE.frieleellipses &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -107,14 +102,14 @@
 <span class="sd"> </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
 <span class="n">_M_XYZ_TO_PQS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.724</span><span class="p">,</span> <span class="mf">0.382</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.098</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.48</span><span class="p">,</span><span class="mf">1.37</span><span class="p">,</span><span class="mf">0.1276</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.686</span><span class="p">]])</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;get_gij_fmc&#39;</span><span class="p">,</span><span class="s1">&#39;get_fmc_discrimination_ellipse&#39;</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">_dot_M_xyz</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">xyz</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_dot_M_xyz</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">xyz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform matrix multiplication between M and xyz (M*xyz) using einsum.</span>
 <span class="sd">    </span>
@@ -143,14 +138,14 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,lj-&gt;li&#39;</span><span class="p">,</span> <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,:])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
       
 
-<span class="k">def</span> <span class="nf">_xyz_to_pqs</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_xyz_to_pqs</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate pqs from xyz.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># calculate pqs from xyz:</span>
     <span class="k">return</span> <span class="n">_dot_M_xyz</span><span class="p">(</span><span class="n">_M_XYZ_TO_PQS</span><span class="p">,</span><span class="n">xyz</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_transpose_02</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_transpose_02</span><span class="p">(</span><span class="n">C</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">C</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
         <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">C</span><span class="p">,(</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
@@ -158,7 +153,7 @@
     <span class="k">return</span> <span class="n">C</span>
 
 
-<span class="k">def</span> <span class="nf">_cij_to_gij</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cij_to_gij</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="n">C</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert from matrix elements describing the discrimination ellipses from Cij (XYZ) to gij (Yxy)&quot;&quot;&quot;</span>
     <span class="n">SIG</span> <span class="o">=</span> <span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">SIG</span><span class="p">,</span> <span class="o">-</span><span class="n">SIG</span><span class="o">*</span><span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
@@ -183,7 +178,7 @@
     <span class="k">return</span> <span class="n">gij</span>
 
 
-<span class="k">def</span> <span class="nf">_get_gij_fmc_1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_gij_fmc_1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get gij matrices describing the discrimination ellipses for xyz using FMC-1.</span>
 <span class="sd">    </span>
@@ -209,7 +204,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">C</span>
     
-<span class="k">def</span> <span class="nf">_get_gij_fmc_2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_gij_fmc_2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get gij matrices describing the discrimination ellipses for xyz using FMC-1.</span>
 <span class="sd">    </span>
@@ -244,7 +239,7 @@
 
 <div class="viewcode-block" id="get_gij_fmc">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_gij_fmc">[docs]</a>
-<span class="k">def</span> <span class="nf">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_gij_fmc</span><span class="p">(</span><span class="n">Yxy</span><span class="p">,</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">ellipsoid</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;Yxy&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get gij matrices describing the discrimination ellipses/ellipsoids for Yxy or xyz using FMC-1 or FMC-2.</span>
 <span class="sd">    </span>
@@ -294,7 +289,7 @@
 
 <div class="viewcode-block" id="get_fmc_discrimination_ellipse">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_fmc_discrimination_ellipse">[docs]</a>
-<span class="k">def</span> <span class="nf">get_fmc_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]]),</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_fmc_discrimination_ellipse</span><span class="p">(</span><span class="n">Yxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]]),</span> <span class="n">etype</span> <span class="o">=</span> <span class="s1">&#39;fmc2&#39;</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get discrimination ellipse(s) in v-format (R,r, xc, yc, theta) for Yxy using FMC-1 or FMC-2.</span>
 <span class="sd">    </span>
@@ -340,8 +335,8 @@
 
     
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
-    <span class="kn">from</span> <span class="nn">macadamellipses</span> <span class="kn">import</span> <span class="n">get_macadam_ellipse</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">macadamellipses</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_macadam_ellipse</span>
     
     <span class="n">Yxy1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>
     <span class="n">Yxy2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">100</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">],[</span><span class="mi">50</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">]])</span>

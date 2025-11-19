@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.cat.chromaticadaptation &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -106,7 +101,7 @@
 
 <span class="sd"> :_MCATS: | default chromatic adaptation sensor spaces</span>
 <span class="sd">          | * &#39;hpe&#39;: Hunt-Pointer-Estevez: R. W. G. Hunt, The Reproduction of Colour: Sixth Edition, 6th ed. Chichester, UK: John Wiley &amp; Sons Ltd, 2004.</span>
-<span class="sd">          | * &#39;cat02&#39;: from ciecam02: `CIE159-2004, âA Colour Apperance Model for Color Management System: CIECAM02,â? CIE, Vienna, 2004. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract&gt;`_</span>
+<span class="sd">          | * &#39;cat02&#39;: from ciecam02: `CIE159-2004, &quot;A Colour Apperance Model for Color Management System: CIECAM02,&quot; CIE, Vienna, 2004. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20198/abstract&gt;`_</span>
 <span class="sd">          | * &#39;cat02-bs&#39;:  cat02 adjusted to solve yellow-blue problem (last line = [0 0 1]): `Brill MH, Süsstrunk S. Repairing gamut problems in CIECAM02: A progress report. Color Res Appl 2008;33(5), 424â426. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.20432/abstract&gt;`_</span>
 <span class="sd">          | * &#39;cat02-jiang&#39;: cat02 modified to solve yb-probem + purple problem: `Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503. &lt;http://onlinelibrary.wiley.com/doi/10.1002/col.21921/abstract&gt;`_</span>
 <span class="sd">          | * &#39;kries&#39;</span>
@@ -159,10 +154,10 @@
 
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span> <span class="n">_EPS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span><span class="p">,</span> <span class="n">_EPS</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_WHITE_POINT&#39;</span><span class="p">,</span><span class="s1">&#39;_LA&#39;</span><span class="p">,</span> <span class="s1">&#39;_MCATS&#39;</span><span class="p">,</span>
            <span class="s1">&#39;check_dimensions&#39;</span><span class="p">,</span><span class="s1">&#39;get_transfer_function&#39;</span><span class="p">,</span><span class="s1">&#39;get_degree_of_adaptation&#39;</span><span class="p">,</span>
@@ -180,7 +175,8 @@
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;cat02-jiang-luo&#39;</span><span class="p">]</span> <span class="o">=</span><span class="n">np2d</span><span class="p">([[</span><span class="mf">0.556150</span><span class="p">,</span> <span class="mf">0.556150</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.112300</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.507327</span><span class="p">,</span> <span class="mf">1.404878</span><span class="p">,</span> <span class="mf">0.102449</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span> <span class="c1"># Jun Jiang, Zhifeng Wang,M. Ronnier Luo,Manuel Melgosa,Michael H. Brill,Changjun Li, Optimum solution of the CIECAM02 yellowâblue and purple problems, Color Res Appl 2015: 40(5), 491-503 </span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;kries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.40024</span><span class="p">,</span> <span class="mf">0.70760</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.08081</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.22630</span><span class="p">,</span> <span class="mf">1.16532</span><span class="p">,</span>  <span class="mf">0.04570</span><span class="p">],[</span> <span class="mf">0.0</span><span class="p">,</span>       <span class="mf">0.0</span><span class="p">,</span>        <span class="mf">0.91822</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;judd-1935&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">3.1956</span><span class="p">,</span><span class="mf">2.4478</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1434</span><span class="p">],[</span><span class="o">-</span><span class="mf">2.5455</span><span class="p">,</span><span class="mf">7.0942</span><span class="p">,</span><span class="mf">0.9963</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
-<span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;judd-1945&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.460</span><span class="p">,</span><span class="mf">1.360</span><span class="p">,</span><span class="mf">0.102</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span> <span class="c1"># from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy</span>
+<span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;judd-1945-CIE016&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.460</span><span class="p">,</span><span class="mf">1.360</span><span class="p">,</span><span class="mf">0.102</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span> <span class="c1"># from CIE16-2004, Eq.4, a23 modified from 0.1 to 0.1020 for increased accuracy</span>
+<span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;judd-1945&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.460</span><span class="p">,</span><span class="mf">1.359</span><span class="p">,</span><span class="mf">0.101</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])</span> <span class="c1"># from Judd&#39;s 1945 paper: Deane B. Judd, &quot;Standard Response Functions for Protanopic and Deuteranopic Vision,&quot; J. Opt. Soc. Am. 35, 199-221 (1945)</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;bfd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.8951</span><span class="p">,</span><span class="mf">0.2664</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1614</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.7502</span><span class="p">,</span><span class="mf">1.7135</span><span class="p">,</span><span class="mf">0.0367</span><span class="p">],[</span><span class="mf">0.0389</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0685</span><span class="p">,</span><span class="mf">1.0296</span><span class="p">]])</span> <span class="c1">#also used in ciecam97s</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;sharp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">1.2694</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0988</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1706</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.8364</span><span class="p">,</span><span class="mf">1.8006</span><span class="p">,</span><span class="mf">0.0357</span><span class="p">],[</span><span class="mf">0.0297</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0315</span><span class="p">,</span><span class="mf">1.0018</span><span class="p">]])</span>
 <span class="n">_MCATS</span><span class="p">[</span><span class="s1">&#39;cmc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np2d</span><span class="p">([[</span><span class="mf">0.7982</span><span class="p">,</span>  <span class="mf">0.3389</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1371</span><span class="p">],[</span><span class="o">-</span><span class="mf">0.5918</span><span class="p">,</span>  <span class="mf">1.5512</span><span class="p">,</span> <span class="mf">0.0406</span><span class="p">],[</span><span class="mf">0.0008</span><span class="p">,</span>  <span class="mf">0.0239</span><span class="p">,</span> <span class="mf">0.9753</span><span class="p">]])</span>
@@ -194,7 +190,7 @@
 
 <div class="viewcode-block" id="check_dimensions">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.check_dimensions">[docs]</a>
-<span class="k">def</span> <span class="nf">check_dimensions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">caller</span> <span class="o">=</span> <span class="s1">&#39;cat.apply()&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_dimensions</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">caller</span> <span class="o">=</span> <span class="s1">&#39;cat.apply()&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if dimensions of data and xyzw match. </span>
 <span class="sd">    </span>
@@ -222,7 +218,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="get_transfer_function">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.get_transfer_function">[docs]</a>
-<span class="k">def</span> <span class="nf">get_transfer_function</span><span class="p">(</span><span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">lmsw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lmsw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">get_transfer_function</span><span class="p">(</span><span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">lmsw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lmsw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                           <span class="n">lmsw0</span> <span class="o">=</span> <span class="n">_WHITE_POINT</span><span class="p">,</span> <span class="n">D10</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">D20</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">La1</span> <span class="o">=</span> <span class="n">_LA</span><span class="p">,</span> <span class="n">La2</span> <span class="o">=</span> <span class="n">_LA</span><span class="p">,</span> <span class="n">La0</span> <span class="o">=</span> <span class="n">_LA</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the chromatic adaptation diagonal matrix transfer function Dt.</span>
@@ -301,7 +297,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="smet2017_D">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.smet2017_D">[docs]</a>
-<span class="k">def</span> <span class="nf">smet2017_D</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">Dmax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">smet2017_D</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">Dmax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the degree of adaptation based on chromaticity following </span>
 <span class="sd">    Smet et al. (2017) </span>
@@ -343,7 +339,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="get_degree_of_adaptation">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.get_degree_of_adaptation">[docs]</a>
-<span class="k">def</span> <span class="nf">get_degree_of_adaptation</span><span class="p">(</span><span class="n">Dtype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_degree_of_adaptation</span><span class="p">(</span><span class="n">Dtype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates the degree of adaptation according to some function </span>
 <span class="sd">    published in literature. </span>
@@ -439,7 +435,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="parse_x1x2_parameters">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.parse_x1x2_parameters">[docs]</a>
-<span class="k">def</span> <span class="nf">parse_x1x2_parameters</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">target_shape</span><span class="p">,</span> <span class="n">catmode</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_x1x2_parameters</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">target_shape</span><span class="p">,</span> <span class="n">catmode</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">default</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]):</span>
 <span class="w">   </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">   Parse input parameters x and make them the target_shape for easy calculation. </span>
 <span class="sd">   </span>
@@ -496,7 +492,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="apply">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply">[docs]</a>
-<span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+<span class="k">def</span><span class="w"> </span><span class="nf">apply</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">catmode</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cattype</span> <span class="o">=</span> <span class="s1">&#39;vonkries&#39;</span><span class="p">,</span> <span class="n">xyzw1</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
           <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="p">[</span><span class="n">_MCAT_DEFAULT</span><span class="p">],</span> <span class="n">normxyz0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">outtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">La</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">F</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Dtype</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate corresponding colors by applying a von Kries chromatic adaptation</span>
@@ -707,7 +703,7 @@
     
 <div class="viewcode-block" id="apply_vonkries1">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries1">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_vonkries1</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
                     <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -773,10 +769,10 @@
         <span class="n">rgb</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
-        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
-        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Use of Yw requires xyz input.&#39;</span><span class="p">)</span>
             
@@ -799,7 +795,7 @@
 
 <div class="viewcode-block" id="apply_vonkries2">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries2">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_vonkries2</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> 
                     <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span>
                     <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -877,11 +873,11 @@
         <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
         <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">dot23</span><span class="p">(</span><span class="n">mcat</span><span class="p">,</span> <span class="n">xyzw0</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">==</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
-        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span>
-        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span>
-        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span>
-        <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">xyzw0</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">in_type</span> <span class="o">!=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">use_Yw</span> <span class="o">==</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">xyz</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgbw1</span> <span class="o">=</span> <span class="n">xyzw1</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgbw2</span> <span class="o">=</span> <span class="n">xyzw2</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">rgbw0</span> <span class="o">=</span> <span class="n">xyzw0</span><span class="o">.</span><span class="n">T</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Use of Yw requires xyz input.&#39;</span><span class="p">)</span>
         
@@ -913,7 +909,7 @@
     
 <div class="viewcode-block" id="apply_vonkries">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_vonkries">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_vonkries</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_vonkries</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw1</span><span class="p">,</span> <span class="n">xyzw2</span><span class="p">,</span> <span class="n">xyzw0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_step</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> 
                    <span class="n">catmode</span> <span class="o">=</span> <span class="s1">&#39;1&gt;0&gt;2&#39;</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">invmcat</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                    <span class="n">in_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">out_type</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">use_Yw</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
@@ -1005,7 +1001,7 @@
 
 <div class="viewcode-block" id="apply_ciecat94">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cat.apply_ciecat94">[docs]</a>
-<span class="k">def</span> <span class="nf">apply_ciecat94</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_ciecat94</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                    <span class="n">E</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">Er</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> 
                    <span class="n">Yb</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cat94_old</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>

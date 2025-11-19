@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cam.sww2016 &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.cam.sww2016 &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -97,12 +92,12 @@
 <span class="sd">    &lt;https://doi.org/10.1364/JOSAA.33.00A319&gt;`_</span>
 <span class="sd">    .. </span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_MUNSELL</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> 
                    <span class="n">getwlr</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cam.helpers</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">asplit</span><span class="p">,</span> <span class="n">ajoin</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cam.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">_CAM_SWW16_AXES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;lab_cam_sww16&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;L (lab_cam_sww16)&quot;</span><span class="p">,</span> <span class="s2">&quot;a (lab_cam_sww16)&quot;</span><span class="p">,</span> <span class="s2">&quot;b (lab_cam_sww16)&quot;</span><span class="p">]}</span>
 
@@ -117,7 +112,7 @@
 
 <div class="viewcode-block" id="cam_sww16">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.cam_sww16">[docs]</a>
-<span class="k">def</span> <span class="nf">cam_sww16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cam_sww16</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dataw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
               <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="s1">&#39;forward&#39;</span><span class="p">,</span>
               <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span>
               <span class="n">match_conversionmatrix_to_cieobs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -444,7 +439,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="xyz_to_lab_cam_sww16">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.xyz_to_lab_cam_sww16">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_lab_cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_lab_cam_sww16</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>\
                          <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam_sww16 forward mode with &#39;xyz&#39; input.</span>
@@ -456,7 +451,7 @@
                 
 <div class="viewcode-block" id="lab_cam_sww16_to_xyz">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.cam.lab_cam_sww16_to_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">lab_cam_sww16_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">lab_cam_sww16_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">Ccwb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
                          <span class="n">parameters</span> <span class="o">=</span> <span class="s1">&#39;JOSA&#39;</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper function for cam_sww16 inverse mode with &#39;xyz&#39; input.</span>
@@ -472,9 +467,9 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__0&#39;</span><span class="p">:</span>
     <span class="c1">#------------------------------------------------------------------------------</span>
-    <span class="k">def</span> <span class="nf">test_model</span><span class="p">():</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_model</span><span class="p">():</span>
     
-        <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span> <span class="c1"># lazy import</span>
     
         <span class="c1"># Read selected set of Munsell samples and LMS10(lambda):</span>
         <span class="n">M</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="s1">&#39;Munsell_LMS_nonlin_Nov18_2015_version.dat&#39;</span><span class="p">,</span><span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
@@ -494,7 +489,7 @@
         <span class="c1">#LMS10[1:,:] = LMS10[1:,:]/LMS10[1:,:].sum(axis=1,keepdims=True)*Y10[1:,:].sum() </span>
         
         <span class="c1"># test python model vs excel calculator:</span>
-        <span class="k">def</span> <span class="nf">spdBB</span><span class="p">(</span><span class="n">CCT</span> <span class="o">=</span> <span class="mi">5500</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">spdBB</span><span class="p">(</span><span class="n">CCT</span> <span class="o">=</span> <span class="mi">5500</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">400</span><span class="p">,</span><span class="mi">700</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mi">25000</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1964_10&#39;</span><span class="p">):</span>
             <span class="n">wl</span> <span class="o">=</span> <span class="n">getwlr</span><span class="p">(</span><span class="n">wl</span><span class="p">)</span>
             <span class="n">dl</span> <span class="o">=</span> <span class="n">wl</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">wl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">spd</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mf">6.626068E-34</span><span class="o">*</span><span class="p">(</span><span class="mi">299792458</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="n">wl</span><span class="o">*</span><span class="mf">0.000000001</span><span class="p">)</span><span class="o">**</span><span class="mi">5</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">6.626068E-34</span><span class="o">*</span><span class="mi">299792458</span><span class="o">/</span><span class="p">(</span><span class="n">wl</span><span class="o">*</span><span class="mf">0.000000001</span><span class="p">)</span><span class="o">/</span><span class="mf">1.3806503E-23</span><span class="o">/</span><span class="n">CCT</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>

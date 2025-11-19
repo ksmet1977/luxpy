@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Utils sub-package &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Utils sub-package &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -301,18 +296,18 @@ the values of the corresponding keys in dict db.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.utils.vec_to_dict">
-<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">vec_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#vec_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.vec_to_dict" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">vec_to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vec</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#vec_to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.vec_to_dict" title="Link to this definition"></a></dt>
 <dd><p>Convert dict to vec and vice versa.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">vec<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">list or vector array, optional</div>
+<div class="line">None or list or vector array, optional</div>
 </div>
 </dd>
 <dt class="field-even">dic<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">dict, optional</div>
+<div class="line">None or dict, optional</div>
 </div>
 </dd>
 <dt class="field-odd">vsize<span class="colon">:</span></dt>
@@ -992,59 +987,73 @@ Returns None if succesful, otherwise throws and error or outputs False.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.utils.save_pkl">
-<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">save_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#save_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.save_pkl" title="Link to this definition"></a></dt>
-<dd><p>Save an object in a (gzipped) pickle file.</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">save_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compresslevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_file_size_in_Mb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_part_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#save_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.save_pkl" title="Link to this definition"></a></dt>
+<dd><p>Save an object in a (gzipped) pickle file, optionally splitting into multiple files.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">filename<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">str with filename of pickle file.</div>
+<div class="line">str with (base) filename.</div>
 </div>
 </dd>
 <dt class="field-even">obj<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
-<div class="line">python object to save</div>
+<div class="line">Python object to save.</div>
 </div>
 </dd>
 <dt class="field-odd">compresslevel<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">0, optional</div>
-<div class="line">If &gt; 0: use gzip to compress pkl file.</div>
+<div class="line">0 or int, optional </div>
+<div class="line">If &gt; 0: use gzip compression.</div>
+</div>
+</dd>
+<dt class="field-even">max_file_size_in_Mb<span class="colon">:</span></dt>
+<dd class="field-even"><div class="line-block">
+<div class="line">None or float </div>
+<div class="line">Maximum file size per part in MB. If None, do not split.</div>
+</div>
+</dd>
+<dt class="field-odd">part_indicator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘_part_’, optional</div>
+<div class="line">String to indicate part number in filename (e.g., ‘_part_1’, ‘_part_2’,…).</div>
 </div>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><dl class="field-list simple">
-<dt class="field-odd">None<span class="colon">:</span></dt>
-<dd class="field-odd"><p></p></dd>
-</dl>
+<dt>Returns:</dt><dd><p>None</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="luxpy.utils.load_pkl">
-<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">load_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gzipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#load_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.load_pkl" title="Link to this definition"></a></dt>
-<dd><p>Load the object in a (gzipped) pickle file.</p>
+<span class="sig-prename descclassname"><span class="pre">luxpy.utils.</span></span><span class="sig-name descname"><span class="pre">load_pkl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gzipped</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">part_indicator</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'_part_'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/luxpy/utils/utilities.html#load_pkl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#luxpy.utils.load_pkl" title="Link to this definition"></a></dt>
+<dd><p>Load a (possibly split and/or gzipped) pickle file and reconstruct the object.</p>
 <dl>
 <dt>Args:</dt><dd><dl class="field-list">
 <dt class="field-odd">filename<span class="colon">:</span></dt>
 <dd class="field-odd"><div class="line-block">
-<div class="line">str with filename of pickle file.</div>
+<div class="line">str with (base) filename (without any part indices).</div>
 </div>
 </dd>
 <dt class="field-even">gzipped<span class="colon">:</span></dt>
 <dd class="field-even"><div class="line-block">
 <div class="line">False, optional </div>
-<div class="line">If True: ‘.gz’ will be added to filename before opening. </div>
+<div class="line">If True, assume gzipped files (i.e., use .pkl.gz). If False, use .pkl.</div>
+</div>
+</dd>
+<dt class="field-odd">part_indicator<span class="colon">:</span></dt>
+<dd class="field-odd"><div class="line-block">
+<div class="line">‘_part_’, optional</div>
+<div class="line">String that was used when saving to indicate part number in filename (e.g., ‘_part_1’, ‘_part_2’,…).</div>
 </div>
 </dd>
 </dl>
 </dd>
-<dt>Returns:</dt><dd><dl class="field-list">
-<dt class="field-odd">obj<span class="colon">:</span></dt>
-<dd class="field-odd"><div class="line-block">
-<div class="line">loaded python object</div>
+<dt>Returns:</dt><dd><dl>
+<dt>obj: </dt><dd><div class="line-block">
+<div class="line">loaded Python object.</div>
 </div>
 </dd>
 </dl>

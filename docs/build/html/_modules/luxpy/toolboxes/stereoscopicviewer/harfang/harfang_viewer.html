@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.stereoscopicviewer.harfang.harfang_viewer &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.stereoscopicviewer.harfang.harfang_viewer &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -86,21 +81,21 @@
 
 <span class="sd">@author: u0032318</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">ctypes</span> <span class="kn">import</span> <span class="n">c_uint32</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">math</span><span class="w"> </span><span class="kn">import</span> <span class="n">pi</span><span class="p">,</span> <span class="n">sin</span><span class="p">,</span> <span class="n">cos</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_uint32</span>
 
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">is_importable</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imsave</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_importable</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imsave</span> 
 
    
 <span class="c1"># import harfang (and if necessary install it):</span>
 <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;harfang&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">harfang</span> <span class="k">as</span> <span class="nn">hg</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">harfang</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">hg</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_PKG_PATH&#39;</span><span class="p">,</span> <span class="s1">&#39;CreateSphereModel&#39;</span><span class="p">,</span><span class="s1">&#39;CreatePlaneModel&#39;</span><span class="p">,</span>
@@ -122,7 +117,7 @@
 
 <div class="viewcode-block" id="CreateSphereModel">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.CreateSphereModel">[docs]</a>
-<span class="k">def</span> <span class="nf">CreateSphereModel</span><span class="p">(</span><span class="n">decl</span> <span class="p">:</span> <span class="n">hg</span><span class="o">.</span><span class="n">VertexLayout</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subdiv_x</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">subdiv_y</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">flip_normals</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">CreateSphereModel</span><span class="p">(</span><span class="n">decl</span> <span class="p">:</span> <span class="n">hg</span><span class="o">.</span><span class="n">VertexLayout</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">radius</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subdiv_x</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">subdiv_y</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">flip_normals</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Create a Sphere Model.</span>
 <span class="sd">    </span>
@@ -205,7 +200,7 @@
 
 <div class="viewcode-block" id="CreatePlaneModel">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.CreatePlaneModel">[docs]</a>
-<span class="k">def</span> <span class="nf">CreatePlaneModel</span><span class="p">(</span><span class="n">decl</span> <span class="p">:</span> <span class="n">hg</span><span class="o">.</span><span class="n">VertexLayout</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">width</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subdiv_x</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">subdiv_y</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">flip_normals</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">CreatePlaneModel</span><span class="p">(</span><span class="n">decl</span> <span class="p">:</span> <span class="n">hg</span><span class="o">.</span><span class="n">VertexLayout</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">width</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">height</span> <span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">subdiv_x</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">subdiv_y</span> <span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">8</span><span class="p">,</span> <span class="n">flip_normals</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Create a Plane (Quad) Model.</span>
 <span class="sd">    </span>
@@ -279,7 +274,7 @@
 
 <div class="viewcode-block" id="create_material">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.create_material">[docs]</a>
-<span class="k">def</span> <span class="nf">create_material</span><span class="p">(</span><span class="n">prg_ref</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">ubc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">orm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_material</span><span class="p">(</span><span class="n">prg_ref</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">ubc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">orm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slf</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">tex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">blend_mode</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">BM_Opaque</span><span class="p">,</span> 
                     <span class="n">faceculling</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">FC_CounterClockwise</span>
                     <span class="p">):</span>
@@ -328,7 +323,7 @@
 
 <div class="viewcode-block" id="update_material_texture">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.update_material_texture">[docs]</a>
-<span class="k">def</span> <span class="nf">update_material_texture</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">mat_idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;uSelfMap&quot;</span><span class="p">,</span> <span class="n">stage</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">texListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">update_material_texture</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tex</span><span class="p">,</span> <span class="n">mat_idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;uSelfMap&quot;</span><span class="p">,</span> <span class="n">stage</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">texListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Update the texture of a Harfang material.</span>
 <span class="sd">    </span>
@@ -376,7 +371,7 @@
 
 <div class="viewcode-block" id="makeColorTex">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.makeColorTex">[docs]</a>
-<span class="k">def</span> <span class="nf">makeColorTex</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">texHeight</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">texWidth</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">makeColorTex</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">texHeight</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">texWidth</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">save</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Make a full single-color texture.</span>
 <span class="sd">    </span>
@@ -403,7 +398,7 @@
     
 <div class="viewcode-block" id="split_SingleSphericalTex">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.split_SingleSphericalTex">[docs]</a>
-<span class="k">def</span> <span class="nf">split_SingleSphericalTex</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">left_layout_pos</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_SingleSphericalTex</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">left_layout_pos</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Split Image into left eye and right eye subimages </span>
 <span class="sd">    </span>
@@ -460,7 +455,7 @@
 <span class="c1">#                 generated_files.append(file_posX)</span>
 <span class="c1">#     return generated_files</span>
     
-<span class="k">def</span> <span class="nf">_cleanupGeneratedFiles</span><span class="p">(</span><span class="n">generated_files</span><span class="p">,</span> <span class="n">keep_list</span> <span class="o">=</span> <span class="p">[]):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cleanupGeneratedFiles</span><span class="p">(</span><span class="n">generated_files</span><span class="p">,</span> <span class="n">keep_list</span> <span class="o">=</span> <span class="p">[]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Clean up files generated by viewer (keep_list: files to keep) &quot;&quot;&quot;</span>
     <span class="n">gf</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">generated_files</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">generated_files</span><span class="p">:</span> 
@@ -470,7 +465,7 @@
         <span class="n">gf</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">gf</span>
 
-<span class="k">def</span> <span class="nf">_getLeftRightFileNames</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">left_is_right</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_getLeftRightFileNames</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">left_is_right</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get filenames of left and right subimages&quot;&quot;&quot;</span>
     <span class="n">_left_strId</span> <span class="o">=</span> <span class="s1">&#39;_L&#39;</span>
     <span class="n">_right_strId</span> <span class="o">=</span> <span class="s1">&#39;_L&#39;</span> <span class="k">if</span> <span class="n">left_is_right</span> <span class="k">else</span> <span class="s1">&#39;_R&#39;</span>
@@ -486,7 +481,7 @@
     
     <span class="k">return</span> <span class="n">file_L</span><span class="p">,</span> <span class="n">file_R</span>
 
-<span class="k">def</span> <span class="nf">_processEquiRectImagePath</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="n">left_is_right</span><span class="p">,</span> <span class="n">left_layout_pos</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_processEquiRectImagePath</span><span class="p">(</span><span class="n">filePath</span><span class="p">,</span> <span class="n">left_is_right</span><span class="p">,</span> <span class="n">left_layout_pos</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Process the path of the rectangular image.</span>
 <span class="sd">    (splits image if no left (&#39;_R&#39;) or right (&#39;_L&#39;) sub-images are found in same folder as in filePath</span>
 <span class="sd">     </span>
@@ -522,8 +517,8 @@
 
 <div class="viewcode-block" id="Shader">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Shader">[docs]</a>
-<span class="k">class</span> <span class="nc">Shader</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">assetPath</span> <span class="o">=</span> <span class="s1">&#39;core/shader/pbr.hps&#39;</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shader</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span> <span class="n">assetPath</span> <span class="o">=</span> <span class="s1">&#39;core/shader/pbr.hps&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Initialize / load a shader from assets.</span>
 <span class="sd">        </span>
@@ -541,8 +536,8 @@
 
 <div class="viewcode-block" id="Scene">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Scene">[docs]</a>
-<span class="k">class</span> <span class="nc">Scene</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scene</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">canvasColorI</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">],</span>
                  <span class="n">ambientEnvColorI</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -566,8 +561,8 @@
 
 <div class="viewcode-block" id="Camera">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Camera">[docs]</a>
-<span class="k">class</span> <span class="nc">Camera</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="k">class</span><span class="w"> </span><span class="nc">Camera</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">scene</span><span class="p">,</span>
                  <span class="n">position</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
                  <span class="n">rotation</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -612,8 +607,8 @@
 
 <div class="viewcode-block" id="Material">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Material">[docs]</a>
-<span class="k">class</span> <span class="nc">Material</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shader_prgRef</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Material</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shader_prgRef</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span>
                  <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">uBaseOpacityColor</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">],</span>
@@ -671,7 +666,7 @@
         
 <div class="viewcode-block" id="Material.createMaterial">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Material.createMaterial">[docs]</a>
-    <span class="k">def</span> <span class="nf">createMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                        <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                        <span class="n">uBaseOpacityColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                        <span class="n">uSelfColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -715,7 +710,7 @@
 
 <div class="viewcode-block" id="Material.LoadTexturesFromFiles">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Material.LoadTexturesFromFiles">[docs]</a>
-    <span class="k">def</span> <span class="nf">LoadTexturesFromFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texFileList</span><span class="p">,</span> <span class="n">return_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">LoadTexturesFromFiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">texFileList</span><span class="p">,</span> <span class="n">return_type</span> <span class="o">=</span> <span class="nb">list</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Load textures specified in texFileList (return_type is either a list or dict) </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -733,8 +728,8 @@
 
 <div class="viewcode-block" id="Screen">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Screen">[docs]</a>
-<span class="k">class</span> <span class="nc">Screen</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="k">class</span><span class="w"> </span><span class="nc">Screen</span><span class="p">(</span><span class="n">Material</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">scene</span><span class="p">,</span>  <span class="n">shader_prgRef</span><span class="p">,</span> <span class="n">resources</span><span class="p">,</span>
                  <span class="n">geometry</span> <span class="o">=</span> <span class="s1">&#39;sphere&#39;</span><span class="p">,</span> <span class="n">aspect_ratio</span> <span class="o">=</span> <span class="p">[</span><span class="mi">19</span><span class="p">,</span><span class="mi">16</span><span class="p">],</span>
                  <span class="n">radius</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
@@ -848,7 +843,7 @@
 
 <div class="viewcode-block" id="Screen.updateScreenMaterial">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Screen.updateScreenMaterial">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                             <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">uSelfColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                             <span class="n">uBaseOpacityColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -898,7 +893,7 @@
     
 <div class="viewcode-block" id="Screen.updateScreenMaterialTexture">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Screen.updateScreenMaterialTexture">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Update the texture of the Harfang material.</span>
 <span class="sd">        </span>
@@ -926,8 +921,8 @@
 
 <div class="viewcode-block" id="Eye">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye">[docs]</a>
-<span class="k">class</span> <span class="nc">Eye</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+<span class="k">class</span><span class="w"> </span><span class="nc">Eye</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                  <span class="n">eye</span><span class="p">,</span> 
                  <span class="n">vrFlag</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
                  <span class="n">shader_assetPath</span> <span class="o">=</span> <span class="s1">&#39;core/shader/pbr.hps&#39;</span><span class="p">,</span>
@@ -1009,7 +1004,7 @@
      
 <div class="viewcode-block" id="Eye.updateScreenMaterial">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye.updateScreenMaterial">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                        <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                        <span class="n">uBaseOpacityColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                        <span class="n">uSelfColor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1027,7 +1022,7 @@
         
 <div class="viewcode-block" id="Eye.updateScreenMaterialTexture">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye.updateScreenMaterialTexture">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Update Screen MaterialTexture (see Screen.updtateScreenMaterialTexture.__doc__) &quot;&quot;&quot;</span>        
         <span class="bp">self</span><span class="o">.</span><span class="n">_screen</span><span class="o">.</span><span class="n">updateScreenMaterialTexture</span><span class="p">(</span><span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="n">uSelfMapTexture</span><span class="p">,</span>
                                                  <span class="n">uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="n">uSelfMapTextureListPreloaded</span><span class="p">)</span>
@@ -1039,7 +1034,7 @@
 
 <div class="viewcode-block" id="Eye.SceneForwardPipelinePassViewId_PrepareSceneForwardPipelineCommonRenderData">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye.SceneForwardPipelinePassViewId_PrepareSceneForwardPipelineCommonRenderData">[docs]</a>
-    <span class="k">def</span> <span class="nf">SceneForwardPipelinePassViewId_PrepareSceneForwardPipelineCommonRenderData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SceneForwardPipelinePassViewId_PrepareSceneForwardPipelineCommonRenderData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vid</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="c1"># vid = 0  # keep track of the next free view id</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vid</span> <span class="o">=</span> <span class="n">vid</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">passId</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">SceneForwardPipelinePassViewId</span><span class="p">()</span>
@@ -1050,7 +1045,7 @@
     
 <div class="viewcode-block" id="Eye.PrepareSceneForwardPipelineViewDependentRenderData_SubmitSceneToForwardPipeline">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye.PrepareSceneForwardPipelineViewDependentRenderData_SubmitSceneToForwardPipeline">[docs]</a>
-    <span class="k">def</span> <span class="nf">PrepareSceneForwardPipelineViewDependentRenderData_SubmitSceneToForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">vr_eye_rect</span><span class="p">,</span> <span class="n">isMainScreen</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">PrepareSceneForwardPipelineViewDependentRenderData_SubmitSceneToForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">vr_eye_rect</span><span class="p">,</span> <span class="n">isMainScreen</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passId</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">PrepareSceneForwardPipelineViewDependentRenderData</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vid</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passId</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">isMainScreen</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
             <span class="bp">self</span><span class="o">.</span><span class="n">vid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">passId</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">SubmitSceneToForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">scene</span><span class="p">,</span> <span class="n">vr_eye_rect</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vr_fb</span><span class="o">.</span><span class="n">GetHandle</span><span class="p">()</span> <span class="p">)</span>
@@ -1060,14 +1055,14 @@
 
 <div class="viewcode-block" id="Eye.DestroyForwardPipeline">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.Eye.DestroyForwardPipeline">[docs]</a>
-    <span class="k">def</span> <span class="nf">DestroyForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">DestroyForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">hg</span><span class="o">.</span><span class="n">DestroyForwardPipeline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline</span><span class="p">)</span></div>
 </div>
 
         
         
         
-<span class="k">def</span> <span class="nf">_processMaterialInput</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">equiRectImageLeftIsRight</span><span class="p">,</span> <span class="n">equiRectImageLeftPos</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_processMaterialInput</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">equiRectImageLeftIsRight</span><span class="p">,</span> <span class="n">equiRectImageLeftPos</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Process material input (helper function)&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
         <span class="n">x</span> <span class="o">=</span> <span class="p">[(</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">)]</span>
@@ -1105,8 +1100,8 @@
 
 <div class="viewcode-block" id="HmdStereoViewer">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer">[docs]</a>
-<span class="k">class</span> <span class="nc">HmdStereoViewer</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vrFlag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">vsync</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multisample</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">cam_fov</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">HmdStereoViewer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vrFlag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">vsync</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">multisample</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">cam_fov</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span>
                  <span class="n">windowWidth</span> <span class="o">=</span> <span class="n">_SCREEN_TEX_WH</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">windowHeight</span> <span class="o">=</span> <span class="n">_SCREEN_TEX_WH</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> 
                  <span class="n">windowTitle</span> <span class="o">=</span> <span class="s2">&quot;Harfang3d - Stereoscopic Viewer&quot;</span><span class="p">,</span>
                  <span class="n">mainScreenIdx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -1290,7 +1285,7 @@
         
 <div class="viewcode-block" id="HmdStereoViewer.set_texture">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.set_texture">[docs]</a>
-    <span class="k">def</span> <span class="nf">set_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_uSelfMapTexture</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_texture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">screen_uSelfMapTexture</span><span class="p">,</span>
                     <span class="n">equiRectImageLeftPos</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">equiRectImageLeftIsRight</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">screen_uSelfMapTextureListPreloaded</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1316,7 +1311,7 @@
     
 <div class="viewcode-block" id="HmdStereoViewer.init_main">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.init_main">[docs]</a>
-    <span class="k">def</span> <span class="nf">init_main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize Input and Window, add folder with compiled assets&quot;&quot;&quot;</span>
         
         <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_assetsFolder</span><span class="p">):</span>
@@ -1336,7 +1331,7 @@
                     
 <div class="viewcode-block" id="HmdStereoViewer.shutdown">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.shutdown">[docs]</a>
-    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Shutdown Pipelines for left and right eyes, Shutdown Render and destroy Window&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">leftEyeScreen</span><span class="o">.</span><span class="n">DestroyForwardPipeline</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rightEyeScreen</span><span class="o">.</span><span class="n">DestroyForwardPipeline</span><span class="p">()</span>
@@ -1348,7 +1343,7 @@
         
 <div class="viewcode-block" id="HmdStereoViewer.updateScreenMaterial">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.updateScreenMaterial">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                        <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                        <span class="n">equiRectImageLeftIsRight</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                        <span class="n">equiRectImageLeftPos</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1418,7 +1413,7 @@
         
 <div class="viewcode-block" id="HmdStereoViewer.updateScreenMaterialTexture">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.updateScreenMaterialTexture">[docs]</a>
-    <span class="k">def</span> <span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">updateScreenMaterialTexture</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
                                     <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                                     <span class="n">equiRectImageLeftIsRight</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                                     <span class="n">equiRectImageLeftPos</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1461,21 +1456,21 @@
         
 <div class="viewcode-block" id="HmdStereoViewer.resetFrameNumber">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.resetFrameNumber">[docs]</a>
-    <span class="k">def</span> <span class="nf">resetFrameNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">resetFrameNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Reset the frame number &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span> <span class="o">=</span> <span class="mi">0</span></div>
 
     
 <div class="viewcode-block" id="HmdStereoViewer.getFrameNumber">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.getFrameNumber">[docs]</a>
-    <span class="k">def</span> <span class="nf">getFrameNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getFrameNumber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the current frame number &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frameNumber</span></div>
 
     
 <div class="viewcode-block" id="HmdStereoViewer.display">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.display">[docs]</a>
-    <span class="k">def</span> <span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Display the texture (first one from list, use run() to loop through all of them) &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resetFrameNumber</span><span class="p">()</span>
         
@@ -1492,7 +1487,7 @@
         
 <div class="viewcode-block" id="HmdStereoViewer.run">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.run">[docs]</a>
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeFcns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pipeFcnsUpdate</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">only_once</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeFcns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">pipeFcnsUpdate</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">only_once</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
             <span class="n">u_delay</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">a_delay</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">autoShutdown</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Run through all textures specified at initialization (and do some action) .</span>
@@ -1577,7 +1572,7 @@
 
 <div class="viewcode-block" id="HmdStereoViewer.frame">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.frame">[docs]</a>
-    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
+    <span class="k">def</span><span class="w"> </span><span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>        
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Run everything required to update a frame &quot;&quot;&quot;</span>
         <span class="n">dt</span> <span class="o">=</span> <span class="n">hg</span><span class="o">.</span><span class="n">TickClock</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keyboard</span><span class="o">.</span><span class="n">Update</span><span class="p">()</span>
@@ -1626,7 +1621,7 @@
             
 <div class="viewcode-block" id="HmdStereoViewer.generate_defaultPipeFcns">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.HmdStereoViewer.generate_defaultPipeFcns">[docs]</a>
-    <span class="k">def</span> <span class="nf">generate_defaultPipeFcns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeFcnDef</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_defaultPipeFcns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipeFcnDef</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Generate default pipeline functions (if pipeFcnDef not None: use these) &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pipeFcnDef</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1">#==============================================================================</span>
@@ -1643,7 +1638,7 @@
             <span class="c1">#------------------------------------------------------------------------------ </span>
     
             <span class="c1"># Define pipe_fcn 0:</span>
-            <span class="k">def</span> <span class="nf">initWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">initWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Initialize the state array&quot;&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">return</span> <span class="n">action</span><span class="p">[</span><span class="mi">0</span><span class="p">](</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">action</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>     
@@ -1651,7 +1646,7 @@
                     <span class="k">return</span> <span class="n">out</span>  
                 
             <span class="c1"># Define pipe_fcn 1:   </span>
-            <span class="k">def</span> <span class="nf">updateWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">check</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">updateWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">check</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Wrapper function (cfr. control flow) around texture update function&quot;&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">out</span>
                 <span class="k">if</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span> <span class="c1"># if action finished set new stimulus</span>
@@ -1663,7 +1658,7 @@
                 <span class="k">return</span> <span class="n">out</span>
     
             <span class="c1"># Define pipe_fcn 2</span>
-            <span class="k">def</span> <span class="nf">actionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">check</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">actionWrapper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">action</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">check</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Wrapper function (cfr. control flow) around texture action function&quot;&quot;&quot;</span>
                 <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="k">return</span> <span class="n">out</span>
                 <span class="k">if</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span> <span class="c1"># -&gt; fcn1 finished</span>
@@ -1684,11 +1679,11 @@
                  
                 <span class="k">return</span> <span class="n">out</span>
     
-            <span class="k">def</span> <span class="nf">i_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">i_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Action to do at init (= setting the state array)&quot;&quot;&quot;</span>
                 <span class="k">return</span> <span class="p">[[</span><span class="kc">False</span><span class="p">,</span> <span class="mf">1e100</span><span class="p">],</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="mf">1e100</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># [[updateReady, UpdateOut (=tstart)], [[ActionReady, ActionOut (=tstart)]], texNumber] </span>
             
-            <span class="k">def</span> <span class="nf">u_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">u_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Action to do at update (= change texture) &quot;&quot;&quot;</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">n_stimuli</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen_uSelfMapTextureList</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">texIdx</span> <span class="o">=</span> <span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_stimuli</span><span class="p">)</span> <span class="c1"># % n because only n images in example, normally: comment this line and use out[2] as the index into the texList</span>
@@ -1697,18 +1692,18 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">rightEyeScreen</span><span class="o">.</span><span class="n">updateScreenMaterialTexture</span><span class="p">(</span> <span class="n">uSelfMapTexture</span> <span class="o">=</span> <span class="n">texR</span> <span class="p">)</span>
                 <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
             
-            <span class="k">def</span> <span class="nf">u_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">u_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Check to do at update (= check whether the delay before texture action function can be run, to make sure image has already displayed fully on HMD) &quot;&quot;&quot;</span>
                 <span class="n">t_now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> 
                 <span class="n">dt</span> <span class="o">=</span> <span class="n">t_now</span> <span class="o">-</span> <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> 
                 <span class="k">return</span> <span class="n">dt</span> <span class="o">&gt;=</span> <span class="n">delay</span>
     
-            <span class="k">def</span> <span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Action to do at action (= start timer to create a delay as default or e.g. start some measurement when user creates his own a_action function and updates the default pipelineFcns) &quot;&quot;&quot;</span>
                 <span class="n">t_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="c1"># e.g. get time or start measurement</span>
                 <span class="k">return</span> <span class="n">t_start</span> <span class="c1"># stored in out[3] so it is available for a later check</span>
     
-            <span class="k">def</span> <span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">def</span><span class="w"> </span><span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
 <span class="w">                </span><span class="sd">&quot;&quot;&quot; Check to do at action (= check if time since start of timer is larger than delay to create a delay as default or e.g. check whether measurement file exists (indicating finished measurement) when user creates his own a_action function and updates the default pipelineFcns) &quot;&quot;&quot;</span>
                 <span class="n">t_now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> 
                 <span class="n">dt</span> <span class="o">=</span> <span class="n">t_now</span> <span class="o">-</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> 
@@ -1728,7 +1723,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">generate_color_texs</span><span class="p">(</span><span class="n">rgba_list</span><span class="p">,</span> <span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_color_texs</span><span class="p">(</span><span class="n">rgba_list</span><span class="p">,</span> <span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;./&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Generate color textures from rgba_list &quot;&quot;&quot;</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">texFiles</span> <span class="o">=</span> <span class="p">[]</span>
@@ -1740,7 +1735,7 @@
 
 <div class="viewcode-block" id="generate_stimulus_tex_list">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.generate_stimulus_tex_list">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_stimulus_tex_list</span><span class="p">(</span><span class="n">stimulus_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_stimulus_tex_list</span><span class="p">(</span><span class="n">stimulus_list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                                <span class="n">equiRectImageLeftIsRight</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                                <span class="n">equiRectImageLeftPos</span> <span class="o">=</span> <span class="s1">&#39;bottom&#39;</span><span class="p">,</span> 
                                <span class="n">rgba_save_folder</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -1800,7 +1795,7 @@
 
 <div class="viewcode-block" id="get_rgb_from_rgbtexpath">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.get_rgb_from_rgbtexpath">[docs]</a>
-<span class="k">def</span> <span class="nf">get_rgb_from_rgbtexpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rgb_from_rgbtexpath</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get rgb values from filename &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">[(</span><span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;tex_&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">4</span><span class="p">):]</span>
     <span class="n">r</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">path</span><span class="p">[:</span><span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)]),</span> <span class="n">path</span><span class="p">[(</span><span class="n">path</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span>
@@ -1812,7 +1807,7 @@
 
 <div class="viewcode-block" id="getRectMask">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.getRectMask">[docs]</a>
-<span class="k">def</span> <span class="nf">getRectMask</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getRectMask</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">shape</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get a boolean rectangular mask with mask-area determined by the (row,col) coordinates of the top-left &amp; bottom-right corners of the ROI &quot;&quot;&quot;</span>
     <span class="n">rm</span><span class="p">,</span> <span class="n">rM</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">cm</span><span class="p">,</span> <span class="n">cM</span> <span class="o">=</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">],</span> <span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -1827,7 +1822,7 @@
 
 <div class="viewcode-block" id="getRoiImage">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.getRoiImage">[docs]</a>
-<span class="k">def</span> <span class="nf">getRoiImage</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">roi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getRoiImage</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">roi</span><span class="p">):</span>
     <span class="n">mask</span> <span class="o">=</span> <span class="n">getRectMask</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span> <span class="n">img</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
     <span class="n">subimg</span> <span class="o">=</span> <span class="n">img</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">*</span><span class="p">(</span><span class="n">roi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span><span class="mi">3</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">subimg</span></div>
@@ -1835,7 +1830,7 @@
 
 <div class="viewcode-block" id="get_xyz_from_xyzmap_roi">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.get_xyz_from_xyzmap_roi">[docs]</a>
-<span class="k">def</span> <span class="nf">get_xyz_from_xyzmap_roi</span><span class="p">(</span><span class="n">xyzmap</span><span class="p">,</span> <span class="n">roi</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_xyz_from_xyzmap_roi</span><span class="p">(</span><span class="n">xyzmap</span><span class="p">,</span> <span class="n">roi</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get xyz values of Region-Of-Interest in XYZ-map &quot;&quot;&quot;</span>
     <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">xyzmap</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">M</span><span class="p">,</span><span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">m</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
@@ -1851,7 +1846,7 @@
 
 <div class="viewcode-block" id="get_rgbFromTexPaths">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.get_rgbFromTexPaths">[docs]</a>
-<span class="k">def</span> <span class="nf">get_rgbFromTexPaths</span><span class="p">(</span><span class="n">rgbatexFiles</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_rgbFromTexPaths</span><span class="p">(</span><span class="n">rgbatexFiles</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get rgb values read from the filenames of the tex-files &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rgbatexFiles</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">rgbatexFiles</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
@@ -1865,7 +1860,7 @@
     <span class="k">return</span> <span class="n">rgbs</span>    </div>
 
     
-<span class="k">def</span> <span class="nf">get_avgXYZFromXYZmaps</span><span class="p">(</span><span class="n">xyzmaps</span><span class="p">,</span> <span class="n">roi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_avgXYZFromXYZmaps</span><span class="p">(</span><span class="n">xyzmaps</span><span class="p">,</span> <span class="n">roi</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get average xyz values of Region-Of-Interest in XYZ-maps &quot;&quot;&quot;</span>
     <span class="n">xyzs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">xyzmap</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">xyzmaps</span><span class="p">):</span>
@@ -1875,7 +1870,7 @@
     
 <div class="viewcode-block" id="generate_rgba_texs_iml">
 <a class="viewcode-back" href="../../../../../toolboxes.html#luxpy.toolboxes.stereoscopicviewer.generate_rgba_texs_iml">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_rgba_texs_iml</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">rgba_save_folder</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_rgba_texs_iml</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">rgba_save_folder</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Generate rgba texture images, save them in a folder and return a list of texFiles and a .iml file with the paths to the texFiles&quot;&quot;&quot;</span>
     <span class="n">rgba</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">rgb</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="mi">255</span><span class="p">))</span> <span class="c1"># add alpha channel required by HMDviewer</span>
     <span class="n">texFiles</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">generate_stimulus_tex_list</span><span class="p">(</span><span class="n">rgba</span><span class="p">,</span> <span class="n">rgba_save_folder</span> <span class="o">=</span> <span class="n">rgba_save_folder</span><span class="p">)</span>
@@ -1907,7 +1902,7 @@
     
     <span class="k">if</span> <span class="n">use_LMK</span><span class="p">:</span>
         <span class="c1">## Setup instance of LMK for measurements:</span>
-        <span class="kn">from</span> <span class="nn">luxpy.toolboxes.technoteamlmk</span> <span class="kn">import</span> <span class="n">lmkActiveX</span><span class="p">,</span> <span class="n">kill_lmk4_process</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.toolboxes.technoteamlmk</span><span class="w"> </span><span class="kn">import</span> <span class="n">lmkActiveX</span><span class="p">,</span> <span class="n">kill_lmk4_process</span>
         
         <span class="n">modfrequency</span> <span class="o">=</span> <span class="mi">72</span> <span class="c1"># check what freq. the headset is running on: Quest2: 72 Hz, Rift CV2: 90 Hz</span>
         <span class="n">lmkX</span> <span class="o">=</span> <span class="n">lmkActiveX</span><span class="p">(</span><span class="s1">&#39;tts20035&#39;</span><span class="p">,</span> <span class="s1">&#39;xvr&#39;</span><span class="p">,</span> <span class="n">focusfactor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1915,7 +1910,7 @@
                           <span class="n">modfrequency</span> <span class="o">=</span> <span class="n">modfrequency</span><span class="p">,</span> <span class="n">maxtime</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                           <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
                            
-        <span class="k">def</span> <span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> 
+        <span class="k">def</span><span class="w"> </span><span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> 
                      <span class="n">lmkX</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">folder_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">file_name_base</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">folder_name</span><span class="p">):</span> 
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">folder_name</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
@@ -1925,7 +1920,7 @@
                 
             <span class="k">return</span> <span class="n">file</span> <span class="o">+</span> <span class="s1">&#39;.pcf&#39;</span>
     
-        <span class="k">def</span> <span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">],(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
                 <span class="k">return</span> <span class="kc">False</span>
             <span class="k">else</span><span class="p">:</span>
@@ -1937,11 +1932,11 @@
                              <span class="s1">&#39;check&#39;</span>  <span class="p">:</span> <span class="p">[</span><span class="n">a_check</span><span class="p">,</span>  <span class="p">{}]}</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1">#--------------------------------------------------------------------------</span>
-        <span class="k">def</span> <span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">a_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot; Start timer &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="c1"># stored in out[1][1] so it is available for a later check</span>
     
-        <span class="k">def</span> <span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">a_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frameNumber</span><span class="p">,</span> <span class="n">out</span><span class="p">,</span> <span class="n">delay</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
 <span class="w">            </span><span class="sd">&quot;&quot;&quot; Check if delay seconds have passed since start of timer &quot;&quot;&quot;</span>
             <span class="k">return</span> <span class="p">((</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="n">delay</span><span class="p">)</span> <span class="c1"># out[1][1] contains start time</span>
         

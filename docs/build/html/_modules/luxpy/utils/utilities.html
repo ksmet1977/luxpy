@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.utils.utilities &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.utils.utilities &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -171,23 +166,24 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Package imports:</span>
 <span class="c1"># Core:</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">import</span> <span class="nn">importlib</span>
-<span class="kn">import</span> <span class="nn">importlib.util</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">import</span> <span class="nn">cProfile</span>
-<span class="kn">import</span> <span class="nn">pstats</span>
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">gzip</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">odict</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.util</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cProfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pstats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">odict</span>
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;odict&#39;</span><span class="p">]</span>
 
 <span class="c1"># other:</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="c1"># import matplotlib.pyplot as plt # have become lazy imports </span>
 <span class="c1"># import scipy as sp # have become lazy imports </span>
 
@@ -209,7 +205,7 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">.folder_tree</span> <span class="kn">import</span> <span class="n">tree</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.folder_tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">tree</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;get_Axes3D_module&#39;</span><span class="p">,</span>
             <span class="s1">&#39;np2d&#39;</span><span class="p">,</span><span class="s1">&#39;np3d&#39;</span><span class="p">,</span><span class="s1">&#39;np2dT&#39;</span><span class="p">,</span><span class="s1">&#39;np3dT&#39;</span><span class="p">,</span>
             <span class="s1">&#39;put_args_in_db&#39;</span><span class="p">,</span><span class="s1">&#39;vec_to_dict&#39;</span><span class="p">,</span>
@@ -225,16 +221,16 @@
 <span class="c1">##############################################################################</span>
 <div class="viewcode-block" id="get_Axes3D_module">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.get_Axes3D_module">[docs]</a>
-<span class="k">def</span> <span class="nf">get_Axes3D_module</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_Axes3D_module</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Get Axes3D module from mpl_toolkits.mplot3d &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.mplot3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Axes3D</span> <span class="c1"># lazy import</span>
     <span class="k">return</span> <span class="n">Axes3D</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="np2d">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2d">[docs]</a>
-<span class="k">def</span> <span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">np2d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array.</span>
 <span class="sd">    </span>
@@ -258,7 +254,7 @@
 
 <div class="viewcode-block" id="np2dT">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.np2dT">[docs]</a>
-<span class="k">def</span> <span class="nf">np2dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">np2dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 2D numpy array and transpose.</span>
 <span class="sd">    </span>
@@ -281,7 +277,7 @@
 
 <div class="viewcode-block" id="np3d">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3d">[docs]</a>
-<span class="k">def</span> <span class="nf">np3d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">np3d</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array.</span>
 <span class="sd">    </span>
@@ -304,7 +300,7 @@
     
 <div class="viewcode-block" id="np3dT">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.np3dT">[docs]</a>
-<span class="k">def</span> <span class="nf">np3dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="c1"># keep last axis the same</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">np3dT</span><span class="p">(</span><span class="n">data</span><span class="p">):</span> <span class="c1"># keep last axis the same</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a tuple, list or numpy array at least a 3d numpy array and transposed first 2 axes.</span>
 <span class="sd">    </span>
@@ -331,7 +327,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="put_args_in_db">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.put_args_in_db">[docs]</a>
-<span class="k">def</span> <span class="nf">put_args_in_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">put_args_in_db</span><span class="p">(</span><span class="n">db</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Takes the args with not-None input values of a function and overwrites </span>
 <span class="sd">    the values of the corresponding keys in dict db.</span>
@@ -385,15 +381,15 @@
 <span class="c1">#------------------------------------------------------------------------------   </span>
 <div class="viewcode-block" id="vec_to_dict">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.vec_to_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">vec_to_dict</span><span class="p">(</span><span class="n">vec</span><span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dic</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">vec_to_dict</span><span class="p">(</span><span class="n">vec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vsize</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert dict to vec and vice versa.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :vec: </span>
-<span class="sd">            | list or vector array, optional</span>
+<span class="sd">            | None or list or vector array, optional</span>
 <span class="sd">        :dic: </span>
-<span class="sd">            | dict, optional</span>
+<span class="sd">            | None or dict, optional</span>
 <span class="sd">        :vsize:</span>
 <span class="sd">            | list or vector array with size of values of dict, optional</span>
 <span class="sd">        :keys:</span>
@@ -405,27 +401,30 @@
 <span class="sd">            |   x is an array, if vec is None</span>
 <span class="sd">            |   x is a dict, if vec is not None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">vec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">vec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Put values in vec in dic:</span>
         <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># keeps track of length already read from x</span>
+        <span class="n">dic</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
             <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="n">vec</span><span class="p">[</span><span class="n">n</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">vsize</span><span class="p">[</span><span class="n">i</span><span class="p">])]</span>
             <span class="n">n</span> <span class="o">+=</span> <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> 
         <span class="k">return</span> <span class="n">dic</span><span class="p">,</span> <span class="n">vsize</span>
-    <span class="k">else</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">vec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">dic</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="c1"># Put values of keys in dic in vec:</span>
         <span class="n">vec</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">vsize</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">keys</span><span class="p">):</span>
             <span class="n">vec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">vec</span><span class="p">,</span> <span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]))</span>
             <span class="n">vsize</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dic</span><span class="p">[</span><span class="n">v</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">vsize</span></div>
+        <span class="k">return</span> <span class="n">vec</span><span class="p">,</span> <span class="n">vsize</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Either vec or dict must be not None, and also not both!&#39;</span><span class="p">)</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="loadtxt">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.loadtxt">[docs]</a>
-<span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Load data from text file. </span>
 <span class="sd">    </span>
@@ -467,7 +466,7 @@
 
 <div class="viewcode-block" id="savetxt">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.savetxt">[docs]</a>
-<span class="k">def</span> <span class="nf">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;:1.18f&#39;</span><span class="p">,</span> <span class="n">aw</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">savetxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;:1.18f&#39;</span><span class="p">,</span> <span class="n">aw</span> <span class="o">=</span> <span class="s1">&#39;w&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Save data to text file. </span>
 <span class="sd">    </span>
@@ -522,7 +521,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="getdata">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.getdata">[docs]</a>
-<span class="k">def</span> <span class="nf">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">getdata</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> 
             <span class="n">datatype</span> <span class="o">=</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span> <span class="n">copy</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get data from csv-file. </span>
@@ -589,7 +588,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="dictkv">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.dictkv">[docs]</a>
-<span class="k">def</span> <span class="nf">dictkv</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">dictkv</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">values</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ordered</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Easy input of of keys and values into dict.</span>
 <span class="sd">    </span>
@@ -611,12 +610,12 @@
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span><span class="n">values</span><span class="p">))</span></div>
 
     
-<span class="k">class</span> <span class="nc">OD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">OD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class provides a nice way to create OrderedDict &quot;literals&quot;.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slices</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slices</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">slices</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
             <span class="n">slices</span> <span class="o">=</span> <span class="n">slices</span><span class="p">,</span>
         <span class="k">return</span> <span class="n">odict</span><span class="p">((</span><span class="nb">slice</span><span class="o">.</span><span class="n">start</span><span class="p">,</span> <span class="nb">slice</span><span class="o">.</span><span class="n">stop</span><span class="p">)</span> <span class="k">for</span> <span class="nb">slice</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">)</span>
@@ -626,7 +625,7 @@
 <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="meshblock">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.meshblock">[docs]</a>
-<span class="k">def</span> <span class="nf">meshblock</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">meshblock</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Create a meshed block from x and y.</span>
 <span class="sd">    </span>
@@ -653,7 +652,7 @@
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="asplit">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.asplit">[docs]</a>
-<span class="k">def</span> <span class="nf">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">asplit</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split data on last axis</span>
 <span class="sd">    </span>
@@ -673,7 +672,7 @@
 
 <div class="viewcode-block" id="ajoin">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.ajoin">[docs]</a>
-<span class="k">def</span> <span class="nf">ajoin</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ajoin</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Join data on last axis.</span>
 <span class="sd">    </span>
@@ -699,7 +698,7 @@
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="broadcast_shape">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.broadcast_shape">[docs]</a>
-<span class="k">def</span> <span class="nf">broadcast_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">target_shape</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">broadcast_shape</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">target_shape</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">expand_2d_to_3d</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis0_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axis1_repeats</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Broadcasts shapes of data to a target_shape.</span>
 <span class="sd">    </span>
@@ -756,7 +755,7 @@
 
 <div class="viewcode-block" id="todim">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.todim">[docs]</a>
-<span class="k">def</span> <span class="nf">todim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tshape</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">todim</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">tshape</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Expand x to dims that are broadcast-compatable with shape of another array.</span>
 <span class="sd">    </span>
@@ -813,7 +812,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="read_excel">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.read_excel">[docs]</a>
-<span class="k">def</span> <span class="nf">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> 
                <span class="n">force_dictoutput</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;X&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Read excel file using openpyxl.</span>
@@ -855,7 +854,7 @@
     <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;openpyxl&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not import (nor pip install openpyxl)! Please try a manual install. And retry.&quot;</span><span class="p">)</span>
             
@@ -941,7 +940,7 @@
 
 <div class="viewcode-block" id="write_excel">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.write_excel">[docs]</a>
-<span class="k">def</span> <span class="nf">write_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">sheet_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cell_range</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Write data to an excel file using openpyxl.</span>
 <span class="sd">    </span>
@@ -967,7 +966,7 @@
     <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;openpyxl&#39;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="kn">import</span> <span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">openpyxl</span> <span class="c1"># lazy import</span>
         <span class="k">except</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Could not import (nor pip install openpyxl)! Please try a manual install. And retry.&quot;</span><span class="p">)</span>
 
@@ -1060,7 +1059,7 @@
     
 <div class="viewcode-block" id="show_luxpy_tree">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.show_luxpy_tree">[docs]</a>
-<span class="k">def</span> <span class="nf">show_luxpy_tree</span><span class="p">(</span><span class="n">omit</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span><span class="s1">&#39;__pycache__&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">show_luxpy_tree</span><span class="p">(</span><span class="n">omit</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;.pyc&#39;</span><span class="p">,</span><span class="s1">&#39;__pycache__&#39;</span><span class="p">,</span>
                             <span class="s1">&#39;.txt&#39;</span><span class="p">,</span><span class="s1">&#39;.dat&#39;</span><span class="p">,</span><span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="s1">&#39;.npz&#39;</span><span class="p">,</span>
                             <span class="s1">&#39;.png&#39;</span><span class="p">,</span><span class="s1">&#39;.jpg&#39;</span><span class="p">,</span><span class="s1">&#39;.md&#39;</span><span class="p">,</span><span class="s1">&#39;.pdf&#39;</span><span class="p">,</span><span class="s1">&#39;.ini&#39;</span><span class="p">,</span><span class="s1">&#39;.log&#39;</span><span class="p">,</span> <span class="s1">&#39;.rar&#39;</span><span class="p">,</span>
                             <span class="s1">&#39;drivers&#39;</span><span class="p">,</span><span class="s1">&#39;SDK_&#39;</span><span class="p">,</span><span class="s1">&#39;dll&#39;</span><span class="p">,</span><span class="s1">&#39;bak&#39;</span><span class="p">]):</span>
@@ -1082,7 +1081,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="is_importable">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.is_importable">[docs]</a>
-<span class="k">def</span> <span class="nf">is_importable</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_importable</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if string is importable/loadable. If it doesn&#39;t then try to &#39;pip install&#39; it using subprocess.</span>
 <span class="sd">    Returns None if succesful, otherwise throws and error or outputs False.</span>
@@ -1121,7 +1120,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="get_function_kwargs">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.get_function_kwargs">[docs]</a>
-<span class="k">def</span> <span class="nf">get_function_kwargs</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_function_kwargs</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get dictionary of a function&#39;s keyword arguments and their default values. </span>
 <span class="sd">    </span>
@@ -1148,7 +1147,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="profile_fcn">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.profile_fcn">[docs]</a>
-<span class="k">def</span> <span class="nf">profile_fcn</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort_stats</span> <span class="o">=</span> <span class="s1">&#39;tottime&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">profile_fcn</span><span class="p">(</span><span class="n">fcn</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sort_stats</span> <span class="o">=</span> <span class="s1">&#39;tottime&#39;</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Profile or time a function fcn.</span>
 <span class="sd">    </span>
@@ -1194,7 +1193,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="unique">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.unique">[docs]</a>
-<span class="k">def</span> <span class="nf">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">sort</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">unique</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">sort</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get unique elements from array.</span>
 <span class="sd">    </span>
@@ -1217,59 +1216,155 @@
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
+<span class="c1"># def save_pkl(filename, obj, compresslevel = 0): </span>
+<span class="c1">#     &quot;&quot;&quot; </span>
+<span class="c1">#     Save an object in a (gzipped) pickle file.</span>
+    
+<span class="c1">#     Args:</span>
+<span class="c1">#         :filename:</span>
+<span class="c1">#             | str with filename of pickle file.</span>
+<span class="c1">#         :obj:</span>
+<span class="c1">#             | python object to save</span>
+<span class="c1">#         :compresslevel:</span>
+<span class="c1">#             | 0, optional</span>
+<span class="c1">#             | If &gt; 0: use gzip to compress pkl file.</span>
+    
+<span class="c1">#     Returns:</span>
+<span class="c1">#         :None:</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     _open = (lambda file,w: gzip.open(file+&#39;.gz&#39;, w, compresslevel = compresslevel)) if (compresslevel &gt; 0) else (lambda file, w: open(file,w))</span>
+<span class="c1">#     with _open(filename, &#39;wb&#39;) as handle:</span>
+<span class="c1">#         pickle.dump(obj, handle, protocol=pickle.HIGHEST_PROTOCOL)</span>
+        
+<span class="c1"># def load_pkl(filename, gzipped = False):</span>
+<span class="c1">#     &quot;&quot;&quot; </span>
+<span class="c1">#     Load the object in a (gzipped) pickle file.</span>
+    
+<span class="c1">#     Args:</span>
+<span class="c1">#         :filename:</span>
+<span class="c1">#             | str with filename of pickle file.</span>
+<span class="c1">#         :gzipped:</span>
+<span class="c1">#             | False, optional </span>
+<span class="c1">#             | If True: &#39;.gz&#39; will be added to filename before opening. </span>
+        
+<span class="c1">#     Returns:</span>
+<span class="c1">#         :obj:</span>
+<span class="c1">#             | loaded python object</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     obj = None</span>
+<span class="c1">#     if gzipped and (filename[-3:] != &#39;.gz&#39;): filename = filename + &#39;.gz&#39;</span>
+<span class="c1">#     _open = gzip.open if filename[-3:] == &#39;.gz&#39; else open</span>
+<span class="c1">#     with _open(filename, &#39;rb&#39;) as handle:</span>
+<span class="c1">#         obj = pickle.load(handle)</span>
+<span class="c1">#     return obj</span>
+
 <div class="viewcode-block" id="save_pkl">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.save_pkl">[docs]</a>
-<span class="k">def</span> <span class="nf">save_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span> 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Save an object in a (gzipped) pickle file.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">save_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_file_size_in_Mb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">part_indicator</span> <span class="o">=</span> <span class="s1">&#39;_part_&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Save an object in a (gzipped) pickle file, optionally splitting into multiple files.</span>
 <span class="sd">    </span>
 <span class="sd">    Args:</span>
 <span class="sd">        :filename:</span>
-<span class="sd">            | str with filename of pickle file.</span>
-<span class="sd">        :obj:</span>
-<span class="sd">            | python object to save</span>
-<span class="sd">        :compresslevel:</span>
-<span class="sd">            | 0, optional</span>
-<span class="sd">            | If &gt; 0: use gzip to compress pkl file.</span>
-<span class="sd">    </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        :None:</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_open</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span><span class="n">w</span><span class="p">:</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="o">+</span><span class="s1">&#39;.gz&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">compresslevel</span> <span class="o">=</span> <span class="n">compresslevel</span><span class="p">))</span> <span class="k">if</span> <span class="p">(</span><span class="n">compresslevel</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span> <span class="n">w</span><span class="p">:</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span><span class="n">w</span><span class="p">))</span>
-    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
-        <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">handle</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span></div>
+<span class="sd">          | str with (base) filename.</span>
+<span class="sd">        :obj: </span>
+<span class="sd">            | Python object to save.</span>
+<span class="sd">        :compresslevel: </span>
+<span class="sd">            | 0 or int, optional </span>
+<span class="sd">            | If &gt; 0: use gzip compression.</span>
+<span class="sd">        :max_file_size_in_Mb:</span>
+<span class="sd">            | None or float </span>
+<span class="sd">            | Maximum file size per part in MB. If None, do not split.</span>
+<span class="sd">        :part_indicator:</span>
+<span class="sd">            | &#39;_part_&#39;, optional</span>
+<span class="sd">            | String to indicate part number in filename (e.g., &#39;_part_1&#39;, &#39;_part_2&#39;,...).</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">raw_data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">pickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pkl.gz&quot;</span> <span class="k">if</span> <span class="n">compresslevel</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;.pkl&quot;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>  <span class="c1"># Ensure no trailing extension</span>
+    
+    <span class="n">max_bytes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">max_file_size_in_Mb</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">*</span> <span class="mi">1024</span><span class="p">)</span>
+    <span class="n">n_parts</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span> <span class="o">/</span> <span class="n">max_bytes</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">max_file_size_in_Mb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">n_parts</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">_open</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="n">compresslevel</span><span class="p">))</span> <span class="k">if</span> <span class="n">compresslevel</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">open</span>
+        <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span> <span class="o">+</span> <span class="n">ext</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
         
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_parts</span><span class="p">):</span>
+            <span class="n">part_data</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">max_bytes</span> <span class="p">:</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">max_bytes</span><span class="p">]</span>
+            <span class="n">part_filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}{</span><span class="n">part_indicator</span><span class="si">}{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="n">_open</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">compresslevel</span><span class="o">=</span><span class="n">compresslevel</span><span class="p">))</span> <span class="k">if</span> <span class="n">compresslevel</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">open</span>
+            <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">part_filename</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+                <span class="n">handle</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">part_data</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="load_pkl">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.load_pkl">[docs]</a>
-<span class="k">def</span> <span class="nf">load_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">gzipped</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    Load the object in a (gzipped) pickle file.</span>
-<span class="sd">    </span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">gzipped</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">part_indicator</span> <span class="o">=</span> <span class="s1">&#39;_part_&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load a (possibly split and/or gzipped) pickle file and reconstruct the object.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        :filename:</span>
-<span class="sd">            | str with filename of pickle file.</span>
+<span class="sd">        :filename: </span>
+<span class="sd">            | str with (base) filename (without any part indices).</span>
 <span class="sd">        :gzipped:</span>
 <span class="sd">            | False, optional </span>
-<span class="sd">            | If True: &#39;.gz&#39; will be added to filename before opening. </span>
-<span class="sd">        </span>
-<span class="sd">    Returns:</span>
-<span class="sd">        :obj:</span>
-<span class="sd">            | loaded python object</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">obj</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">if</span> <span class="n">gzipped</span> <span class="ow">and</span> <span class="p">(</span><span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">!=</span> <span class="s1">&#39;.gz&#39;</span><span class="p">):</span> <span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span> <span class="o">+</span> <span class="s1">&#39;.gz&#39;</span>
-    <span class="n">_open</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span> <span class="k">if</span> <span class="n">filename</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.gz&#39;</span> <span class="k">else</span> <span class="nb">open</span>
-    <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">obj</span></div>
+<span class="sd">            | If True, assume gzipped files (i.e., use .pkl.gz). If False, use .pkl.</span>
+<span class="sd">        :part_indicator:</span>
+<span class="sd">            | &#39;_part_&#39;, optional</span>
+<span class="sd">            | String that was used when saving to indicate part number in filename (e.g., &#39;_part_1&#39;, &#39;_part_2&#39;,...).</span>
 
+<span class="sd">    Returns:</span>
+<span class="sd">        obj: </span>
+<span class="sd">            | loaded Python object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pkl.gz&quot;</span> <span class="k">if</span> <span class="n">gzipped</span> <span class="k">else</span> <span class="s2">&quot;.pkl&quot;</span>
+    <span class="n">base_name</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">removesuffix</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">_is_split_pickle</span><span class="p">(</span><span class="n">base_name</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">part_indicator</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">raw_data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">()</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">part_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_name</span><span class="si">}{</span><span class="n">part_indicator</span><span class="si">}{</span><span class="n">i</span><span class="si">}{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">part_file</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="n">_open</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span> <span class="k">if</span> <span class="n">part_file</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.gz&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span>
+            <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">part_file</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">raw_data</span> <span class="o">+=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">raw_data</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">gzipped</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.gz&#39;</span><span class="p">):</span>
+            <span class="n">filename</span> <span class="o">+=</span> <span class="s1">&#39;.gz&#39;</span>
+        <span class="n">_open</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span> <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s1">&#39;.gz&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="nb">open</span>
+        <span class="k">with</span> <span class="n">_open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">handle</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_is_split_pickle</span><span class="p">(</span><span class="n">base_filename</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s2">&quot;.pkl&quot;</span><span class="p">,</span> <span class="n">part_indicator</span> <span class="o">=</span> <span class="s1">&#39;_part_&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check whether a base filename corresponds to a split pickle object.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        base_filename (str): The base file name without suffix/index.</span>
+<span class="sd">        ext (str): The extension to check for (e.g., &#39;.pkl&#39; or &#39;.pkl.gz&#39;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        bool: True if split parts exist, False otherwise.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">first_part</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">base_filename</span><span class="si">}{</span><span class="n">part_indicator</span><span class="si">}</span><span class="s2">1</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">first_part</span><span class="p">)</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span> 
     <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;imageio&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">success</span><span class="p">:</span> 
-        <span class="kn">import</span> <span class="nn">imageio</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span> <span class="c1"># lazy import</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">imageio</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">try</span><span class="p">:</span> 
@@ -1286,7 +1381,7 @@
 
 <div class="viewcode-block" id="imsave">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.imsave">[docs]</a>
-<span class="k">def</span> <span class="nf">imsave</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">imsave</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">img</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Save image using imageio&quot;&quot;&quot;</span>
     <span class="n">imageio</span> <span class="o">=</span> <span class="n">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="p">)</span> <span class="c1"># lazy-import</span>
     <span class="k">try</span><span class="p">:</span> 
@@ -1297,7 +1392,7 @@
     
 <div class="viewcode-block" id="imread">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.imread">[docs]</a>
-<span class="k">def</span> <span class="nf">imread</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">imread</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="n">use_freeimage</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Read image using imageio&quot;&quot;&quot;</span>
     <span class="n">imageio</span> <span class="o">=</span> <span class="n">_try_imageio_import</span><span class="p">(</span><span class="n">use_freeimage</span><span class="p">)</span> <span class="c1"># lazy-import</span>
     <span class="k">try</span><span class="p">:</span> 
@@ -1309,7 +1404,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="lazy_import">
 <a class="viewcode-back" href="../../../utils.html#luxpy.utils.lazy_import">[docs]</a>
-<span class="k">def</span> <span class="nf">lazy_import</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lazy_import</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Lazy import of module &quot;&quot;&quot;</span>
     <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">find_spec</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
     <span class="n">loader</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">LazyLoader</span><span class="p">(</span><span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>

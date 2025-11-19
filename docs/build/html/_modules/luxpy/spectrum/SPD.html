@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.spectrum.SPD &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -151,17 +146,17 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">spd_normalize</span><span class="p">,</span> <span class="n">plot_spectrum_colors</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">getdata</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.CDATA</span> <span class="kn">import</span> <span class="n">XYZ</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">spd_normalize</span><span class="p">,</span> <span class="n">plot_spectrum_colors</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">getdata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.CDATA</span><span class="w"> </span><span class="kn">import</span> <span class="n">XYZ</span> 
 
 <div class="viewcode-block" id="SPD">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD">[docs]</a>
-<span class="k">class</span> <span class="nc">SPD</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SPD</span><span class="p">:</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax0iswl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> \
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ax0iswl</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;spd&#39;</span><span class="p">,</span> \
                  <span class="n">wl_new</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_method</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span>\
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>\
                  <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">):</span>
@@ -252,7 +247,7 @@
     
 <div class="viewcode-block" id="SPD.read_csv_">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.read_csv_">[docs]</a>
-    <span class="k">def</span> <span class="nf">read_csv_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_csv_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reads spectral data from file.</span>
 <span class="sd">        </span>
@@ -281,7 +276,7 @@
 
 <div class="viewcode-block" id="SPD.plot">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Spectrum&#39;</span><span class="p">,</span> <span class="n">wavelength_bar</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ylabel</span> <span class="o">=</span> <span class="s1">&#39;Spectrum&#39;</span><span class="p">,</span> <span class="n">wavelength_bar</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Make a plot of the spectral data in SPD instance.</span>
 <span class="sd">        </span>
@@ -289,7 +284,7 @@
 <span class="sd">            :returns:</span>
 <span class="sd">                | handle to current axes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wavelength_bar</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">Smax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
@@ -301,7 +296,7 @@
     
 <div class="viewcode-block" id="SPD.mean">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.mean">[docs]</a>
-    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take mean of all spectra in SPD instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -313,7 +308,7 @@
         
 <div class="viewcode-block" id="SPD.sum">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.sum">[docs]</a>
-    <span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Sum all spectra in SPD instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -325,7 +320,7 @@
         
 <div class="viewcode-block" id="SPD.dot">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.dot">[docs]</a>
-    <span class="k">def</span> <span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take dot product with instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -340,7 +335,7 @@
             
 <div class="viewcode-block" id="SPD.add">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.add">[docs]</a>
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -350,7 +345,7 @@
     
 <div class="viewcode-block" id="SPD.sub">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.sub">[docs]</a>
-    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subtract instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -360,7 +355,7 @@
         
 <div class="viewcode-block" id="SPD.mul">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.mul">[docs]</a>
-    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Multiply by instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -370,7 +365,7 @@
         
 <div class="viewcode-block" id="SPD.div">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.div">[docs]</a>
-    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Divide by instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -380,7 +375,7 @@
     
 <div class="viewcode-block" id="SPD.pow">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.pow">[docs]</a>
-    <span class="k">def</span> <span class="nf">pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Raise SPD instance to power n.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -390,7 +385,7 @@
     
 <div class="viewcode-block" id="SPD.get_">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.get_">[docs]</a>
-    <span class="k">def</span> <span class="nf">get_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get spd as ndarray in instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -399,7 +394,7 @@
     
 <div class="viewcode-block" id="SPD.setwlv">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.setwlv">[docs]</a>
-    <span class="k">def</span> <span class="nf">setwlv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">spd</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setwlv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">spd</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Store spd ndarray in fields wl and values of instance of SPD.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -412,7 +407,7 @@
       
 <div class="viewcode-block" id="SPD.getwld_">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.getwld_">[docs]</a>
-    <span class="k">def</span> <span class="nf">getwld_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getwld_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get wavelength spacing of SPD instance. </span>
 <span class="sd">                   </span>
@@ -428,7 +423,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="SPD.normalize">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.normalize">[docs]</a>
-    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm_f</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalize spectral power distributions in SPD instance.</span>
 <span class="sd">        </span>
@@ -459,7 +454,7 @@
     <span class="c1">#--------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="SPD.cie_interp">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.cie_interp">[docs]</a>
-    <span class="k">def</span> <span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">sprague_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sprague_method</span> <span class="o">=</span> <span class="s1">&#39;sprague_cie224_2017&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">cie_interp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">wl_new</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">sprague_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">sprague_method</span> <span class="o">=</span> <span class="s1">&#39;sprague_cie224_2017&#39;</span><span class="p">,</span> <span class="n">negative_values_allowed</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                    <span class="n">extrap_values</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">extrap_kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Interpolate / extrapolate spectral data following standard CIE15-2018.</span>
@@ -556,7 +551,7 @@
 
 <div class="viewcode-block" id="SPD.to_xyz">
 <a class="viewcode-back" href="../../../spectrum.html#luxpy.spectrum.SPD.SPD.to_xyz">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates xyz tristimulus values from spectral data </span>
 <span class="sd">        and return as instance of XYZ.</span>

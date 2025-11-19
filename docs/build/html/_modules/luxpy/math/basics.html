@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.math.basics &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.math.basics &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -193,9 +188,9 @@
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">===============================================================================</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">np2d</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">asplit</span>
 <span class="c1"># from scipy import stats # has become a lazy import</span>
 
 <span class="n">__all__</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;normalize_3x3_matrix&#39;</span><span class="p">,</span><span class="s1">&#39;symmM_to_posdefM&#39;</span><span class="p">,</span><span class="s1">&#39;check_symmetric&#39;</span><span class="p">,</span> <span class="s1">&#39;in_hull&#39;</span><span class="p">,</span>
@@ -212,7 +207,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="erf">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.erf">[docs]</a>
-<span class="k">def</span> <span class="nf">erf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">erf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    erf(x, /, out=None, *, where=True, casting=&#39;same_kind&#39;, order=&#39;K&#39;, dtype=None, subok=True[, signature, extobj])</span>
 <span class="sd">    erf(z) Returns the error function of complex argument.</span>
@@ -251,13 +246,13 @@
 <span class="sd">        &gt;&gt;&gt; plt.ylabel(&#39;$erf(x)$&#39;)</span>
 <span class="sd">        &gt;&gt;&gt; plt.show()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erf</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erf</span> <span class="c1"># lazy import</span>
     <span class="k">return</span> <span class="n">erf</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="erfinv">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.erfinv">[docs]</a>
-<span class="k">def</span> <span class="nf">erfinv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">erfinv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    erfinv(x, /, out=None, *, where=True, casting=&#39;same_kind&#39;, order=&#39;K&#39;, dtype=None, subok=True[, signature, extobj])</span>
 <span class="sd">    Inverse of the error function.</span>
@@ -295,14 +290,14 @@
 <span class="sd">            array([       -inf, -0.86312307, -0.5407314 , -0.30457019, -0.0987901 ,</span>
 <span class="sd">                   0.0987901 ,  0.30457019,  0.5407314 ,  0.86312307,         inf])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erfinv</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erfinv</span> <span class="c1"># lazy import</span>
     <span class="k">return</span> <span class="n">erfinv</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="normalize_3x3_matrix">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.normalize_3x3_matrix">[docs]</a>
-<span class="k">def</span> <span class="nf">normalize_3x3_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">xyz0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_3x3_matrix</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">xyz0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span><span class="mf">1.0</span><span class="p">]])):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Normalize 3x3 matrix M to xyz0 -- &gt; [1,1,1]</span>
 <span class="sd">    </span>
@@ -330,7 +325,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="line_intersect">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.line_intersect">[docs]</a>
-<span class="k">def</span> <span class="nf">line_intersect</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">line_intersect</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b1</span><span class="p">,</span> <span class="n">b2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Line intersections of series of two line segments a and b. </span>
 <span class="sd">        </span>
@@ -367,7 +362,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="positive_arctan">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.positive_arctan">[docs]</a>
-<span class="k">def</span> <span class="nf">positive_arctan</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">positive_arctan</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.</span>
 <span class="sd">    </span>
@@ -400,7 +395,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="dot23">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.dot23">[docs]</a>
-<span class="k">def</span> <span class="nf">dot23</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dot23</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">B</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Dot product of a 2-d ndarray with a (N x K x L) 3-d ndarray </span>
 <span class="sd">    using einsum().</span>
@@ -430,7 +425,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="check_symmetric">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.check_symmetric">[docs]</a>
-<span class="k">def</span> <span class="nf">check_symmetric</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_symmetric</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check if A is symmetric.</span>
 <span class="sd">    </span>
@@ -455,7 +450,7 @@
 
 <div class="viewcode-block" id="check_posdef">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.check_posdef">[docs]</a>
-<span class="k">def</span> <span class="nf">check_posdef</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_posdef</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks positive definiteness of a matrix via Cholesky.</span>
 <span class="sd">    </span>
@@ -488,7 +483,7 @@
 
 <div class="viewcode-block" id="symmM_to_posdefM">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.symmM_to_posdefM">[docs]</a>
-<span class="k">def</span> <span class="nf">symmM_to_posdefM</span><span class="p">(</span><span class="n">A</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;make&#39;</span><span class="p">,</span> <span class="n">forcesymm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">symmM_to_posdefM</span><span class="p">(</span><span class="n">A</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1.0e-9</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;make&#39;</span><span class="p">,</span> <span class="n">forcesymm</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert a symmetric matrix to a positive definite one. </span>
 <span class="sd">    </span>
@@ -590,7 +585,7 @@
 <span class="c1">#-----------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="bvgpdf">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.bvgpdf">[docs]</a>
-<span class="k">def</span> <span class="nf">bvgpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmainv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">bvgpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmainv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate bivariate Gaussian probability density function (BVGPDF)</span>
 <span class="sd">    </span>
@@ -622,7 +617,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="mahalanobis2">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.mahalanobis2">[docs]</a>
-<span class="k">def</span> <span class="nf">mahalanobis2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmainv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mahalanobis2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmainv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Evaluate the squared mahalanobis distance</span>
 <span class="sd">    </span>
@@ -701,7 +696,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="rms">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.rms">[docs]</a>
-<span class="k">def</span> <span class="nf">rms</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rms</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate root-mean-square along axis.</span>
 <span class="sd">    </span>
@@ -726,7 +721,7 @@
 <span class="c1">#-----------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="geomean">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.geomean">[docs]</a>
-<span class="k">def</span> <span class="nf">geomean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">geomean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate geometric mean along axis.</span>
 <span class="sd">    </span>
@@ -751,7 +746,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="polyarea">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.polyarea">[docs]</a>
-<span class="k">def</span> <span class="nf">polyarea</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">polyarea</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates area of polygon. </span>
 <span class="sd">    </span>
@@ -774,7 +769,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cart2pol">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.cart2pol">[docs]</a>
-<span class="k">def</span> <span class="nf">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cart2pol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Cartesion to polar coordinates.</span>
 <span class="sd">    </span>
@@ -800,7 +795,7 @@
 
 <div class="viewcode-block" id="pol2cart">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.pol2cart">[docs]</a>
-<span class="k">def</span> <span class="nf">pol2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pol2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert Cartesion to polar coordinates.</span>
 <span class="sd">    </span>
@@ -832,7 +827,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="spher2cart">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.spher2cart">[docs]</a>
-<span class="k">def</span> <span class="nf">spher2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">deg</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">spher2cart</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">deg</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert spherical to cartesian coordinates.</span>
 <span class="sd">    </span>
@@ -864,7 +859,7 @@
 
 <div class="viewcode-block" id="cart2spher">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.cart2spher">[docs]</a>
-<span class="k">def</span> <span class="nf">cart2spher</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span> <span class="n">deg</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cart2spher</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">,</span> <span class="n">deg</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert cartesian to spherical coordinates.</span>
 <span class="sd">    </span>
@@ -903,7 +898,7 @@
 <span class="c1"># magnitude of a vector</span>
 <div class="viewcode-block" id="magnitude_v">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.magnitude_v">[docs]</a>
-<span class="k">def</span> <span class="nf">magnitude_v</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">magnitude_v</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates magnitude of vector.</span>
 <span class="sd">    </span>
@@ -923,7 +918,7 @@
 <span class="c1"># angle between vectors</span>
 <div class="viewcode-block" id="angle_v1v2">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.angle_v1v2">[docs]</a>
-<span class="k">def</span> <span class="nf">angle_v1v2</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">angle_v1v2</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates angle between two vectors.</span>
 <span class="sd">    </span>
@@ -951,7 +946,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="histogram">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.histogram">[docs]</a>
-<span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bin_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">histogram</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bin_center</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Histogram function that can take as bins either the center (cfr. matlab hist) or bin-edges.</span>
 <span class="sd">    </span>
@@ -989,7 +984,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="v_to_cik">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.v_to_cik">[docs]</a>
-<span class="k">def</span> <span class="nf">v_to_cik</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">v_to_cik</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate 2x2 &#39;(covariance matrix)^-1&#39; elements cik </span>
 <span class="sd">    </span>
@@ -1025,7 +1020,7 @@
 
 <div class="viewcode-block" id="cik_to_v">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.cik_to_v">[docs]</a>
-<span class="k">def</span> <span class="nf">cik_to_v</span><span class="p">(</span><span class="n">cik</span><span class="p">,</span> <span class="n">xyc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cik_to_v</span><span class="p">(</span><span class="n">cik</span><span class="p">,</span> <span class="n">xyc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inverse</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate v-format ellipse descriptor from 2x2 &#39;covariance matrix&#39;^-1 cik </span>
 <span class="sd">    </span>
@@ -1080,7 +1075,7 @@
 
 <div class="viewcode-block" id="fmod">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.fmod">[docs]</a>
-<span class="k">def</span> <span class="nf">fmod</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fmod</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Floating point modulus </span>
 <span class="sd">    </span>
@@ -1105,7 +1100,7 @@
 
 <div class="viewcode-block" id="remove_outliers">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.remove_outliers">[docs]</a>
-<span class="k">def</span> <span class="nf">remove_outliers</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remove_outliers</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Remove multivariate outliers from data when outside of alpha-level confidence ellipsoid.</span>
 <span class="sd">    </span>
@@ -1120,7 +1115,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | (N-... x p) ndarray with multivariate data; outliers removed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># delete outliers:    </span>
     <span class="n">datac</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -1134,7 +1129,7 @@
 
 <div class="viewcode-block" id="fit_ellipse">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.fit_ellipse">[docs]</a>
-<span class="k">def</span> <span class="nf">fit_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">center_on_mean_xy</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">fit_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">center_on_mean_xy</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit an ellipse to supplied data points.</span>
 
@@ -1219,7 +1214,7 @@
 
 <div class="viewcode-block" id="fit_cov_ellipse">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.fit_cov_ellipse">[docs]</a>
-<span class="k">def</span> <span class="nf">fit_cov_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">pdf</span> <span class="o">=</span> <span class="s1">&#39;chi2&#39;</span><span class="p">,</span> <span class="n">SE</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">fit_cov_ellipse</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">pdf</span> <span class="o">=</span> <span class="s1">&#39;chi2&#39;</span><span class="p">,</span> <span class="n">SE</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                     <span class="n">robust</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">robust_alpha</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Fit covariance ellipse to xy data.</span>
@@ -1253,7 +1248,7 @@
 <span class="sd">        :v:</span>
 <span class="sd">            | vector with ellipse parameters [Rmax,Rmin, xc,yc, theta (rad.)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import </span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import </span>
     
     <span class="c1"># delete outliers:    </span>
     <span class="k">if</span> <span class="n">robust</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
@@ -1288,7 +1283,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="in_hull">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.in_hull">[docs]</a>
-<span class="k">def</span> <span class="nf">in_hull</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">hull</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">in_hull</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">hull</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Test if points in `p` are in `hull`</span>
 
@@ -1304,7 +1299,7 @@
 <span class="sd">        :bool:</span>
 <span class="sd">            | boolean ndarray with True for in-gamut and False for out-of-gamut points</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Delaunay</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">Delaunay</span> <span class="c1"># lazy import</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hull</span><span class="p">,</span><span class="n">Delaunay</span><span class="p">):</span>
         <span class="n">hull</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">hull</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">hull</span><span class="o">.</span><span class="n">find_simplex</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span></div>
@@ -1507,7 +1502,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">use_log</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> 
         <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">Y</span><span class="p">,</span><span class="n">Yi</span><span class="p">:</span> <span class="n">Yi</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">,</span><span class="n">f</span>
@@ -1518,7 +1513,7 @@
 
 <div class="viewcode-block" id="linterp">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.linterp">[docs]</a>
-<span class="k">def</span> <span class="nf">linterp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">linterp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">left</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="s1">&#39;ext&#39;</span><span class="p">,</span> 
              <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span>
              <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1568,7 +1563,7 @@
 
 <div class="viewcode-block" id="interpolatedunivariatespline">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.interpolatedunivariatespline">[docs]</a>
-<span class="k">def</span> <span class="nf">interpolatedunivariatespline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">interpolatedunivariatespline</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                                  <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
                                  <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span>
                                  <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> 
@@ -1611,7 +1606,7 @@
 <span class="sd">            | ndarray with new values at coordinates in Xnew</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import </span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import </span>
 
     <span class="c1"># get interpolator type index:</span>
     <span class="n">k</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">,</span> <span class="s1">&#39;cubic&#39;</span><span class="p">,</span> <span class="s1">&#39;quartic&#39;</span><span class="p">,</span> <span class="s1">&#39;quintic&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">kind</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
@@ -1631,7 +1626,7 @@
 
 <div class="viewcode-block" id="_interpolate_with_nans">
 <a class="viewcode-back" href="../../../math.html#luxpy.math._interpolate_with_nans">[docs]</a>
-<span class="k">def</span> <span class="nf">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_interpolate_with_nans</span><span class="p">(</span><span class="n">fintp</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> 
                            <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Deal with possible NaNs in Y&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">delete_nans</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span> <span class="c1"># interpolate with potential NaNs present</span>
@@ -1669,13 +1664,13 @@
     <span class="k">return</span> <span class="n">Yn</span></div>
 
 
-<span class="k">def</span> <span class="nf">_interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">fill_value</span><span class="p">,</span> 
               <span class="n">interp_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">extrap_log</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform 1-D interpolation using scipy.interpolate.interp1d().</span>
 <span class="sd">    (Private: for use with interp1 function)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span>
     <span class="k">if</span> <span class="p">((</span><span class="n">ext</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;ext&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)):</span><span class="c1"># | (ext in (&#39;linear&#39;,&#39;quadratic&#39;,&#39;cubic&#39;)): </span>
         <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span>
     <span class="k">elif</span> <span class="p">((</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;flat&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">ext</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)):</span>
@@ -1683,7 +1678,7 @@
     <span class="n">fi</span><span class="p">,</span><span class="n">fii</span> <span class="o">=</span> <span class="n">_use_log</span><span class="p">(</span><span class="n">use_log</span> <span class="o">=</span> <span class="n">interp_log</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fii</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">fi</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span> <span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span><span class="p">,</span> <span class="n">bounds_error</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">)(</span><span class="n">Xnew</span><span class="p">))</span>
  
-<span class="k">def</span> <span class="nf">_get_fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span><span class="n">kind</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="n">fill_value</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_fintp</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span><span class="n">kind</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="n">fill_value</span><span class="p">,</span>
                <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">scipy_interpolator</span><span class="p">,</span>
                <span class="n">w</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">check_finite</span><span class="p">,</span>
                <span class="n">interp_log</span><span class="p">,</span> <span class="n">extrap_log</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
@@ -1706,7 +1701,7 @@
     
     <span class="k">return</span> <span class="n">fintp</span>
 
-<span class="k">def</span> <span class="nf">_get_most_time_efficient_interpolator</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">extrap_required</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_most_time_efficient_interpolator</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">kind</span><span class="p">,</span> <span class="n">ext</span><span class="p">,</span> <span class="n">force_scipy_interpolator</span><span class="p">,</span><span class="n">extrap_required</span><span class="p">):</span>
     <span class="c1"># Use most time-efficient interpolator:</span>
     <span class="n">N</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
@@ -1726,7 +1721,7 @@
 
 <div class="viewcode-block" id="interp1">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.interp1">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">interp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">ext</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">,</span> 
             <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
             <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
             <span class="n">w</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">bbox</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">check_finite</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="c1"># scipy.interpolate.InterpolatedUnivariateSpline kwargs</span>
@@ -1862,7 +1857,7 @@
                                  <span class="p">[</span><span class="o">-</span><span class="mi">180</span><span class="p">,</span> <span class="mi">1080</span><span class="p">,</span> <span class="o">-</span><span class="mi">2648</span><span class="p">,</span> <span class="mi">3033</span><span class="p">,</span> <span class="o">-</span><span class="mi">1960</span><span class="p">,</span> <span class="mi">884</span><span class="p">],</span>
                                  <span class="p">])</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="mf">209.0</span>
 
-<span class="k">def</span> <span class="nf">_pre_extrap_left_right_with_2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_pre_extrap_left_right_with_2</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
     <span class="c1"># Check equal x-spacing:</span>
     <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dx</span> <span class="o">==</span> <span class="n">dx</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
@@ -1883,7 +1878,7 @@
 
 <div class="viewcode-block" id="_extrap_y">
 <a class="viewcode-back" href="../../../math.html#luxpy.math._extrap_y">[docs]</a>
-<span class="k">def</span> <span class="nf">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_extrap_y</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
             <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
             <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
             <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1926,7 +1921,7 @@
     <span class="k">return</span> <span class="n">xn_x</span><span class="p">,</span> <span class="n">yne</span></div>
 
 
-<span class="k">def</span> <span class="nf">_interp1_sprague5</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_interp1_sprague5</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                      <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                      <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
                      <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1970,7 +1965,7 @@
     
 <div class="viewcode-block" id="interp1_sprague5">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_sprague5">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1_sprague5</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">interp1_sprague5</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                      <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                      <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
                      <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -2015,7 +2010,7 @@
 
 
 <span class="c1">#----------------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xn</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">xn</span><span class="p">,</span>
                                 <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                                 <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                                 <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
@@ -2081,7 +2076,7 @@
 
 <div class="viewcode-block" id="interp1_sprague_cie224_2017">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_sprague_cie224_2017">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">interp1_sprague_cie224_2017</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                      <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                      <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
                      <span class="n">delete_nans</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -2125,7 +2120,7 @@
                                 <span class="n">nan_indices</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> </div>
 
 <span class="c1">#----------------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_cardinal_lagrange</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_cardinal_lagrange</span><span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ydata</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    cardinal(xdata, x):</span>
 <span class="sd">    In: xdata, array with the nodes x_i.</span>
@@ -2150,7 +2145,7 @@
     <span class="k">return</span> <span class="n">l</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">xdata</span><span class="p">,</span> <span class="n">ydata</span><span class="p">)</span>
   
 
-<span class="k">def</span> <span class="nf">_interp1_lagrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">pre_extrap</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_interp1_lagrange</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xn</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">pre_extrap</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                      <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                      <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                      <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
@@ -2183,7 +2178,7 @@
 
 <div class="viewcode-block" id="interp1_lagrange">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.interp1_lagrange">[docs]</a>
-<span class="k">def</span> <span class="nf">interp1_lagrange</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">interp1_lagrange</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
                      <span class="n">extrap</span> <span class="o">=</span> <span class="s1">&#39;linear&#39;</span><span class="p">,</span> 
                      <span class="n">force_scipy_interpolator</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                      <span class="n">scipy_interpolator</span> <span class="o">=</span> <span class="s1">&#39;InterpolatedUnivariateSpline&#39;</span><span class="p">,</span>
@@ -2238,7 +2233,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="ndinterp1_scipy">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.ndinterp1_scipy">[docs]</a>
-<span class="k">def</span> <span class="nf">ndinterp1_scipy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="n">rescale</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>    
+<span class="k">def</span><span class="w"> </span><span class="nf">ndinterp1_scipy</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Xnew</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="n">rescale</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>    
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform a n-dimensional linear interpolation (wrapper around scipy.interpolate.LinearNDInterpolator).</span>
 <span class="sd">    </span>
@@ -2264,13 +2259,13 @@
 <span class="sd">        :Ynew:</span>
 <span class="sd">            | ndarray with new values at coordinates in Xnew</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     <span class="k">return</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">fill_value</span> <span class="o">=</span> <span class="n">fill_value</span><span class="p">,</span>  <span class="n">rescale</span> <span class="o">=</span> <span class="n">rescale</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">Xnew</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ndinterp1">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.ndinterp1">[docs]</a>
-<span class="k">def</span> <span class="nf">ndinterp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ndinterp1</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Xnew</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform nd-dimensional linear interpolation using Delaunay triangulation.</span>
 <span class="sd">    </span>
@@ -2291,7 +2286,7 @@
     <span class="c1">#get dimensions:</span>
     <span class="n">n</span> <span class="o">=</span> <span class="n">Xnew</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># create an object with triangulation</span>
-    <span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">Delaunay</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial</span><span class="w"> </span><span class="kn">import</span> <span class="n">Delaunay</span> <span class="c1"># lazy import</span>
     <span class="n">tri</span> <span class="o">=</span> <span class="n">Delaunay</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> 
     <span class="c1"># find simplexes that contain interpolated points</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">tri</span><span class="o">.</span><span class="n">find_simplex</span><span class="p">(</span><span class="n">Xnew</span><span class="p">)</span>
@@ -2325,7 +2320,7 @@
 
 <div class="viewcode-block" id="box_m">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.box_m">[docs]</a>
-<span class="k">def</span> <span class="nf">box_m</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">,</span> <span class="n">ni</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">robust</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">robust_alpha</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">box_m</span><span class="p">(</span><span class="o">*</span><span class="n">X</span><span class="p">,</span> <span class="n">ni</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">robust</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">robust_alpha</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Perform Box&#39;s M test (p&gt;=2) to check equality of covariance matrices or Bartlett&#39;s test (p==1) for equality of variances.</span>
 <span class="sd">    </span>
@@ -2361,7 +2356,7 @@
 <span class="sd">        1. If p==1: Reduces to Bartlett&#39;s test for equal variances.</span>
 <span class="sd">        2. If (ni&gt;20).all() &amp; (p&lt;6) &amp; (k&lt;6): then a more appropriate chi2 test is used in a some cases.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
     
     <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="c1"># groups</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># variables</span>
@@ -2430,7 +2425,7 @@
 
 <div class="viewcode-block" id="pitman_morgan">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.pitman_morgan">[docs]</a>
-<span class="k">def</span> <span class="nf">pitman_morgan</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pitman_morgan</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Pitman-Morgan Test for the difference between correlated variances with paired samples.</span>
 <span class="sd">     </span>
@@ -2455,7 +2450,7 @@
 <span class="sd">        1. Based on Gardner, R.C. (2001). Psychological Statistics Using SPSS for Windows. New Jersey, Prentice Hall.</span>
 <span class="sd">        2. Python port from matlab code by Janne Kauttonen (https://nl.mathworks.com/matlabcentral/fileexchange/67910-pitmanmorgantest-x-y; accessed Sep 26, 2019)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
     
     <span class="n">N</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">var1</span><span class="p">,</span> <span class="n">var2</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span><span class="n">Y</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -2491,7 +2486,7 @@
 
 <div class="viewcode-block" id="stress">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.stress">[docs]</a>
-<span class="k">def</span> <span class="nf">stress</span><span class="p">(</span><span class="n">DE</span><span class="p">,</span><span class="n">DV</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_scale</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stress</span><span class="p">(</span><span class="n">DE</span><span class="p">,</span><span class="n">DV</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">max_scale</span> <span class="o">=</span> <span class="mi">100</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate STandardize-Residual-Sum-of-Squares (STRESS).</span>
 <span class="sd">    </span>
@@ -2522,7 +2517,7 @@
 
 <div class="viewcode-block" id="stress_F_test">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.stress_F_test">[docs]</a>
-<span class="k">def</span> <span class="nf">stress_F_test</span><span class="p">(</span><span class="n">stressA</span><span class="p">,</span> <span class="n">stressB</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">stress_F_test</span><span class="p">(</span><span class="n">stressA</span><span class="p">,</span> <span class="n">stressB</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Perform F-test on significance of difference between STRESS A and STRESS B.</span>
 <span class="sd">    </span>
@@ -2543,7 +2538,7 @@
 <span class="sd">            | - &#39;Fc&#39;: critcal values</span>
 <span class="sd">            | - &#39;H&#39;: string reporting on significance of A compared to B.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span> <span class="c1"># lazy import</span>
     
     <span class="n">N</span> <span class="o">=</span> <span class="n">N</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">stressA</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
     <span class="n">Fvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">stressA</span><span class="p">)</span>
@@ -2563,7 +2558,7 @@
         <span class="k">elif</span> <span class="p">(</span><span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A insignificantly better than B&quot;</span>
         <span class="k">elif</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;</span> <span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="o">/</span><span class="n">Fcs</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span>
-            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A insignificanty poorer than B&quot;</span>
+            <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A insignificantly poorer than B&quot;</span>
         <span class="k">elif</span> <span class="p">(</span><span class="n">Fvs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">H_</span> <span class="o">=</span> <span class="s2">&quot;A equals B&quot;</span>
         <span class="n">H</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">H_</span><span class="p">)</span>
@@ -2574,7 +2569,7 @@
 
 <div class="viewcode-block" id="mean_distance_weighted">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.mean_distance_weighted">[docs]</a>
-<span class="k">def</span> <span class="nf">mean_distance_weighted</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_x</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">mean_distance_weighted</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">center_x</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="n">max_iter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="n">mu</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mu0</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Recursively calculate distance weighted mean.</span>
 <span class="sd">    </span>
@@ -2632,7 +2627,7 @@
 
             
 <span class="c1">#---------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">round_sigfig</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">round_sigfig</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round x (int, float, ndarray) to n significant digits.</span>
 
@@ -2653,7 +2648,7 @@
     <span class="n">mags</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x_positive</span><span class="p">)))</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">mags</span><span class="p">)</span> <span class="o">/</span> <span class="n">mags</span>
 
-<span class="k">def</span> <span class="nf">round_halfwayfromzero</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">round_halfwayfromzero</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round x to n decimal points using round half away from zero.</span>
 <span class="sd">    This function is needed because the rounding specified in the CIE</span>
@@ -2675,7 +2670,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="o">**</span><span class="n">n</span>
 
 
-<span class="k">def</span> <span class="nf">_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Round helper function (private)&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">n</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> 
         <span class="k">return</span> <span class="n">x</span>
@@ -2693,7 +2688,7 @@
     
 <div class="viewcode-block" id="round">
 <a class="viewcode-back" href="../../../math.html#luxpy.math.round">[docs]</a>
-<span class="k">def</span> <span class="nf">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round x (int, float, ndarray or tuple) to n significant digits, or n decimals (&#39;to nearest even&#39; or &#39;halfway from zero&#39;).</span>
 

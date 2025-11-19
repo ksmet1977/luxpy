@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.deltaE.colordifferences &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -94,16 +89,16 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cam</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">cam</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">xyz_to_lab</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;deltaH&#39;</span><span class="p">,</span> <span class="s1">&#39;DE_camucs&#39;</span><span class="p">,</span> <span class="s1">&#39;DE2000&#39;</span><span class="p">,</span><span class="s1">&#39;DE_cspace&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="deltaH">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.deltaH">[docs]</a>
-<span class="k">def</span> <span class="nf">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute a hue difference, dH = 2*C1*C2*sin(dh/2)</span>
 <span class="sd">    </span>
@@ -128,7 +123,7 @@
     <span class="k">return</span> <span class="n">cam</span><span class="o">.</span><span class="n">deltaH</span><span class="p">(</span><span class="n">h1</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">h2</span> <span class="o">=</span> <span class="n">h2</span><span class="p">,</span> <span class="n">C2</span> <span class="o">=</span> <span class="n">C2</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="n">htype</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">_process_DEi</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_process_DEi</span><span class="p">(</span><span class="n">DEi</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Process color difference input DEi for output (helper function).</span>
 <span class="sd">    </span>
@@ -191,7 +186,7 @@
 
 <div class="viewcode-block" id="DE_camucs">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.DE_camucs">[docs]</a>
-<span class="k">def</span> <span class="nf">DE_camucs</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DE_camucs</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
               <span class="n">xyzwt</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> \
               <span class="n">Ywt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditionst</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span>\
               <span class="n">Ywr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditionsr</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span>\
@@ -267,7 +262,7 @@
 
 <div class="viewcode-block" id="DE2000">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.DE2000">[docs]</a>
-<span class="k">def</span> <span class="nf">DE2000</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DE2000</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
               <span class="n">xyzwt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">KLCH</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -407,7 +402,7 @@
 
 <div class="viewcode-block" id="DE_cspace">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.DE_cspace">[docs]</a>
-<span class="k">def</span> <span class="nf">DE_cspace</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">DE_cspace</span><span class="p">(</span><span class="n">xyzt</span><span class="p">,</span> <span class="n">xyzr</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">tf</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">DEtype</span> <span class="o">=</span> <span class="s1">&#39;jab&#39;</span><span class="p">,</span> <span class="n">avg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">avg_axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;DEi&#39;</span><span class="p">,</span>
               <span class="n">xyzwt</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzwr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fwtft</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">fwtfr</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">KLCH</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
               <span class="n">camtype</span> <span class="o">=</span> <span class="n">cam</span><span class="o">.</span><span class="n">_CAM_DEFAULT_TYPE</span><span class="p">,</span> <span class="n">ucstype</span> <span class="o">=</span> <span class="s1">&#39;ucs&#39;</span><span class="p">):</span>
 <span class="w">    </span>

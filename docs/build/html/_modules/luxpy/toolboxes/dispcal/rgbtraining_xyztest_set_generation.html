@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.dispcal.rgbtraining_xyztest_set_generation &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.dispcal.rgbtraining_xyztest_set_generation &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -96,17 +91,17 @@
 
 <span class="sd">@author: u0032318</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">_CIEOBS</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">_CIEOBS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">math</span>
 
-<span class="kn">from</span> <span class="nn">luxpy.toolboxes.dispcal</span> <span class="kn">import</span> <span class="n">displaycalibration</span> <span class="k">as</span> <span class="n">dc</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.toolboxes.dispcal</span><span class="w"> </span><span class="kn">import</span> <span class="n">displaycalibration</span> <span class="k">as</span> <span class="n">dc</span>
 
 <span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="n">divide</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">,</span> <span class="n">invalid</span> <span class="o">=</span> <span class="s1">&#39;raise&#39;</span><span class="p">)</span>
 
@@ -117,7 +112,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># training and test data generation </span>
 <span class="c1">#------------------------------------------------------------------------------    </span>
-<span class="k">def</span> <span class="nf">_generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">include_max</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_min</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">include_max</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">include_min</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                             <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate RGB training data by creating a cube of RGB values.</span>
@@ -165,7 +160,7 @@
 
 <div class="viewcode-block" id="split_ramps_from_cube">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.split_ramps_from_cube">[docs]</a>
-<span class="k">def</span> <span class="nf">split_ramps_from_cube</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">xyz</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rgb_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_ramps_from_cube</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">xyz</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rgb_only</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Split a cube data set in pure RGB (ramps) and non-pure (remainder of cube). </span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -195,7 +190,7 @@
 
 <div class="viewcode-block" id="is_random_sampling_of_pure_rgbs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.is_random_sampling_of_pure_rgbs">[docs]</a>
-<span class="k">def</span> <span class="nf">is_random_sampling_of_pure_rgbs</span><span class="p">(</span><span class="n">inc</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_random_sampling_of_pure_rgbs</span><span class="p">(</span><span class="n">inc</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Return boolean indicating if the RGB cube axes (=single channel ramps) </span>
 <span class="sd">    are sampled (different increment) independently from the remainder of the cube.</span>
@@ -215,7 +210,7 @@
 
 <div class="viewcode-block" id="generate_training_data">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.generate_training_data">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_training_data</span><span class="p">(</span><span class="n">inc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">],</span> <span class="n">inc_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
                            <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                            <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span>
@@ -303,7 +298,7 @@
 
 <div class="viewcode-block" id="generate_test_data">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.generate_test_data">[docs]</a>
-<span class="k">def</span> <span class="nf">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_test_data</span><span class="p">(</span><span class="n">dlab</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span>
                        <span class="n">xyzrgb_hull</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">randomize_order</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate XYZ test values by creating a cube of CIELAB L*a*b* values, then converting these to XYZ values.</span>
@@ -394,7 +389,7 @@
     
 <div class="viewcode-block" id="plot_rgb_xyz_lab_of_set">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.plot_rgb_xyz_lab_of_set">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">rgb_xyz_lab</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;lab&#39;</span><span class="p">],</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_rgb_xyz_lab_of_set</span><span class="p">(</span><span class="n">rgb_xyz_lab</span><span class="p">,</span> <span class="n">subscript</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">data_contains</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rgb&#39;</span><span class="p">,</span><span class="s1">&#39;xyz&#39;</span><span class="p">,</span><span class="s1">&#39;lab&#39;</span><span class="p">],</span>
                             <span class="n">nrows</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
                             <span class="n">marker</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -468,7 +463,7 @@
     
     <span class="c1"># To ensure XYZ test data is within hull of display, provide xyzrgb_hull data:</span>
     <span class="c1"># simulate some measurements of the training data using a virtual display:</span>
-    <span class="kn">from</span> <span class="nn">virtualdisplay</span> <span class="kn">import</span> <span class="n">VirtualDisplay</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">virtualdisplay</span><span class="w"> </span><span class="kn">import</span> <span class="n">VirtualDisplay</span>
     <span class="n">vd</span> <span class="o">=</span> <span class="n">VirtualDisplay</span><span class="p">(</span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
     <span class="n">xyz_tr</span> <span class="o">=</span> <span class="n">vd</span><span class="o">.</span><span class="n">to_xyz</span><span class="p">(</span><span class="n">rgb_tr</span><span class="p">)</span> <span class="c1"># &#39;measure xyz for each of the displayed rgb_tr</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;simulated xyz_tr.shape: &#39;</span><span class="p">,</span> <span class="n">xyz_tr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>

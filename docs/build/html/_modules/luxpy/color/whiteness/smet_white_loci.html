@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.whiteness.smet_white_loci &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.whiteness.smet_white_loci &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -107,9 +102,9 @@
 <span class="sd">    &lt;https://www.osapublishing.org/oe/abstract.cfm?uri=oe-25-7-8350&amp;origin=search)&gt;`_</span>
 
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_cct</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">cat</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">cri_ref</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_cct</span>  
 
 <span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L200&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1900.1</span><span class="p">,</span> <span class="mf">1408.4</span><span class="p">,</span> <span class="mf">0.2069</span><span class="p">,</span> <span class="mf">0.4571</span><span class="p">,</span> <span class="o">-</span><span class="mf">934.1</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mi">6568</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0088</span> <span class="p">])}</span> 
 <span class="n">_UW_NEUTRALITY_PARAMETERS_SMET2014</span><span class="p">[</span><span class="s1">&#39;L1000&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1418.3</span><span class="p">,</span> <span class="mf">842.9</span><span class="p">,</span> <span class="mf">0.2088</span><span class="p">,</span> <span class="mf">0.4632</span><span class="p">,</span> <span class="o">-</span><span class="mf">659.8</span><span class="p">,</span> <span class="mf">8.2</span><span class="p">,</span> <span class="mi">6076</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0076</span><span class="p">])</span>   
@@ -121,7 +116,7 @@
 
 <div class="viewcode-block" id="xyz_to_neutrality_smet2018">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.whiteness.xyz_to_neutrality_smet2018">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_neutrality_smet2018</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">uw_model</span> <span class="o">=</span> <span class="s1">&#39;Linvar&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_neutrality_smet2018</span><span class="p">(</span><span class="n">xyz10</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">uw_model</span> <span class="o">=</span> <span class="s1">&#39;Linvar&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate degree of neutrality using the unique white model in Smet et al. (2014) or the normalized (max = 1) degree of chromatic adaptation model from Smet et al. (2017).</span>
 <span class="sd">    </span>
@@ -167,7 +162,7 @@
 
 <div class="viewcode-block" id="cct_to_neutral_loci_smet2018">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.whiteness.cct_to_neutral_loci_smet2018">[docs]</a>
-<span class="k">def</span> <span class="nf">cct_to_neutral_loci_smet2018</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv,D&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cct_to_neutral_loci_smet2018</span><span class="p">(</span><span class="n">cct</span><span class="p">,</span> <span class="n">nlocitype</span> <span class="o">=</span> <span class="s1">&#39;uw&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv,D&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the most neutral appearing Duv10 in and the degree of neutrality for a specified CCT using the models in Smet et al. (2018).</span>
 <span class="sd">    </span>

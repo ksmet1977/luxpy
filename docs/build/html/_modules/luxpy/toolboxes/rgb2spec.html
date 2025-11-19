@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.rgb2spec &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.rgb2spec &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -103,16 +98,16 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">_WL3</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">_WL3</span>
 
-<span class="kn">from</span> <span class="nn">.smits_mitsuba</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.smits_mitsuba</span><span class="w"> </span><span class="kn">import</span> <span class="o">*</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="n">smits_mitsuba</span><span class="o">.</span><span class="n">__all__</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;convert&#39;</span><span class="p">]</span>
 
 <div class="viewcode-block" id="convert">
 <a class="viewcode-back" href="../../../toolboxes.html#luxpy.toolboxes.rgb2spec.convert">[docs]</a>
-<span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;smits_mtsb&#39;</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">linearized_rgb</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;smits_mtsb&#39;</span><span class="p">,</span> <span class="n">intent</span> <span class="o">=</span> <span class="s1">&#39;rfl&#39;</span><span class="p">,</span>  <span class="n">bitdepth</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">wlr</span> <span class="o">=</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">rgb2spec</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert an array of RGB values to a spectrum.</span>
 <span class="sd">    </span>

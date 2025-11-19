@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.indvcmf.individual_observer_cmf_model &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -172,11 +167,11 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">spd_normalize</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">getdata</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">math</span><span class="p">,</span> <span class="n">_WL3</span><span class="p">,</span> <span class="n">_CMF</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">getwld</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">spd_normalize</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">getdata</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_DATA&#39;</span><span class="p">,</span><span class="s1">&#39;_DSRC_STD_DEF&#39;</span><span class="p">,</span> <span class="s1">&#39;_DSRC_LMS_ODENS_DEF&#39;</span><span class="p">,</span><span class="s1">&#39;_LMS_TO_XYZ_METHOD&#39;</span><span class="p">]</span>
 <span class="n">__all__</span> <span class="o">+=</span> <span class="p">[</span><span class="s1">&#39;load_database&#39;</span><span class="p">,</span><span class="s1">&#39;init&#39;</span><span class="p">,</span><span class="s1">&#39;query_state&#39;</span><span class="p">]</span>
@@ -213,7 +208,7 @@
 
 <div class="viewcode-block" id="my_round">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.my_round">[docs]</a>
-<span class="k">def</span> <span class="nf">my_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">my_round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round array x to n decimal points using round half away from zero.</span>
 <span class="sd">    This function is needed because the rounding specified in the CIE</span>
@@ -241,7 +236,7 @@
 
 <div class="viewcode-block" id="sign_figs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.sign_figs">[docs]</a>
-<span class="k">def</span> <span class="nf">sign_figs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sign_figs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Round x to n significant figures (not decimal points).</span>
 <span class="sd">    This function is needed because the rounding specified in the CIE</span>
@@ -275,7 +270,7 @@
 
 <div class="viewcode-block" id="chop">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.chop">[docs]</a>
-<span class="k">def</span> <span class="nf">chop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">chop</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">epsilon</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Chop values smaller than epsilon in absolute value to zero.</span>
 <span class="sd">    Similar to Mathematica function.</span>
@@ -309,7 +304,7 @@
 <span class="c1">#  Function/class determining/constituting the database</span>
 <span class="c1">#=============================================================================</span>
 
-<span class="k">def</span> <span class="nf">_load_asano_misc_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_asano_misc_data</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load misc. data required by Asano model.</span>
 <span class="sd">    </span>
@@ -351,7 +346,7 @@
                                <span class="p">[</span><span class="o">-</span><span class="mf">0.0036</span><span class="p">,</span> <span class="mf">0.0054</span><span class="p">,</span> <span class="mf">0.2291</span><span class="p">]])</span>
     <span class="k">return</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_load_asano_std_data</span><span class="p">(</span><span class="n">dsrc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_asano_std_data</span><span class="p">(</span><span class="n">dsrc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load standard deviation data for Asano Individual Observer Model.</span>
 <span class="sd">    </span>
@@ -394,7 +389,7 @@
     
     <span class="k">return</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_load_asano_lms_and_odensities</span><span class="p">(</span><span class="n">wl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_asano_lms_and_odensities</span><span class="p">(</span><span class="n">wl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load LMS absorbance data and optical density data from Asano.</span>
 <span class="sd">    </span>
@@ -431,7 +426,7 @@
     <span class="n">data</span><span class="p">[</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;LMSa&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">(),</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">data</span>
     
-<span class="k">def</span> <span class="nf">_docul_fine</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">,</span> <span class="n">docul2</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_docul_fine</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">,</span> <span class="n">docul2</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the two parts of the expression for the optical density of the </span>
 <span class="sd">    ocular media as function of age.</span>
@@ -456,7 +451,7 @@
     <span class="n">docul2_pad</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">460</span><span class="p">,</span> <span class="mi">835</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>  <span class="c1"># fill</span>
     <span class="n">docul2_pad</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>                       <span class="c1"># fill</span>
     <span class="n">docul2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">docul2</span><span class="p">,</span> <span class="n">docul2_pad</span><span class="p">))</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     <span class="n">spl</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">docul2</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">docul2</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">docul2_fine</span> <span class="o">=</span> <span class="n">ocular_sum_32</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">docul2_fine</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">spl</span><span class="p">(</span><span class="n">ocular_sum_32</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
@@ -464,7 +459,7 @@
     <span class="n">docul1_fine</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ocular_sum_32</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">docul2_fine</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">docul1_fine</span><span class="p">,</span> <span class="n">docul2_fine</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]))</span>
 
-<span class="k">def</span> <span class="nf">_load_cietc197_lms_and_odensities</span><span class="p">(</span><span class="n">wl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_load_cietc197_lms_and_odensities</span><span class="p">(</span><span class="n">wl</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load LMS absorbance data and optical density data from CIE TC1-97.</span>
 <span class="sd">        </span>
@@ -508,8 +503,8 @@
     <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;wls&#39;</span><span class="p">:</span> <span class="n">wl</span><span class="p">,</span> <span class="s1">&#39;rmd&#39;</span><span class="p">:</span> <span class="n">macula_rel</span><span class="p">,</span> <span class="s1">&#39;docul&#39;</span><span class="p">:</span><span class="n">docul2</span><span class="p">,</span> <span class="s1">&#39;LMSa&#39;</span><span class="p">:</span> <span class="n">absorbance</span><span class="p">,</span><span class="s1">&#39;LMSa_interps&#39;</span><span class="p">:</span><span class="n">absorbance_interps</span><span class="p">}</span>
     <span class="k">return</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">LMSa</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_create_LMSa_interpolators</span><span class="p">(</span><span class="n">LMSa</span><span class="p">,</span> <span class="n">kind</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     <span class="n">_peak_shft</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span> 
@@ -527,7 +522,7 @@
 
 <div class="viewcode-block" id="load_database">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.load_database">[docs]</a>
-<span class="k">def</span> <span class="nf">load_database</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_std</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_lms_odens</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_database</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_std</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_lms_odens</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Load database required for Asano Individual Observer Model.</span>
 <span class="sd">    </span>
@@ -579,7 +574,7 @@
 
 <div class="viewcode-block" id="init">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.init">[docs]</a>
-<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_std</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_lms_odens</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_std</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dsrc_lms_odens</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
          <span class="n">use_sign_figs</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">use_my_round</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span><span class="n">use_chop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
          <span class="n">path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -676,7 +671,7 @@
     
 <div class="viewcode-block" id="query_state">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.query_state">[docs]</a>
-<span class="k">def</span> <span class="nf">query_state</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">query_state</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print current settings for &#39;global variables&#39;.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -706,7 +701,7 @@
 <span class="c1">#  Functions of age and/or field size</span>
 <span class="c1">#==============================================================================</span>
 
-<span class="k">def</span> <span class="nf">_d_ocular</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">docul0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_ocular</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">docul0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the optical density of the ocular media for a given age.</span>
 
@@ -742,7 +737,7 @@
     <span class="n">corrected_lomd</span> <span class="o">=</span> <span class="n">corrected_lomd</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od_lens</span><span class="o">/</span><span class="mi">100</span><span class="p">)</span> <span class="c1"># varied overall optical density of lens</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">docul</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:],</span><span class="n">corrected_lomd</span><span class="p">))</span> 
 
-<span class="k">def</span> <span class="nf">_d_mac_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_mac_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the macular pigment for a given field size.</span>
 <span class="sd">    </span>
@@ -763,7 +758,7 @@
         <span class="n">var_od</span> <span class="o">=</span> <span class="o">-</span><span class="mi">100</span>
     <span class="k">return</span> <span class="n">my_round</span><span class="p">((</span><span class="mf">0.485</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fieldsize</span><span class="o">/</span><span class="mf">6.132</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od</span><span class="o">/</span><span class="mi">100</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_d_mac</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rmd0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_mac</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">rmd0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the optical density of the macular pigment for a given field size.</span>
 <span class="sd">    </span>
@@ -790,7 +785,7 @@
     <span class="n">rmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">=</span> <span class="n">rmd</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:]</span> <span class="o">*</span> <span class="n">_d_mac_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="n">fieldsize</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="n">var_od</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">rmd</span>
 
-<span class="k">def</span> <span class="nf">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_LM_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the L- and M-cone photopigments for a given field size.</span>
 <span class="sd">    </span>
@@ -812,7 +807,7 @@
     <span class="k">return</span> <span class="n">my_round</span><span class="p">((</span><span class="mf">0.38</span> <span class="o">+</span> <span class="mf">0.54</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">fieldsize</span><span class="o">/</span><span class="mf">1.333</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">var_od</span><span class="o">/</span><span class="mi">100</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_d_S_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_d_S_max</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_od</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the maximum optical density of the S-cone photopigment for a given field size.</span>
 <span class="sd">    </span>
@@ -911,7 +906,7 @@
 
 <span class="c1">#     return np.vstack((wls,alpha_lms))</span>
 
-<span class="k">def</span> <span class="nf">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSa0_interps</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_LMS_absorptance</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">LMSa0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSa0_interps</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the quantal absorptance of the L, M and S cones for a given field size.</span>
 <span class="sd">    </span>
@@ -980,7 +975,7 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">wls</span><span class="p">,</span><span class="n">alpha_lms</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">_LMS_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_LMS_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                  <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMSq&#39;</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1048,7 +1043,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_LMS_energy</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_LMS_energy</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                 <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
                 <span class="n">norm_type</span> <span class="o">=</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;LMSe&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1138,7 +1133,7 @@
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_relative_L_cone_weight_Vl_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_relative_L_cone_weight_Vl_quantal</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                                       <span class="n">LMSa</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                                       <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                                       <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -1230,7 +1225,7 @@
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_Vl_energy_and_LM_weights</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_Vl_energy_and_LM_weights</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                              <span class="n">LMSa</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSq</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSe</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">LMSe_o_max</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                              <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_mac</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                              <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
@@ -1305,7 +1300,7 @@
     <span class="n">Vl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(([</span><span class="n">LMSe</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span> <span class="n">V</span><span class="p">]))</span>
     <span class="k">return</span> <span class="n">Vl</span><span class="p">,</span> <span class="p">(</span><span class="n">a21</span><span class="p">,</span> <span class="n">a22</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">_xyz_interpolated_reference_system</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">XYZ31_std</span><span class="p">,</span> <span class="n">XYZ64_std</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_xyz_interpolated_reference_system</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span> <span class="n">XYZ31_std</span><span class="p">,</span> <span class="n">XYZ64_std</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the spectral chromaticity coordinates of the reference system</span>
 <span class="sd">    by interpolation between correspoding spectral chromaticity coordinates</span>
@@ -1330,7 +1325,7 @@
 <span class="sd">            | The computed interpolated spectral chromaticity coordinates of the</span>
 <span class="sd">            | CIE standard XYZ systems; wavelenghts in first row.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># Compute the xyz spectral chromaticity coordinates of the CIE standards </span>
     <span class="n">xyz31</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">XYZ31_std</span><span class="p">[:</span><span class="mi">1</span><span class="p">,:],(</span><span class="n">xyz_to_Yxy</span><span class="p">((</span><span class="n">XYZ31_std</span><span class="p">[</span><span class="mi">1</span><span class="p">:,:])</span><span class="o">.</span><span class="n">T</span><span class="p">)[:,</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
@@ -1376,7 +1371,7 @@
 <span class="c1"># =============================================================================</span>
 
     
-<span class="k">def</span> <span class="nf">_square_sum</span><span class="p">(</span><span class="n">a13</span><span class="p">,</span> <span class="n">a21</span><span class="p">,</span> <span class="n">a22</span><span class="p">,</span> <span class="n">a33</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_square_sum</span><span class="p">(</span><span class="n">a13</span><span class="p">,</span> <span class="n">a21</span><span class="p">,</span> <span class="n">a22</span><span class="p">,</span> <span class="n">a33</span><span class="p">,</span> 
                 <span class="n">xyz_ref_trunk</span><span class="p">,</span> <span class="n">x_ref_min</span><span class="p">,</span>
                 <span class="n">L_wl_sum</span><span class="p">,</span> <span class="n">M_wl_sum</span><span class="p">,</span> <span class="n">S_wl_sum</span><span class="p">,</span> <span class="n">V_wl_sum</span><span class="p">,</span>
                 <span class="n">L_wl_ref_min</span><span class="p">,</span> <span class="n">M_wl_ref_min</span><span class="p">,</span> <span class="n">S_wl_ref_min</span><span class="p">,</span> <span class="n">V_wl_ref_min</span><span class="p">,</span>
@@ -1470,7 +1465,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">err</span>
     
-<span class="k">def</span> <span class="nf">_compute_LMS</span><span class="p">(</span><span class="n">wls</span><span class="p">,</span> <span class="n">L_spline</span><span class="p">,</span> <span class="n">M_spline</span><span class="p">,</span> <span class="n">S_spline</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_LMS</span><span class="p">(</span><span class="n">wls</span><span class="p">,</span> <span class="n">L_spline</span><span class="p">,</span> <span class="n">M_spline</span><span class="p">,</span> <span class="n">S_spline</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the LMS cone fundamentals for given wavelengths, as linear values </span>
 <span class="sd">    to respective specified precisions.</span>
@@ -1505,7 +1500,7 @@
                                              <span class="n">S_spline</span><span class="p">(</span><span class="n">wls</span><span class="p">)]),</span> <span class="n">LMS_sf</span><span class="p">))))</span>
     <span class="k">return</span> <span class="n">LMS</span>
     
-<span class="k">def</span> <span class="nf">_compute_XYZ</span><span class="p">(</span><span class="n">L_spline</span><span class="p">,</span> <span class="n">M_spline</span><span class="p">,</span> <span class="n">S_spline</span><span class="p">,</span> <span class="n">V_spline</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_XYZ</span><span class="p">(</span><span class="n">L_spline</span><span class="p">,</span> <span class="n">M_spline</span><span class="p">,</span> <span class="n">S_spline</span><span class="p">,</span> <span class="n">V_spline</span><span class="p">,</span>
                 <span class="n">LMS_spec</span><span class="p">,</span> <span class="n">LMS_all</span><span class="p">,</span> <span class="n">LM_weights</span><span class="p">,</span> <span class="n">xyz_reference</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Compute the CIE cone-fundamental-based XYZ tristimulus functions.</span>
@@ -1552,7 +1547,7 @@
 <span class="sd">            | tristimulus values for the tabulated wavelengths, given to</span>
 <span class="sd">            | standard/specified precision; wavelengths in first row.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">optimize</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># &#39;_all&#39;  : values given at 0.1 nm steps from 390 nm to 830 nm</span>
     <span class="c1"># &#39;_main&#39; : values given at 1 nm steps from 390 nm to 830 nm</span>
@@ -1633,7 +1628,7 @@
 
 <div class="viewcode-block" id="compute_cmfs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.compute_cmfs">[docs]</a>
-<span class="k">def</span> <span class="nf">compute_cmfs</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_cmfs</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                  <span class="n">var_shft_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">var_od_LMS</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> 
                  <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
@@ -1736,7 +1731,7 @@
 <span class="sd">         (by Ivar Farup and Jan Henrik Wold, (c) 2012-2017) </span>
 <span class="sd">         &lt;http://github.com/ifarup/ciefunctions&gt;`_</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># TC1-97 ciefunctions rounds fieldsize:</span>
     <span class="n">fieldsize_tmp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">fieldsize</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
@@ -1915,7 +1910,7 @@
 
 <div class="viewcode-block" id="cie2006cmfsEx">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.cie2006cmfsEx">[docs]</a>
-<span class="k">def</span> <span class="nf">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
+<span class="k">def</span><span class="w"> </span><span class="nf">cie2006cmfsEx</span><span class="p">(</span><span class="n">age</span> <span class="o">=</span> <span class="mi">32</span><span class="p">,</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                   <span class="n">var_od_lens</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_macula</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> \
                   <span class="n">var_od_L</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_M</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_od_S</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
                   <span class="n">var_shft_L</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_M</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">var_shft_S</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>\
@@ -2046,7 +2041,7 @@
 
 <div class="viewcode-block" id="getMonteCarloParam">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.getMonteCarloParam">[docs]</a>
-<span class="k">def</span> <span class="nf">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;stdev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getMonteCarloParam</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">stdDevAllParam</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;stdev&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get dict with normally-distributed physiological factors </span>
 <span class="sd">    for a population of observers.</span>
@@ -2080,7 +2075,7 @@
     <span class="k">return</span> <span class="n">varParam</span>  </div>
 
   
-<span class="k">def</span> <span class="nf">getUSCensusAgeDist</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getUSCensusAgeDist</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get US Census Age Distribution</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -2101,7 +2096,7 @@
 
 <div class="viewcode-block" id="genMonteCarloObs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.genMonteCarloObs">[docs]</a>
-<span class="k">def</span> <span class="nf">genMonteCarloObs</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">list_Age</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">genMonteCarloObs</span><span class="p">(</span><span class="n">n_obs</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">list_Age</span> <span class="o">=</span> <span class="p">[</span><span class="mi">32</span><span class="p">],</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                      <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                      <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -2260,7 +2255,7 @@
         
 <div class="viewcode-block" id="getCatObs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.getCatObs">[docs]</a>
-<span class="k">def</span> <span class="nf">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>  <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>  <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
              <span class="n">norm_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;lms&#39;</span><span class="p">,</span> <span class="n">base</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
              <span class="n">strategy_2</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">odata0</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
              <span class="n">lms_to_xyz_method</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
@@ -2408,7 +2403,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="nb">eval</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
 
-<span class="k">def</span> <span class="nf">get_lms_to_xyz_matrix</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_lms_to_xyz_matrix</span><span class="p">(</span><span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the lms to xyz conversion matrix for specific fieldsize using Asano&#39;s method </span>
 <span class="sd">    (i.e. use as a weighted combination of the 2° and 10° matrices).</span>
@@ -2435,7 +2430,7 @@
     <span class="n">M</span> <span class="o">=</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;2d&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">_DATA</span><span class="p">[</span><span class="s1">&#39;M&#39;</span><span class="p">][</span><span class="s1">&#39;10d&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">M</span>
 
-<span class="k">def</span> <span class="nf">lmsb_to_xyzb</span><span class="p">(</span><span class="n">lms</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lmsb_to_xyzb</span><span class="p">(</span><span class="n">lms</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">allow_negative_values</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert from LMS cone fundamentals to XYZ color matching functions using Asano&#39;s method</span>
 <span class="sd">    (use conversion matrix determined as a determined a weighted combination of the 2° and 10° matrices).</span>
@@ -2485,7 +2480,7 @@
 
 <div class="viewcode-block" id="add_to_cmf_dict">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.add_to_cmf_dict">[docs]</a>
-<span class="k">def</span> <span class="nf">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;indv&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;indv&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Add set of cmfs to _CMF dict.</span>
 <span class="sd">    </span>
@@ -2515,12 +2510,12 @@
    
 <div class="viewcode-block" id="plot_cmfs">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.indvcmf.plot_cmfs">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_cmfs</span><span class="p">(</span><span class="n">cmf</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_cmfs</span><span class="p">(</span><span class="n">cmf</span><span class="p">,</span><span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot cmf set.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         <span class="n">axh</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
     <span class="n">axh</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">cmf</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">cmf</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">color</span> <span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -2531,7 +2526,7 @@
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span>
     <span class="n">init</span><span class="p">(</span><span class="n">use_my_round</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">use_sign_figs</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">use_chop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dsrc_lms_odens</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">,</span><span class="n">lms_to_xyz_method</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">)</span>
     <span class="n">xyz2b</span><span class="p">,</span><span class="n">M2</span> <span class="o">=</span> <span class="n">compute_cmfs</span><span class="p">(</span><span class="n">fieldsize</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span><span class="n">age</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span><span class="n">out</span><span class="o">=</span><span class="s1">&#39;xyz,M&#39;</span><span class="p">,</span><span class="n">lms_to_xyz_method</span><span class="o">=</span><span class="s1">&#39;cietc197&#39;</span><span class="p">,</span><span class="n">norm_type</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">lx</span><span class="o">.</span><span class="n">_CIE_E</span><span class="p">,</span><span class="n">relative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">cieobs</span><span class="o">=</span><span class="n">xyz2b</span><span class="p">,</span><span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
@@ -2539,7 +2534,7 @@
     <span class="n">ax</span> <span class="o">=</span> <span class="n">plot_cmfs</span><span class="p">(</span><span class="n">xyz2b</span><span class="p">)</span>
     
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">load_database</span><span class="p">(</span><span class="n">wl</span><span class="o">=</span><span class="n">_WL</span><span class="p">)</span>
     <span class="n">_DATA</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
@@ -2565,7 +2560,7 @@
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;x__main__&#39;</span><span class="p">:</span>  
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span> 
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span> 
     
     <span class="n">out</span> <span class="o">=</span> <span class="n">outcmf</span> <span class="o">+</span> <span class="s1">&#39;,var_age,vAll&#39;</span>
 
@@ -2602,7 +2597,7 @@
 <span class="c1">#    plt.show()</span>
     
     <span class="c1"># Calculate new set of CMFs and calculate xyzw and cct, duv:</span>
-    <span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">xyz_to_cct_ohno</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">xyz_to_cct_ohno</span>
     <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span>  <span class="o">=</span> <span class="n">getCatObs</span><span class="p">(</span><span class="n">n_cat</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fieldsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">)</span>
     <span class="n">add_to_cmf_dict</span><span class="p">(</span><span class="n">bar</span> <span class="o">=</span> <span class="n">XYZb_All_CatObs</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;CatObs1&#39;</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="mi">683</span><span class="p">)</span> 
     <span class="n">xyz2</span> <span class="o">=</span> <span class="n">spd_to_xyz</span><span class="p">(</span><span class="n">_CIE_ILLUMINANTS</span><span class="p">[</span><span class="s1">&#39;F4&#39;</span><span class="p">],</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span><span class="p">)</span>

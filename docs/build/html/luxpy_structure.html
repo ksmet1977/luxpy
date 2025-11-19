@@ -1,23 +1,21 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="./">
 <head>
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Luxpy package structure &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+  <title>Luxpy package structure &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="_static/jquery.js?v=5d32c60e"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="_static/doctools.js?v=9a2dae69"></script>
-        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -36,9 +34,6 @@
           <a href="index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -228,6 +223,7 @@
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plotSL"><code class="docutils literal notranslate"><span class="pre">plotSL()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plotDL"><code class="docutils literal notranslate"><span class="pre">plotDL()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plotBB"><code class="docutils literal notranslate"><span class="pre">plotBB()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.labelWL"><code class="docutils literal notranslate"><span class="pre">labelWL()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plot_color_data"><code class="docutils literal notranslate"><span class="pre">plot_color_data()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plotceruleanline"><code class="docutils literal notranslate"><span class="pre">plotceruleanline()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.utils.plotUH"><code class="docutils literal notranslate"><span class="pre">plotUH()</span></code></a></li>
@@ -242,6 +238,7 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="color.html#ctf">ctf/</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="color.html#module-with-functions-related-to-basic-colorimetry">Module with functions related to basic colorimetry</a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.ctf.colortransforms._get_chromaticity_diagram_boundary_wavelengths"><code class="docutils literal notranslate"><span class="pre">_get_chromaticity_diagram_boundary_wavelengths()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.ctf.colortransforms.xyz_to_Yxy"><code class="docutils literal notranslate"><span class="pre">xyz_to_Yxy()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.ctf.colortransforms.Yxy_to_xyz"><code class="docutils literal notranslate"><span class="pre">Yxy_to_xyz()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.ctf.colortransforms.xyz_to_Yuv"><code class="docutils literal notranslate"><span class="pre">xyz_to_Yuv()</span></code></a></li>
@@ -277,6 +274,7 @@
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_mcamy1992"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_mcamy1992()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_hernandez1999"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_hernandez1999()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_robertson1968"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_robertson1968()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_robertson2023"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_robertson2023()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_ohno2014"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_ohno2014()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_li2016"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_li2016()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="color.html#luxpy.color.cct.xyz_to_cct_li2022"><code class="docutils literal notranslate"><span class="pre">xyz_to_cct_li2022()</span></code></a></li>
@@ -491,6 +489,7 @@
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicEDI"><code class="docutils literal notranslate"><span class="pre">spd_to_aopicEDI()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicDER"><code class="docutils literal notranslate"><span class="pre">spd_to_aopicDER()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicELR"><code class="docutils literal notranslate"><span class="pre">spd_to_aopicELR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_aopicX"><code class="docutils literal notranslate"><span class="pre">spd_to_aopicX()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_COI_ASNZS1680"><code class="docutils literal notranslate"><span class="pre">spd_to_COI_ASNZS1680()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.spd_to_CS_CLa_lrc"><code class="docutils literal notranslate"><span class="pre">spd_to_CS_CLa_lrc()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="toolboxes.html#luxpy.toolboxes.photbiochem.CLa_to_CS"><code class="docutils literal notranslate"><span class="pre">CLa_to_CS()</span></code></a></li>

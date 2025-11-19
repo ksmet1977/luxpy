@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.deltaE.brown1957ellipses &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.deltaE.brown1957ellipses &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -92,10 +87,10 @@
 
 <span class="sd">@author: ksmet1877 [at] gmail.com</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">_EPS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">math</span><span class="p">,</span> <span class="n">plotSL</span><span class="p">,</span> <span class="n">plotellipse</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_EPS</span>
 <span class="n">eps</span> <span class="o">=</span> <span class="n">_EPS</span><span class="o">/</span><span class="mf">10.0</span>
 
 <span class="n">brown1957</span> <span class="o">=</span> <span class="p">{</span>
@@ -134,7 +129,7 @@
 
 <div class="viewcode-block" id="get_brown1957_ellipse">
 <a class="viewcode-back" href="../../../../color.html#luxpy.color.deltaE.get_brown1957_ellipse">[docs]</a>
-<span class="k">def</span> <span class="nf">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_brown1957_ellipse</span><span class="p">(</span><span class="n">xy</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">nsteps</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">average_cik</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Estimate n-step Brown1957 ellipse at CIE x,y coordinates xy by calculating </span>
 <span class="sd">    average inverse covariance ellipse of the k_neighbours closest ellipses.</span>
@@ -183,7 +178,7 @@
             <span class="n">cik_long</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">0</span><span class="p">,:],</span><span class="n">cik</span><span class="p">[:,</span><span class="mi">1</span><span class="p">,:]))</span>
         
         <span class="c1"># Calculate k_neighbours closest ellipses to xy:</span>
-        <span class="kn">import</span> <span class="nn">scipy</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span> <span class="c1"># lazy import</span>
         <span class="n">tree</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span><span class="p">(</span><span class="n">v_brown1957</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">copy_data</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
         <span class="n">d</span><span class="p">,</span> <span class="n">inds</span> <span class="o">=</span> <span class="n">tree</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">xy</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">k_neighbours</span><span class="p">)</span>
     

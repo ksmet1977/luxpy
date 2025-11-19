@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cct.robertson1968.robertson1968 &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.cct.robertson1968.robertson1968 &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -108,9 +103,9 @@
 <span class="sd">@author: ksmet1977 [at] gmail.com</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pickle</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
 
 <span class="c1"># get path to module:</span>
@@ -162,7 +157,7 @@
 <span class="n">_WL3</span> <span class="o">=</span> <span class="n">_CCT_LUT_WL3</span>
 <div class="viewcode-block" id="save_pkl">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.save_pkl">[docs]</a>
-<span class="k">def</span> <span class="nf">save_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">save_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span> 
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Save an object in a pickle file.</span>
 <span class="sd">    </span>
@@ -181,7 +176,7 @@
         
 <div class="viewcode-block" id="load_pkl">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.load_pkl">[docs]</a>
-<span class="k">def</span> <span class="nf">load_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_pkl</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Load the object in a pickle file.</span>
 <span class="sd">    </span>
@@ -201,7 +196,7 @@
 
 <div class="viewcode-block" id="loadtxt">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.loadtxt">[docs]</a>
-<span class="k">def</span> <span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">loadtxt</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">float</span><span class="p">,</span> <span class="n">missing_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Load data from text file. </span>
 <span class="sd">    </span>
@@ -241,7 +236,7 @@
     <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">header</span></div>
 
 
-<span class="k">def</span> <span class="nf">positive_arctan</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">positive_arctan</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">htype</span> <span class="o">=</span> <span class="s1">&#39;deg&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate positive angle (0°-360° or 0 - 2*pi rad.) from x and y.</span>
 <span class="sd">    </span>
@@ -270,7 +265,7 @@
     <span class="k">return</span> <span class="n">h</span>
 
 
-<span class="k">def</span> <span class="nf">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getwlr</span><span class="p">(</span><span class="n">wl3</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get/construct a wavelength range from a 3-vector (start, stop, spacing).</span>
 <span class="sd">    </span>
@@ -291,7 +286,7 @@
     <span class="k">return</span> <span class="n">wl</span>
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">getwld</span><span class="p">(</span><span class="n">wl</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get wavelength spacing. </span>
 <span class="sd">    </span>
@@ -318,7 +313,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># XYZ to chromaticity conversion functions  </span>
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">xyz_to_Yxy</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_Yxy</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values CIE Yxy chromaticity values.</span>
 
@@ -340,7 +335,7 @@
     <span class="k">return</span> <span class="n">Yxy</span>
 
 
-<span class="k">def</span> <span class="nf">Yxy_to_xyz</span><span class="p">(</span><span class="n">Yxy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Yxy_to_xyz</span><span class="p">(</span><span class="n">Yxy</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert CIE Yxy chromaticity values to XYZ tristimulus values.</span>
 
@@ -404,7 +399,7 @@
 <span class="c1">#     xyz[...,2] = Yuv[...,0]*(4.0 - Yuv[...,1] - 10.0*Yuv[...,2])/(2.0*Yuv[...,2])</span>
 <span class="c1">#     return xyz</span>
 
-<span class="k">def</span> <span class="nf">xyz_to_Yuv76</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_Yuv76</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values CIE 1976 Y,u&#39;,v&#39; chromaticity values.</span>
 
@@ -425,7 +420,7 @@
     <span class="n">Yuv</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mf">9.0</span><span class="o">*</span><span class="n">xyz</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">denom</span>
     <span class="k">return</span> <span class="n">Yuv</span>
 
-<span class="k">def</span> <span class="nf">Yuv76_to_xyz</span><span class="p">(</span><span class="n">Yuv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Yuv76_to_xyz</span><span class="p">(</span><span class="n">Yuv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert CIE 1976 Y,u&#39;,v&#39; chromaticity values to XYZ tristimulus values.</span>
 
@@ -446,7 +441,7 @@
     <span class="k">return</span> <span class="n">xyz</span>
 
 
-<span class="k">def</span> <span class="nf">xyz_to_Yuv60</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_Yuv60</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert XYZ tristimulus values CIE 1960 Y,u,v chromaticity values.</span>
 
@@ -464,7 +459,7 @@
     <span class="k">return</span> <span class="n">Yuv</span>
 
 
-<span class="k">def</span> <span class="nf">Yuv60_to_xyz</span><span class="p">(</span><span class="n">Yuv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">Yuv60_to_xyz</span><span class="p">(</span><span class="n">Yuv</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert CIE 1976 Y,u,v chromaticity values to XYZ tristimulus values.</span>
 
@@ -486,7 +481,7 @@
 <span class="c1"># XYZ calculation, CMFs and CMFs conversion (apply color space transform already to CMFs!)</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># import luxpy as lx</span>
-<span class="k">def</span> <span class="nf">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_xyzbar_wl_dl</span><span class="p">(</span><span class="n">cieobs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Get the xyzbar CMF set corresponding to cieobs.</span>
 <span class="sd">    Returns an ndarray with the cmfs (stripped of wavelengths), ndarray with</span>
@@ -500,7 +495,7 @@
     <span class="n">cmf</span><span class="p">[:,</span><span class="n">c</span><span class="p">]</span> <span class="o">+=</span> <span class="n">_CCT_AVOID_ZERO_DIV</span> <span class="c1"># avoid nan&#39;s in uvwvbar</span>
     <span class="k">return</span> <span class="n">cmf</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span>
 
-<span class="k">def</span> <span class="nf">_convert_xyzbar_to_uvwbar</span><span class="p">(</span><span class="n">xyzbar</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_convert_xyzbar_to_uvwbar</span><span class="p">(</span><span class="n">xyzbar</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert the xyzbar (no wl on row 0!) CMF set to a CMF set representing a different </span>
 <span class="sd">    color space/ chromaticity diagram (integration leads to new tristimulus values)</span>
@@ -515,7 +510,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Planckian spectrum and colorimetric calculations:</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_get_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get the blackbody radiatior spectrum, and the spectra corresponding to </span>
 <span class="sd">    the first and second derivatives to Tc of the blackbody radiator.</span>
@@ -556,7 +551,7 @@
     <span class="k">return</span> <span class="n">BB</span><span class="p">,</span> <span class="n">BBp</span><span class="p">,</span> <span class="n">BBpp</span>
 
 
-<span class="k">def</span> <span class="nf">_get_tristim_of_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_tristim_of_BB_BBp_BBpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">xyzbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get the tristimulus values for CMF set xyzbar of the blackbody radiatior spectra</span>
 <span class="sd">    and the spectra corresponding to the first and second derivatives to Tc </span>
@@ -578,7 +573,7 @@
     <span class="k">return</span> <span class="n">T</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzp</span><span class="p">,</span> <span class="n">xyzpp</span>
 
 
-<span class="k">def</span> <span class="nf">_get_uv_uvp_uvpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_uv_uvp_uvpp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">dl</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;BB,BBp,BBpp&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get the (u,v), (u&#39;,v&#39;) and (u&quot;,v&quot;) coordinates of one or more Planckians</span>
 <span class="sd">    with specified Tc. uvwbar (no wavelengths on row0, these are supplied seperately</span>
@@ -621,7 +616,7 @@
 
 <div class="viewcode-block" id="get_tcs4">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.get_tcs4">[docs]</a>
-<span class="k">def</span> <span class="nf">get_tcs4</span><span class="p">(</span><span class="n">tc4</span><span class="p">,</span> <span class="n">cct_min</span> <span class="o">=</span> <span class="n">_CCT_MIN</span><span class="p">,</span> <span class="n">cct_max</span> <span class="o">=</span> <span class="n">_CCT_MAX</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_tcs4</span><span class="p">(</span><span class="n">tc4</span><span class="p">,</span> <span class="n">cct_min</span> <span class="o">=</span> <span class="n">_CCT_MIN</span><span class="p">,</span> <span class="n">cct_max</span> <span class="o">=</span> <span class="n">_CCT_MAX</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Generate list of Tc of Planckians from (Tmin, Tmax inclusive, Tincrement, unit) </span>
 <span class="sd">    </span>
@@ -691,7 +686,7 @@
 
 <div class="viewcode-block" id="calculate_lut">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.calculate_lut">[docs]</a>
-<span class="k">def</span> <span class="nf">calculate_lut</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">lut_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span><span class="s1">&#39;uvp&#39;</span><span class="p">,</span><span class="s1">&#39;uvpp&#39;</span><span class="p">,</span><span class="s1">&#39;iso-T-slope&#39;</span><span class="p">],</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_lut</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">lut_vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;T&#39;</span><span class="p">,</span><span class="s1">&#39;uv&#39;</span><span class="p">,</span><span class="s1">&#39;uvp&#39;</span><span class="p">,</span><span class="s1">&#39;uvpp&#39;</span><span class="p">,</span><span class="s1">&#39;iso-T-slope&#39;</span><span class="p">],</span>
                   <span class="n">cct_min</span> <span class="o">=</span> <span class="n">_CCT_MIN</span><span class="p">,</span> <span class="n">cct_max</span> <span class="o">=</span> <span class="n">_CCT_MAX</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Function that calculates a LUT for the specified calculation method </span>
@@ -829,7 +824,7 @@
 <span class="c1"># Duv calculation</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
 
-<span class="k">def</span> <span class="nf">_get_Duv_for_T_from_uvBB</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span> <span class="n">uBB0</span><span class="p">,</span> <span class="n">vBB0</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_Duv_for_T_from_uvBB</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span> <span class="n">uBB0</span><span class="p">,</span> <span class="n">vBB0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Calculate Duv from (u,v) coordinates of estimated Tc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -843,7 +838,7 @@
     <span class="n">Duv</span> <span class="o">*=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">Duv</span>
 
-<span class="k">def</span> <span class="nf">_get_Duv_for_T</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span>  <span class="n">dl</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_Duv_for_T</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">wl</span><span class="p">,</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">uvwbar</span><span class="p">,</span>  <span class="n">dl</span><span class="p">,</span>
                    <span class="n">uBB</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">vBB</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Calculate Duv from T by generating a planckian and</span>
@@ -865,7 +860,7 @@
     
 
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_get_pns_from_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;m0p&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_pns_from_x</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">m0p</span> <span class="o">=</span> <span class="s1">&#39;m0p&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get idx-1, idx and idx +1 from array. </span>
 <span class="sd">    Returns [Nx1] ndarray with N = len(idx).</span>
@@ -901,7 +896,7 @@
             <span class="k">return</span> <span class="n">x</span><span class="p">[</span><span class="n">idx_m1</span><span class="p">,</span><span class="n">i</span><span class="p">][:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="n">i</span><span class="p">][:,</span><span class="kc">None</span><span class="p">]</span>
    
     
-<span class="k">def</span> <span class="nf">_deal_with_lut_end_points</span><span class="p">(</span><span class="n">pn</span><span class="p">,</span> <span class="n">TBB</span><span class="p">,</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_deal_with_lut_end_points</span><span class="p">(</span><span class="n">pn</span><span class="p">,</span> <span class="n">TBB</span><span class="p">,</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="n">ce</span> <span class="o">=</span> <span class="n">pn</span> <span class="o">==</span> <span class="p">(</span><span class="n">TBB</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># end point</span>
     <span class="n">cb</span> <span class="o">=</span> <span class="n">pn</span><span class="o">&lt;=</span><span class="mi">0</span> <span class="c1"># begin point</span>
     <span class="k">if</span> <span class="n">out_of_lut</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="p">(</span><span class="n">cb</span> <span class="o">|</span> <span class="n">ce</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
@@ -914,7 +909,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Newton-Raphson estimator (cfr. Li, 2016):</span>
 <span class="c1">#------------------------------------------------------------------------------       </span>
-<span class="k">def</span> <span class="nf">_get_newton_raphson_estimated_Tc</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_newton_raphson_estimated_Tc</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">T0</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span>
                                      <span class="n">cieobs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzbar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">uvwbar</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                                      <span class="n">max_iter</span> <span class="o">=</span> <span class="n">_CCT_MAX_ITER</span><span class="p">,</span> <span class="n">fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1015,7 +1010,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <span class="c1"># Robertson1968 base (core) method</span>
 <span class="c1">#------------------------------------------------------------------------------</span>
-<span class="k">def</span> <span class="nf">_uv_to_Tx_robertson1968</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">lut</span><span class="p">,</span> <span class="n">lut_n_cols</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_uv_to_Tx_robertson1968</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">lut</span><span class="p">,</span> <span class="n">lut_n_cols</span><span class="p">,</span> <span class="n">ns</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">out_of_lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                             <span class="n">fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Calculate Tx from u,v and lut using Robertson 1968.</span>
@@ -1076,7 +1071,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="xyz_to_cct">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.xyz_to_cct">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CCT_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_cct</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">is_uv_input</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CCT_CIEOBS</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;cct&#39;</span><span class="p">,</span>
                <span class="n">lut</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">apply_newton_raphson</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
                <span class="n">rtol</span> <span class="o">=</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">atol</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>  <span class="n">max_iter</span> <span class="o">=</span> <span class="n">_CCT_MAX_ITER</span><span class="p">,</span> 
                <span class="n">split_calculation_at_N</span> <span class="o">=</span> <span class="n">_CCT_SPLIT_CALC_AT_N</span><span class="p">,</span> <span class="n">use_fast_duv</span> <span class="o">=</span> <span class="n">_CCT_FAST_DUV</span><span class="p">):</span>
@@ -1250,7 +1245,7 @@
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="xyz_to_duv">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.xyz_to_duv">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_duv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_duv</span><span class="p">(</span><span class="n">xyzw</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;duv&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wraps xyz_to_cct, but with duv output. For kwargs info, see xyz_to_cct.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -1260,7 +1255,7 @@
 <span class="c1">#---------------------------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="cct_to_xyz">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cct.robertson1968.cct_to_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cct_offset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CCT_CIEOBS</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">cct_to_xyz</span><span class="p">(</span><span class="n">ccts</span><span class="p">,</span> <span class="n">duv</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cct_offset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CCT_CIEOBS</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Convert correlated color temperature (550 K &lt;= CCT &lt;= 1e11 K) and </span>
 <span class="sd">    Duv (distance above (&gt;0) or below (&lt;0) the Planckian locus) to </span>
@@ -1365,8 +1360,8 @@
 <span class="c1">#==============================================================================</span>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span> 
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span> 
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
     <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;1931_2&#39;</span>
     
     <span class="c1"># cieobs = &#39;2015_10&#39;</span>

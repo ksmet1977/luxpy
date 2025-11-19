@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.technoteamlmk.TechnoTeamLMK &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.technoteamlmk.TechnoTeamLMK &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -109,29 +104,29 @@
 <span class="sd">@author: ksmet1977</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">time</span> 
-<span class="kn">import</span> <span class="nn">traceback</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">configparser</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">configparser</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">is_importable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">is_importable</span>
 
 
 <span class="c1"># import win32 (and if necessary install it):</span>
 <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;win32&#39;</span><span class="p">,</span> <span class="n">pip_string</span> <span class="o">=</span> <span class="s1">&#39;pywin32&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">win32</span>
-    <span class="kn">from</span> <span class="nn">win32com.client</span> <span class="kn">import</span> <span class="n">Dispatch</span> <span class="c1"># pip install pywin32</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">win32</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">win32com.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dispatch</span> <span class="c1"># pip install pywin32</span>
 
 <span class="c1"># import easygui(and if necessary install it):</span>
 <span class="n">success</span> <span class="o">=</span> <span class="n">is_importable</span><span class="p">(</span><span class="s1">&#39;easygui&#39;</span><span class="p">,</span> <span class="n">try_pip_install</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 <span class="k">if</span> <span class="n">success</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">easygui</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">easygui</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_LABSOFT_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_LABSOFT_CAMERA_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_CAMERAS&#39;</span><span class="p">,</span>
@@ -144,7 +139,7 @@
 
 <div class="viewcode-block" id="get_labsoft_path">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.get_labsoft_path">[docs]</a>
-<span class="k">def</span> <span class="nf">get_labsoft_path</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_labsoft_path</span><span class="p">():</span>
     <span class="n">labsoft_path_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span><span class="s1">&#39;labsoft_path.txt&#39;</span><span class="p">)</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">labsoft_path_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">fid</span><span class="p">:</span>
        <span class="n">labsoft_path</span> <span class="o">=</span> <span class="n">fid</span><span class="o">.</span><span class="n">readlines</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
@@ -169,7 +164,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="define_lens">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.define_lens">[docs]</a>
-<span class="k">def</span> <span class="nf">define_lens</span><span class="p">(</span><span class="n">lens_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">focusFactors</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">define_lens</span><span class="p">(</span><span class="n">lens_type</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">focusFactors</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Define a technoteam lens &quot;&quot;&quot;</span>
     <span class="n">lens</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">}</span>
     <span class="k">if</span> <span class="n">focusFactors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -194,7 +189,7 @@
 <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="kill_lmk4_process">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.kill_lmk4_process">[docs]</a>
-<span class="k">def</span> <span class="nf">kill_lmk4_process</span><span class="p">(</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">kill_lmk4_process</span><span class="p">(</span><span class="n">verbosity</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="s2">&quot;taskkill&quot;</span><span class="p">,</span> <span class="s2">&quot;/F&quot;</span><span class="p">,</span> <span class="s2">&quot;/IM&quot;</span><span class="p">,</span> <span class="s2">&quot;lmk4.exe&quot;</span><span class="p">],</span> <span class="n">capture_output</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="c1"># use: C:\Windows\System32\taskkill ?</span>
                           <span class="n">stderr</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="kc">True</span><span class="p">);</span>
     <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
@@ -232,7 +227,7 @@
 
 <div class="viewcode-block" id="lmkActiveX">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX">[docs]</a>
-<span class="k">class</span> <span class="nc">lmkActiveX</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">lmkActiveX</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Class for TechnoTeam LMK camera basic control</span>
 <span class="sd">    </span>
@@ -369,7 +364,7 @@
     
     <span class="c1"># constructor method</span>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">camera</span><span class="p">,</span> <span class="n">lens</span><span class="p">,</span><span class="n">focusfactor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">camera</span><span class="p">,</span> <span class="n">lens</span><span class="p">,</span><span class="n">focusfactor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                  <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                  <span class="n">modfrequency</span> <span class="o">=</span> <span class="mi">60</span><span class="p">,</span> <span class="n">maxtime</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
                  <span class="n">labsoft_camera_path</span> <span class="o">=</span> <span class="n">_LABSOFT_CAMERA_PATH</span><span class="p">,</span> 
@@ -414,7 +409,7 @@
 <div class="viewcode-block" id="lmkActiveX.show_labsoft_gui">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.show_labsoft_gui">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">show_labsoft_gui</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_labsoft_gui</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
         
         <span class="bp">cls</span><span class="o">.</span><span class="n">show_gui</span> <span class="o">=</span> <span class="n">show</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">answer</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iShow</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">show_gui</span><span class="p">)</span>
@@ -434,7 +429,7 @@
 <div class="viewcode-block" id="lmkActiveX.open_lmk_labsoft_connection">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.open_lmk_labsoft_connection">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">open_lmk_labsoft_connection</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">objectiveCalibrationPath</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_gui</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_lmk_labsoft_connection</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">objectiveCalibrationPath</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">show_gui</span> <span class="o">=</span> <span class="mi">3</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initializes a connection to LMK LabSoft.</span>
 
@@ -484,7 +479,7 @@
 <div class="viewcode-block" id="lmkActiveX.close_lmk_labsoft_connection">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.close_lmk_labsoft_connection">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">close_lmk_labsoft_connection</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close_lmk_labsoft_connection</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Closes the connection to LMK LabSoft and LabSoft itself.</span>
 
@@ -542,13 +537,13 @@
 <div class="viewcode-block" id="lmkActiveX.delete">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.delete">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">delete</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Delete lmk class object (close connection to labsoft) &quot;&quot;&quot;</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">close_lmk_labsoft_connection</span><span class="p">(</span><span class="n">open_dialog</span> <span class="o">=</span> <span class="n">open_dialog</span><span class="p">)</span></div>
 
         
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="fm">__del__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">open_dialog</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Delete lmk class object (close connection to labsoft) &quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span> 
             <span class="bp">cls</span><span class="o">.</span><span class="n">close_lmk_labsoft_connection</span><span class="p">(</span><span class="n">open_dialog</span> <span class="o">=</span> <span class="n">open_dialog</span><span class="p">)</span>
@@ -560,7 +555,7 @@
 <div class="viewcode-block" id="lmkActiveX.setWorkingImage">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.setWorkingImage">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">setWorkingImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setWorkingImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">w</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Set the current working image &quot;&quot;&quot;</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span> <span class="o">=</span> <span class="n">w</span></div>
 
@@ -569,7 +564,7 @@
 <div class="viewcode-block" id="lmkActiveX.display_error_info">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.display_error_info">[docs]</a>
     <span class="nd">@classmethod</span>        
-    <span class="k">def</span> <span class="nf">display_error_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">err_code</span><span class="p">,</span> <span class="n">process_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">display_error_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">err_code</span><span class="p">,</span> <span class="n">process_id</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the info for err_code and print &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">err_code</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{:s}</span><span class="s1"> ok!</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">process_id</span><span class="p">))</span>
@@ -582,7 +577,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_filter_wheel_info">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_filter_wheel_info">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_filter_wheel_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_filter_wheel_info</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get max. number of filter wheels and their names.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -603,7 +598,7 @@
 <div class="viewcode-block" id="lmkActiveX.measureColorMultipic">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.measureColorMultipic">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">measureColorMultipic</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">countPic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaultMaxTries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">measureColorMultipic</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">countPic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaultMaxTries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Capture a ColorMultiPicture &quot;&quot;&quot;</span>
         <span class="n">currTries</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">countPic</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="n">countPic</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">captureCountPic</span>
@@ -634,7 +629,7 @@
 <div class="viewcode-block" id="lmkActiveX.saveImage">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.saveImage">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">saveImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">folderXYZ</span><span class="p">,</span><span class="n">fileNameXYZ</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">saveImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">folderXYZ</span><span class="p">,</span><span class="n">fileNameXYZ</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Save the captured image currently as workingImage to the specified file and folder &quot;&quot;&quot;</span>
         <span class="n">imgPath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folderXYZ</span><span class="p">,</span> <span class="n">fileNameXYZ</span> <span class="o">+</span> <span class="s1">&#39;.pcf&#39;</span><span class="p">)</span>
         <span class="n">tempFlag</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iSaveImage</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span><span class="p">,</span><span class="n">imgPath</span><span class="p">)</span>
@@ -649,7 +644,7 @@
 <div class="viewcode-block" id="lmkActiveX.loadImage">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.loadImage">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">loadImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">pathXYZ</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">loadImage</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">pathXYZ</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Load a previously captured image from a specific path &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pathXYZ</span><span class="p">[</span><span class="o">-</span><span class="mi">4</span><span class="p">:]</span> <span class="o">==</span> <span class="s1">&#39;.pcf&#39;</span><span class="p">:</span>
             <span class="n">tempIdxImage</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -673,7 +668,7 @@
 <div class="viewcode-block" id="lmkActiveX.getStatistic">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.getStatistic">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getStatistic</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">statisticType</span><span class="p">,</span><span class="n">regionName</span><span class="p">,</span><span class="n">colorSpace</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getStatistic</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">statisticType</span><span class="p">,</span><span class="n">regionName</span><span class="p">,</span><span class="n">colorSpace</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get Cmin, Cmax, Cmean, Cvar for specified colorSpace for a specific region &quot;&quot;&quot;</span>
         <span class="n">tmpA</span><span class="p">,</span> <span class="n">tmpB</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iCreateStatistic</span><span class="p">(</span><span class="n">statisticType</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getRegionIndexByName</span><span class="p">(</span><span class="n">regionName</span><span class="p">),</span><span class="mi">1</span><span class="p">,[</span><span class="s1">&#39;1&#39;</span><span class="p">])</span>
         <span class="n">tmpA</span><span class="p">,</span> <span class="n">tmpB</span><span class="p">,</span> <span class="n">tmpC</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iGetStatisticselfect</span><span class="p">(</span><span class="n">statisticType</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getRegionIndexByName</span><span class="p">(</span><span class="n">regionName</span><span class="p">))</span>
@@ -703,7 +698,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_color_autoscan_times">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_color_autoscan_times">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">get_color_autoscan_times</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_color_autoscan_times</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="n">tempFlag</span><span class="p">,</span> <span class="n">autoscantimes</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iColorAutoScanTime</span><span class="p">([</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">filter_wheel_names</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">tempFlag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;iColorAutoScanTime: ColorAutoScanTimes </span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">autoscantimes</span><span class="p">))</span>
@@ -718,7 +713,7 @@
 <div class="viewcode-block" id="lmkActiveX.capture_X_map">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.capture_X_map">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">capture_X_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">X_type</span> <span class="o">=</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">,</span> 
+    <span class="k">def</span><span class="w"> </span><span class="nf">capture_X_map</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folder</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">X_type</span> <span class="o">=</span> <span class="s1">&#39;XYZ&#39;</span><span class="p">,</span> 
                              <span class="n">startRatio</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                              <span class="n">countPic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaultMaxTries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                              <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -791,7 +786,7 @@
 <div class="viewcode-block" id="lmkActiveX.captureXYZmap">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.captureXYZmap">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">captureXYZmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folderXYZ</span><span class="p">,</span> <span class="n">fileNameXYZ</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">captureXYZmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folderXYZ</span><span class="p">,</span> <span class="n">fileNameXYZ</span><span class="p">,</span>
                     <span class="n">startRatio</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">countPic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaultMaxTries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -808,7 +803,7 @@
 <div class="viewcode-block" id="lmkActiveX.captureYmap">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.captureYmap">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">captureYmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folderY</span><span class="p">,</span> <span class="n">fileNameY</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">captureYmap</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">folderY</span><span class="p">,</span> <span class="n">fileNameY</span><span class="p">,</span>
                     <span class="n">startRatio</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">factor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">countPic</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">defaultMaxTries</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                     <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -826,7 +821,7 @@
 <div class="viewcode-block" id="lmkActiveX.createEllips">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.createEllips">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">createEllips</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">centerPt</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createEllips</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">centerPt</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create an ellips with a:</span>
 <span class="sd">        | - centerPoint defined by centerPt (contains x and y value)</span>
@@ -861,7 +856,7 @@
 <div class="viewcode-block" id="lmkActiveX.createPolygon">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.createPolygon">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">createPolygon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pointsXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createPolygon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">pointsXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a polygon with:</span>
 <span class="sd">        | - vertices specified in pointsXY (x-&gt;width, y-&gt;height)</span>
@@ -895,7 +890,7 @@
 <div class="viewcode-block" id="lmkActiveX.createRectangle">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.createRectangle">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">createRectangle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">topleftXY</span><span class="p">,</span> <span class="n">bottomrightXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createRectangle</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">topleftXY</span><span class="p">,</span> <span class="n">bottomrightXY</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a Rectangle spanning:</span>
 <span class="sd">        | - the top-left and bottom-right vertices </span>
@@ -929,7 +924,7 @@
 <div class="viewcode-block" id="lmkActiveX.deleteRegionByName">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.deleteRegionByName">[docs]</a>
     <span class="nd">@classmethod</span>   
-    <span class="k">def</span> <span class="nf">deleteRegionByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">deleteRegionByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Delete a Region by regioName &quot;&quot;&quot;</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">errorFlag</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iDeleteRegion</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">workingImage</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">getRegionIndexByName</span><span class="p">(</span><span class="n">regionName</span><span class="p">));</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">checkForError</span><span class="p">()</span></div>
@@ -939,7 +934,7 @@
 <div class="viewcode-block" id="lmkActiveX.getRegionIndexByName">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.getRegionIndexByName">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getRegionIndexByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">regionName</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getRegionIndexByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">regionName</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Return the index of a region with a region name set to regionName. &quot;&quot;&quot;</span>
         <span class="n">regionIndex</span> <span class="o">=</span> <span class="mi">0</span>
         
@@ -952,7 +947,7 @@
 <div class="viewcode-block" id="lmkActiveX.createStatisticObjectOfRegion">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.createStatisticObjectOfRegion">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">createStatisticObjectOfRegion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regionName</span><span class="p">,</span> <span class="n">statisticType</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">createStatisticObjectOfRegion</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">regionName</span><span class="p">,</span> <span class="n">statisticType</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Create a color statistic object</span>
 <span class="sd">        | call as follows: createStatisticObjectOfRegion(&#39;regionTestName&#39;,statisticType[&#39;standardColor&#39;])</span>
@@ -964,7 +959,7 @@
 <div class="viewcode-block" id="lmkActiveX.selectRegionByIndex">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.selectRegionByIndex">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">selectRegionByIndex</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">ind</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">selectRegionByIndex</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">ind</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Select a region by its index number s defines wether the region is selected or deselected (true or false)        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -980,7 +975,7 @@
 <div class="viewcode-block" id="lmkActiveX.selectRegionByName">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.selectRegionByName">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">selectRegionByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">regionName</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">selectRegionByName</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span><span class="n">regionName</span><span class="p">,</span><span class="n">s</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Select a region by its region name, s defines wether the region is selected or deselected (true or false)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -994,7 +989,7 @@
 <div class="viewcode-block" id="lmkActiveX.setIntegrationTime">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.setIntegrationTime">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">setIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wishedTime</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">wishedTime</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set integration time.</span>
 <span class="sd">        |  [int32, double] LMKAxServer::iSetIntegrationTime	(double _dWishedTime, double &amp; _drRealizedTime)</span>
@@ -1017,7 +1012,7 @@
 <div class="viewcode-block" id="lmkActiveX.getIntegrationTime">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.getIntegrationTime">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">getIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getIntegrationTime</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get integration time.</span>
 <span class="sd">        |  [int32, double, double, double, double, double]	LMKAxServer::iGetIntegrationTime</span>
@@ -1048,7 +1043,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_autoscan">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_autoscan">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_autoscan</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_autoscan</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">autoscan</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Set auto scan. </span>
 <span class="sd">        </span>
@@ -1071,7 +1066,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_autoscan">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_autoscan">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_autoscan</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_autoscan</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get auto scan. </span>
 <span class="sd">        &quot;&quot;&quot;</span> 
@@ -1089,7 +1084,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_autoexposure">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_autoexposure">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_autoexposure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_autoexposure</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">autoexposure</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Set Automatic-Flag for all exposure times. </span>
 <span class="sd">        </span>
@@ -1111,7 +1106,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_autoexposure">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_autoexposure">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_autoexposure</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_autoexposure</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get Automatic-Flag for all exposure times.</span>
 <span class="sd">        &quot;&quot;&quot;</span> 
@@ -1129,7 +1124,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_focusfactor">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_focusfactor">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_focusfactor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">focusfactor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_focusfactor</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">focusfactor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Set focus factor of lens &quot;&quot;&quot;</span>
         <span class="c1"># List of available focus factors.</span>
         <span class="c1"># [int32, SafeArray Pointer(string), int32]</span>
@@ -1155,7 +1150,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_focusfactor">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_focusfactor">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_focusfactor</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_focusfactor</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get focus factor of lens &quot;&quot;&quot;</span>
         <span class="c1"># Get a focus factor</span>
         <span class="n">_</span><span class="p">,</span> <span class="n">FocusFactorList</span><span class="p">,</span> <span class="n">CurrIdx</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iGetFocusFactorList</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
@@ -1166,7 +1161,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_max_exposure_time">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_max_exposure_time">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">set_max_exposure_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">maxtime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_max_exposure_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">maxtime</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Set the maximum possible exposure time.</span>
 <span class="sd">        |  int LMKAxServer::iSetMaxCameraTime	(	double 	_dMaxCameraTime	)</span>
@@ -1193,7 +1188,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_max_exposure_time">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_max_exposure_time">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">get_max_exposure_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_max_exposure_time</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the maximum possible exposure time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1210,7 +1205,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_mod_frequency">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_mod_frequency">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">set_mod_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">modfrequency</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_mod_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">modfrequency</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Set the frequency of modulated light.</span>
 <span class="sd">        |  int LMKAxServer::iSetModulationFrequency	(	double 	_dModFrequency	)</span>
@@ -1237,7 +1232,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_mod_frequency">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_mod_frequency">[docs]</a>
     <span class="nd">@classmethod</span> 
-    <span class="k">def</span> <span class="nf">get_mod_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_mod_frequency</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Get the frequency setting of modulated light.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1254,7 +1249,7 @@
 <div class="viewcode-block" id="lmkActiveX.init">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.init">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;    init lmk ActiveX &quot;&quot;&quot;</span>
          
  
@@ -1309,7 +1304,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_converting_units">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_converting_units">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_converting_units</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">units_name</span> <span class="o">=</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;cd/m²&quot;</span><span class="p">,</span> <span class="n">units_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_converting_units</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">units_name</span> <span class="o">=</span> <span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s2">&quot;cd/m²&quot;</span><span class="p">,</span> <span class="n">units_factor</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Set the converting units (units_name, units, units_factor)&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">units_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units_name</span> <span class="o">=</span> <span class="n">units_name</span> 
         <span class="k">if</span> <span class="n">units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span> 
@@ -1326,7 +1321,7 @@
 <div class="viewcode-block" id="lmkActiveX.get_converting_units">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.get_converting_units">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">get_converting_units</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_converting_units</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; Get the converting units (units_name, units, units_factor)&quot;&quot;&quot;</span>
         <span class="n">tempFlag</span><span class="p">,</span> <span class="n">units_name</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">units_factor</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">lmk</span><span class="o">.</span><span class="n">iGetConvertingUnits</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">units_name</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">units_factor</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">tempFlag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1342,7 +1337,7 @@
 <div class="viewcode-block" id="lmkActiveX.set_verbosity">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.set_verbosity">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">set_verbosity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_verbosity</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verbosity_levels</span><span class="p">:</span>
             <span class="bp">cls</span><span class="o">.</span><span class="n">verbosity</span> <span class="o">=</span> <span class="n">value</span></div>
 
@@ -1350,7 +1345,7 @@
 <div class="viewcode-block" id="lmkActiveX.checkForError">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.lmkActiveX.checkForError">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">checkForError</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">checkForError</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
         <span class="k">global</span> <span class="n">ST</span>
         <span class="n">ST</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">extract_stack</span><span class="p">(</span><span class="n">limit</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="c1"># matlab: ST = dbstack(&#39;-completenames&#39;,1)</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">errorFlag</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
@@ -1364,7 +1359,7 @@
 <span class="c1">#==============================================================================   </span>
 <div class="viewcode-block" id="read_pcf">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.read_pcf">[docs]</a>
-<span class="k">def</span> <span class="nf">read_pcf</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_pcf</span><span class="p">(</span><span class="n">fname</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Read a TechnoTeam PCF image. (!!! output = float32 CIE-RGB !!!)&quot;&quot;&quot;</span>
     <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;latin_1&#39;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
@@ -1396,7 +1391,7 @@
 
 <div class="viewcode-block" id="write_pcf">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.write_pcf">[docs]</a>
-<span class="k">def</span> <span class="nf">write_pcf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_pcf</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Write a basic TechnoTeam PCF image. (!!! output = float32 CIE-RGB !!!)&quot;&quot;&quot;</span>
     <span class="n">encoding</span> <span class="o">=</span> <span class="s1">&#39;latin_1&#39;</span>
     <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">depth</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
@@ -1414,7 +1409,7 @@
 
 <div class="viewcode-block" id="ciergb_to_xyz">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.ciergb_to_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">ciergb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">ciergb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert CIE-RGB to XYZ &quot;&quot;&quot;</span>
     <span class="c1"># matrix from TechnoTeam&#39;s LMK4.pdf (p311, February 27, 2017 version)</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">2.7689</span><span class="p">,</span><span class="mf">1.7518</span><span class="p">,</span><span class="mf">1.1302</span><span class="p">],</span>
@@ -1426,7 +1421,7 @@
 
 <div class="viewcode-block" id="xyz_to_ciergb">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.xyz_to_ciergb">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_ciergb</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_ciergb</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert XYZ to CIE-RGB &quot;&quot;&quot;</span>
     <span class="c1"># matrix from TechnoTeam&#39;s LMK4.pdf (p311, February 27, 2017 version)</span>
     <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.4185</span><span class="p">,</span><span class="o">-</span><span class="mf">0.1587</span><span class="p">,</span><span class="o">-</span><span class="mf">0.0828</span><span class="p">],</span>
@@ -1438,26 +1433,26 @@
 
 <div class="viewcode-block" id="pcf_to_xyz">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.pcf_to_xyz">[docs]</a>
-<span class="k">def</span> <span class="nf">pcf_to_xyz</span><span class="p">(</span><span class="n">pcf_image</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">pcf_to_xyz</span><span class="p">(</span><span class="n">pcf_image</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert a TechnoTeam PCF image to XYZ &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">ciergb_to_xyz</span><span class="p">(</span><span class="n">pcf_image</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="xyz_to_pcf">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.xyz_to_pcf">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_pcf</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_pcf</span><span class="p">(</span><span class="n">xyz</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Convert an xyz image to a TechnoTeam PCF &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">xyz_to_ciergb</span><span class="p">(</span><span class="n">xyz</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">img_to_01</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">img_to_01</span><span class="p">(</span><span class="n">img</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Normalize image to 0 - 1 range &quot;&quot;&quot;</span>
     <span class="n">img</span> <span class="o">=</span> <span class="p">(</span><span class="n">img</span> <span class="o">-</span> <span class="n">img</span><span class="o">.</span><span class="n">min</span><span class="p">())</span><span class="o">/</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">img</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">img</span>
 
 <div class="viewcode-block" id="plot_pcf">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.technoteamlmk.plot_pcf">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_pcf</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">to_01_range</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_pcf</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">to_01_range</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Plot a TechnoTeam PCF image. &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">read_pcf</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>

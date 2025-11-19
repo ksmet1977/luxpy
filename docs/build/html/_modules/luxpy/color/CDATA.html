@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.CDATA &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.CDATA &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -210,11 +205,11 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span>  <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cam.colorappearancemodels</span> <span class="kn">import</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span> 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">xyz_to_Yuv76</span><span class="p">,</span> <span class="n">xyz_to_Yuv60</span><span class="p">,</span> <span class="n">xyz_to_wuv</span><span class="p">,</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">xyz_to_luv</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_Ydlep</span><span class="p">,</span> <span class="n">xyz_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_lms</span><span class="p">,</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span>  <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="n">_CSPACE_AXES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cam.colorappearancemodels</span><span class="w"> </span><span class="kn">import</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">,</span> <span class="n">xyz_to_Yuv76</span><span class="p">,</span> <span class="n">xyz_to_Yuv60</span><span class="p">,</span> <span class="n">xyz_to_wuv</span><span class="p">,</span> <span class="n">xyz_to_lab</span><span class="p">,</span> <span class="n">xyz_to_luv</span><span class="p">,</span> <span class="n">xyz_to_Vrb_mb</span><span class="p">,</span> <span class="n">xyz_to_ipt</span><span class="p">,</span> <span class="n">xyz_to_Ydlep</span><span class="p">,</span> <span class="n">xyz_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_lms</span><span class="p">,</span> 
                    <span class="n">Yxy_to_xyz</span><span class="p">,</span> <span class="n">Yuv_to_xyz</span><span class="p">,</span> <span class="n">Yuv76_to_xyz</span><span class="p">,</span> <span class="n">Yuv60_to_xyz</span><span class="p">,</span> <span class="n">lab_to_xyz</span><span class="p">,</span> <span class="n">luv_to_xyz</span><span class="p">,</span> <span class="n">Vrb_mb_to_xyz</span><span class="p">,</span> <span class="n">ipt_to_xyz</span><span class="p">,</span> <span class="n">Ydlep_to_xyz</span><span class="p">,</span> <span class="n">lms_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabM_ciecam02</span><span class="p">,</span> <span class="n">jabM_ciecam02_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabC_ciecam02</span><span class="p">,</span> <span class="n">jabC_ciecam02_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabM_ciecam16</span><span class="p">,</span> <span class="n">jabM_ciecam16_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_jabC_ciecam16</span><span class="p">,</span> <span class="n">jabC_ciecam16_to_xyz</span><span class="p">,</span> 
@@ -227,13 +222,13 @@
                    <span class="n">xyz_to_srgb</span><span class="p">,</span> <span class="n">srgb_to_xyz</span><span class="p">,</span> 
                    <span class="n">xyz_to_jabz</span><span class="p">,</span> <span class="n">jabz_to_xyz</span><span class="p">,</span>
                    <span class="n">colortf</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">todim</span><span class="p">,</span> <span class="n">put_args_in_db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">todim</span><span class="p">,</span> <span class="n">put_args_in_db</span>
 
 
 
-<span class="k">class</span> <span class="nc">CDATA</span><span class="p">():</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CDATA</span><span class="p">():</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span>
@@ -241,7 +236,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
     
-    <span class="k">def</span> <span class="nf">getvalues_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getvalues_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get values from data and return ndarray.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -249,13 +244,13 @@
             <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
         <span class="k">return</span> <span class="n">data</span>
     
-    <span class="k">def</span> <span class="nf">split_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">split_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Split .value along last axis and return list of ndarrays.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])]</span>
      
-    <span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">join</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Join data along last axis and return instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -267,13 +262,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">data</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">take_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">take_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies numpy.take on .value field.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">indices</span><span class="o">=</span><span class="n">indices</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>  
     
-    <span class="k">def</span> <span class="nf">getax_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">getax_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get elements in .value field along specific axis</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -286,7 +281,7 @@
         <span class="k">elif</span> <span class="p">(</span><span class="n">axis</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">ndim</span><span class="o">&gt;=</span><span class="mi">2</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="n">indices</span><span class="p">]</span>
    
-    <span class="k">def</span> <span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take dot product with instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -294,42 +289,42 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add data to instance value field.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getvalues_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
        
-    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Subtract data from instance value field.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getvalues_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
            
-    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Multiply data with instance value field.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getvalues_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
               
-    <span class="k">def</span> <span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">div</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Divide instance value field by data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getvalues_</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Raise instance value field to power.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">**=</span> <span class="n">n</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">broadcast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span> <span class="n">add_axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">equal_shape</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Broadcast instance value field to shape of data.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -337,7 +332,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">get_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get spectral data related to light sources. </span>
 <span class="sd">        | (cfr. axis = 1 in xyz ndarrays).</span>
@@ -358,7 +353,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">get_R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_R</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get spectral data related to reflectance samples.</span>
 <span class="sd">        | (cfr. axis = 0 in xyz ndarrays).</span>
@@ -376,7 +371,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">shape</span>
         <span class="k">return</span> <span class="bp">self</span>
     
-    <span class="k">def</span> <span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_R</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">idx_S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_subset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx_R</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">idx_S</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get spectral data related to specific light source and reflectance data</span>
 <span class="sd">        | (cfr. axis = 1 and axis = 0 in xyz ndarrays).</span>
@@ -413,15 +408,15 @@
 
 <div class="viewcode-block" id="XYZ">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ">[docs]</a>
-<span class="k">class</span> <span class="nc">XYZ</span><span class="p">(</span><span class="n">CDATA</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XYZ</span><span class="p">(</span><span class="n">CDATA</span><span class="p">):</span>
     
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="n">relative</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">cieobs</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span><span class="p">)</span>
 
     
 <div class="viewcode-block" id="XYZ.ctf">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.ctf">[docs]</a>
-    <span class="k">def</span> <span class="nf">ctf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ctf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">_CSPACE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert XYZ tristimulus values to color space coordinates.</span>
 <span class="sd">        </span>
@@ -446,7 +441,7 @@
 
 <div class="viewcode-block" id="XYZ.plot">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot tristimulus or cone fundamental values.</span>
 <span class="sd">        </span>
@@ -465,7 +460,7 @@
 <span class="sd">            :gca:</span>
 <span class="sd">                | handle to current axes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         
         <span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -493,7 +488,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_Yxy">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yxy">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Yxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Yxy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values CIE Yxy chromaticity values.</span>
 <span class="sd">            </span>
@@ -510,7 +505,7 @@
     
 <div class="viewcode-block" id="XYZ.to_Yuv">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yuv">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Yuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Yuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values CIE 1976 Yu&#39;v&#39; chromaticity values.</span>
 
@@ -528,7 +523,7 @@
     
 <div class="viewcode-block" id="XYZ.to_Yuv76">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yuv76">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Yuv76</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Yuv76</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values CIE 1976 Yu&#39;v&#39; chromaticity values.</span>
 
@@ -546,7 +541,7 @@
     
 <div class="viewcode-block" id="XYZ.to_Yuv60">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Yuv60">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Yuv60</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Yuv60</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values CIE 1960 Yuv chromaticity values.</span>
 
@@ -564,7 +559,7 @@
     
 <div class="viewcode-block" id="XYZ.to_wuv">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_wuv">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_wuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_wuv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values CIE 1964 U*V*W* color space.</span>
 <span class="sd">         </span>
@@ -584,7 +579,7 @@
 
 <div class="viewcode-block" id="XYZ.to_lms">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_lms">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_lms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_lms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values or LMS cone fundamental responses </span>
 <span class="sd">        to LMS cone fundamental responses.</span>
@@ -603,7 +598,7 @@
      
 <div class="viewcode-block" id="XYZ.to_xyz">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_xyz">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values or LMS cone fundamental responses </span>
 <span class="sd">        to XYZ tristimulus values.</span>
@@ -623,7 +618,7 @@
     
 <div class="viewcode-block" id="XYZ.to_lab">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_lab">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_lab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_lab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values to CIE 1976 L*a*b* (CIELAB) coordinates.</span>
 <span class="sd">         </span>
@@ -647,7 +642,7 @@
             
 <div class="viewcode-block" id="XYZ.to_luv">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_luv">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_luv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_luv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values to CIE 1976 L*u*v* (CIELUV) coordinates.</span>
 <span class="sd">         </span>
@@ -671,7 +666,7 @@
     
 <div class="viewcode-block" id="XYZ.to_Vrb_mb">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Vrb_mb">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Vrb_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">scaling</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Vrb_mb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">scaling</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values to V,r,b (Macleod-Boynton) coordinates.</span>
 <span class="sd">        </span>
@@ -701,7 +696,7 @@
     
 <div class="viewcode-block" id="XYZ.to_ipt">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_ipt">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_ipt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_ipt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values to IPT color coordinates.</span>
 <span class="sd">         </span>
@@ -735,7 +730,7 @@
 
 <div class="viewcode-block" id="XYZ.to_Ydlep">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_Ydlep">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_Ydlep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_Ydlep</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_COLORTF_DEFAULT_WHITE_POINT</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ values to Y, dominant (complementary) wavelength </span>
 <span class="sd">        and excitation purity.</span>
@@ -759,7 +754,7 @@
 
 <div class="viewcode-block" id="XYZ.to_srgb">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_srgb">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_srgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_srgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="mf">2.4</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates IEC:61966 sRGB values from xyz.</span>
 
@@ -780,7 +775,7 @@
     
 <div class="viewcode-block" id="XYZ.to_jabz">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabz">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;jabz&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ztype</span> <span class="o">=</span> <span class="s1">&#39;jabz&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Convert XYZ tristimulus values to Jz,az,bz color coordinates.</span>
 
@@ -820,7 +815,7 @@
     
 <div class="viewcode-block" id="XYZ.to_jabM_ciecam02">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabM_ciecam02">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabM_ciecam02</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabM_ciecam02</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabM_ciecam02</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -832,7 +827,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jabC_ciecam02">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabC_ciecam02">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabC_ciecam02</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabC_ciecam02</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabC_ciecam02</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -844,7 +839,7 @@
     
 <div class="viewcode-block" id="XYZ.to_jab_cam02ucs">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam02ucs">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam02ucs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam02ucs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam02ucs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -856,7 +851,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jab_cam02lcd">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam02lcd">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam02lcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam02lcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam02lcd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -868,7 +863,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jab_cam02scd">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam02scd">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam02scd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam02scd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">yellowbluepurplecorrect</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat02&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam02scd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -881,7 +876,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_jabM_ciecam16">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabM_ciecam16">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabM_ciecam16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabM_ciecam16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabM_ciecam16</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -893,7 +888,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jabC_ciecam16">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabC_ciecam16">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabC_ciecam16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabC_ciecam16</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabC_ciecam16</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -905,7 +900,7 @@
     
 <div class="viewcode-block" id="XYZ.to_jab_cam16ucs">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam16ucs">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam16ucs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam16ucs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam02ucs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -917,7 +912,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jab_cam16lcd">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam16lcd">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam16lcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam16lcd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam16lcd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -929,7 +924,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jab_cam16scd">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jab_cam16scd">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jab_cam16scd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jab_cam16scd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="mf">100.0</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jab_cam16scd</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -940,7 +935,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_jabM_zcam">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabM_zcam">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabM_zcam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabM_zcam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span>  <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabM_zcam</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -952,7 +947,7 @@
 
 <div class="viewcode-block" id="XYZ.to_jabC_zcam">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_jabC_zcam">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_jabC_zcam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_jabC_zcam</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_WHITE_POINT</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="n">_CAM_DEFAULT_CONDITIONS</span><span class="p">,</span> <span class="n">mcat</span> <span class="o">=</span> <span class="s1">&#39;cat16&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_jabC_zcam</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -964,7 +959,7 @@
     <span class="c1">#--------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_qabW_cam15u">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_qabW_cam15u">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_qabW_cam15u</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_qabW_cam15u</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_qabW_cam15u</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -976,7 +971,7 @@
     <span class="c1">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_lab_cam_sww_2016">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_lab_cam_sww_2016">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_lab_cam_sww_2016</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_lab_cam_sww_2016</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">,</span> <span class="n">Lw</span> <span class="o">=</span> <span class="mf">400.0</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">inputtype</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="s1">&#39;2006_10&#39;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_lab_cam_sww_2016</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -987,7 +982,7 @@
     <span class="c1">#--------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_qabS_cam18sl">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_qabS_cam18sl">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_qabS_cam18sl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_qabS_cam18sl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_qabS_cam18sl</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -998,7 +993,7 @@
     <span class="c1">#--------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="XYZ.to_qabM_cam18sl">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.XYZ.to_qabM_cam18sl">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_qabM_cam18sl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_qabM_cam18sl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span> <span class="n">xyzb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Lb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">100</span><span class="p">],</span> <span class="n">fov</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span> <span class="n">parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        See ?luxpy.xyz_to_qabM_cam18sl</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1011,9 +1006,9 @@
     
 <div class="viewcode-block" id="LAB">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.LAB">[docs]</a>
-<span class="k">class</span> <span class="nc">LAB</span><span class="p">(</span><span class="n">CDATA</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LAB</span><span class="p">(</span><span class="n">CDATA</span><span class="p">):</span>
   
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> \
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">relative</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> \
                  <span class="n">xyzw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">scaling</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> \
                  <span class="n">Lw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">Yb</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">conditions</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">naka_rushton_parameters</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">unique_hue_data</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1045,7 +1040,7 @@
     
 <div class="viewcode-block" id="LAB.ctf">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.LAB.ctf">[docs]</a>
-    <span class="k">def</span> <span class="nf">ctf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ctf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert color space coordinates to XYZ tristimulus values.</span>
 <span class="sd">        </span>
@@ -1071,7 +1066,7 @@
     
 <div class="viewcode-block" id="LAB.plot">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.LAB.plot">[docs]</a>
-    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plt_type</span> <span class="o">=</span> <span class="s1">&#39;3d&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">plt_type</span> <span class="o">=</span> <span class="s1">&#39;3d&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Plot color coordinates.</span>
 <span class="sd">        </span>
@@ -1094,7 +1089,7 @@
 <span class="sd">            :gca: </span>
 <span class="sd">                | handle to current axes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         
         <span class="n">L</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="n">b</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -1125,7 +1120,7 @@
         
 <div class="viewcode-block" id="LAB.to_xyz">
 <a class="viewcode-back" href="../../../color.html#luxpy.color.CDATA.LAB.to_xyz">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert color space coordinates to XYZ tristimulus values.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

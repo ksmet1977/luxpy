@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.dispcal.virtualdisplay &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.dispcal.virtualdisplay &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -83,14 +78,14 @@
 
 <span class="sd">@author: u0032318</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span> 
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="n">colortf</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">put_args_in_db</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="n">colortf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">put_args_in_db</span>
 
 
-<span class="kn">from</span> <span class="nn">luxpy.toolboxes.dispcal.displaycalibration</span> <span class="kn">import</span> <span class="n">TR_ggo</span><span class="p">,</span> <span class="n">TRi_ggo</span><span class="p">,</span> <span class="n">TR_gog</span><span class="p">,</span> <span class="n">TRi_gog</span><span class="p">,</span> <span class="n">TR_gogo</span><span class="p">,</span> <span class="n">TRi_gogo</span><span class="p">,</span> <span class="n">TR_sigmoid</span><span class="p">,</span> <span class="n">TRi_sigmoid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.toolboxes.dispcal.displaycalibration</span><span class="w"> </span><span class="kn">import</span> <span class="n">TR_ggo</span><span class="p">,</span> <span class="n">TRi_ggo</span><span class="p">,</span> <span class="n">TR_gog</span><span class="p">,</span> <span class="n">TRi_gog</span><span class="p">,</span> <span class="n">TR_gogo</span><span class="p">,</span> <span class="n">TRi_gogo</span><span class="p">,</span> <span class="n">TR_sigmoid</span><span class="p">,</span> <span class="n">TRi_sigmoid</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;virtualdisplay&#39;</span><span class="p">,</span> <span class="s1">&#39;_VIRTUALDISPLAY_PARS&#39;</span><span class="p">,</span>
            <span class="s1">&#39;virtualdisplay_kwak2000&#39;</span><span class="p">,</span><span class="s1">&#39;_VIRTUALDISPLAY_KWAK2000_PARS&#39;</span><span class="p">,</span>
@@ -120,7 +115,7 @@
                        <span class="s1">&#39;channel_dependence&#39;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
 
 
-<span class="k">def</span> <span class="nf">virtualdisplay</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">virtualdisplay</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">tr_type</span> <span class="o">=</span> <span class="s1">&#39;ggo&#39;</span><span class="p">,</span>
                    <span class="n">M</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gain</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">offset_gogo</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                    <span class="n">sigmoid_m</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmoid_a</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">sigmoid_q</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                    <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">sigma_noise</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -290,7 +285,7 @@
 <span class="n">_f_kwak2000</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">abC</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="c1"># S-shaped function</span>
 <span class="n">_fp_kwak2000</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">abC</span><span class="p">:</span> <span class="p">((</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">abC</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>  <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="n">abC</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">abC</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># first deriv. of S-Shaped function</span>
    
-<span class="k">def</span> <span class="nf">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span>  <span class="n">A</span><span class="p">,</span> <span class="n">abC</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span>  <span class="n">A</span><span class="p">,</span> <span class="n">abC</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">):</span>
     <span class="n">dac</span> <span class="o">=</span> <span class="n">rgb</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">f_RGB</span> <span class="o">=</span> <span class="n">_f_kwak2000</span><span class="p">(</span><span class="n">dac</span><span class="p">,</span><span class="n">abC</span><span class="p">)</span>
     <span class="n">fp_RGB</span> <span class="o">=</span> <span class="n">_fp_kwak2000</span><span class="p">(</span><span class="n">dac</span><span class="p">,</span><span class="n">abC</span><span class="p">)</span>
@@ -300,7 +295,7 @@
     <span class="n">RGB</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">R</span><span class="p">,</span><span class="n">G</span><span class="p">,</span><span class="n">B</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
     <span class="k">return</span> <span class="n">RGB</span>
 
-<span class="k">def</span> <span class="nf">virtualdisplay_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">virtualdisplay_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">forward</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> 
                             <span class="n">cspace_noise</span> <span class="o">=</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="n">sigma_noise</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                             <span class="n">normalize_Ywhite_to_100</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -347,7 +342,7 @@
         <span class="n">rgb_lin</span> <span class="o">=</span> <span class="n">_TR_SII_kwak2000</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_A&#39;</span><span class="p">],</span> <span class="n">kwak2000_pars</span><span class="p">[</span><span class="s1">&#39;S_shapeII_abC&#39;</span><span class="p">],</span> <span class="n">nbit</span> <span class="o">=</span> <span class="n">nbit</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">verbosity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
-            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;g--&#39;</span><span class="p">)</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rgb</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="n">rgb_lin</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="s1">&#39;b:&#39;</span><span class="p">)</span>
@@ -405,8 +400,8 @@
 <span class="c1">#==============================================================================</span>
 <div class="viewcode-block" id="VirtualDisplay">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay">[docs]</a>
-<span class="k">class</span> <span class="nc">VirtualDisplay</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">class</span><span class="w"> </span><span class="nc">VirtualDisplay</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;kwak2000_SII&#39;</span><span class="p">,</span> <span class="n">seed</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbit</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                  <span class="n">channel_dependence</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">model_pars</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;virtualdisplay_kwak2000_SII&#39;</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;kwak2000_SII&#39;</span><span class="p">):</span>
@@ -446,7 +441,7 @@
 
 <div class="viewcode-block" id="VirtualDisplay.to_rgb">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay.to_rgb">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_rgb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xyz</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1">#print(&#39;VD: to_rgb-&gt;model_pars&#39;,self.model_pars)</span>
         <span class="n">model_pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">)</span>
         <span class="n">model_pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
@@ -456,7 +451,7 @@
     
 <div class="viewcode-block" id="VirtualDisplay.to_xyz">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.dispcal.VirtualDisplay.to_xyz">[docs]</a>
-    <span class="k">def</span> <span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rgb</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="c1"># print(&#39;VD1: to_xyz-&gt;model_pars:&#39;, self.model_pars)</span>
         <span class="n">model_pars</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model_pars</span><span class="p">)</span>
         <span class="n">model_pars</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
@@ -474,7 +469,7 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> 
     
     <span class="c1"># # === Test virtual diplay functions =======================================</span>
     <span class="c1"># rgb = np.array([[255,255,255],[200,150,60]])</span>
@@ -515,7 +510,7 @@
     <span class="c1"># print(&#39;\nDE: &#39;,((lab-lab2)**2).sum(-1)**0.5)</span>
     
     <span class="c1"># Plot Virtual Display Gamut:</span>
-    <span class="kn">import</span> <span class="nn">itertools</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
     <span class="n">include_max</span><span class="p">,</span> <span class="n">include_min</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
     <span class="n">inc</span><span class="p">,</span> <span class="n">inc_offset</span><span class="p">,</span><span class="n">nbit</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span>
     <span class="n">dv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">inc_offset</span><span class="p">,</span> <span class="mi">2</span><span class="o">**</span><span class="n">nbit</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inc</span><span class="p">)</span>
@@ -540,7 +535,7 @@
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;a*&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;b*&#39;</span><span class="p">)</span>
     <span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s1">&#39;L*&#39;</span><span class="p">)</span>
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span>
     <span class="n">lx</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">in_hull</span><span class="p">(</span><span class="n">xyzw2</span><span class="p">,</span><span class="n">xyz2</span><span class="p">)</span>
     <span class="n">lx</span><span class="o">.</span><span class="n">math</span><span class="o">.</span><span class="n">in_hull</span><span class="p">(</span><span class="n">xyzw3</span><span class="p">,</span><span class="n">xyz3</span><span class="p">)</span>
     <span class="c1"># virtualdisplay_kwak2000(rgb,verbosity=1, normalize_Ywhite_to_100=False, channel_dependence=False)</span>

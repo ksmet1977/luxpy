@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.color.cri.iestm30.graphics &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -125,18 +120,18 @@
 
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">colorsys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">colorsys</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">xyz_to_srgb</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">_CIE_D65</span><span class="p">,</span> <span class="n">xyz_to_srgb</span><span class="p">,</span> <span class="n">spd_to_power</span><span class="p">,</span> 
                    <span class="n">spd_normalize</span><span class="p">,</span> <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">xyz_to_Yxy</span><span class="p">,</span> <span class="n">xyz_to_Yuv</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cri.utils.helpers</span> <span class="kn">import</span> <span class="n">spd_to_cri</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cri.utils.helpers</span><span class="w"> </span><span class="kn">import</span> <span class="n">spd_to_cri</span>
 
-<span class="kn">from</span> <span class="nn">luxpy.color.cri.utils.graphics</span> <span class="kn">import</span> <span class="n">plot_ColorVectorGraphic</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cri.VFPX.vectorshiftmodel</span> <span class="kn">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span> 
-<span class="kn">from</span> <span class="nn">luxpy.color.cri.VFPX.VF_PX_models</span> <span class="kn">import</span> <span class="n">plot_VF_PX_models</span>
-<span class="kn">from</span> <span class="nn">luxpy.color.cri.iestm30.metrics</span> <span class="kn">import</span> <span class="n">spd_to_ies_tm30_metrics</span><span class="p">,</span> <span class="n">tm30_metrics_to_annexE_recommendations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cri.utils.graphics</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_ColorVectorGraphic</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cri.VFPX.vectorshiftmodel</span><span class="w"> </span><span class="kn">import</span>  <span class="n">_VF_MODEL_TYPE</span><span class="p">,</span> <span class="n">_VF_PCOLORSHIFT</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cri.VFPX.VF_PX_models</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_VF_PX_models</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.color.cri.iestm30.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">spd_to_ies_tm30_metrics</span><span class="p">,</span> <span class="n">tm30_metrics_to_annexE_recommendations</span>
 
 <span class="n">_TM30_FONT_SIZE_FULLREPORT</span> <span class="o">=</span> <span class="mi">8</span>
 <span class="n">_TM30_FONT_SIZE</span> <span class="o">=</span> <span class="mi">11</span>
@@ -185,7 +180,7 @@
 
 <div class="viewcode-block" id="_tm30_process_spd">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri._tm30_process_spd">[docs]</a>
-<span class="k">def</span> <span class="nf">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate all required parameters for plotting from spd using cri.spd_to_cri()</span>
 <span class="sd">    </span>
@@ -232,7 +227,7 @@
     <span class="k">return</span> <span class="n">data</span></div>
 
 
-<span class="k">def</span> <span class="nf">_get_hue_map</span><span class="p">(</span><span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_get_hue_map</span><span class="p">(</span><span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> 
                  <span class="n">hbinnrs</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzri</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">xyzrw</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generate color map for hue bins.</span>
@@ -305,7 +300,7 @@
 
 <div class="viewcode-block" id="plot_tm30_cvg">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_cvg">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_cvg</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>  
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_cvg</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>  
                   <span class="n">gamut_line_color</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                   <span class="n">gamut_line_style</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span>
                   <span class="n">gamut_line_marker</span> <span class="o">=</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span>
@@ -453,7 +448,7 @@
 
 <div class="viewcode-block" id="plot_tm30_spd">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_spd">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                   <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot test SPD and reference illuminant, both normalized to the same luminous power.</span>
@@ -495,7 +490,7 @@
 <span class="sd">            | dictionary with required parameters for plotting functions.  </span>
 <span class="sd">  </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import </span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import </span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
@@ -521,7 +516,7 @@
 
 <div class="viewcode-block" id="plot_tm30_Rfi">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_Rfi">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_Rfi</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_Rfi</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                   <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot Sample Color Fidelity values (Rfi).</span>
@@ -562,7 +557,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import </span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import </span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
@@ -599,7 +594,7 @@
 
 <div class="viewcode-block" id="plot_tm30_Rfhj">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_Rfhj">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_Rfhj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_Rfhj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                    <span class="n">xlabel</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                    <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -649,7 +644,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import </span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import </span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
@@ -697,7 +692,7 @@
 
 <div class="viewcode-block" id="plot_tm30_Rcshj">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_Rcshj">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_Rcshj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_Rcshj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">xlabel</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                     <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -747,7 +742,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | dictionary with required parameters for plotting functions.   </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
@@ -799,7 +794,7 @@
 
 <div class="viewcode-block" id="plot_tm30_Rhshj">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_Rhshj">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_Rhshj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_Rhshj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
                     <span class="n">xlabel</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">y_offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> 
                     <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -849,7 +844,7 @@
 <span class="sd">        :data:</span>
 <span class="sd">            | dictionary with required parameters for plotting functions.     </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">hdata</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;hue_bin_data&#39;</span><span class="p">]</span>
@@ -898,7 +893,7 @@
 
 <div class="viewcode-block" id="plot_tm30_Rxhj">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_Rxhj">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_Rxhj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_Rxhj</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span>
                    <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Plot Local Chroma Shifts (Rcshj), Local Hue Shifts (Rhshj) and Local Color Fidelity values (Rfhj) (one for each hue-bin).</span>
@@ -946,7 +941,7 @@
     <span class="n">data</span> <span class="o">=</span> <span class="n">_tm30_process_spd</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="n">cri_type</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     
     <span class="k">if</span> <span class="n">axh</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         <span class="n">fig</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>
     
     <span class="n">plot_tm30_Rcshj</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axh</span> <span class="o">=</span> <span class="n">axh</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlabel</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">y_offset</span> <span class="o">=</span> <span class="mf">0.02</span><span class="p">,</span> <span class="n">font_size</span> <span class="o">=</span> <span class="n">font_size</span><span class="p">)</span>
@@ -955,7 +950,7 @@
     <span class="k">return</span> <span class="n">axh</span><span class="p">,</span> <span class="n">data</span></div>
 
 
-<span class="k">def</span> <span class="nf">_split_notes</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_split_notes</span><span class="p">(</span><span class="n">notes</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Split a string on white spaces over multiple lines, such that the line length doesn&#39;t exceed a specified value.</span>
 <span class="sd">    </span>
@@ -986,7 +981,7 @@
     <span class="n">notes_</span> <span class="o">=</span> <span class="n">notes_</span> <span class="o">+</span> <span class="n">line</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">notes_</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_top</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">manufacturer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_top</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">manufacturer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print source name, source model, manufacturer and date in an empty axes.</span>
 
@@ -1019,7 +1014,7 @@
     <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Model: &#39;</span> <span class="o">+</span> <span class="n">model</span><span class="p">,</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">axh</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_bottom</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_bottom</span><span class="p">(</span><span class="n">axh</span><span class="p">,</span> <span class="n">spd</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="n">interp_settings</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Print some notes, the CIE x, y, u&#39;,v&#39; and Ra, R9 values of the source in some empty axes.</span>
 <span class="sd">    </span>
@@ -1067,7 +1062,7 @@
     <span class="n">axh</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span><span class="mf">1.0</span><span class="p">,</span> <span class="s2">&quot;    $R_9$  </span><span class="si">{:1.0f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cierai</span><span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">fontsize</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">horizontalalignment</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">,</span><span class="n">verticalalignment</span><span class="o">=</span><span class="s1">&#39;top&#39;</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
 
     <span class="c1"># Create a Rectangle patch</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">patches</span> <span class="c1"># lazy import</span>
     <span class="n">rect</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mf">7.2</span><span class="p">,</span><span class="mf">0.5</span><span class="p">),</span><span class="mf">1.7</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
     
     <span class="c1"># Add the patch to the Axes</span>
@@ -1075,7 +1070,7 @@
 
     <span class="k">return</span> <span class="n">axh</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_full</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_full</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
                          <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">manufacturer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                          <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> 
                          <span class="n">notes</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">max_len_notes_line</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span>
@@ -1086,7 +1081,7 @@
                          <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-24 Color Rendition Report&#39;</span><span class="p">,</span>
                          <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE_FULLREPORT</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create TM30 Color Rendition Report (&#39;full&#39;). &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># Set up subplots:</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>  
@@ -1138,14 +1133,14 @@
     
     <span class="k">return</span> <span class="n">axs</span><span class="p">,</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_intermediate</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_intermediate</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
                                    <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
                                    <span class="n">save_fig_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
                                    <span class="n">show_annexE_priority</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_Rcsh1_Rfh1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                                    <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-18 Color Rendition Report&#39;</span><span class="p">,</span>
                                    <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create TM30 Color Rendition Report (&#39;intermediate&#39;). &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     <span class="c1"># Set up subplots:</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>  
@@ -1175,14 +1170,14 @@
     
     <span class="k">return</span> <span class="n">axs</span><span class="p">,</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_simple</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_simple</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
                          <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
                          <span class="n">save_fig_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
                          <span class="n">show_annexE_priority</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_Rcsh1_Rfh1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                          <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-18 Color Rendition Report&#39;</span><span class="p">,</span>
                          <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create TM30 Color Rendition Report (&#39;simple&#39;). &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import </span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import </span>
     
     <span class="c1"># Set up subplots:</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>  
@@ -1206,14 +1201,14 @@
     
     <span class="k">return</span> <span class="n">axs</span><span class="p">,</span> <span class="n">data</span>
 
-<span class="k">def</span> <span class="nf">_plot_tm30_report_spd_cvg</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">_plot_tm30_report_spd_cvg</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span> 
                          <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span>
                          <span class="n">save_fig_name</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span> <span class="mi">300</span><span class="p">,</span>
                          <span class="n">show_annexE_priority</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">show_Rcsh1_Rfh1</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
                          <span class="n">suptitle</span> <span class="o">=</span> <span class="s1">&#39;ANSI/IES TM-30-18 Color Rendition Report&#39;</span><span class="p">,</span>
                          <span class="n">font_size</span> <span class="o">=</span> <span class="n">_TM30_FONT_SIZE</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Create TM30 Color Rendition Report (&#39;spd_cvg&#39;). &quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import </span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import </span>
     
     <span class="c1"># Set up subplots:</span>
     <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">)</span>  
@@ -1246,7 +1241,7 @@
 
 <div class="viewcode-block" id="plot_tm30_report">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_tm30_report">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_tm30_report</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_tm30_report</span><span class="p">(</span><span class="n">spd</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="s1">&#39;ies-tm30&#39;</span><span class="p">,</span>
                      <span class="n">report_type</span> <span class="o">=</span> <span class="s1">&#39;full&#39;</span><span class="p">,</span>
                      <span class="n">source</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">manufacturer</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
                      <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> 
@@ -1397,7 +1392,7 @@
 <span class="c1">#==================================================================================</span>
 <div class="viewcode-block" id="plot_cri_graphics">
 <a class="viewcode-back" href="../../../../../color.html#luxpy.color.cri.plot_cri_graphics">[docs]</a>
-<span class="k">def</span> <span class="nf">plot_cri_graphics</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_cri_graphics</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cri_type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">hbins</span> <span class="o">=</span> <span class="mi">16</span><span class="p">,</span> <span class="n">start_hue</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">scalef</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> \
                       <span class="n">plot_axis_labels</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">bin_labels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">plot_edge_lines</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
                       <span class="n">plot_center_lines</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plot_bin_colors</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> \
                       <span class="n">axtype</span> <span class="o">=</span> <span class="s1">&#39;polar&#39;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">force_CVG_layout</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1574,8 +1569,8 @@
     <span class="c1">#layout = np.array([[6,6,0,0],[0,3,3,3],[3,3,3,3],[0,0,3,2],[2,2,2,2],[2,0,2,2],[4,0,2,2]])</span>
     <span class="n">layout</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
     
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
-    <span class="k">def</span> <span class="nf">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="n">n</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_subplot</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="n">n</span><span class="p">,</span> <span class="n">polar</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">frameon</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot2grid</span><span class="p">(</span><span class="n">layout</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> 
                               <span class="n">colspan</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> 
                               <span class="n">rowspan</span> <span class="o">=</span> <span class="n">layout</span><span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> 
@@ -1711,8 +1706,8 @@
 
     
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> 
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> 
     
     <span class="n">spd</span> <span class="o">=</span> <span class="n">lx</span><span class="o">.</span><span class="n">_CIE_F4</span>
 

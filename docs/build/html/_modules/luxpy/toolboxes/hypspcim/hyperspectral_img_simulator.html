@@ -1,22 +1,20 @@
+
+
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" data-content_root="../../../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.12.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=b76e3c8a" />
-      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+  <title>luxpy.toolboxes.hypspcim.hyperspectral_img_simulator &mdash; LuxPy 1.12.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
 
   
-  <!--[if lt IE 9]>
-    <script src="../../../../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
-        <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
-        <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script src="../../../../_static/documentation_options.js?v=fe8e256b"></script>
-        <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
-        <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=a687bbd5"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" /> 
@@ -33,9 +31,6 @@
           <a href="../../../../index.html" class="icon icon-home">
             LuxPy
           </a>
-              <div class="version">
-                1.12.0
-              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
@@ -104,13 +99,13 @@
 <span class="sd">     </span>
 <span class="sd">.. codeauthor:: Kevin A.G. Smet (ksmet1977 at gmail.com)</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">luxpy</span> <span class="kn">import</span> <span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_CIE_E</span><span class="p">,</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">cat</span><span class="p">,</span> <span class="n">colortf</span><span class="p">,</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">_CIE_ILLUMINANTS</span><span class="p">,</span> <span class="n">_CRI_RFL</span><span class="p">,</span> <span class="n">_CIE_E</span><span class="p">,</span>
                    <span class="n">spd_to_xyz</span><span class="p">,</span> <span class="n">plot_color_data</span><span class="p">,</span> <span class="n">math</span><span class="p">,</span> <span class="n">cie_interp</span><span class="p">,</span> <span class="n">getwlr</span><span class="p">,</span> <span class="n">xyz_to_srgb</span><span class="p">)</span>
-<span class="kn">from</span> <span class="nn">luxpy.utils</span> <span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imsave</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">luxpy.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_PKG_PATH</span><span class="p">,</span> <span class="n">_SEP</span><span class="p">,</span> <span class="n">_EPS</span><span class="p">,</span> <span class="n">imread</span><span class="p">,</span> <span class="n">imsave</span>
 
-<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 
 <span class="n">__all__</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;_HYPSPCIM_PATH&#39;</span><span class="p">,</span><span class="s1">&#39;_HYPSPCIM_DEFAULT_IMAGE&#39;</span><span class="p">,</span><span class="s1">&#39;render_image&#39;</span><span class="p">,</span><span class="s1">&#39;xyz_to_rfl&#39;</span><span class="p">,</span>
           <span class="s1">&#39;get_superresolution_hsi&#39;</span><span class="p">,</span><span class="s1">&#39;hsi_to_rgb&#39;</span><span class="p">,</span><span class="s1">&#39;rfl_to_rgb&#39;</span><span class="p">,</span><span class="s1">&#39;_CSF_NIKON_D700&#39;</span><span class="p">]</span>             
@@ -130,7 +125,7 @@
 
 <div class="viewcode-block" id="xyz_to_rfl">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.xyz_to_rfl">[docs]</a>
-<span class="k">def</span> <span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_rfl</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;rfl_est&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span>\
                  <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours_nd</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -230,7 +225,7 @@
         <span class="n">lab</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span><span class="n">csf_based_rgb_rounding</span><span class="p">)</span> <span class="c1"># speed up search</span>
     
     
-    <span class="kn">import</span> <span class="nn">scipy</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span> <span class="c1"># lazy import</span>
     
     <span class="k">if</span> <span class="n">interp_type</span> <span class="o">==</span> <span class="s1">&#39;nearest&#39;</span><span class="p">:</span>
         <span class="c1"># Find rfl (cfr. lab_rr) from rfl set that results in &#39;near&#39; metameric </span>
@@ -305,7 +300,7 @@
             <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span> <span class="c1">#min(rfl.shape[0]-1,rfl_est.shape[0]-1)</span>
             <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">rfl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)[:</span><span class="nb">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">rfl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
             <span class="n">st</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">rfl_est</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)[:</span><span class="nb">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">rfl_est</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
-            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+            <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
             <span class="n">ax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,),</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">object</span><span class="p">)</span>
             <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
@@ -331,7 +326,7 @@
 
 <div class="viewcode-block" id="render_image">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.render_image">[docs]</a>
-<span class="k">def</span> <span class="nf">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">,</span> \
+<span class="k">def</span><span class="w"> </span><span class="nf">render_image</span><span class="p">(</span><span class="n">img</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rfl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;img_hyp&#39;</span><span class="p">,</span> \
                  <span class="n">refspd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> \
                  <span class="n">cspace</span> <span class="o">=</span> <span class="s1">&#39;xyz&#39;</span><span class="p">,</span> <span class="n">cspace_tf</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>\
                  <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">show</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -547,7 +542,7 @@
     <span class="k">if</span> <span class="n">show</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
         <span class="c1"># show images using pyplot.show():</span>
             
-        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
         
         <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">img_original_rendered</span><span class="p">)</span>
@@ -578,7 +573,7 @@
 
 <div class="viewcode-block" id="rfl_to_rgb">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.rfl_to_rgb">[docs]</a>
-<span class="k">def</span> <span class="nf">rfl_to_rgb</span><span class="p">(</span><span class="n">rfl</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalize_to_white</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">rfl_to_rgb</span><span class="p">(</span><span class="n">rfl</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalize_to_white</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Convert spectral reflectance functions (illuminated by spd) to Camera Sensitivity Functions.</span>
 <span class="sd">    </span>
@@ -625,7 +620,7 @@
     
 <div class="viewcode-block" id="hsi_to_rgb">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.hsi_to_rgb">[docs]</a>
-<span class="k">def</span> <span class="nf">hsi_to_rgb</span><span class="p">(</span><span class="n">hsi</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">srgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
+<span class="k">def</span><span class="w"> </span><span class="nf">hsi_to_rgb</span><span class="p">(</span><span class="n">hsi</span><span class="p">,</span> <span class="n">spd</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">cieobs</span> <span class="o">=</span> <span class="n">_CIEOBS</span><span class="p">,</span> <span class="n">srgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
                <span class="n">linear_rgb</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">CSF</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalize_to_white</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> 
                <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
@@ -680,7 +675,7 @@
        
 <div class="viewcode-block" id="get_superresolution_hsi">
 <a class="viewcode-back" href="../../../../toolboxes.html#luxpy.toolboxes.hypspcim.get_superresolution_hsi">[docs]</a>
-<span class="k">def</span> <span class="nf">get_superresolution_hsi</span><span class="p">(</span><span class="n">lrhsi</span><span class="p">,</span> <span class="n">hrci</span><span class="p">,</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_superresolution_hsi</span><span class="p">(</span><span class="n">lrhsi</span><span class="p">,</span> <span class="n">hrci</span><span class="p">,</span> <span class="n">CSF</span><span class="p">,</span> <span class="n">wl</span> <span class="o">=</span> <span class="p">[</span><span class="mi">380</span><span class="p">,</span><span class="mi">780</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">csf_based_rgb_rounding</span> <span class="o">=</span> <span class="n">_ROUNDING</span><span class="p">,</span>
                             <span class="n">interp_type</span> <span class="o">=</span> <span class="s1">&#39;nd&#39;</span><span class="p">,</span> <span class="n">k_neighbours</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">verbosity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    Get a HighResolution HyperSpectral Image (super-resolution HSI) based on a LowResolution HSI and a HighResolution Color Image.</span>
@@ -741,7 +736,7 @@
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
     
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span> <span class="c1"># lazy import</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span> <span class="c1"># lazy import</span>
     
     
     <span class="c1">#--------------------------------------------------------------------------</span>
@@ -763,12 +758,12 @@
     <span class="c1">#--------------------------------------------------------------------------</span>
     <span class="c1"># Example / test code for super resolution:</span>
     <span class="c1">#--------------------------------------------------------------------------</span>
-    <span class="kn">import</span> <span class="nn">time</span>
-    <span class="kn">import</span> <span class="nn">luxpy</span> <span class="k">as</span> <span class="nn">lx</span>
-    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-    <span class="kn">from</span> <span class="nn">skimage</span> <span class="kn">import</span> <span class="n">transform</span>
-    <span class="kn">import</span> <span class="nn">imageio</span>
-    <span class="kn">from</span> <span class="nn">skimage.transform</span> <span class="kn">import</span> <span class="n">rescale</span><span class="p">,</span><span class="n">resize</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">luxpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">lx</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">skimage</span><span class="w"> </span><span class="kn">import</span> <span class="n">transform</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">imageio</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">skimage.transform</span><span class="w"> </span><span class="kn">import</span> <span class="n">rescale</span><span class="p">,</span><span class="n">resize</span>
     
     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>    
     
