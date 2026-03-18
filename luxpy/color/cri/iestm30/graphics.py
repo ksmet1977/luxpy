@@ -62,6 +62,14 @@ from luxpy.color.cri.iestm30.metrics import spd_to_ies_tm30_metrics, tm30_metric
 _TM30_FONT_SIZE_FULLREPORT = 8
 _TM30_FONT_SIZE = 11
 
+# Paper size presets (width, height in inches) for use as :figsize: str argument.
+_TM30FIGSIZES = {
+    'a4'              : (8.27, 11.69),
+    'a4_landscape'    : (11.69, 8.27),
+    'letter'          : (8.5,  11.0),
+    'letter_landscape': (11.0,  8.5),
+}
+
 __all__ = ['_tm30_process_spd','plot_tm30_cvg','plot_tm30_Rfi',
            'plot_tm30_Rxhj','plot_tm30_Rcshj', 'plot_tm30_Rhshj', 
            'plot_tm30_Rfhj', 'plot_tm30_spd','plot_tm30_report', 
@@ -824,9 +832,11 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
         :axh: 
             | None, optional
             | If None: create new figure with single axes, else plot on specified axes. 
-        :figsize:
+       :figsize:
             | (6,15), optional
             | Figure size of pyplot figure.
+            | If str: a predefined size preset from _TM30FIGSIZES.
+            | If tuple: used directly as (width, height) in inches.
         :font_size:
             | _TM30_FONT_SIZE, optional
             | Font size of text, axis labels and axis values.
@@ -841,6 +851,9 @@ def plot_tm30_Rxhj(spd, cri_type = 'ies-tm30', axh = None, figsize = (6,15),
             | dictionary with required parameters for plotting functions.     
     """
 
+    if isinstance(figsize, str):
+        figsize = _TM30FIGSIZES.get(figsize, figsize)
+    
     data = _tm30_process_spd(spd, cri_type = cri_type,**kwargs)
     
     if axh is None:
@@ -1199,11 +1212,13 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
         :figsize:
             | None, optional
             | Figure size of pyplot figure.
-            | If None a default depending on the report_type is used:
-            |   - 'full': (7,12)
+            | If None: a default depending on the report_type is used:
+            |   - 'full'         : (7,12)
             |   - 'intermediate' : (14,6)
-            |   - 'simple' : (6,6)
-            |   -'spd_cvg': (14,6)
+            |   - 'simple'       : (6,6)
+            |   - 'spd_cvg'      : (14,6)
+            | If str: a predefined size preset from _TM30FIGSIZES.
+            | If tuple: used directly as (width, height) in inches.
         :save_fig_name:
             | None, optional
             | Filename (+path) to which the report will be saved as an image (png).
@@ -1241,6 +1256,8 @@ def plot_tm30_report(spd, cri_type = 'ies-tm30',
     """
     if font_size is None: 
         font_size = _TM30_FONT_SIZE if report_type != 'full' else _TM30_FONT_SIZE_FULLREPORT
+    if isinstance(figsize, str):
+        figsize = _TM30FIGSIZES.get(figsize, figsize)
     if report_type == 'full':
         if figsize is None: figsize = (7,12)
         return _plot_tm30_report_full(spd, cri_type = cri_type,
