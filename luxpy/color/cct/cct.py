@@ -2739,7 +2739,9 @@ def _uv_to_Tx_zhang2019(u, v, lut, lut_n_cols, ns = 0, out_of_lut = None,
         # uBBb, vBBb = uvBBab[N:,0:1], uvBBab[N:,1:2]
         
         # find distance in UCD of BBab to input:
-        DEuv = ((uvBBab[...,0:1] - u.T)**2 + (uvBBab[...,1:2] - v.T)**2) # no need for **0.5
+        uu, vv = np.vstack((u, u)), np.vstack((v, v))
+        DEuv = ((uvBBab[...,0:1] - uu)**2 + (uvBBab[...,1:2] - vv)**2)
+        #DEuv = ((uvBBab[...,0:1] - u.T)**2 + (uvBBab[...,1:2] - v.T)**2) # no need for **0.5
         DEuv_a, DEuv_b = DEuv[:N], DEuv[N:] 
 
         c = (DEuv_a < DEuv_b)[:,0]
